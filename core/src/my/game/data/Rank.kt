@@ -1,4 +1,4 @@
-package my.game.logic
+package my.game.data
 
 enum class Rank {
     Ace,

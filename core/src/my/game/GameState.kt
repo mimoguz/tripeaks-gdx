@@ -1,4 +1,4 @@
-package my.game.logic
+package my.game
 
 import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
@@ -8,10 +8,12 @@ import ktx.assets.invoke
 import ktx.assets.pool
 import ktx.collections.GdxArray
 import ktx.collections.set
-import my.game.Constants
-import my.game.TextureAtlasAssets
-import my.game.get
-import my.game.screens.*
+import my.game.data.Card
+import my.game.data.Source
+import my.game.views.CardView
+import my.game.views.DiscardView
+import my.game.views.FadeOut
+import my.game.views.StackView
 
 class GameState(private val assets: AssetManager) : Drawable, Dynamic {
     private val stack = java.util.Stack<Card>()
@@ -19,13 +21,13 @@ class GameState(private val assets: AssetManager) : Drawable, Dynamic {
     private val peaks =  IntMap<Card?>()
 
     private val cardsPool = pool { Card() }
-    private val cardViewPool = pool { CardView(assets[TextureAtlasAssets.Cards]) }
-    private val outAnimationPool = pool { CardOutAnimation(assets[TextureAtlasAssets.Cards]) }
+    private val cardViewPool = pool { CardView(assets) }
+    private val outAnimationPool = pool { FadeOut(assets) }
 
     private val rows = GdxArray<GdxArray<CardView>>()
-    private val animations = GdxArray<CardOutAnimation>()
-    private val discardView by lazy { DiscardView(discard, assets[TextureAtlasAssets.Cards]) }
-    private val stackView by lazy { StackView(stack, assets[TextureAtlasAssets.Cards]) }
+    private val animations = GdxArray<FadeOut>()
+    private val discardView by lazy { DiscardView(discard, assets) }
+    private val stackView by lazy { StackView(stack, assets) }
 
     fun init() {
         rows.clear()
@@ -38,7 +40,6 @@ class GameState(private val assets: AssetManager) : Drawable, Dynamic {
 
         val deck = Util.makeDeck()
         Table.layout.withIndex().forEach { layer ->
-            println(layer.index)
             layer.value.withIndex().forEach { cell ->
                 when (cell.value) {
                     Table.OPEN_CARD_SYMBOL, Table.CLOSED_CARD_SYMBOL -> {
@@ -96,18 +97,10 @@ class GameState(private val assets: AssetManager) : Drawable, Dynamic {
                 peaks[Util.getIndex(cell)] = card
 
                 val leftUp = Util.getIndex(cell.column - 1, cell.row - 1)
-                if (peaks.containsKey(leftUp) && peaks[leftUp] != null) {
-                    peaks[leftUp]?.apply {
-                        isOpen = false
-                    }
-                }
+                peaks[leftUp, null]?.let { it.isOpen = false }
 
                 val rightUp = Util.getIndex(cell.column - 1, cell.row + 1)
-                if (peaks.containsKey(rightUp) && peaks[rightUp] != null) {
-                    peaks[rightUp]?.apply {
-                        isOpen = false
-                    }
-                }
+                peaks[rightUp, null]?.let { it.isOpen = false }
             }
         }
 
@@ -140,7 +133,10 @@ class GameState(private val assets: AssetManager) : Drawable, Dynamic {
         for (column in (cellX - 1) .. cellX) {
             for (row in (cellY - 1) .. cellY) {
                 val cell = Util.getIndex(column, row)
-                if (peaks.containsKey(cell) && peaks[cell]!!.isOpen) {
+                if (peaks[cell, null]?.isOpen == true) {
+                    if (peaks[cell]?.areConsecutive(discard.peek()) != true) {
+                        return
+                    }
                     val card = peaks.remove(cell)!!
                     val view = rows[row].find { drawable -> (drawable as CardView).card == card }!!
                     rows[row].removeValue(view, true)
@@ -151,15 +147,34 @@ class GameState(private val assets: AssetManager) : Drawable, Dynamic {
                             Constants.Y0 - (row + 2) * Constants.CELL_HEIGHT,
                             ::whenOutAnimationFinished
                     ))
-                    discard.add(card)
+                    discard.push(card)
+
+                    // Flip upper neighbors if they are clear.
+                    if (isClear(column - 1, row - 1)) {
+                        peaks[Util.getIndex(column - 1, row - 1), null]?.let { it.isOpen = true}
+                    }
+                    if (isClear(column + 1, row - 1)) {
+                        peaks[Util.getIndex(column + 1, row - 1), null]?.let { it.isOpen = true}
+                    }
+
+                    if (peaks.isEmpty) {
+                        println("Won!")
+                    }
+
                     return
                 }
             }
         }
     }
 
-    private fun whenOutAnimationFinished(anim: CardOutAnimation) {
+    private fun whenOutAnimationFinished(anim: FadeOut) {
         animations.removeValue(anim, true)
         outAnimationPool(anim)
+    }
+
+    private fun isClear(column: Int, row: Int): Boolean {
+        val leftDown = Util.getIndex(column - 1, row + 1)
+        val rightDown = Util.getIndex(column + 1, row + 1)
+        return  !peaks.containsKey(leftDown) && !peaks.containsKey(rightDown)
     }
 }

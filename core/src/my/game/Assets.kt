@@ -3,11 +3,13 @@ package my.game
 import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
+import com.badlogic.gdx.scenes.scene2d.ui.Skin
 import ktx.assets.getAsset
 import ktx.assets.load
 
 enum class TextureAtlasAssets(val path: String) {
-    Cards("images/cards.atlas")
+    Cards("images/cards.atlas"),
+    Ui("images/ui.atlas")
 }
 
 fun AssetManager.load(asset: TextureAtlasAssets) = load<TextureAtlas>(asset.path)

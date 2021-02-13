@@ -1,4 +1,4 @@
-package my.game.logic
+package my.game
 
 object Table {
     const val OPEN_CARD_SYMBOL = 'o'

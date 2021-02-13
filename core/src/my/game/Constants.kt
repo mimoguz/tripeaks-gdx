@@ -10,8 +10,10 @@ object Constants {
     const val CELL_HEIGHT = 20f
     const val CONTENT_WIDTH = 300f
     const val CONTENT_HEIGHT = 200f
+//    const val X0 = -CONTENT_WIDTH / 2f
+//    const val Y0 = CONTENT_HEIGHT / 2f
     const val X0 = -CONTENT_WIDTH / 2f
     const val Y0 = CONTENT_HEIGHT / 2f
-    val DISCARD_POSITION = Vector2(-120f, -60f)
-    val STACK_POSITION = Vector2(-120f, -100f)
+    val DISCARD_POSITION = Vector2(X0 + CELL_WIDTH * 2f, -Y0 + CELL_HEIGHT * 2f)
+    val STACK_POSITION = Vector2(X0 + CELL_WIDTH * 2f, -Y0)
 }

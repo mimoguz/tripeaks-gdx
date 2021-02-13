@@ -1,4 +1,4 @@
-package my.game
+package my.game.screens
 
 import com.badlogic.gdx.graphics.Camera
 import com.badlogic.gdx.utils.viewport.FitViewport

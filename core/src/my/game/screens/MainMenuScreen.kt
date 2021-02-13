@@ -7,7 +7,6 @@ import ktx.graphics.color
 import ktx.graphics.use
 import my.game.FontAssets
 import my.game.Game
-import my.game.IntegerScalingViewport
 import my.game.get
 
 class MainMenuScreen(val game: Game) : KtxScreen {

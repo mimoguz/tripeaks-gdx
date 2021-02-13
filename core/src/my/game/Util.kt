@@ -1,7 +1,9 @@
-package my.game.logic
+package my.game
 
 import ktx.collections.GdxArray
-import my.game.Constants
+import my.game.data.Rank
+import my.game.data.Source
+import my.game.data.Suit
 
 object Util {
     data class CardInfo(val suit: Suit, val rank: Rank)
