@@ -21,7 +21,10 @@ class Card {
             suit.toString().toLowerCase(Locale.US) +
                     (rank.ordinal + 1).toString().padStart(2, '0')
 
-    fun areConsecutive(other: Card) = abs(rank.ordinal - other.rank.ordinal) == 1
+    fun areConsecutive(other: Card): Boolean {
+        val distance = abs(rank.ordinal - other.rank.ordinal)
+        return distance == 1 || distance == 12
+    }
 
     override fun toString(): String = "$rank of ${suit}s"
 }

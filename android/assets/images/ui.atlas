@@ -6,7 +6,7 @@ filter: Nearest, Nearest
 repeat: none
 buttonDisabled
   rotate: false
-  xy: 2, 2
+  xy: 20, 38
   size: 16, 16
   split: 3, 3, 3, 4
   orig: 16, 16
@@ -22,9 +22,23 @@ buttonDown
   index: -1
 buttonUp
   rotate: false
-  xy: 2, 20
+  xy: 2, 38
   size: 16, 16
   split: 3, 3, 3, 3
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+deal
+  rotate: false
+  xy: 2, 20
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+undo
+  rotate: false
+  xy: 2, 2
+  size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1

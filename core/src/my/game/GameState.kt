@@ -48,8 +48,8 @@ class GameState(private val assets: AssetManager) : Drawable, Dynamic {
                         val card = cardsPool().set(info.suit, info.rank, source, cell.value == Table.OPEN_CARD_SYMBOL)
                         val view = cardViewPool().set(
                                 card,
-                                Constants.X0 + cell.index * Constants.CELL_WIDTH,
-                                Constants.Y0 - (layer.index + 2) * Constants.CELL_HEIGHT
+                                cell.index * Constants.CELL_WIDTH,
+                                Constants.CONTENT_HEIGHT - (layer.index + 2) * Constants.CELL_HEIGHT
                         )
                         rows[layer.index].add(view)
                         peaks[Util.getIndex(source.column, source.row)] = card
@@ -128,12 +128,13 @@ class GameState(private val assets: AssetManager) : Drawable, Dynamic {
     }
 
     fun touch(point: Vector2) {
-        val cellX = ((point.x - Constants.X0) / Constants.CELL_WIDTH).toInt()
-        val cellY = ((Constants.Y0 - point.y) / Constants.CELL_HEIGHT).toInt()
+        val cellX = (point.x/ Constants.CELL_WIDTH).toInt()
+        val cellY = ((Constants.CONTENT_HEIGHT -  point.y) / Constants.CELL_HEIGHT).toInt()
         for (column in (cellX - 1) .. cellX) {
             for (row in (cellY - 1) .. cellY) {
                 val cell = Util.getIndex(column, row)
                 if (peaks[cell, null]?.isOpen == true) {
+                    println(peaks[cell, null])
                     if (peaks[cell]?.areConsecutive(discard.peek()) != true) {
                         return
                     }
@@ -143,8 +144,8 @@ class GameState(private val assets: AssetManager) : Drawable, Dynamic {
                     cardViewPool(view)
                     animations.add(outAnimationPool().set(
                             card,
-                            Constants.X0 + column * Constants.CELL_WIDTH,
-                            Constants.Y0 - (row + 2) * Constants.CELL_HEIGHT,
+                            column * Constants.CELL_WIDTH,
+                            (row + 2) * Constants.CELL_HEIGHT,
                             ::whenOutAnimationFinished
                     ))
                     discard.push(card)

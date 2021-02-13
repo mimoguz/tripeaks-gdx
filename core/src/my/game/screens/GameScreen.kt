@@ -5,13 +5,15 @@ import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
+import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.Stage
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import ktx.app.KtxScreen
 import ktx.graphics.use
-import ktx.scene2d.button
-import ktx.scene2d.label
-import ktx.scene2d.*
-import my.game.*
+import ktx.scene2d.Scene2DSkin
+import my.game.Constants
+import my.game.Game
 import my.game.GameState
 
 class GameScreen(val game: Game) : KtxScreen {
@@ -20,37 +22,21 @@ class GameScreen(val game: Game) : KtxScreen {
     private val touchPoint3D = Vector3()
     private val touchPoint2D = Vector2()
     private val state = GameState(game.assets)
-//    private val stage by lazy {
-//        Stage(viewport).apply {
-//            actors {
-//                scene2d.button {
-//                    label("deal")
-//                    setPosition(
-//                            Constants.DISCARD_POSITION.x - 2f * Constants.CELL_WIDTH,
-//                            Constants.DISCARD_POSITION.y - 2f * Constants.CELL_HEIGHT
-//                    )
-//                    setSize(27f, 37f)
-//                    addListener {
-//                        println("Click")
-//                        return@addListener true
-//                    }
-//                }
-//            }
-//        }
-//    }
+    private val stage = Stage(viewport)
 
     override fun render(delta: Float) {
-        state.update(delta)
-//        stage.act()
         camera.update()
+        state.update(delta)
+        stage.act(delta)
 
         Gdx.gl.glClearColor(0.39f, 0.64f, 0.28f, 1f)
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
 
+        stage.draw()
+
         game.batch.enableBlending()
         game.batch.use(camera) { batch ->
             state.draw(batch)
-//            stage.draw()
         }
         game.batch.disableBlending()
 
@@ -64,10 +50,33 @@ class GameScreen(val game: Game) : KtxScreen {
 
     override fun show() {
         state.init()
-//        Gdx.input.inputProcessor = stage
+        stage.actors.add(TextButton("Deal", Scene2DSkin.defaultSkin).apply {
+            addListener(object : ClickListener() {
+                override fun clicked(event: InputEvent?, x: Float, y: Float) {
+                    state.deal()
+                    super.clicked(event, x, y)
+                }
+            })
+            setSize(Constants.SPRITE_WIDTH, Constants.SPRITE_HEIGHT)
+            setPosition(Constants.STACK_POSITION.x - Constants.CELL_WIDTH * 2f, Constants.STACK_POSITION.y)
+        })
+
+        stage.actors.add(TextButton("Undo", Scene2DSkin.defaultSkin).apply {
+            addListener(object : ClickListener() {
+                override fun clicked(event: InputEvent?, x: Float, y: Float) {
+                    state.undo()
+                    super.clicked(event, x, y)
+                }
+            })
+            setSize(Constants.SPRITE_WIDTH, Constants.SPRITE_HEIGHT)
+            setPosition(Constants.DISCARD_POSITION.x - Constants.CELL_WIDTH * 2f, Constants.DISCARD_POSITION.y)
+        })
+
+        Gdx.input.inputProcessor = stage
     }
 
     override fun resize(width: Int, height: Int) {
-        viewport.update(width, height)
+        viewport.update(width, height, true)
+        stage.viewport.update(width, height)
     }
 }
