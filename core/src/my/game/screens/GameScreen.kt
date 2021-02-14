@@ -102,7 +102,7 @@ class GameScreen(val game: Game) : KtxScreen {
                 }
             })
             setSize(Constants.SPRITE_WIDTH, Constants.SPRITE_WIDTH)
-            setPosition(Constants.CONTENT_WIDTH - Constants.SPRITE_WIDTH - 1f, 0f)
+            setPosition(Constants.CONTENT_WIDTH - Constants.SPRITE_WIDTH - 2f, Constants.VERTICAL_PADDING)
             children.add(
                     Image(SpriteDrawable(game.assets[TextureAtlasAssets.Ui].createSprite("new"))).apply {
                         setPosition(Constants.SPRITE_WIDTH / 2f - 7f, Constants.SPRITE_WIDTH / 2f - 7f)

@@ -26,5 +26,10 @@ object Util {
     inline fun getColumn(index: Int): Int = index % Constants.COLUMN_COUNT
 
     inline fun getRow(index: Int): Int = index / Constants.COLUMN_COUNT
+
+    inline fun getCellX(column: Int): Float = column * Constants.CELL_WIDTH + 1f
+
+    inline fun getCellY(row: Int): Float =
+            Constants.CONTENT_HEIGHT - (row + 2) * Constants.CELL_HEIGHT - Constants.VERTICAL_PADDING
 }
 

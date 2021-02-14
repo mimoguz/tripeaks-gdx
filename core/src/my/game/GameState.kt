@@ -104,8 +104,8 @@ class GameState(private val assets: AssetManager) : View, Dynamic {
                 peaks[Util.getIndex(cell)] = card
                 val view = cardViewPool().set(
                         card,
-                        cell.column * Constants.CELL_WIDTH + 1f,
-                        Constants.CONTENT_HEIGHT - (cell.row + 2) * Constants.CELL_HEIGHT
+                        Util.getCellX(cell.column),
+                        Util.getCellY(cell.row)
                 )
                 rows[cell.row].add(view)
 
@@ -159,8 +159,8 @@ class GameState(private val assets: AssetManager) : View, Dynamic {
                     cardViewPool(view)
                     animations.add(outAnimationPool().set(
                             card,
-                            column * Constants.CELL_WIDTH,
-                            Constants.CONTENT_HEIGHT - (row + 2) * Constants.CELL_HEIGHT,
+                            Util.getCellX(column),
+                            Util.getCellY(row),
                             ::whenOutAnimationFinished
                     ))
                     discard.push(card)

@@ -24,6 +24,7 @@ www-test/
 /android/libs/x86/
 /android/libs/x86_64/
 /android/gen/
+/android/release/
 .idea/
 *.ipr
 *.iws
