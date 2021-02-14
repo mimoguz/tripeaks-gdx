@@ -46,19 +46,15 @@ class GameState(private val assets: AssetManager) : View, Dynamic {
         }
 
         val deck = Util.makeDeck()
-        Table.layout.withIndex().forEach { layer ->
-            layer.value.withIndex().forEach { cell ->
-                when (cell.value) {
+        Table.layout.withIndex().forEach { row ->
+            row.value.withIndex().forEach { column ->
+                when (column.value) {
                     Table.OPEN_CARD_SYMBOL, Table.CLOSED_CARD_SYMBOL -> {
                         val info = deck.pop()
-                        val source = Source.Cell(cell.index, layer.index)
-                        val card = cardsPool().set(info.suit, info.rank, source, cell.value == Table.OPEN_CARD_SYMBOL)
-                        val view = cardViewPool().set(
-                                card,
-                                cell.index * Constants.CELL_WIDTH + 1f,
-                                Constants.CONTENT_HEIGHT - (layer.index + 2) * Constants.CELL_HEIGHT
-                        )
-                        rows[layer.index].add(view)
+                        val source = Source.Cell(column.index, row.index)
+                        val card = cardsPool().set(info.suit, info.rank, source, column.value == Table.OPEN_CARD_SYMBOL)
+                        val view = cardViewPool().set(card, Util.getCellX(column.index), Util.getCellY(row.index))
+                        rows[row.index].add(view)
                         peaks[Util.getIndex(source.column, source.row)] = card
                     }
                 }
@@ -102,11 +98,7 @@ class GameState(private val assets: AssetManager) : View, Dynamic {
             is Source.Cell -> {
                 val cell = card.source as Source.Cell
                 peaks[Util.getIndex(cell)] = card
-                val view = cardViewPool().set(
-                        card,
-                        Util.getCellX(cell.column),
-                        Util.getCellY(cell.row)
-                )
+                val view = cardViewPool().set(card, Util.getCellX(cell.column), Util.getCellY(cell.row))
                 rows[cell.row].add(view)
 
                 val leftUp = Util.getIndex(cell.column - 1, cell.row - 1)
@@ -157,12 +149,7 @@ class GameState(private val assets: AssetManager) : View, Dynamic {
                     }!!
                     rows[row].removeValue(view, true)
                     cardViewPool(view)
-                    animations.add(outAnimationPool().set(
-                            card,
-                            Util.getCellX(column),
-                            Util.getCellY(row),
-                            ::whenOutAnimationFinished
-                    ))
+                    animations.add(outAnimationPool().set(card, Util.getCellX(column), Util.getCellY(row), ::whenOutAnimationFinished))
                     discard.push(card)
 
                     // Flip upper neighbors if they are clear.

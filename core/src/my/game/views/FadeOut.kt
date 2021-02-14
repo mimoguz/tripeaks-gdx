@@ -16,7 +16,7 @@ class FadeOut(private val assets: AssetManager) : View, Dynamic {
 
     override fun update(delta: Float) {
         alpha -= 1 / (Constants.ANIMATION_TIME * 60f)
-        acc += 4f * Constants.CELL_HEIGHT * (delta / Constants.ANIMATION_TIME)
+        acc += 6f * Constants.CELL_HEIGHT * (delta / Constants.ANIMATION_TIME)
         if (acc >= 1.0) {
             position.set(position.x, position. y - 1f)
         }

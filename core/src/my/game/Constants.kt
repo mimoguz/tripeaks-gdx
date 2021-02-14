@@ -3,7 +3,7 @@ package my.game
 import com.badlogic.gdx.math.Vector2
 
 object Constants {
-    const val ANIMATION_TIME = 0.333f
+    const val ANIMATION_TIME = 0.4f
     const val VERTICAL_PADDING = 4f
     const val COLUMN_COUNT = 20
     const val CARD_BACK = "cardBack"
