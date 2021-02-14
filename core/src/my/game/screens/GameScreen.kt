@@ -137,10 +137,6 @@ class GameScreen(val game: Game) : KtxScreen {
             key(Input.Keys.ESCAPE, false)
         }
         paused = true
-        dialog.show(stage).apply {
-            invalidateHierarchy()
-            invalidate()
-            layout()
-        }
+        dialog.show(stage)
     }
 }
