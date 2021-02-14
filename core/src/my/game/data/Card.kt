@@ -27,5 +27,7 @@ class Card {
     }
 
     override fun toString(): String = "$rank of ${suit}s"
+
+    override fun equals(other: Any?): Boolean = other !is Card || (other.rank == rank && other.suit == suit)
 }
 

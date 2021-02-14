@@ -3,12 +3,11 @@ package my.game.views
 import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
-import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.math.Vector2
 import my.game.*
 import my.game.data.Card
 
-class FadeOut(private val assets: AssetManager) : Drawable, Dynamic {
+class FadeOut(private val assets: AssetManager) : View, Dynamic {
     private var sprite: Sprite? = null
     private val position: Vector2 = Vector2()
     private var alpha: Float = 1f
@@ -19,9 +18,7 @@ class FadeOut(private val assets: AssetManager) : Drawable, Dynamic {
         alpha -= 1 / (Constants.ANIMATION_TIME * 60f)
         acc += 4f * Constants.CELL_HEIGHT * (delta / Constants.ANIMATION_TIME)
         if (acc >= 1.0) {
-            position.y -= 1f
-            acc = 0f
-
+            position.set(position.x, position. y - 1f)
         }
         if (alpha <= 0f) {
             finished(this)

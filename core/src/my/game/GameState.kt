@@ -15,10 +15,10 @@ import my.game.views.DiscardView
 import my.game.views.FadeOut
 import my.game.views.StackView
 
-class GameState(private val assets: AssetManager) : Drawable, Dynamic {
+class GameState(private val assets: AssetManager) : View, Dynamic {
     private val stack = java.util.Stack<Card>()
     private val discard = java.util.Stack<Card>()
-    private val peaks =  IntMap<Card?>()
+    private val peaks = IntMap<Card?>()
 
     private val cardsPool = pool { Card() }
     private val cardViewPool = pool { CardView(assets) }
@@ -29,10 +29,17 @@ class GameState(private val assets: AssetManager) : Drawable, Dynamic {
     private val discardView by lazy { DiscardView(discard, assets) }
     private val stackView by lazy { StackView(stack, assets) }
 
+    val canDeal: Boolean
+        get() = stack.isNotEmpty()
+
+    val canUndo: Boolean
+        get() = discard.size > 1
+
+    val won: Boolean
+        get() = peaks.isEmpty
+
     fun init() {
-        rows.clear()
-        stack.clear()
-        discard.clear()
+        clearCollections()
 
         for (layer in 0 until 4) {
             rows.add(GdxArray())
@@ -48,7 +55,7 @@ class GameState(private val assets: AssetManager) : Drawable, Dynamic {
                         val card = cardsPool().set(info.suit, info.rank, source, cell.value == Table.OPEN_CARD_SYMBOL)
                         val view = cardViewPool().set(
                                 card,
-                                cell.index * Constants.CELL_WIDTH,
+                                cell.index * Constants.CELL_WIDTH + 1f,
                                 Constants.CONTENT_HEIGHT - (layer.index + 2) * Constants.CELL_HEIGHT
                         )
                         rows[layer.index].add(view)
@@ -95,6 +102,12 @@ class GameState(private val assets: AssetManager) : Drawable, Dynamic {
             is Source.Cell -> {
                 val cell = card.source as Source.Cell
                 peaks[Util.getIndex(cell)] = card
+                val view = cardViewPool().set(
+                        card,
+                        cell.column * Constants.CELL_WIDTH + 1f,
+                        Constants.CONTENT_HEIGHT - (cell.row + 2) * Constants.CELL_HEIGHT
+                )
+                rows[cell.row].add(view)
 
                 val leftUp = Util.getIndex(cell.column - 1, cell.row - 1)
                 peaks[leftUp, null]?.let { it.isOpen = false }
@@ -128,10 +141,10 @@ class GameState(private val assets: AssetManager) : Drawable, Dynamic {
     }
 
     fun touch(point: Vector2) {
-        val cellX = (point.x/ Constants.CELL_WIDTH).toInt()
-        val cellY = ((Constants.CONTENT_HEIGHT -  point.y) / Constants.CELL_HEIGHT).toInt()
-        for (column in (cellX - 1) .. cellX) {
-            for (row in (cellY - 1) .. cellY) {
+        val cellX = (point.x / Constants.CELL_WIDTH).toInt()
+        val cellY = ((Constants.CONTENT_HEIGHT - point.y) / Constants.CELL_HEIGHT).toInt()
+        for (column in (cellX - 1)..cellX) {
+            for (row in (cellY - 1)..cellY) {
                 val cell = Util.getIndex(column, row)
                 if (peaks[cell, null]?.isOpen == true) {
                     println(peaks[cell, null])
@@ -139,23 +152,25 @@ class GameState(private val assets: AssetManager) : Drawable, Dynamic {
                         return
                     }
                     val card = peaks.remove(cell)!!
-                    val view = rows[row].find { drawable -> (drawable as CardView).card == card }!!
+                    val view = rows[row].find { drawable ->
+                        drawable?.card?.equals(card) ?: false
+                    }!!
                     rows[row].removeValue(view, true)
                     cardViewPool(view)
                     animations.add(outAnimationPool().set(
                             card,
                             column * Constants.CELL_WIDTH,
-                            (row + 2) * Constants.CELL_HEIGHT,
+                            Constants.CONTENT_HEIGHT - (row + 2) * Constants.CELL_HEIGHT,
                             ::whenOutAnimationFinished
                     ))
                     discard.push(card)
 
                     // Flip upper neighbors if they are clear.
                     if (isClear(column - 1, row - 1)) {
-                        peaks[Util.getIndex(column - 1, row - 1), null]?.let { it.isOpen = true}
+                        peaks[Util.getIndex(column - 1, row - 1), null]?.let { it.isOpen = true }
                     }
                     if (isClear(column + 1, row - 1)) {
-                        peaks[Util.getIndex(column + 1, row - 1), null]?.let { it.isOpen = true}
+                        peaks[Util.getIndex(column + 1, row - 1), null]?.let { it.isOpen = true }
                     }
 
                     if (peaks.isEmpty) {
@@ -176,6 +191,25 @@ class GameState(private val assets: AssetManager) : Drawable, Dynamic {
     private fun isClear(column: Int, row: Int): Boolean {
         val leftDown = Util.getIndex(column - 1, row + 1)
         val rightDown = Util.getIndex(column + 1, row + 1)
-        return  !peaks.containsKey(leftDown) && !peaks.containsKey(rightDown)
+        return !peaks.containsKey(leftDown) && !peaks.containsKey(rightDown)
+    }
+
+    private fun clearCollections() {
+        for (row in rows) {
+            for (view in row) {
+                if (view != null) {
+                    cardViewPool(view)
+                }
+            }
+        }
+        peaks.values().forEach { if (it != null) cardsPool(it) }
+        stack.forEach { cardsPool(it) }
+        discard.forEach { cardsPool(it) }
+        animations.forEach { outAnimationPool(it) }
+
+        rows.clear()
+        stack.clear()
+        discard.clear()
+        animations.clear()
     }
 }

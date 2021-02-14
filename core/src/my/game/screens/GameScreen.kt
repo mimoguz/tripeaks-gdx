@@ -5,16 +5,19 @@ import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
-import com.badlogic.gdx.scenes.scene2d.InputEvent
+import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.Stage
+import com.badlogic.gdx.scenes.scene2d.Touchable
+import com.badlogic.gdx.scenes.scene2d.ui.Button
+import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener
+import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable
 import ktx.app.KtxScreen
 import ktx.graphics.use
 import ktx.scene2d.Scene2DSkin
-import my.game.Constants
-import my.game.Game
-import my.game.GameState
+import ktx.scene2d.actors
+import my.game.*
 
 class GameScreen(val game: Game) : KtxScreen {
     private val camera = OrthographicCamera()
@@ -24,10 +27,51 @@ class GameScreen(val game: Game) : KtxScreen {
     private val state = GameState(game.assets)
     private val stage = Stage(viewport)
 
+    private val dealButton by lazy {
+        Button(Scene2DSkin.defaultSkin).apply {
+            addListener(object : ChangeListener() {
+                override fun changed(event: ChangeEvent?, actor: Actor?) {
+                    state.deal()
+                }
+            })
+            setSize(Constants.SPRITE_WIDTH, Constants.SPRITE_HEIGHT)
+            setPosition(Constants.STACK_POSITION.x - Constants.CELL_WIDTH * 2f, Constants.STACK_POSITION.y)
+            children.add(
+                    Image(SpriteDrawable(game.assets[TextureAtlasAssets.Ui].createSprite("deal"))).apply {
+                        setPosition(Constants.SPRITE_WIDTH / 2f - 8f, Constants.SPRITE_HEIGHT / 2f - 8f)
+                        touchable = Touchable.disabled
+                    }
+            )
+        }
+    }
+
+    private val undoButton by lazy {
+        Button(Scene2DSkin.defaultSkin).apply {
+            addListener(object : ChangeListener() {
+                override fun changed(event: ChangeEvent?, actor: Actor?) {
+                    state.undo()
+                }
+            })
+            setSize(Constants.SPRITE_WIDTH, Constants.SPRITE_HEIGHT)
+            setPosition(Constants.DISCARD_POSITION.x - Constants.CELL_WIDTH * 2f, Constants.DISCARD_POSITION.y)
+            children.add(
+                    Image(SpriteDrawable(game.assets[TextureAtlasAssets.Ui].createSprite("undo"))).apply {
+                        setPosition(Constants.SPRITE_WIDTH / 2f - 8f, Constants.SPRITE_HEIGHT / 2f - 8f)
+                        touchable = Touchable.disabled
+                    }
+            )
+        }
+    }
+
     override fun render(delta: Float) {
         camera.update()
         state.update(delta)
         stage.act(delta)
+
+        dealButton.isDisabled = !state.canDeal || state.won
+        undoButton.isDisabled = !state.canUndo || state.won
+        dealButton.touchable = if (dealButton.isDisabled) Touchable.disabled else Touchable.enabled
+        undoButton.touchable = if (undoButton.isDisabled) Touchable.disabled else Touchable.enabled
 
         Gdx.gl.glClearColor(0.39f, 0.64f, 0.28f, 1f)
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
@@ -50,33 +94,26 @@ class GameScreen(val game: Game) : KtxScreen {
 
     override fun show() {
         state.init()
-        stage.actors.add(TextButton("Deal", Scene2DSkin.defaultSkin).apply {
-            addListener(object : ClickListener() {
-                override fun clicked(event: InputEvent?, x: Float, y: Float) {
-                    state.deal()
-                    super.clicked(event, x, y)
+        stage.actors.addAll(dealButton, undoButton)
+        stage.actors.add(Button(Scene2DSkin.defaultSkin).apply {
+            addListener(object : ChangeListener() {
+                override fun changed(event: ChangeEvent?, actor: Actor?) {
+                    state.init()
                 }
             })
-            setSize(Constants.SPRITE_WIDTH, Constants.SPRITE_HEIGHT)
-            setPosition(Constants.STACK_POSITION.x - Constants.CELL_WIDTH * 2f, Constants.STACK_POSITION.y)
+            setSize(Constants.SPRITE_WIDTH, Constants.SPRITE_WIDTH)
+            setPosition(Constants.CONTENT_WIDTH - Constants.SPRITE_WIDTH - 1f, 0f)
+            children.add(
+                    Image(SpriteDrawable(game.assets[TextureAtlasAssets.Ui].createSprite("new"))).apply {
+                        setPosition(Constants.SPRITE_WIDTH / 2f - 7f, Constants.SPRITE_WIDTH / 2f - 7f)
+                        touchable = Touchable.disabled
+                    }
+            )
         })
-
-        stage.actors.add(TextButton("Undo", Scene2DSkin.defaultSkin).apply {
-            addListener(object : ClickListener() {
-                override fun clicked(event: InputEvent?, x: Float, y: Float) {
-                    state.undo()
-                    super.clicked(event, x, y)
-                }
-            })
-            setSize(Constants.SPRITE_WIDTH, Constants.SPRITE_HEIGHT)
-            setPosition(Constants.DISCARD_POSITION.x - Constants.CELL_WIDTH * 2f, Constants.DISCARD_POSITION.y)
-        })
-
         Gdx.input.inputProcessor = stage
     }
 
     override fun resize(width: Int, height: Int) {
         viewport.update(width, height, true)
-        stage.viewport.update(width, height)
     }
 }

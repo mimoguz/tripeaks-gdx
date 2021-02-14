@@ -2,6 +2,6 @@ package my.game
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 
-interface Drawable {
+interface View {
     fun draw(batch: SpriteBatch)
 }

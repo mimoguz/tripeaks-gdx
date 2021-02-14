@@ -48,12 +48,16 @@ class LoadingScreen(val game: Game) : KtxScreen {
                     button {
                         up = skin["buttonUp"]
                         down = skin["buttonDown"]
+                        disabled = skin["buttonDisabled"]
+                        pressedOffsetY = -1f
                     }
                     textButton {
                         up = skin["buttonUp"]
                         down = skin["buttonDown"]
+                        disabled = skin["buttonDisabled"]
                         font = game.assets[FontAssets.GameFont]
                         fontColor = skin["light"]
+                        pressedOffsetY = -1f
                     }
                 }
     }

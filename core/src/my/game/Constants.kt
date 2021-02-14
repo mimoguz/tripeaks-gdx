@@ -12,6 +12,6 @@ object Constants {
     const val CONTENT_HEIGHT = 200f
     const val SPRITE_WIDTH = 27f
     const val SPRITE_HEIGHT = 37f
-    val DISCARD_POSITION = Vector2(CELL_WIDTH * 2f, CELL_HEIGHT * 2f)
-    val STACK_POSITION = Vector2(CELL_WIDTH * 2f, 0f)
+    val DISCARD_POSITION = Vector2(CELL_WIDTH * 2f + 1f, CELL_HEIGHT * 2f)
+    val STACK_POSITION = Vector2(CELL_WIDTH * 2f + 1f, 0f)
 }
