@@ -41,9 +41,10 @@ class LoadingScreen(val game: Game) : KtxScreen {
         Scene2DSkin.defaultSkin =
                 skin(game.assets[TextureAtlasAssets.Ui]) { skin ->
                     color("light", 219f / 255f, 204f / 255f, 196f / 255f, 1f)
+                    color("dark", 76f / 255f, 56f / 255f, 77f / 255f, 1f)
                     label {
                         font = game.assets[FontAssets.GameFont]
-                        fontColor = skin["light"]
+                        fontColor = skin["dark"]
                     }
                     button {
                         up = skin["buttonUp"]
@@ -56,8 +57,13 @@ class LoadingScreen(val game: Game) : KtxScreen {
                         down = skin["buttonDown"]
                         disabled = skin["buttonDisabled"]
                         font = game.assets[FontAssets.GameFont]
-                        fontColor = skin["light"]
+                        fontColor = skin["dark"]
                         pressedOffsetY = -1f
+                    }
+                    window {
+                        titleFont = game.assets[FontAssets.GameFont]
+                        titleFontColor = skin["light"]
+                        background = skin["window"]
                     }
                 }
     }

@@ -1,6 +1,7 @@
 package my.game.screens
 
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.Input
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.math.Vector2
@@ -9,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.Touchable
 import com.badlogic.gdx.scenes.scene2d.ui.Button
+import com.badlogic.gdx.scenes.scene2d.ui.Dialog
 import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener
@@ -26,6 +28,7 @@ class GameScreen(val game: Game) : KtxScreen {
     private val touchPoint2D = Vector2()
     private val state = GameState(game.assets)
     private val stage = Stage(viewport)
+    private var paused = false
 
     private val dealButton by lazy {
         Button(Scene2DSkin.defaultSkin).apply {
@@ -76,15 +79,15 @@ class GameScreen(val game: Game) : KtxScreen {
         Gdx.gl.glClearColor(0.39f, 0.64f, 0.28f, 1f)
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
 
-        stage.draw()
-
         game.batch.enableBlending()
         game.batch.use(camera) { batch ->
             state.draw(batch)
         }
         game.batch.disableBlending()
 
-        if (Gdx.input.justTouched()) {
+        stage.draw()
+
+        if (Gdx.input.justTouched() && !paused) {
             touchPoint3D.set(Gdx.input.x.toFloat(), Gdx.input.y.toFloat(), 0f)
             viewport.unproject(touchPoint3D)
             touchPoint2D.set(touchPoint3D.x, touchPoint3D.y)
@@ -98,7 +101,7 @@ class GameScreen(val game: Game) : KtxScreen {
         stage.actors.add(Button(Scene2DSkin.defaultSkin).apply {
             addListener(object : ChangeListener() {
                 override fun changed(event: ChangeEvent?, actor: Actor?) {
-                    state.init()
+                    showNewGameDialog()
                 }
             })
             setSize(Constants.SPRITE_WIDTH, Constants.SPRITE_WIDTH)
@@ -115,5 +118,29 @@ class GameScreen(val game: Game) : KtxScreen {
 
     override fun resize(width: Int, height: Int) {
         viewport.update(width, height, true)
+    }
+
+    private fun showNewGameDialog() {
+        val dialog = object : Dialog ("", Scene2DSkin.defaultSkin) {
+            override fun result(obj: Any?) {
+                paused = false
+                if (obj == true) {
+                    state.init()
+                }
+            }
+        }.apply {
+            pad(16f, 24f, 16f, 24f)
+            text("Start a new game?")
+            button(" Start  ", true)
+            button(" Cancel ", false)
+            key(Input.Keys.ENTER, true)
+            key(Input.Keys.ESCAPE, false)
+        }
+        paused = true
+        dialog.show(stage).apply {
+            invalidateHierarchy()
+            invalidate()
+            layout()
+        }
     }
 }
