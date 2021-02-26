@@ -4,6 +4,8 @@ import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.utils.IntMap
+import com.badlogic.gdx.utils.Json
+import com.badlogic.gdx.utils.JsonValue
 import ktx.assets.invoke
 import ktx.assets.pool
 import ktx.collections.GdxArray
@@ -14,10 +16,11 @@ import my.game.views.CardView
 import my.game.views.DiscardView
 import my.game.views.FadeOut
 import my.game.views.StackView
+import java.util.*
 
-class GameState(private val assets: AssetManager) : View, Dynamic {
-    private val stack = java.util.Stack<Card>()
-    private val discard = java.util.Stack<Card>()
+class GameState(private val assets: AssetManager) : View, Dynamic, Json.Serializable {
+    private val stack = Stack<Card>()
+    private val discard = Stack<Card>()
     private val peaks = IntMap<Card?>()
 
     private val cardsPool = pool { Card() }
@@ -29,14 +32,11 @@ class GameState(private val assets: AssetManager) : View, Dynamic {
     private val discardView by lazy { DiscardView(discard, assets) }
     private val stackView by lazy { StackView(stack, assets) }
 
-    val canDeal: Boolean
-        get() = stack.isNotEmpty()
+    val canDeal: Boolean get() = stack.isNotEmpty()
 
-    val canUndo: Boolean
-        get() = discard.size > 1
+    val canUndo: Boolean get() = discard.size > 1
 
-    val won: Boolean
-        get() = peaks.isEmpty
+    val won: Boolean get() = peaks.isEmpty
 
     fun init() {
         clearCollections()
@@ -112,26 +112,6 @@ class GameState(private val assets: AssetManager) : View, Dynamic {
         return card
     }
 
-    override fun update(delta: Float) {
-        for (anim in animations) {
-            anim.update(delta)
-        }
-        discardView.update(delta)
-    }
-
-    override fun draw(batch: SpriteBatch) {
-        for (row in rows) {
-            for (cardView in row) {
-                cardView.draw(batch)
-            }
-        }
-        for (anim in animations) {
-            anim.draw(batch)
-        }
-        discardView.draw(batch)
-        stackView.draw(batch)
-    }
-
     fun touch(point: Vector2) {
         val cellX = (point.x / Constants.CELL_WIDTH).toInt()
         val cellY = ((Constants.CONTENT_HEIGHT - point.y) / Constants.CELL_HEIGHT).toInt()
@@ -139,7 +119,6 @@ class GameState(private val assets: AssetManager) : View, Dynamic {
             for (row in (cellY - 1)..cellY) {
                 val cell = Util.getIndex(column, row)
                 if (peaks[cell, null]?.isOpen == true) {
-                    println(peaks[cell, null])
                     if (peaks[cell]?.areConsecutive(discard.peek()) != true) {
                         return
                     }
@@ -160,13 +139,64 @@ class GameState(private val assets: AssetManager) : View, Dynamic {
                         peaks[Util.getIndex(column + 1, row - 1), null]?.let { it.isOpen = true }
                     }
 
-                    if (peaks.isEmpty) {
-                        println("Won!")
-                    }
-
                     return
                 }
             }
+        }
+    }
+
+    override fun update(delta: Float) {
+        for (anim in animations) {
+            anim.update(delta)
+        }
+        discardView.update(delta)
+    }
+
+    override fun draw(batch: SpriteBatch) {
+        for (row in rows) {
+            for (cardView in row) {
+                cardView.draw(batch)
+            }
+        }
+        for (anim in animations) {
+            anim.draw(batch)
+        }
+        discardView.draw(batch)
+        stackView.draw(batch)
+    }
+
+    override fun write(json: Json) {
+        writeCollection(json, "stack", stack)
+        writeCollection(json, "discard", discard)
+        writeCollection(json, "peaks", peaks.values())
+    }
+
+    override fun read(json: Json, jsonData: JsonValue) {
+        clearCollections()
+        cardsPool.clear()
+
+        readStack(json, jsonData, "stack", stack)
+        readStack(json, jsonData, "discard", discard)
+
+        for (layer in 0 until 4) {
+            rows.add(GdxArray())
+        }
+
+        val objects = json.readValue("peaks", ArrayList::class.java, Card::class.java, jsonData)
+
+        for (obj in objects) {
+            val card = obj as Card
+            val cell = card.source as Source.Cell
+            peaks[Util.getIndex(cell)] = card
+            val view = cardViewPool().set(card, Util.getCellX(cell.column), Util.getCellY(cell.row))
+            rows[cell.row].add(view)
+        }
+    }
+
+    private fun readStack(json: Json, jsonData: JsonValue, key: String, collection: Stack<Card>) {
+        val cards = json.readValue(key, ArrayList::class.java, Card::class.java, jsonData)
+        for (card in cards) {
+            collection.push(card as Card)
         }
     }
 
@@ -198,5 +228,15 @@ class GameState(private val assets: AssetManager) : View, Dynamic {
         stack.clear()
         discard.clear()
         animations.clear()
+    }
+
+    companion object {
+        fun writeCollection(json: Json, name: String, collection: Iterable<Card?>) {
+            json.writeArrayStart(name)
+            for (item in collection) {
+                item?.write(json)
+            }
+            json.writeArrayEnd()
+        }
     }
 }
