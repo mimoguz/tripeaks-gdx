@@ -69,6 +69,13 @@ class GameScreen(val game: Game) : KtxScreen {
     override fun render(delta: Float) {
         camera.update()
         state.update(delta)
+
+        if (state.won && !paused) {
+            showNewGameDialog("You won!", "New game", "Exit") {
+                Gdx.app.exit()
+            }
+        }
+
         stage.act(delta)
 
         dealButton.isDisabled = !state.canDeal || state.won
@@ -101,7 +108,7 @@ class GameScreen(val game: Game) : KtxScreen {
         stage.actors.add(Button(Scene2DSkin.defaultSkin).apply {
             addListener(object : ChangeListener() {
                 override fun changed(event: ChangeEvent?, actor: Actor?) {
-                    showNewGameDialog()
+                    showNewGameDialog("Start a new game?", "Start", "Cancel")
                 }
             })
             setSize(Constants.SPRITE_WIDTH, Constants.SPRITE_WIDTH)
@@ -120,19 +127,23 @@ class GameScreen(val game: Game) : KtxScreen {
         viewport.update(width, height, true)
     }
 
-    private fun showNewGameDialog() {
+    private fun showNewGameDialog(text: String, okText: String, cancelText: String, onCancel: () -> Unit = {}) {
         val dialog = object : Dialog ("", Scene2DSkin.defaultSkin) {
             override fun result(obj: Any?) {
                 paused = false
                 if (obj == true) {
                     state.init()
+                } else {
+                    onCancel()
                 }
             }
         }.apply {
+            buttonTable.pad(8f, 0f, 0f, 0f)
+            buttonTable.defaults().width(60f)
             pad(16f, 24f, 16f, 24f)
-            text("Start a new game?")
-            button(" Start  ", true)
-            button(" Cancel ", false)
+            text(text)
+            button(okText, true)
+            button(cancelText, false)
             key(Input.Keys.ENTER, true)
             key(Input.Keys.ESCAPE, false)
         }
