@@ -13,7 +13,7 @@ class StackView(private val stack: java.util.Stack<Card>, assets: AssetManager) 
 
     override fun draw(batch: SpriteBatch) {
         for (shift in 0 until stack.size) {
-            batch.draw(sprite, Constants.STACK_POSITION.x + shift * 8f, Constants.STACK_POSITION.y)
+            batch.draw(sprite, Constants.STACK_POSITION.x - shift * 5f, Constants.STACK_POSITION.y)
         }
     }
 }

@@ -51,7 +51,7 @@ class MainMenuScreen(val game: Game) : KtxScreen {
 
                     })
                     width = 100f
-                    setPosition(Constants.CONTENT_WIDTH / 2f - 50f, Constants.CONTENT_HEIGHT / 2f - height)
+                    setPosition(Constants.CONTENT_WIDTH / 2f - 50f, Constants.CONTENT_HEIGHT / 2f - height - 16f)
                 }
         )
         Gdx.input.inputProcessor = stage

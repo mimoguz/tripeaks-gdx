@@ -36,7 +36,7 @@ class GameScreen(val game: Game) : KtxScreen {
                 }
             })
             setSize(Constants.SPRITE_WIDTH, Constants.SPRITE_HEIGHT)
-            setPosition(Constants.STACK_POSITION.x - Constants.CELL_WIDTH * 2f, Constants.STACK_POSITION.y)
+            setPosition(Constants.STACK_POSITION.x + Constants.CELL_WIDTH * 2f + 1f, Constants.STACK_POSITION.y)
             children.add(
                     Image(SpriteDrawable(game.assets[TextureAtlasAssets.Ui].createSprite("deal"))).apply {
                         setPosition(Constants.SPRITE_WIDTH / 2f - 8f, Constants.SPRITE_HEIGHT / 2f - 8f)
@@ -117,7 +117,7 @@ class GameScreen(val game: Game) : KtxScreen {
             setSize(Constants.SPRITE_WIDTH, Constants.SPRITE_WIDTH)
             setPosition(
                     Constants.CONTENT_WIDTH - Constants.SPRITE_WIDTH - 2f,
-                    Constants.CONTENT_HEIGHT - Constants.SPRITE_WIDTH - Constants.VERTICAL_PADDING
+                    Constants.CONTENT_HEIGHT - Constants.SPRITE_WIDTH - Constants.VERTICAL_PADDING - 3f
             )
             children.add(
                     Image(SpriteDrawable(game.assets[TextureAtlasAssets.Ui].createSprite("new"))).apply {
