@@ -81,22 +81,21 @@ class GameState(private val assets: AssetManager) : View, Dynamic {
 
         val card = discard.pop()
 
-        when (card.source) {
+        when (val source = card.source) {
             is Source.Stack -> {
                 card.isOpen = false
                 stack.push(card)
             }
 
             is Source.Cell -> {
-                val cell = card.source as Source.Cell
-                peaks[Util.getIndex(cell)] = card
-                val view = cardViewPool().set(card, Util.getCellX(cell.column), Util.getCellY(cell.row))
-                rows[cell.row].add(view)
+                peaks[Util.getIndex(source)] = card
+                val view = cardViewPool().set(card, Util.getCellX(source.column), Util.getCellY(source.row))
+                rows[source.row].add(view)
 
-                val leftUp = Util.getIndex(cell.column - 1, cell.row - 1)
+                val leftUp = Util.getIndex(source.column - 1, source.row - 1)
                 peaks[leftUp, null]?.let { it.isOpen = false }
 
-                val rightUp = Util.getIndex(cell.column - 1, cell.row + 1)
+                val rightUp = Util.getIndex(source.column - 1, source.row + 1)
                 peaks[rightUp, null]?.let { it.isOpen = false }
             }
         }
@@ -170,10 +169,11 @@ class GameState(private val assets: AssetManager) : View, Dynamic {
         val savedPeaks = save.getString(Constants.PREFERENCES_PEAKS_KEY).split(Constants.PREFERENCES_SEPARATOR)
         for (str in savedPeaks) {
             val card = cardsPool().read(str)
-            val cell = card.source as Source.Cell
-            peaks[Util.getIndex(cell)] = card
-            val view = cardViewPool().set(card, Util.getCellX(cell.column), Util.getCellY(cell.row))
-            rows[cell.row].add(view)
+            (card.source as? Source.Cell)?.let { cell ->
+                peaks[Util.getIndex(cell)] = card
+                val view = cardViewPool().set(card, Util.getCellX(cell.column), Util.getCellY(cell.row))
+                rows[cell.row].add(view)
+            }
         }
     }
 

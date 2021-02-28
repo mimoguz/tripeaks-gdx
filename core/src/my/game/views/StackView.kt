@@ -9,7 +9,7 @@ import my.game.data.Card
 import my.game.get
 
 class StackView(private val stack: java.util.Stack<Card>, assets: AssetManager) : View {
-    private val sprite = assets[TextureAtlasAssets.Cards].createSprite(Constants.CARD_BACK)
+    private val sprite = assets[TextureAtlasAssets.Cards].createSprite(Constants.SPRITE_CARD_BACK_KEY)
 
     override fun draw(batch: SpriteBatch) {
         for (shift in 0 until stack.size) {

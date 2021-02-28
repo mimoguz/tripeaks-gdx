@@ -9,16 +9,26 @@ import my.game.data.Card
 
 class FadeOut(private val assets: AssetManager) : View, Dynamic {
     private var sprite: Sprite? = null
-    private val position: Vector2 = Vector2()
-    private var alpha: Float = 1f
-    private var acc: Float = 0f
-    private var finished = { _: FadeOut -> }
+    private var finished: (FadeOut) -> Unit = {}
+    private val position = Vector2()
+    private var alpha = 1f
+    private var acc = 0f
+
+    fun set(card: Card, x: Float, y: Float, finished: (anim: FadeOut) -> Unit): FadeOut {
+        sprite = assets[TextureAtlasAssets.Cards].createSprite(card.getSpriteName())
+        alpha = 1f
+        acc = 0f
+        position.set(x, y)
+        this.finished = finished
+        return this
+    }
 
     override fun update(delta: Float) {
-        alpha -= 1 / (Constants.ANIMATION_TIME * 60f)
-        acc += 6f * Constants.CELL_HEIGHT * (delta / Constants.ANIMATION_TIME)
+        alpha -= 1f / (Constants.ANIMATION_TIME * 60f)
+        acc += 12f * Constants.CELL_HEIGHT * Constants.ANIMATION_TIME * delta
         if (acc >= 1.0) {
-            position.set(position.x, position. y - 1f)
+            position.set(position.x, position.y - 2f)
+            acc = 0f
         }
         if (alpha <= 0f) {
             finished(this)
@@ -28,14 +38,5 @@ class FadeOut(private val assets: AssetManager) : View, Dynamic {
     override fun draw(batch: SpriteBatch) {
         sprite?.setPosition(position.x, position.y)
         sprite?.draw(batch, alpha)
-    }
-
-    fun set(card: Card, x: Float, y: Float, finished: (anim: FadeOut) -> Unit): FadeOut {
-        sprite = assets[TextureAtlasAssets.Cards].createSprite(card.getSpriteName())
-        alpha = 1f
-        acc = 0f
-        position.set(x, y)
-        this.finished = finished
-        return this
     }
 }

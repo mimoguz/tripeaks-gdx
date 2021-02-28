@@ -19,7 +19,7 @@ class CardView(private val assets: AssetManager) : View {
     fun set(card: Card, x: Float, y: Float): CardView {
         this.card = card
         front = assets[TextureAtlasAssets.Cards].createSprite(card.getSpriteName())
-        back = assets[TextureAtlasAssets.Cards].createSprite(Constants.CARD_BACK)
+        back = assets[TextureAtlasAssets.Cards].createSprite(Constants.SPRITE_CARD_BACK_KEY)
         this.position.set(x, y)
         return this
     }

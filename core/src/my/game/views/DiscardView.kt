@@ -23,7 +23,7 @@ class DiscardView(private val discard: java.util.Stack<Card>, private val assets
 
     private fun getSprite(): Sprite =
                 if (top == null) {
-                    assets[TextureAtlasAssets.Cards].createSprite(Constants.CARD_BACK)
+                    assets[TextureAtlasAssets.Cards].createSprite(Constants.SPRITE_CARD_BACK_KEY)
                 } else {
                     assets[TextureAtlasAssets.Cards].createSprite(top!!.getSpriteName())
                 }
