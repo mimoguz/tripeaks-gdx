@@ -37,9 +37,9 @@ deal
   index: -1
 new
   rotate: false
-  xy: 20, 3
-  size: 15, 15
-  orig: 15, 15
+  xy: 20, 2
+  size: 16, 16
+  orig: 16, 16
   offset: 0, 0
   index: -1
 undo

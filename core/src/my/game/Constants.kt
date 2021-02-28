@@ -13,6 +13,12 @@ object Constants {
     const val CONTENT_HEIGHT = 200f
     const val SPRITE_WIDTH = 27f
     const val SPRITE_HEIGHT = 37f
+    const val PREFERENCES_VALID_KEY = "valid"
+    const val PREFERENCES_SAVE_KEY = "save"
+    const val PREFERENCES_STACK_KEY = "stack"
+    const val PREFERENCES_DISCARD_KEY = "discard"
+    const val PREFERENCES_PEAKS_KEY = "peaks"
+    const val PREFERENCES_SEPARATOR = ", "
     val STACK_POSITION = Vector2(CELL_WIDTH * 2f + 1f, VERTICAL_PADDING)
     val DISCARD_POSITION = Vector2(CELL_WIDTH * 2f + 1f, CELL_HEIGHT * 2f + STACK_POSITION.y)
 }

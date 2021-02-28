@@ -1,12 +1,10 @@
 package my.game.data
 
-import com.badlogic.gdx.utils.Json
-import com.badlogic.gdx.utils.JsonValue
 import my.game.Util
 import java.util.*
 import kotlin.math.abs
 
-class Card : Json.Serializable {
+class Card {
     private var suit: Suit = Suit.Club
     private var rank: Rank = Rank.Ace
     var isOpen: Boolean = false
@@ -33,26 +31,20 @@ class Card : Json.Serializable {
 
     override fun toString(): String = "$rank of ${suit}s"
 
-    override fun write(json: Json) {
-        json.writeValue("suit", suit.name)
-        json.writeValue("rank", rank.name)
-        json.writeValue("isOpen", isOpen)
-        when (src) {
-            is Source.Stack -> json.writeValue("source", -1)
-            is Source.Cell -> json.writeValue("source", Util.getIndex(source as Source.Cell))
-        }
+    fun write(): String {
+        val index = (src as? Source.Cell)?.let { Util.getIndex(it) } ?: -1
+        val open = if (isOpen) 1 else 0
+        return "${suit.name} ${rank.name} $open $index"
     }
 
-    override fun read(json: Json, jsonData: JsonValue) {
-        suit = Suit.valueOf(json.readValue("suit", String::class.java, jsonData))
-        rank = Rank.valueOf(json.readValue("rank", String::class.java, jsonData))
-        isOpen = json.readValue("isOpen", Boolean::class.java, jsonData)
-        val sourceIndex = json.readValue("source", Int::class.java, jsonData)
-        src = if (sourceIndex == -1) {
-            Source.Stack
-        } else {
-            Source.Cell(Util.getColumn(sourceIndex), Util.getRow(sourceIndex))
-        }
+    fun read(text: String): Card {
+        val parts = text.split(' ')
+        suit = Suit.valueOf(parts[0])
+        rank = Rank.valueOf(parts[1])
+        isOpen = parts[2] == "1"
+        val index = parts[3].toInt()
+        src = if (index == -1) Source.Stack else Source.Cell(Util.getColumn(index), Util.getRow(index))
+        return this
     }
 
     override fun equals(other: Any?): Boolean = other !is Card || (other.rank == rank && other.suit == suit)

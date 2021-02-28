@@ -15,6 +15,9 @@ class LoadingScreen(val game: Game) : KtxScreen {
         for (asset in TextureAtlasAssets.values()) {
             game.assets.load(asset)
         }
+        for (asset in TextureAssets.values()) {
+            game.assets.load(asset)
+        }
         for (asset in FontAssets.values()) {
             game.assets.load(asset)
         }

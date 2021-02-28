@@ -1,11 +1,10 @@
 package my.game
 
+import com.badlogic.gdx.Preferences
 import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.utils.IntMap
-import com.badlogic.gdx.utils.Json
-import com.badlogic.gdx.utils.JsonValue
 import ktx.assets.invoke
 import ktx.assets.pool
 import ktx.collections.GdxArray
@@ -18,7 +17,7 @@ import my.game.views.FadeOut
 import my.game.views.StackView
 import java.util.*
 
-class GameState(private val assets: AssetManager) : View, Dynamic, Json.Serializable {
+class GameState(private val assets: AssetManager) : View, Dynamic {
     private val stack = Stack<Card>()
     private val discard = Stack<Card>()
     private val peaks = IntMap<Card?>()
@@ -33,18 +32,11 @@ class GameState(private val assets: AssetManager) : View, Dynamic, Json.Serializ
     private val stackView by lazy { StackView(stack, assets) }
 
     val canDeal: Boolean get() = stack.isNotEmpty()
-
     val canUndo: Boolean get() = discard.size > 1
-
     val won: Boolean get() = peaks.isEmpty
 
     fun init() {
-        clearCollections()
-
-        for (layer in 0 until 4) {
-            rows.add(GdxArray())
-        }
-
+        resetCollections()
         val deck = Util.makeDeck()
         Table.layout.withIndex().forEach { row ->
             row.value.withIndex().forEach { column ->
@@ -165,27 +157,19 @@ class GameState(private val assets: AssetManager) : View, Dynamic, Json.Serializ
         stackView.draw(batch)
     }
 
-    override fun write(json: Json) {
-        writeCollection(json, "stack", stack)
-        writeCollection(json, "discard", discard)
-        writeCollection(json, "peaks", peaks.values())
+    fun save(save: Preferences) {
+        save.putString(Constants.PREFERENCES_STACK_KEY, collectionString(stack))
+        save.putString(Constants.PREFERENCES_DISCARD_KEY, collectionString(discard))
+        save.putString(Constants.PREFERENCES_PEAKS_KEY, collectionString(peaks.values()))
     }
 
-    override fun read(json: Json, jsonData: JsonValue) {
-        clearCollections()
-        cardsPool.clear()
-
-        readStack(json, jsonData, "stack", stack)
-        readStack(json, jsonData, "discard", discard)
-
-        for (layer in 0 until 4) {
-            rows.add(GdxArray())
-        }
-
-        val objects = json.readValue("peaks", ArrayList::class.java, Card::class.java, jsonData)
-
-        for (obj in objects) {
-            val card = obj as Card
+    fun load(save: Preferences) {
+        resetCollections()
+        readStack(save.getString(Constants.PREFERENCES_STACK_KEY), stack)
+        readStack(save.getString(Constants.PREFERENCES_DISCARD_KEY), discard)
+        val savedPeaks = save.getString(Constants.PREFERENCES_PEAKS_KEY).split(Constants.PREFERENCES_SEPARATOR)
+        for (str in savedPeaks) {
+            val card = cardsPool().read(str)
             val cell = card.source as Source.Cell
             peaks[Util.getIndex(cell)] = card
             val view = cardViewPool().set(card, Util.getCellX(cell.column), Util.getCellY(cell.row))
@@ -193,10 +177,10 @@ class GameState(private val assets: AssetManager) : View, Dynamic, Json.Serializ
         }
     }
 
-    private fun readStack(json: Json, jsonData: JsonValue, key: String, collection: Stack<Card>) {
-        val cards = json.readValue(key, ArrayList::class.java, Card::class.java, jsonData)
-        for (card in cards) {
-            collection.push(card as Card)
+    private fun readStack(text: String, collection: Stack<Card>) {
+        val savedStack = text.split(Constants.PREFERENCES_SEPARATOR)
+        for (str in savedStack) {
+            collection.push(cardsPool().read(str))
         }
     }
 
@@ -211,7 +195,7 @@ class GameState(private val assets: AssetManager) : View, Dynamic, Json.Serializ
         return !peaks.containsKey(leftDown) && !peaks.containsKey(rightDown)
     }
 
-    private fun clearCollections() {
+    private fun resetCollections() {
         for (row in rows) {
             for (view in row) {
                 if (view != null) {
@@ -228,15 +212,21 @@ class GameState(private val assets: AssetManager) : View, Dynamic, Json.Serializ
         stack.clear()
         discard.clear()
         animations.clear()
+
+        for (layer in 0 until 4) {
+            rows.add(GdxArray())
+        }
     }
 
     companion object {
-        fun writeCollection(json: Json, name: String, collection: Iterable<Card?>) {
-            json.writeArrayStart(name)
-            for (item in collection) {
-                item?.write(json)
+        fun collectionString(collection: Iterable<Card?>): String {
+            val joiner = StringJoiner(Constants.PREFERENCES_SEPARATOR)
+            for (card in collection) {
+                if (card != null) {
+                    joiner.add(card.write())
+                }
             }
-            json.writeArrayEnd()
+            return joiner.toString()
         }
     }
 }

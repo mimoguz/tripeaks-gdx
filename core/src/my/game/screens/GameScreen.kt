@@ -12,13 +12,11 @@ import com.badlogic.gdx.scenes.scene2d.Touchable
 import com.badlogic.gdx.scenes.scene2d.ui.Button
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog
 import com.badlogic.gdx.scenes.scene2d.ui.Image
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable
 import ktx.app.KtxScreen
 import ktx.graphics.use
 import ktx.scene2d.Scene2DSkin
-import ktx.scene2d.actors
 import my.game.*
 
 class GameScreen(val game: Game) : KtxScreen {
@@ -103,8 +101,13 @@ class GameScreen(val game: Game) : KtxScreen {
     }
 
     override fun show() {
-        state.init()
+        if (!load()) {
+            state.init()
+        }
+
         stage.actors.addAll(dealButton, undoButton)
+
+        // The new game button
         stage.actors.add(Button(Scene2DSkin.defaultSkin).apply {
             addListener(object : ChangeListener() {
                 override fun changed(event: ChangeEvent?, actor: Actor?) {
@@ -112,7 +115,10 @@ class GameScreen(val game: Game) : KtxScreen {
                 }
             })
             setSize(Constants.SPRITE_WIDTH, Constants.SPRITE_WIDTH)
-            setPosition(Constants.CONTENT_WIDTH - Constants.SPRITE_WIDTH - 2f, Constants.VERTICAL_PADDING)
+            setPosition(
+                    Constants.CONTENT_WIDTH - Constants.SPRITE_WIDTH - 2f,
+                    Constants.CONTENT_HEIGHT - Constants.SPRITE_WIDTH - Constants.VERTICAL_PADDING
+            )
             children.add(
                     Image(SpriteDrawable(game.assets[TextureAtlasAssets.Ui].createSprite("new"))).apply {
                         setPosition(Constants.SPRITE_WIDTH / 2f - 7f, Constants.SPRITE_WIDTH / 2f - 7f)
@@ -120,6 +126,7 @@ class GameScreen(val game: Game) : KtxScreen {
                     }
             )
         })
+
         Gdx.input.inputProcessor = stage
     }
 
@@ -127,8 +134,30 @@ class GameScreen(val game: Game) : KtxScreen {
         viewport.update(width, height, true)
     }
 
+    override fun dispose() {
+        if (!state.won) {
+            save()
+        }
+        super.dispose()
+    }
+
+    override fun pause() {
+        if (!state.won) {
+            save()
+        } else {
+            Gdx.app.getPreferences(Constants.PREFERENCES_SAVE_KEY)
+                    .putBoolean(Constants.PREFERENCES_VALID_KEY, false)
+        }
+        super.pause()
+    }
+
+    override fun resume() {
+        load()
+        super.resume()
+    }
+
     private fun showNewGameDialog(text: String, okText: String, cancelText: String, onCancel: () -> Unit = {}) {
-        val dialog = object : Dialog ("", Scene2DSkin.defaultSkin) {
+        val dialog = object : Dialog("", Scene2DSkin.defaultSkin) {
             override fun result(obj: Any?) {
                 paused = false
                 if (obj == true) {
@@ -149,5 +178,23 @@ class GameScreen(val game: Game) : KtxScreen {
         }
         paused = true
         dialog.show(stage)
+    }
+
+    private fun save() {
+        val preferences = Gdx.app.getPreferences(Constants.PREFERENCES_SAVE_KEY)
+        preferences.putBoolean(Constants.PREFERENCES_VALID_KEY, true)
+        state.save(preferences)
+        preferences.flush()
+    }
+
+    private fun load(): Boolean {
+        val preferences = Gdx.app.getPreferences(Constants.PREFERENCES_SAVE_KEY)
+        if (preferences.getBoolean(Constants.PREFERENCES_VALID_KEY, false)) {
+            state.load(preferences)
+            preferences.putBoolean(Constants.PREFERENCES_VALID_KEY, false)
+            preferences.flush()
+            return true
+        }
+        return false
     }
 }
