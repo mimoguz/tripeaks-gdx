@@ -190,10 +190,14 @@ class GameScreen(val game: Game) : KtxScreen {
     private fun load(): Boolean {
         val preferences = Gdx.app.getPreferences(Constants.PREFERENCES_SAVE_KEY)
         if (preferences.getBoolean(Constants.PREFERENCES_VALID_KEY, false)) {
-            state.load(preferences)
-            preferences.putBoolean(Constants.PREFERENCES_VALID_KEY, false)
-            preferences.flush()
-            return true
+            return try {
+                state.load(preferences)
+                preferences.putBoolean(Constants.PREFERENCES_VALID_KEY, false)
+                preferences.flush()
+                true
+            } catch(_: Exception){
+                false
+            }
         }
         return false
     }
