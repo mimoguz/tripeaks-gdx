@@ -36,8 +36,8 @@ class MainMenuScreen(val game: Game) : KtxScreen {
         val skin = Scene2DSkin.defaultSkin
         stage.actors.add(
                 Image(game.assets[TextureAssets.Title]).apply {
-                    setSize(128f, 48f)
-                    setPosition(Constants.CONTENT_WIDTH / 2f - 64f, Constants.CONTENT_HEIGHT / 2f + 8f)
+                    setSize(150f, 48f)
+                    setPosition((Constants.CONTENT_WIDTH - width) / 2, Constants.CONTENT_HEIGHT / 2f + 8f)
                 },
 
                 TextButton("Start", skin).apply {
