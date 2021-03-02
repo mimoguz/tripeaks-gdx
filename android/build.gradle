@@ -17,11 +17,11 @@ android {
         exclude 'META-INF/robovm/ios/robovm.xml'
     }
     defaultConfig {
-        applicationId "my.game"
+        applicationId "ogz.tripeaks"
         minSdkVersion 24
         targetSdkVersion 30
         versionCode 1
-        versionName "1.0"
+        versionName "0.1"
     }
     buildTypes {
         release {
@@ -86,7 +86,7 @@ task run(type: Exec) {
     }
 
     def adb = path + "/platform-tools/adb"
-    commandLine "$adb", 'shell', 'am', 'start', '-n', 'my.game/my.game.AndroidLauncher'
+    commandLine "$adb", 'shell', 'am', 'start', '-n', 'ogz.tripeaks/ogz.tripeaks.AndroidLauncher'
 }
 
 eclipse.project.name = appName + "-android"
