@@ -178,7 +178,11 @@ class GameScreen(val game: Game) : KtxScreen {
                 row()
                 add(Label(message, Scene2DSkin.defaultSkin, if (useDarkTheme) "dark" else "light"))
             }
-            buttonTable.add(makeDialogButton("Start new game") { state.init() })
+            buttonTable.add(makeDialogButton("Start new game") {
+                dialog.hide()
+                paused = false
+                state.init()
+            })
             buttonTable.add(makeDialogButton("Exit game") { Gdx.app.exit() })
         }
         paused = true
@@ -209,11 +213,8 @@ class GameScreen(val game: Game) : KtxScreen {
             })
             row()
             row()
-            add(makeDialogButton("Exit game") {
-                dialog.hide()
-                paused = false
-                Gdx.app.exit()
-            }).pad(20f, 0f, 0f, 0f)
+            add(makeDialogButton("Exit game") { Gdx.app.exit() })
+                    .pad(20f, 0f, 0f, 0f)
         }
         paused = true
         dialog.show(stage)
