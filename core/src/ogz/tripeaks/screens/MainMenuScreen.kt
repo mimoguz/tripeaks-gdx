@@ -43,7 +43,7 @@ class MainMenuScreen(val game: Game) : KtxScreen {
                     setPosition((Const.CONTENT_WIDTH - width) / 2, Const.CONTENT_HEIGHT / 2f + 8f)
                 },
 
-                TextButton("Start", skin, if (useDarkTheme) "dark" else null).apply {
+                TextButton("Start", skin, if (useDarkTheme) "dark" else "light").apply {
                     addListener(object : ChangeListener() {
                         override fun changed(event: ChangeEvent?, actor: Actor?) {
                             game.addScreen(GameScreen(game))

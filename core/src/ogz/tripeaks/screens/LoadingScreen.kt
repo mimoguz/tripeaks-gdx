@@ -49,7 +49,8 @@ class LoadingScreen(val game: Game) : KtxScreen {
                         font = game.assets[FontAssets.GameFont]
                         fontColor = skin["dark"]
                     }
-                    label("dark", extend = defaultStyle) {
+                    label("light", extend = defaultStyle) {}
+                    label("dark", extend = "light") {
                         fontColor = skin["light"]
                     }
                     button {
@@ -58,7 +59,8 @@ class LoadingScreen(val game: Game) : KtxScreen {
                         disabled = skin["buttonDisabled"]
                         pressedOffsetY = -1f
                     }
-                    button("dark", extend = defaultStyle) {
+                    button("light", extend = defaultStyle) {}
+                    button("dark", extend = "light") {
                         up = skin["buttonUpDark"]
                         down = skin["buttonDownDark"]
                         disabled = skin["buttonDisabledDark"]
@@ -71,7 +73,8 @@ class LoadingScreen(val game: Game) : KtxScreen {
                         fontColor = skin["dark"]
                         pressedOffsetY = -1f
                     }
-                    textButton("dark", extend = defaultStyle) {
+                    textButton("light", extend = defaultStyle) {}
+                    textButton("dark", extend = "light") {
                         up = skin["buttonUpDark"]
                         down = skin["buttonDownDark"]
                         disabled = skin["buttonDisabledDark"]
@@ -82,7 +85,8 @@ class LoadingScreen(val game: Game) : KtxScreen {
                         titleFontColor = skin["dark"]
                         background = skin["window"]
                     }
-                    window("dark", extend = defaultStyle) {
+                    window("light", extend = defaultStyle) {}
+                    window("dark", extend = "light") {
                         titleFontColor = skin["light"]
                         background = skin["windowDark"]
                     }

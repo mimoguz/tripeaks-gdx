@@ -129,7 +129,7 @@ class GameScreen(val game: Game) : KtxScreen {
     }
 
     private fun makeImageButton(iconKey: String, buttonWidth: Float, buttonHeight: Float, x: Float, y: Float, onChange: () -> Unit): Button {
-        val button = Button(Scene2DSkin.defaultSkin, if (useDarkTheme) "dark" else null)
+        val button = Button(Scene2DSkin.defaultSkin, if (useDarkTheme) "dark" else "light")
         val icon = if (useDarkTheme) iconKey + "Dark" else iconKey
         button.apply {
             addListener(object : ChangeListener() {
@@ -150,7 +150,7 @@ class GameScreen(val game: Game) : KtxScreen {
     }
 
     private fun makeMenuButton(text: String, onChange: () -> Unit): TextButton {
-        val button = TextButton(text, Scene2DSkin.defaultSkin, if (useDarkTheme)  "dark" else null)
+        val button = TextButton(text, Scene2DSkin.defaultSkin, if (useDarkTheme)  "dark" else "light")
         button.addListener(object : ChangeListener() {
             override fun changed(event: ChangeEvent?, actor: Actor?) {
                 onChange()
@@ -191,7 +191,7 @@ class GameScreen(val game: Game) : KtxScreen {
     }
 
     private fun showMenu() {
-        val dialog = Dialog("", Scene2DSkin.defaultSkin, if (useDarkTheme)  "dark" else null)
+        val dialog = Dialog("", Scene2DSkin.defaultSkin, if (useDarkTheme)  "dark" else "light")
         dialog.buttonTable.apply {
             pad(8f, 0f, 0f, 0f)
             defaults().width(120f)
