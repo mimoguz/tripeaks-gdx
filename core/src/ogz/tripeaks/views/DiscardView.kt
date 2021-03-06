@@ -9,7 +9,7 @@ import ogz.tripeaks.Util
 import ogz.tripeaks.View
 import ogz.tripeaks.data.Card
 
-class DiscardView(private val discard: java.util.Stack<Card>, private val assets: AssetManager, private var dark: Boolean = false)
+class DiscardView(private val discard: java.util.Stack<Card>, private val assets: AssetManager, private var dark: Boolean)
     : View, Dynamic {
 
     private var top = if (discard.empty()) null else discard.peek()

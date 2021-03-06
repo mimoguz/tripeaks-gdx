@@ -1,4 +1,4 @@
-package ogz.tripeaks
+package ogz.tripeaks.views
 
 import com.badlogic.gdx.Preferences
 import com.badlogic.gdx.assets.AssetManager
@@ -9,18 +9,15 @@ import ktx.assets.invoke
 import ktx.assets.pool
 import ktx.collections.GdxArray
 import ktx.collections.set
+import ogz.tripeaks.*
 import ogz.tripeaks.data.Card
 import ogz.tripeaks.data.Source
-import ogz.tripeaks.views.CardView
-import ogz.tripeaks.views.DiscardView
-import ogz.tripeaks.views.FadeOut
-import ogz.tripeaks.views.StackView
 import java.util.*
 
 class GameState(private val assets: AssetManager, private var dark: Boolean) : View, Dynamic {
     private val stack = Stack<Card>()
     private val discard = Stack<Card>()
-    private val peaks = IntMap<Card?>()
+    private val peaks = IntMap<Card>()
 
     private val cardsPool = pool { Card() }
     private val cardViewPool = pool { CardView(assets) }
@@ -28,7 +25,7 @@ class GameState(private val assets: AssetManager, private var dark: Boolean) : V
 
     private val rows = GdxArray<GdxArray<CardView>>()
     private val animations = GdxArray<FadeOut>()
-    private val discardView by lazy { DiscardView(discard, assets) }
+    private val discardView by lazy { DiscardView(discard, assets, dark) }
     private val stackView by lazy { StackView(stack, assets, dark) }
 
     val canDeal: Boolean get() = stack.isNotEmpty()
@@ -157,7 +154,10 @@ class GameState(private val assets: AssetManager, private var dark: Boolean) : V
     }
 
     override fun setTheme(dark: Boolean) {
-
+        this.dark = dark
+        discardView.setTheme(dark)
+        stackView.setTheme(dark)
+        rows.forEach { row -> row.forEach { it.setTheme(dark) } }
     }
 
     fun save(save: Preferences) {
@@ -200,14 +200,8 @@ class GameState(private val assets: AssetManager, private var dark: Boolean) : V
     }
 
     private fun resetCollections() {
-        for (row in rows) {
-            for (view in row) {
-                if (view != null) {
-                    cardViewPool(view)
-                }
-            }
-        }
-        peaks.values().forEach { if (it != null) cardsPool(it) }
+        rows.forEach { row -> row.forEach { it?.let { cardViewPool(it) } } }
+        peaks.values().forEach { cardsPool(it) }
         stack.forEach { cardsPool(it) }
         discard.forEach { cardsPool(it) }
         animations.forEach { outAnimationPool(it) }
@@ -226,9 +220,7 @@ class GameState(private val assets: AssetManager, private var dark: Boolean) : V
         fun collectionString(collection: Iterable<Card?>): String {
             val joiner = StringJoiner(Const.PREFERENCES_SEPARATOR)
             for (card in collection) {
-                if (card != null) {
-                    joiner.add(card.write())
-                }
+                card?.let { joiner.add(it.write()) }
             }
             return joiner.toString()
         }

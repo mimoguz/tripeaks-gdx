@@ -1,22 +1,38 @@
 
 ui.png
-size: 64, 64
+size: 128, 64
 format: RGBA8888
 filter: Nearest, Nearest
 repeat: none
 buttonDisabled
   rotate: false
-  xy: 20, 38
+  xy: 2, 2
   size: 16, 16
   split: 3, 3, 4, 4
   orig: 16, 16
   offset: 0, 0
   index: -1
+buttonDisabledDark
+  rotate: false
+  xy: 56, 20
+  size: 16, 16
+  split: 3, 3, 3, 4
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
 buttonDown
   rotate: false
-  xy: 20, 20
+  xy: 56, 38
   size: 16, 16
   split: 3, 3, 4, 4
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+buttonDownDark
+  rotate: false
+  xy: 38, 2
+  size: 16, 16
+  split: 3, 3, 3, 4
   orig: 16, 16
   offset: 0, 0
   index: -1
@@ -28,7 +44,22 @@ buttonUp
   orig: 16, 16
   offset: 0, 0
   index: -1
+buttonUpDark
+  rotate: false
+  xy: 38, 20
+  size: 16, 16
+  split: 3, 3, 3, 4
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
 deal
+  rotate: false
+  xy: 20, 38
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+dealDark
   rotate: false
   xy: 2, 20
   size: 16, 16
@@ -37,6 +68,13 @@ deal
   index: -1
 new
   rotate: false
+  xy: 56, 2
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+newDark
+  rotate: false
   xy: 20, 2
   size: 16, 16
   orig: 16, 16
@@ -44,14 +82,21 @@ new
   index: -1
 undo
   rotate: false
-  xy: 2, 2
+  xy: 20, 20
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+undoDark
+  rotate: false
+  xy: 38, 38
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 window
   rotate: false
-  xy: 38, 38
+  xy: 74, 38
   size: 16, 16
   split: 3, 3, 3, 5
   orig: 16, 16
