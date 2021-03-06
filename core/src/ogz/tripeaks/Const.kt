@@ -34,6 +34,6 @@ object Const {
     const val FACE_Y = 4f
     val STACK_POSITION = Vector2( CONTENT_WIDTH - CELL_WIDTH * 4f, VERTICAL_PADDING)
     val DISCARD_POSITION = Vector2(CELL_WIDTH * 2f + 1f, VERTICAL_PADDING)
-    val DARK_BACKGROUND: Color = Color.valueOf("3d405bff")
+    val DARK_BACKGROUND: Color = Color.valueOf("232433ff")
     val LIGHT_BACKGROUND: Color = Color.valueOf("63a347ff")
 }
