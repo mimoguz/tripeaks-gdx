@@ -14,7 +14,7 @@ buttonDisabled
   index: -1
 buttonDisabledDark
   rotate: false
-  xy: 56, 20
+  xy: 74, 38
   size: 16, 16
   split: 3, 3, 3, 4
   orig: 16, 16
@@ -22,7 +22,7 @@ buttonDisabledDark
   index: -1
 buttonDown
   rotate: false
-  xy: 56, 38
+  xy: 38, 2
   size: 16, 16
   split: 3, 3, 4, 4
   orig: 16, 16
@@ -30,9 +30,9 @@ buttonDown
   index: -1
 buttonDownDark
   rotate: false
-  xy: 38, 2
+  xy: 56, 20
   size: 16, 16
-  split: 3, 3, 3, 4
+  split: 3, 3, 4, 4
   orig: 16, 16
   offset: 0, 0
   index: -1
@@ -46,9 +46,9 @@ buttonUp
   index: -1
 buttonUpDark
   rotate: false
-  xy: 38, 20
+  xy: 56, 38
   size: 16, 16
-  split: 3, 3, 3, 4
+  split: 3, 3, 4, 4
   orig: 16, 16
   offset: 0, 0
   index: -1
@@ -68,14 +68,14 @@ dealDark
   index: -1
 new
   rotate: false
-  xy: 56, 2
+  xy: 74, 20
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 newDark
   rotate: false
-  xy: 20, 2
+  xy: 38, 20
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
@@ -96,7 +96,15 @@ undoDark
   index: -1
 window
   rotate: false
-  xy: 74, 38
+  xy: 56, 2
+  size: 16, 16
+  split: 3, 3, 3, 5
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+windowDark
+  rotate: false
+  xy: 20, 2
   size: 16, 16
   split: 3, 3, 3, 5
   orig: 16, 16

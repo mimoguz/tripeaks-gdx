@@ -1,5 +1,6 @@
 package ogz.tripeaks
 
+import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.graphics.g2d.Sprite
 import ktx.collections.GdxArray
@@ -35,6 +36,8 @@ object Util {
     fun getCellY(row: Int): Float =
             Const.CONTENT_HEIGHT - (row + 2) * Const.CELL_HEIGHT - Const.VERTICAL_PADDING
 
+    fun readDarkThemePreference() = Gdx.app.getPreferences(Const.PREFERENCES_GAME_PREFS).getBoolean(Const.PREFERENCES_DARK_THEME, false)
+
     fun setPlateSprite(assets: AssetManager, sprite: Sprite, dark: Boolean): Sprite {
         val key =  if (dark) Const.SPRITE_PLATE_DARK else Const.SPRITE_PLATE_LIGHT
         setRegion(assets, sprite, key)
@@ -52,5 +55,7 @@ object Util {
         sprite.setRegion(region)
         sprite.setBounds(region.regionX.toFloat(), region.regionY.toFloat(), region.regionWidth.toFloat(), region.regionHeight.toFloat())
     }
+
+
 }
 

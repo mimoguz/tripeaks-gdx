@@ -8,12 +8,10 @@ import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener
+import com.badlogic.gdx.utils.ScreenUtils
 import ktx.app.KtxScreen
 import ktx.scene2d.Scene2DSkin
-import ogz.tripeaks.Const
-import ogz.tripeaks.Game
-import ogz.tripeaks.TextureAssets
-import ogz.tripeaks.get
+import ogz.tripeaks.*
 
 class MainMenuScreen(val game: Game) : KtxScreen {
 
@@ -25,22 +23,27 @@ class MainMenuScreen(val game: Game) : KtxScreen {
             )
     )
 
+    private var clearColor = Const.LIGHT_BACKGROUND
+
     override fun render(delta: Float) {
         stage.act(delta)
-        Gdx.gl.glClearColor(0.39f, 0.64f, 0.28f, 1f)
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
+        ScreenUtils.clear(clearColor)
         stage.draw()
     }
 
     override fun show() {
         val skin = Scene2DSkin.defaultSkin
+        val useDarkTheme = Util.readDarkThemePreference()
+        if (useDarkTheme) {
+            clearColor = Const.DARK_BACKGROUND
+        }
         stage.actors.add(
                 Image(game.assets[TextureAssets.Title]).apply {
                     setSize(118f, 50f)
                     setPosition((Const.CONTENT_WIDTH - width) / 2, Const.CONTENT_HEIGHT / 2f + 8f)
                 },
 
-                TextButton("Start", skin).apply {
+                TextButton("Start", skin, if (useDarkTheme) "dark" else null).apply {
                     addListener(object : ChangeListener() {
                         override fun changed(event: ChangeEvent?, actor: Actor?) {
                             game.addScreen(GameScreen(game))

@@ -6,10 +6,10 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import ogz.tripeaks.*
 import ogz.tripeaks.data.Card
 
-class StackView(private val stack: java.util.Stack<Card>, private val assets: AssetManager, dark: Boolean)
+class StackView(private val stack: java.util.Stack<Card>, private val assets: AssetManager, useDarkTheme: Boolean)
     : View {
 
-    private var plate = Util.setPlateSprite(assets, Sprite(), dark)
+    private var plate = Util.setPlateSprite(assets, Sprite(), useDarkTheme)
     private val back = assets[TextureAtlasAssets.Cards].createSprite(Const.SPRITE_CARD_BACK)
 
     override fun draw(batch: SpriteBatch) {

@@ -14,10 +14,10 @@ class CardView(private val assets: AssetManager) : View {
     private var back: Sprite = Sprite()
     private var plate: Sprite = Sprite()
 
-    fun set(card: Card, x: Float, y: Float, dark: Boolean): CardView {
+    fun set(card: Card, x: Float, y: Float, useDarkTheme: Boolean): CardView {
         this.card = card
         Util.setRegion(assets, back, Const.SPRITE_CARD_BACK)
-        setTheme(dark)
+        setTheme(useDarkTheme)
         this.position.set(x, y)
         return this
     }

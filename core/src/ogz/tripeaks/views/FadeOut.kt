@@ -7,8 +7,8 @@ import com.badlogic.gdx.math.Vector2
 import ogz.tripeaks.*
 import ogz.tripeaks.data.Card
 
-class FadeOut(private val assets: AssetManager, dark: Boolean) : View, Dynamic {
-    private var plate = Util.setPlateSprite(assets, Sprite(), dark)
+class FadeOut(private val assets: AssetManager, useDarkTheme: Boolean) : View, Dynamic {
+    private var plate = Util.setPlateSprite(assets, Sprite(), useDarkTheme)
     private var face = Sprite()
     private var finished: (FadeOut) -> Unit = {}
     private val position = Vector2()

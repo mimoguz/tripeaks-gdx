@@ -8,7 +8,7 @@ import ktx.assets.getAsset
 import ktx.assets.load
 
 enum class TextureAtlasAssets(val path: String) {
-    Cards("images/cards2.atlas"),
+    Cards("images/cards.atlas"),
     Ui("images/ui.atlas")
 }
 

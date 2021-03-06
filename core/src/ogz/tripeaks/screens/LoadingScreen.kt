@@ -62,7 +62,6 @@ class LoadingScreen(val game: Game) : KtxScreen {
                         up = skin["buttonUpDark"]
                         down = skin["buttonDownDark"]
                         disabled = skin["buttonDisabledDark"]
-
                     }
                     textButton {
                         up = skin["buttonUp"]
@@ -85,6 +84,7 @@ class LoadingScreen(val game: Game) : KtxScreen {
                     }
                     window("dark", extend = defaultStyle) {
                         titleFontColor = skin["light"]
+                        background = skin["windowDark"]
                     }
                 }
     }
