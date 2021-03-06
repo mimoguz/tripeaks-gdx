@@ -4,22 +4,20 @@ import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.math.Vector2
-import ogz.tripeaks.Constants
-import ogz.tripeaks.View
-import ogz.tripeaks.TextureAtlasAssets
+import ogz.tripeaks.*
 import ogz.tripeaks.data.Card
-import ogz.tripeaks.get
 
 class CardView(private val assets: AssetManager) : View {
     var card: Card? = null
     private val position: Vector2 = Vector2()
-    private var front: Sprite? = null
-    private var back: Sprite? = null
+    private var face: Sprite = Sprite()
+    private var back: Sprite = Sprite()
+    private var plate: Sprite = Sprite()
 
-    fun set(card: Card, x: Float, y: Float): CardView {
+    fun set(card: Card, x: Float, y: Float, dark: Boolean): CardView {
         this.card = card
-        front = assets[TextureAtlasAssets.Cards].createSprite(card.getSpriteName())
-        back = assets[TextureAtlasAssets.Cards].createSprite(Constants.SPRITE_CARD_BACK_KEY)
+        Util.setRegion(assets, back, Const.SPRITE_CARD_BACK)
+        setTheme(dark)
         this.position.set(x, y)
         return this
     }
@@ -29,11 +27,21 @@ class CardView(private val assets: AssetManager) : View {
         return this
     }
 
-    inline fun setPosition(pos: Vector2): CardView = setPosition(pos.x, pos.y)
+    fun setPosition(pos: Vector2): CardView = setPosition(pos.x, pos.y)
 
     override fun draw(batch: SpriteBatch) {
-        val sprite = if (card?.isOpen == true) front else back
-        sprite?.setPosition(position.x, position.y)
-        sprite?.draw(batch)
+        batch.draw(plate, position.x, position.y)
+        if (card?.isOpen == true) {
+            batch.draw(face, position.x + Const.FACE_X, position.y + Const.FACE_Y)
+        } else {
+            batch.draw(back, position.x, position.y)
+        }
+    }
+
+    override fun setTheme(dark: Boolean) {
+        Util.setPlateSprite(assets, plate, dark)
+        if (card != null) {
+            Util.setFaceSprite(assets, face, card!!, dark)
+        }
     }
 }

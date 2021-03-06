@@ -14,6 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Dialog
 import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable
+import com.badlogic.gdx.utils.ScreenUtils
 import ktx.app.KtxScreen
 import ktx.graphics.use
 import ktx.scene2d.Scene2DSkin
@@ -21,10 +22,10 @@ import ogz.tripeaks.*
 
 class GameScreen(val game: Game) : KtxScreen {
     private val camera = OrthographicCamera()
-    private val viewport = IntegerScalingViewport(Constants.CONTENT_WIDTH.toInt(), Constants.CONTENT_HEIGHT.toInt(), camera)
+    private val viewport = IntegerScalingViewport(Const.CONTENT_WIDTH.toInt(), Const.CONTENT_HEIGHT.toInt(), camera)
     private val touchPoint3D = Vector3()
     private val touchPoint2D = Vector2()
-    private val state = GameState(game.assets)
+    private val state = GameState(game.assets, true)
     private val stage = Stage(viewport)
     private var paused = false
 
@@ -35,11 +36,11 @@ class GameScreen(val game: Game) : KtxScreen {
                     state.deal()
                 }
             })
-            setSize(Constants.SPRITE_WIDTH, Constants.SPRITE_HEIGHT)
-            setPosition(Constants.STACK_POSITION.x + Constants.CELL_WIDTH * 2f + 1f, Constants.STACK_POSITION.y)
+            setSize(Const.SPRITE_WIDTH, Const.SPRITE_HEIGHT)
+            setPosition(Const.STACK_POSITION.x + Const.CELL_WIDTH * 2f + 1f, Const.STACK_POSITION.y)
             children.add(
                     Image(SpriteDrawable(game.assets[TextureAtlasAssets.Ui].createSprite("deal"))).apply {
-                        setPosition(Constants.SPRITE_WIDTH / 2f - 8f, Constants.SPRITE_HEIGHT / 2f - 8f)
+                        setPosition(Const.SPRITE_WIDTH / 2f - 8f, Const.SPRITE_HEIGHT / 2f - 8f)
                         touchable = Touchable.disabled
                     }
             )
@@ -53,11 +54,11 @@ class GameScreen(val game: Game) : KtxScreen {
                     state.undo()
                 }
             })
-            setSize(Constants.SPRITE_WIDTH, Constants.SPRITE_HEIGHT)
-            setPosition(Constants.DISCARD_POSITION.x - Constants.CELL_WIDTH * 2f, Constants.DISCARD_POSITION.y)
+            setSize(Const.SPRITE_WIDTH, Const.SPRITE_HEIGHT)
+            setPosition(Const.DISCARD_POSITION.x - Const.CELL_WIDTH * 2f, Const.DISCARD_POSITION.y)
             children.add(
                     Image(SpriteDrawable(game.assets[TextureAtlasAssets.Ui].createSprite("undo"))).apply {
-                        setPosition(Constants.SPRITE_WIDTH / 2f - 8f, Constants.SPRITE_HEIGHT / 2f - 8f)
+                        setPosition(Const.SPRITE_WIDTH / 2f - 8f, Const.SPRITE_HEIGHT / 2f - 8f)
                         touchable = Touchable.disabled
                     }
             )
@@ -80,6 +81,7 @@ class GameScreen(val game: Game) : KtxScreen {
         undoButton.isDisabled = !state.canUndo || state.won
         dealButton.touchable = if (dealButton.isDisabled) Touchable.disabled else Touchable.enabled
         undoButton.touchable = if (undoButton.isDisabled) Touchable.disabled else Touchable.enabled
+
 
         Gdx.gl.glClearColor(0.39f, 0.64f, 0.28f, 1f)
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
@@ -114,14 +116,14 @@ class GameScreen(val game: Game) : KtxScreen {
                     showNewGameDialog("Start a new game?", "Start", "Cancel")
                 }
             })
-            setSize(Constants.SPRITE_WIDTH, Constants.SPRITE_WIDTH)
+            setSize(Const.SPRITE_WIDTH, Const.SPRITE_WIDTH)
             setPosition(
-                    Constants.CONTENT_WIDTH - Constants.SPRITE_WIDTH - 2f,
-                    Constants.CONTENT_HEIGHT - Constants.SPRITE_WIDTH - Constants.VERTICAL_PADDING - 3f
+                    Const.CONTENT_WIDTH - Const.SPRITE_WIDTH - 2f,
+                    Const.CONTENT_HEIGHT - Const.SPRITE_WIDTH - Const.VERTICAL_PADDING - 3f
             )
             children.add(
                     Image(SpriteDrawable(game.assets[TextureAtlasAssets.Ui].createSprite("new"))).apply {
-                        setPosition(Constants.SPRITE_WIDTH / 2f - 7f, Constants.SPRITE_WIDTH / 2f - 7f)
+                        setPosition(Const.SPRITE_WIDTH / 2f - 7f, Const.SPRITE_WIDTH / 2f - 7f)
                         touchable = Touchable.disabled
                     }
             )
@@ -145,8 +147,8 @@ class GameScreen(val game: Game) : KtxScreen {
         if (!state.won) {
             save()
         } else {
-            Gdx.app.getPreferences(Constants.PREFERENCES_SAVE_KEY)
-                    .putBoolean(Constants.PREFERENCES_VALID_KEY, false)
+            Gdx.app.getPreferences(Const.PREFERENCES_SAVE)
+                    .putBoolean(Const.PREFERENCES_VALID, false)
         }
         super.pause()
     }
@@ -181,18 +183,18 @@ class GameScreen(val game: Game) : KtxScreen {
     }
 
     private fun save() {
-        val preferences = Gdx.app.getPreferences(Constants.PREFERENCES_SAVE_KEY)
-        preferences.putBoolean(Constants.PREFERENCES_VALID_KEY, true)
+        val preferences = Gdx.app.getPreferences(Const.PREFERENCES_SAVE)
+        preferences.putBoolean(Const.PREFERENCES_VALID, true)
         state.save(preferences)
         preferences.flush()
     }
 
     private fun load(): Boolean {
-        val preferences = Gdx.app.getPreferences(Constants.PREFERENCES_SAVE_KEY)
-        if (preferences.getBoolean(Constants.PREFERENCES_VALID_KEY, false)) {
+        val preferences = Gdx.app.getPreferences(Const.PREFERENCES_SAVE)
+        if (preferences.getBoolean(Const.PREFERENCES_VALID, false)) {
             return try {
                 state.load(preferences)
-                preferences.putBoolean(Constants.PREFERENCES_VALID_KEY, false)
+                preferences.putBoolean(Const.PREFERENCES_VALID, false)
                 preferences.flush()
                 true
             } catch(_: Exception){

@@ -21,7 +21,7 @@ class Card {
     }
 
     fun getSpriteName() =
-            suit.toString().toLowerCase(Locale.US) +
+            suit.toString().toLowerCase(Locale.US) + "_" +
                     (rank.ordinal + 1).toString().padStart(2, '0')
 
     fun areConsecutive(other: Card): Boolean {

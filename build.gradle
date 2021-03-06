@@ -12,7 +12,6 @@ buildscript {
     dependencies {
         classpath 'com.android.tools.build:gradle:4.1.2'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
-
     }
 }
 
@@ -22,12 +21,12 @@ allprojects {
     version = '0.1'
     ext {
         appName = "TriPeaks"
-        gdxVersion = '1.9.13'
+        gdxVersion = '1.9.14'
         roboVMVersion = '2.3.12'
         box2DLightsVersion = '1.5'
         ashleyVersion = '1.7.3'
         aiVersion = '1.8.2'
-        ktxVersion = '1.9.13-b1'
+        ktxVersion = '1.9.14-b1'
     }
 
     repositories {

@@ -10,7 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener
 import ktx.app.KtxScreen
 import ktx.scene2d.Scene2DSkin
-import ogz.tripeaks.Constants
+import ogz.tripeaks.Const
 import ogz.tripeaks.Game
 import ogz.tripeaks.TextureAssets
 import ogz.tripeaks.get
@@ -19,8 +19,8 @@ class MainMenuScreen(val game: Game) : KtxScreen {
 
     private val stage = Stage(
             IntegerScalingViewport(
-                    Constants.CONTENT_WIDTH.toInt(),
-                    Constants.CONTENT_HEIGHT.toInt(),
+                    Const.CONTENT_WIDTH.toInt(),
+                    Const.CONTENT_HEIGHT.toInt(),
                     OrthographicCamera()
             )
     )
@@ -37,7 +37,7 @@ class MainMenuScreen(val game: Game) : KtxScreen {
         stage.actors.add(
                 Image(game.assets[TextureAssets.Title]).apply {
                     setSize(118f, 50f)
-                    setPosition((Constants.CONTENT_WIDTH - width) / 2, Constants.CONTENT_HEIGHT / 2f + 8f)
+                    setPosition((Const.CONTENT_WIDTH - width) / 2, Const.CONTENT_HEIGHT / 2f + 8f)
                 },
 
                 TextButton("Start", skin).apply {
@@ -51,7 +51,7 @@ class MainMenuScreen(val game: Game) : KtxScreen {
 
                     })
                     width = 100f
-                    setPosition(Constants.CONTENT_WIDTH / 2f - 50f, Constants.CONTENT_HEIGHT / 2f - height - 8f)
+                    setPosition(Const.CONTENT_WIDTH / 2f - 50f, Const.CONTENT_HEIGHT / 2f - height - 8f)
                 }
         )
         Gdx.input.inputProcessor = stage

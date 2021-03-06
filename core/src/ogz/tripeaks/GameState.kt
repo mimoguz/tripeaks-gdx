@@ -17,19 +17,19 @@ import ogz.tripeaks.views.FadeOut
 import ogz.tripeaks.views.StackView
 import java.util.*
 
-class GameState(private val assets: AssetManager) : View, Dynamic {
+class GameState(private val assets: AssetManager, private var dark: Boolean) : View, Dynamic {
     private val stack = Stack<Card>()
     private val discard = Stack<Card>()
     private val peaks = IntMap<Card?>()
 
     private val cardsPool = pool { Card() }
     private val cardViewPool = pool { CardView(assets) }
-    private val outAnimationPool = pool { FadeOut(assets) }
+    private val outAnimationPool = pool { FadeOut(assets, dark) }
 
     private val rows = GdxArray<GdxArray<CardView>>()
     private val animations = GdxArray<FadeOut>()
     private val discardView by lazy { DiscardView(discard, assets) }
-    private val stackView by lazy { StackView(stack, assets) }
+    private val stackView by lazy { StackView(stack, assets, dark) }
 
     val canDeal: Boolean get() = stack.isNotEmpty()
     val canUndo: Boolean get() = discard.size > 1
@@ -45,7 +45,7 @@ class GameState(private val assets: AssetManager) : View, Dynamic {
                         val info = deck.pop()
                         val source = Source.Cell(column.index, row.index)
                         val card = cardsPool().set(info.suit, info.rank, source, column.value == Table.OPEN_CARD_SYMBOL)
-                        val view = cardViewPool().set(card, Util.getCellX(column.index), Util.getCellY(row.index))
+                        val view = cardViewPool().set(card, Util.getCellX(column.index), Util.getCellY(row.index), dark)
                         rows[row.index].add(view)
                         peaks[Util.getIndex(source.column, source.row)] = card
                     }
@@ -89,13 +89,13 @@ class GameState(private val assets: AssetManager) : View, Dynamic {
 
             is Source.Cell -> {
                 peaks[Util.getIndex(source)] = card
-                val view = cardViewPool().set(card, Util.getCellX(source.column), Util.getCellY(source.row))
+                val view = cardViewPool().set(card, Util.getCellX(source.column), Util.getCellY(source.row), dark)
                 rows[source.row].add(view)
 
                 val leftUp = Util.getIndex(source.column - 1, source.row - 1)
                 peaks[leftUp, null]?.let { it.isOpen = false }
 
-                val rightUp = Util.getIndex(source.column - 1, source.row + 1)
+                val rightUp = Util.getIndex(source.column + 1, source.row - 1)
                 peaks[rightUp, null]?.let { it.isOpen = false }
             }
         }
@@ -104,8 +104,8 @@ class GameState(private val assets: AssetManager) : View, Dynamic {
     }
 
     fun touch(point: Vector2) {
-        val cellX = (point.x / Constants.CELL_WIDTH).toInt()
-        val cellY = ((Constants.CONTENT_HEIGHT - point.y) / Constants.CELL_HEIGHT).toInt()
+        val cellX = (point.x / Const.CELL_WIDTH).toInt()
+        val cellY = ((Const.CONTENT_HEIGHT - point.y) / Const.CELL_HEIGHT).toInt()
         for (column in (cellX - 1)..cellX) {
             for (row in (cellY - 1)..cellY) {
                 val cell = Util.getIndex(column, row)
@@ -119,7 +119,7 @@ class GameState(private val assets: AssetManager) : View, Dynamic {
                     }!!
                     rows[row].removeValue(view, true)
                     cardViewPool(view)
-                    animations.add(outAnimationPool().set(card, Util.getCellX(column), Util.getCellY(row), ::whenOutAnimationFinished))
+                    animations.add(outAnimationPool().set(card, Util.getCellX(column), Util.getCellY(row), ::whenOutAnimationFinished, dark))
                     discard.push(card)
 
                     // Flip upper neighbors if they are clear.
@@ -156,29 +156,33 @@ class GameState(private val assets: AssetManager) : View, Dynamic {
         stackView.draw(batch)
     }
 
+    override fun setTheme(dark: Boolean) {
+
+    }
+
     fun save(save: Preferences) {
-        save.putString(Constants.PREFERENCES_STACK_KEY, collectionString(stack))
-        save.putString(Constants.PREFERENCES_DISCARD_KEY, collectionString(discard))
-        save.putString(Constants.PREFERENCES_PEAKS_KEY, collectionString(peaks.values()))
+        save.putString(Const.PREFERENCES_STACK, collectionString(stack))
+        save.putString(Const.PREFERENCES_DISCARD, collectionString(discard))
+        save.putString(Const.PREFERENCES_PEAKS, collectionString(peaks.values()))
     }
 
     fun load(save: Preferences) {
         resetCollections()
-        readStack(save.getString(Constants.PREFERENCES_STACK_KEY), stack)
-        readStack(save.getString(Constants.PREFERENCES_DISCARD_KEY), discard)
-        val savedPeaks = save.getString(Constants.PREFERENCES_PEAKS_KEY).split(Constants.PREFERENCES_SEPARATOR)
+        readStack(save.getString(Const.PREFERENCES_STACK), stack)
+        readStack(save.getString(Const.PREFERENCES_DISCARD), discard)
+        val savedPeaks = save.getString(Const.PREFERENCES_PEAKS).split(Const.PREFERENCES_SEPARATOR)
         for (str in savedPeaks) {
             val card = cardsPool().read(str)
             (card.source as? Source.Cell)?.let { cell ->
                 peaks[Util.getIndex(cell)] = card
-                val view = cardViewPool().set(card, Util.getCellX(cell.column), Util.getCellY(cell.row))
+                val view = cardViewPool().set(card, Util.getCellX(cell.column), Util.getCellY(cell.row), dark)
                 rows[cell.row].add(view)
             }
         }
     }
 
     private fun readStack(text: String, collection: Stack<Card>) {
-        val savedStack = text.split(Constants.PREFERENCES_SEPARATOR)
+        val savedStack = text.split(Const.PREFERENCES_SEPARATOR)
         for (str in savedStack) {
             collection.push(cardsPool().read(str))
         }
@@ -220,7 +224,7 @@ class GameState(private val assets: AssetManager) : View, Dynamic {
 
     companion object {
         fun collectionString(collection: Iterable<Card?>): String {
-            val joiner = StringJoiner(Constants.PREFERENCES_SEPARATOR)
+            val joiner = StringJoiner(Const.PREFERENCES_SEPARATOR)
             for (card in collection) {
                 if (card != null) {
                     joiner.add(card.write())

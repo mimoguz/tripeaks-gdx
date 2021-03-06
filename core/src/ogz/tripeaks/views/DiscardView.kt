@@ -3,28 +3,34 @@ package ogz.tripeaks.views
 import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
-import ogz.tripeaks.*
+import ogz.tripeaks.Const
+import ogz.tripeaks.Dynamic
+import ogz.tripeaks.Util
+import ogz.tripeaks.View
 import ogz.tripeaks.data.Card
 
-class DiscardView(private val discard: java.util.Stack<Card>, private val assets: AssetManager) : View, Dynamic {
+class DiscardView(private val discard: java.util.Stack<Card>, private val assets: AssetManager, private var dark: Boolean = false)
+    : View, Dynamic {
+
     private var top = if (discard.empty()) null else discard.peek()
-    private var sprite = getSprite()
+    private var face = top?.let { Util.setFaceSprite(assets, Sprite(), it, dark) } ?: Sprite()
+    private var plate = Util.setPlateSprite(assets, Sprite(), dark)
 
     override fun update(delta: Float) {
         if (top != discard.peek()) {
             top = discard.peek()
-            sprite = getSprite()
+            top?.let { Util.setFaceSprite(assets, face, it, dark) }
         }
     }
 
     override fun draw(batch: SpriteBatch) {
-        batch.draw(sprite, Constants.DISCARD_POSITION.x, Constants.DISCARD_POSITION.y)
+        batch.draw(plate, Const.DISCARD_POSITION.x, Const.DISCARD_POSITION.y)
+        batch.draw(face, Const.DISCARD_POSITION.x + Const.FACE_X, Const.DISCARD_POSITION.y + Const.FACE_Y)
     }
 
-    private fun getSprite(): Sprite =
-                if (top == null) {
-                    assets[TextureAtlasAssets.Cards].createSprite(Constants.SPRITE_CARD_BACK_KEY)
-                } else {
-                    assets[TextureAtlasAssets.Cards].createSprite(top!!.getSpriteName())
-                }
+    override fun setTheme(dark: Boolean) {
+        this.dark = dark
+        Util.setPlateSprite(assets, plate, dark)
+        top?.let { Util.setFaceSprite(assets, face, it, dark) }
+    }
 }
