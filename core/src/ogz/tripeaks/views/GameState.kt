@@ -12,12 +12,14 @@ import ktx.collections.set
 import ogz.tripeaks.*
 import ogz.tripeaks.data.Card
 import ogz.tripeaks.data.Source
+import ogz.tripeaks.data.StatKeeper
 import java.util.*
 
 class GameState(private val assets: AssetManager, private var dark: Boolean) : View, Dynamic {
     private val stack = Stack<Card>()
     private val discard = Stack<Card>()
     private val peaks = IntMap<Card>()
+    val statKeeper = StatKeeper()
 
     private val cardsPool = pool { Card() }
     private val cardViewPool = pool { CardView(assets) }
@@ -34,6 +36,8 @@ class GameState(private val assets: AssetManager, private var dark: Boolean) : V
 
     fun init() {
         resetCollections()
+        statKeeper.set(0, 0, 0, 0)
+
         val deck = Util.makeDeck()
         Table.layout.withIndex().forEach { row ->
             row.value.withIndex().forEach { column ->
@@ -67,6 +71,7 @@ class GameState(private val assets: AssetManager, private var dark: Boolean) : V
         val card = stack.pop()
         card.isOpen = true
         discard.push(card)
+        statKeeper.takeFromStack()
 
         return card
     }
@@ -82,6 +87,7 @@ class GameState(private val assets: AssetManager, private var dark: Boolean) : V
             is Source.Stack -> {
                 card.isOpen = false
                 stack.push(card)
+                statKeeper.backToStack()
             }
 
             is Source.Cell -> {
@@ -94,6 +100,8 @@ class GameState(private val assets: AssetManager, private var dark: Boolean) : V
 
                 val rightUp = Util.getIndex(source.column + 1, source.row - 1)
                 peaks[rightUp, null]?.let { it.isOpen = false }
+
+                statKeeper.backToPeaks()
             }
         }
 
@@ -127,6 +135,7 @@ class GameState(private val assets: AssetManager, private var dark: Boolean) : V
                         peaks[Util.getIndex(column + 1, row - 1), null]?.let { it.isOpen = true }
                     }
 
+                    statKeeper.takeFromPeaks()
                     return
                 }
             }
@@ -161,16 +170,18 @@ class GameState(private val assets: AssetManager, private var dark: Boolean) : V
     }
 
     fun save(save: Preferences) {
-        save.putString(Const.PREFERENCES_STACK, collectionString(stack))
-        save.putString(Const.PREFERENCES_DISCARD, collectionString(discard))
-        save.putString(Const.PREFERENCES_PEAKS, collectionString(peaks.values()))
+        save.putString(Const.SAVE_STACK, collectionString(stack))
+        save.putString(Const.SAVE_DISCARD, collectionString(discard))
+        save.putString(Const.SAVE_PEAKS, collectionString(peaks.values()))
+        statKeeper.save(save)
     }
 
     fun load(save: Preferences) {
         resetCollections()
-        readStack(save.getString(Const.PREFERENCES_STACK), stack)
-        readStack(save.getString(Const.PREFERENCES_DISCARD), discard)
-        val savedPeaks = save.getString(Const.PREFERENCES_PEAKS).split(Const.PREFERENCES_SEPARATOR)
+
+        readStack(save.getString(Const.SAVE_STACK), stack)
+        readStack(save.getString(Const.SAVE_DISCARD), discard)
+        val savedPeaks = save.getString(Const.SAVE_PEAKS).split(Const.SEPARATOR)
         for (str in savedPeaks) {
             val card = cardsPool().read(str)
             (card.source as? Source.Cell)?.let { cell ->
@@ -179,10 +190,12 @@ class GameState(private val assets: AssetManager, private var dark: Boolean) : V
                 rows[cell.row].add(view)
             }
         }
+
+        statKeeper.load(save)
     }
 
     private fun readStack(text: String, collection: Stack<Card>) {
-        val savedStack = text.split(Const.PREFERENCES_SEPARATOR)
+        val savedStack = text.split(Const.SEPARATOR)
         for (str in savedStack) {
             collection.push(cardsPool().read(str))
         }
@@ -218,7 +231,7 @@ class GameState(private val assets: AssetManager, private var dark: Boolean) : V
 
     companion object {
         fun collectionString(collection: Iterable<Card?>): String {
-            val joiner = StringJoiner(Const.PREFERENCES_SEPARATOR)
+            val joiner = StringJoiner(Const.SEPARATOR)
             for (card in collection) {
                 card?.let { joiner.add(it.write()) }
             }
