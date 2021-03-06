@@ -1,2 +1,4 @@
 A bare-bones tri peaks solitaire game. Currently only has randomly generated games. 
-Pre-solved games, game statistics, and dark mode are on the roadmap.
+Pre-solved games and game statistics on the roadmap.
+
+- Version 0.11 added the dark mode.
