@@ -110,7 +110,7 @@ class GameState(private val assets: AssetManager, private var dark: Boolean) : V
 
     fun touch(point: Vector2) {
         val cellX = (point.x / Const.CELL_WIDTH).toInt()
-        val cellY = ((Const.CONTENT_HEIGHT - point.y) / Const.CELL_HEIGHT).toInt()
+        val cellY = ((Const.CONTENT_HEIGHT -  Const.VERTICAL_PADDING - point.y) / Const.CELL_HEIGHT).toInt()
         for (column in (cellX - 1)..cellX) {
             for (row in (cellY - 1)..cellY) {
                 val cell = Util.getIndex(column, row)
