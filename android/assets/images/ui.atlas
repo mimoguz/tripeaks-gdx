@@ -16,7 +16,7 @@ buttonDisabledDark
   rotate: false
   xy: 74, 38
   size: 16, 16
-  split: 3, 3, 3, 4
+  split: 3, 3, 4, 4
   orig: 16, 16
   offset: 0, 0
   index: -1
@@ -50,6 +50,34 @@ buttonUpDark
   size: 16, 16
   split: 3, 3, 4, 4
   orig: 16, 16
+  offset: 0, 0
+  index: -1
+checkboxOffDark
+  rotate: false
+  xy: 92, 34
+  size: 18, 9
+  orig: 18, 9
+  offset: 0, 0
+  index: -1
+checkboxOffLight
+  rotate: false
+  xy: 92, 23
+  size: 18, 9
+  orig: 18, 9
+  offset: 0, 0
+  index: -1
+checkboxOnDark
+  rotate: false
+  xy: 74, 9
+  size: 18, 9
+  orig: 18, 9
+  offset: 0, 0
+  index: -1
+checkboxOnLight
+  rotate: false
+  xy: 92, 45
+  size: 18, 9
+  orig: 18, 9
   offset: 0, 0
   index: -1
 deal
@@ -98,7 +126,7 @@ window
   rotate: false
   xy: 56, 2
   size: 16, 16
-  split: 3, 3, 3, 5
+  split: 3, 3, 5, 5
   orig: 16, 16
   offset: 0, 0
   index: -1
@@ -106,7 +134,7 @@ windowDark
   rotate: false
   xy: 20, 2
   size: 16, 16
-  split: 3, 3, 3, 5
+  split: 3, 3, 5, 5
   orig: 16, 16
   offset: 0, 0
   index: -1

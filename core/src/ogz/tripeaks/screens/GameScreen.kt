@@ -10,12 +10,14 @@ import com.badlogic.gdx.scenes.scene2d.Touchable
 import com.badlogic.gdx.scenes.scene2d.ui.*
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable
+import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.ScreenUtils
 import ktx.app.KtxScreen
 import ktx.graphics.use
 import ktx.scene2d.Scene2DSkin
 import ogz.tripeaks.*
 import ogz.tripeaks.views.GameState
+import kotlin.concurrent.fixedRateTimer
 
 class GameScreen(val game: Game) : KtxScreen {
     private val camera = OrthographicCamera()
@@ -145,15 +147,25 @@ class GameScreen(val game: Game) : KtxScreen {
         return button
     }
 
-    private fun makeDialogButton(text: String, onChange: () -> Unit): TextButton {
-        val button = TextButton(text, Scene2DSkin.defaultSkin, if (useDarkTheme) "dark" else "light")
-        button.addListener(object : ChangeListener() {
-            override fun changed(event: ChangeEvent?, actor: Actor?) {
-                onChange()
+    private fun makeDialogButton(text: String, onChange: () -> Unit): TextButton =
+            TextButton(text, Scene2DSkin.defaultSkin, if (useDarkTheme) "dark" else "light").apply {
+                pad(4f, 8f, 5f, 8f)
+                addListener(object : ChangeListener() {
+                    override fun changed(event: ChangeEvent?, actor: Actor?) {
+                        onChange()
+                    }
+                })
             }
-        })
-        return button
-    }
+
+    private fun makeDialogToggle(text: String, value: Boolean, onChange: (checked: Boolean) -> Unit): TextButton =
+            CheckBox(text, Scene2DSkin.defaultSkin, if (useDarkTheme) "dark" else "light").apply {
+                isChecked = value
+                addListener(object : ChangeListener() {
+                    override fun changed(event: ChangeEvent?, actor: Actor?) {
+                        onChange(this@apply.isChecked)
+                    }
+                })
+            }
 
     private fun save() {
         val preferences = Gdx.app.getPreferences(Const.SAVE_NAME)
@@ -170,7 +182,7 @@ class GameScreen(val game: Game) : KtxScreen {
                             "You used undo ${state.statKeeper.undoCount} time${if (state.statKeeper.undoCount == 1) "" else "s"}.\n\n" +
                             "Your longest chain was ${state.statKeeper.longestChain} card${if (state.statKeeper.longestChain == 1) "" else "s"} long."
 
-            buttonTable.pad(8f, 0f, 0f, 0f)
+            buttonTable.pad(0f, 4f, 0f, 4f)
             buttonTable.defaults().width(110f)
             pad(16f, 24f, 16f, 24f)
             contentTable.apply {
@@ -191,30 +203,36 @@ class GameScreen(val game: Game) : KtxScreen {
 
     private fun showMenu() {
         val dialog = Dialog("", Scene2DSkin.defaultSkin, if (useDarkTheme) "dark" else "light")
+        dialog.pad(3f, 12f, 10f, 12f)
         dialog.buttonTable.apply {
-            pad(8f, 0f, 0f, 0f)
-            defaults().width(120f)
-            pad(16f, 24f, 16f, 24f)
+            defaults().width(180f).pad(1f)
+            //defaults().width(100f).height(34f)
+            add(makeDialogButton("Return to game") {
+                dialog.hide()
+                paused = false
+            })
+            row()
             add(makeDialogButton("Start new game") {
                 paused = false
                 state.init()
                 dialog.hide()
             })
             row()
-            add(makeDialogButton("Use ${if (useDarkTheme) "light" else "dark"} theme") {
+            add(makeDialogToggle(" Use dark theme", useDarkTheme) { value ->
                 paused = false
-                setTheme(!useDarkTheme)
+                setTheme(value)
                 dialog.hide()
-            })
+            }.apply { align(Align.left) })
             row()
-            add(makeDialogButton("Return to game") {
-                dialog.hide()
+            add(makeDialogToggle(" Put unreachable cards open", useDarkTheme) { value ->
                 paused = false
-            })
+                setTheme(value)
+                dialog.hide()
+            }.apply { align(Align.left) })
             row()
-            row()
-            add(makeDialogButton("Exit game") { Gdx.app.exit() })
-                    .pad(20f, 0f, 0f, 0f)
+            add(makeDialogButton("Exit game") { Gdx.app.exit() }.apply { width = 140f })
+                    .align(Align.center)
+                    .padTop(18f)
         }
         paused = true
         dialog.show(stage)
