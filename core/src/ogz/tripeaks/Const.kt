@@ -13,8 +13,8 @@ object Const {
     const val FACE_X = 6f
     const val FACE_Y = 4f
     const val PREFERENCES_DARK_THEME = "darkTheme"
-    const val PREFERENCES_SHOW_ALL = "showAllCards"
     const val PREFERENCES_NAME = "gamePreferences"
+    const val PREFERENCES_SHOW_ALL = "showAllCards"
     const val SAVE_CURRENT_CHAIN = "currentChain"
     const val SAVE_DISCARD = "discard"
     const val SAVE_LONGEST_CHAIN = "longestChain"
