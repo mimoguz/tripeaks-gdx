@@ -16,27 +16,18 @@ import ktx.app.KtxScreen
 import ktx.graphics.use
 import ktx.scene2d.Scene2DSkin
 import ogz.tripeaks.*
+import ogz.tripeaks.data.GamePreferences
 import ogz.tripeaks.views.GameState
-import kotlin.concurrent.fixedRateTimer
 
-class GameScreen(val game: Game) : KtxScreen {
+class GameScreen(val game: Game, private var preferences: GamePreferences) : KtxScreen {
     private val camera = OrthographicCamera()
     private val viewport = IntegerScalingViewport(Const.CONTENT_WIDTH.toInt(), Const.CONTENT_HEIGHT.toInt(), camera)
     private val touchPoint3D = Vector3()
     private val touchPoint2D = Vector2()
     private val stage = Stage(viewport)
     private var paused = false
-    private var backgroundColor = Const.LIGHT_BACKGROUND
-    private var useDarkTheme = false
-        set(value) {
-            if (value xor field) {
-                backgroundColor = if (value) Const.DARK_BACKGROUND else Const.LIGHT_BACKGROUND
-                state.setTheme(value)
-                field = value
-                setUi()
-            }
-        }
-    private val state = GameState(game.assets, useDarkTheme)
+    private var backgroundColor = if (preferences.useDarkTheme) Const.DARK_BACKGROUND else Const.LIGHT_BACKGROUND
+    private val state = GameState(game.assets, preferences.useDarkTheme, preferences.showAllCards)
     private var dealButton = Button()
     private var undoButton = Button()
 
@@ -53,6 +44,8 @@ class GameScreen(val game: Game) : KtxScreen {
         } else {
             Gdx.app.getPreferences(Const.SAVE_NAME)
                     .putBoolean(Const.SAVE_VALID, false)
+                    .flush()
+
         }
         super.pause()
     }
@@ -127,8 +120,8 @@ class GameScreen(val game: Game) : KtxScreen {
     }
 
     private fun makeImageButton(iconKey: String, buttonWidth: Float, buttonHeight: Float, x: Float, y: Float, onChange: () -> Unit): Button {
-        val button = Button(Scene2DSkin.defaultSkin, if (useDarkTheme) "dark" else "light")
-        val icon = if (useDarkTheme) iconKey + "Dark" else iconKey
+        val button = Button(Scene2DSkin.defaultSkin, selectTheme())
+        val icon = if (preferences.useDarkTheme) iconKey + "Dark" else iconKey
         button.apply {
             addListener(object : ChangeListener() {
                 override fun changed(event: ChangeEvent?, actor: Actor?) {
@@ -148,7 +141,7 @@ class GameScreen(val game: Game) : KtxScreen {
     }
 
     private fun makeDialogButton(text: String, onChange: () -> Unit): TextButton =
-            TextButton(text, Scene2DSkin.defaultSkin, if (useDarkTheme) "dark" else "light").apply {
+            TextButton(text, Scene2DSkin.defaultSkin, selectTheme()).apply {
                 pad(4f, 8f, 5f, 8f)
                 addListener(object : ChangeListener() {
                     override fun changed(event: ChangeEvent?, actor: Actor?) {
@@ -158,7 +151,7 @@ class GameScreen(val game: Game) : KtxScreen {
             }
 
     private fun makeDialogToggle(text: String, value: Boolean, onChange: (checked: Boolean) -> Unit): TextButton =
-            CheckBox(text, Scene2DSkin.defaultSkin, if (useDarkTheme) "dark" else "light").apply {
+            CheckBox(text, Scene2DSkin.defaultSkin, selectTheme()).apply {
                 isChecked = value
                 addListener(object : ChangeListener() {
                     override fun changed(event: ChangeEvent?, actor: Actor?) {
@@ -175,7 +168,7 @@ class GameScreen(val game: Game) : KtxScreen {
     }
 
     private fun showEndGameDialog() {
-        val dialog = Dialog("", Scene2DSkin.defaultSkin, if (useDarkTheme) "dark" else "light")
+        val dialog = Dialog("", Scene2DSkin.defaultSkin, selectTheme())
         dialog.apply {
             val message =
                     "You removed ${state.statKeeper.removedFromStack} card${if (state.statKeeper.removedFromStack == 1) "" else "s"} from the stack.\n\n" +
@@ -186,9 +179,9 @@ class GameScreen(val game: Game) : KtxScreen {
             buttonTable.defaults().width(110f)
             pad(16f, 24f, 16f, 24f)
             contentTable.apply {
-                add(Label("You won!", Scene2DSkin.defaultSkin, if (useDarkTheme) "dark" else "light"))
+                add(Label("You won!", Scene2DSkin.defaultSkin, selectTheme()))
                 row()
-                add(Label(message, Scene2DSkin.defaultSkin, if (useDarkTheme) "dark" else "light"))
+                add(Label(message, Scene2DSkin.defaultSkin, selectTheme()))
             }
             buttonTable.add(makeDialogButton("Start new game") {
                 dialog.hide()
@@ -202,7 +195,7 @@ class GameScreen(val game: Game) : KtxScreen {
     }
 
     private fun showMenu() {
-        val dialog = Dialog("", Scene2DSkin.defaultSkin, if (useDarkTheme) "dark" else "light")
+        val dialog = Dialog("", Scene2DSkin.defaultSkin, selectTheme())
         dialog.pad(3f, 12f, 10f, 12f)
         dialog.buttonTable.apply {
             defaults().width(180f).pad(1f)
@@ -218,15 +211,15 @@ class GameScreen(val game: Game) : KtxScreen {
                 dialog.hide()
             })
             row()
-            add(makeDialogToggle(" Use dark theme", useDarkTheme) { value ->
-                paused = false
+            add(makeDialogToggle(" Use dark theme", preferences.useDarkTheme) { value ->
                 setTheme(value)
+                paused = false
                 dialog.hide()
             }.apply { align(Align.left) })
             row()
-            add(makeDialogToggle(" Put unreachable cards open", useDarkTheme) { value ->
+            add(makeDialogToggle(" Show all cards", preferences.showAllCards) { value ->
+                setShowAllCards(value)
                 paused = false
-                setTheme(value)
                 dialog.hide()
             }.apply { align(Align.left) })
             row()
@@ -238,16 +231,28 @@ class GameScreen(val game: Game) : KtxScreen {
         dialog.show(stage)
     }
 
+    private fun setShowAllCards(show: Boolean): Boolean {
+        if (show != preferences.showAllCards) {
+            preferences.showAllCards = show
+            state.setShowAllCards(show)
+            preferences.save()
+            return  true
+        }
+        return false
+    }
+
     private fun setTheme(useDarkTheme: Boolean): Boolean {
-        if (useDarkTheme xor this.useDarkTheme) {
-            this.useDarkTheme = useDarkTheme
-            val preferences = Gdx.app.getPreferences(Const.PREFERENCES_NAME)
-            preferences.putBoolean(Const.PREFERENCES_DARK_THEME, this.useDarkTheme)
-            preferences.flush()
+        if (preferences.useDarkTheme != useDarkTheme) {
+            preferences.useDarkTheme = useDarkTheme
+            backgroundColor = if (useDarkTheme) Const.DARK_BACKGROUND else Const.LIGHT_BACKGROUND
+            state.setTheme(useDarkTheme)
+            preferences.save()
+            setUi()
             return true
         }
         return false
     }
+
 
     private fun setUi() {
         stage.clear()
@@ -283,4 +288,6 @@ class GameScreen(val game: Game) : KtxScreen {
 
         Gdx.input.inputProcessor = stage
     }
+
+    private fun selectTheme(): String = if (preferences.useDarkTheme) "dark" else "light"
 }

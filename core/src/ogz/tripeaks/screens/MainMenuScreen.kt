@@ -11,6 +11,7 @@ import com.badlogic.gdx.utils.ScreenUtils
 import ktx.app.KtxScreen
 import ktx.scene2d.Scene2DSkin
 import ogz.tripeaks.*
+import ogz.tripeaks.data.GamePreferences
 
 class MainMenuScreen(val game: Game) : KtxScreen {
 
@@ -31,9 +32,9 @@ class MainMenuScreen(val game: Game) : KtxScreen {
     }
 
     override fun show() {
+        val preferences = GamePreferences().apply { load() }
         val skin = Scene2DSkin.defaultSkin
-        val useDarkTheme = Util.readDarkThemePreference()
-        if (useDarkTheme) {
+        if (preferences.useDarkTheme) {
             clearColor = Const.DARK_BACKGROUND
         }
         stage.actors.add(
@@ -42,10 +43,10 @@ class MainMenuScreen(val game: Game) : KtxScreen {
                     setPosition((Const.CONTENT_WIDTH - width) / 2, Const.CONTENT_HEIGHT / 2f + 8f)
                 },
 
-                TextButton("Start", skin, if (useDarkTheme) "dark" else "light").apply {
+                TextButton("Start", skin, if (preferences.useDarkTheme) "dark" else "light").apply {
                     addListener(object : ChangeListener() {
                         override fun changed(event: ChangeEvent?, actor: Actor?) {
-                            game.addScreen(GameScreen(game))
+                            game.addScreen(GameScreen(game, preferences))
                             game.setScreen<GameScreen>()
                             game.removeScreen<MainMenuScreen>()
                             dispose()

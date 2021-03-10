@@ -1,24 +1,19 @@
 package ogz.tripeaks.views
 
-import com.badlogic.gdx.assets.AssetManager
-import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.math.Vector2
 import ogz.tripeaks.*
 import ogz.tripeaks.data.Card
 
-class CardView(private val assets: AssetManager) : View {
+class CardView(private val spriteCollection: SpriteCollection) : View {
     var card: Card? = null
     private val position: Vector2 = Vector2()
-    private var face: Sprite = Sprite()
-    private var back: Sprite = Sprite()
-    private var plate: Sprite = Sprite()
+    private var alwaysShow = false
 
-    fun set(card: Card, x: Float, y: Float, useDarkTheme: Boolean): CardView {
+    fun set(card: Card, x: Float, y: Float, alwaysShow: Boolean): CardView {
         this.card = card
-        Util.setRegion(assets, back, Const.SPRITE_CARD_BACK)
-        setTheme(useDarkTheme)
-        this.position.set(x, y)
+        this.alwaysShow = alwaysShow
+        position.set(x, y)
         return this
     }
 
@@ -29,19 +24,23 @@ class CardView(private val assets: AssetManager) : View {
 
     fun setPosition(pos: Vector2): CardView = setPosition(pos.x, pos.y)
 
-    override fun draw(batch: SpriteBatch) {
-        batch.draw(plate, position.x, position.y)
-        if (card?.isOpen == true) {
-            batch.draw(face, position.x + Const.FACE_X, position.y + Const.FACE_Y)
-        } else {
-            batch.draw(back, position.x, position.y)
-        }
+    fun setAlwaysShow(show: Boolean) {
+        alwaysShow = show
     }
 
-    override fun setTheme(dark: Boolean) {
-        Util.setPlateSprite(assets, plate, dark)
-        if (card != null) {
-            Util.setFaceSprite(assets, face, card!!, dark)
+    override fun draw(batch: SpriteBatch) {
+        if (card == null) {
+            return
+        }
+        batch.draw(spriteCollection.plate , position.x, position.y)
+        if (card!!.isOpen || alwaysShow) {
+            batch.draw(
+                    spriteCollection.faceList[Util.getSpriteIndex(card!!)] ,
+                    position.x + Const.FACE_X,
+                    position.y + Const.FACE_Y
+            )
+        } else {
+            batch.draw(spriteCollection.back, position.x, position.y)
         }
     }
 }

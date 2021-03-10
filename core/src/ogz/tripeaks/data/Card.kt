@@ -5,8 +5,12 @@ import java.util.*
 import kotlin.math.abs
 
 class Card {
-    private var suit: Suit = Suit.Club
-    private var rank: Rank = Rank.Ace
+    var suit: Suit = Suit.Club
+        get() = field
+        private set
+    var rank: Rank = Rank.Ace
+        get() = field
+        private set
     var isOpen: Boolean = false
     private var src: Source = Source.Stack
 
@@ -20,9 +24,7 @@ class Card {
         return this
     }
 
-    fun getSpriteName() =
-            suit.toString().toLowerCase(Locale.US) + "_" +
-                    (rank.ordinal + 1).toString().padStart(2, '0')
+    inline fun getSpriteName() = Util.getSpriteName(suit, rank)
 
     fun areConsecutive(other: Card): Boolean {
         val distance = abs(rank.ordinal - other.rank.ordinal)

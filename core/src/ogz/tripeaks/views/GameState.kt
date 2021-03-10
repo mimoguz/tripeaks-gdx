@@ -15,20 +15,26 @@ import ogz.tripeaks.data.Source
 import ogz.tripeaks.data.StatKeeper
 import java.util.*
 
-class GameState(private val assets: AssetManager, private var dark: Boolean) : View, Dynamic {
+class GameState(
+        assets: AssetManager,
+        private var useDarkTheme: Boolean,
+        private var showAllCards: Boolean
+) : View, Dynamic {
+
     private val stack = Stack<Card>()
     private val discard = Stack<Card>()
     private val peaks = IntMap<Card>()
+    private val spriteCollection = SpriteCollection(assets, useDarkTheme)
     val statKeeper = StatKeeper()
 
     private val cardsPool = pool { Card() }
-    private val cardViewPool = pool { CardView(assets) }
-    private val outAnimationPool = pool { FadeOut(assets, dark) }
+    private val cardViewPool = pool { CardView(spriteCollection) }
+    private val outAnimationPool = pool { FadeOut(spriteCollection) }
 
     private val rows = GdxArray<GdxArray<CardView>>()
     private val animations = GdxArray<FadeOut>()
-    private val discardView by lazy { DiscardView(discard, assets, dark) }
-    private val stackView by lazy { StackView(stack, assets, dark) }
+    private val discardView by lazy { DiscardView(discard, spriteCollection) }
+    private val stackView by lazy { StackView(stack, spriteCollection) }
 
     val canDeal: Boolean get() = stack.isNotEmpty()
     val canUndo: Boolean get() = discard.size > 1
@@ -46,7 +52,7 @@ class GameState(private val assets: AssetManager, private var dark: Boolean) : V
                         val info = deck.pop()
                         val source = Source.Cell(column.index, row.index)
                         val card = cardsPool().set(info.suit, info.rank, source, column.value == Table.OPEN_CARD_SYMBOL)
-                        val view = cardViewPool().set(card, Util.getCellX(column.index), Util.getCellY(row.index), dark)
+                        val view = cardViewPool().set(card, Util.getCellX(column.index), Util.getCellY(row.index), showAllCards)
                         rows[row.index].add(view)
                         peaks[Util.getIndex(source.column, source.row)] = card
                     }
@@ -92,7 +98,7 @@ class GameState(private val assets: AssetManager, private var dark: Boolean) : V
 
             is Source.Cell -> {
                 peaks[Util.getIndex(source)] = card
-                val view = cardViewPool().set(card, Util.getCellX(source.column), Util.getCellY(source.row), dark)
+                val view = cardViewPool().set(card, Util.getCellX(source.column), Util.getCellY(source.row), showAllCards)
                 rows[source.row].add(view)
 
                 val leftUp = Util.getIndex(source.column - 1, source.row - 1)
@@ -124,7 +130,7 @@ class GameState(private val assets: AssetManager, private var dark: Boolean) : V
                     }!!
                     rows[row].removeValue(view, true)
                     cardViewPool(view)
-                    animations.add(outAnimationPool().set(card, Util.getCellX(column), Util.getCellY(row), ::whenOutAnimationFinished, dark))
+                    animations.add(outAnimationPool().set(card, Util.getCellX(column), Util.getCellY(row), ::whenOutAnimationFinished))
                     discard.push(card)
 
                     // Flip upper neighbors if they are clear.
@@ -146,12 +152,11 @@ class GameState(private val assets: AssetManager, private var dark: Boolean) : V
         for (anim in animations) {
             anim.update(delta)
         }
-        discardView.update(delta)
     }
 
     override fun draw(batch: SpriteBatch) {
-        for (row in rows) {
-            for (cardView in row) {
+        for (row in rows.iterator()) {
+            for (cardView in row.iterator()) {
                 cardView.draw(batch)
             }
         }
@@ -162,17 +167,25 @@ class GameState(private val assets: AssetManager, private var dark: Boolean) : V
         stackView.draw(batch)
     }
 
-    override fun setTheme(dark: Boolean) {
-        this.dark = dark
-        discardView.setTheme(dark)
-        stackView.setTheme(dark)
-        rows.forEach { row -> row.forEach { it.setTheme(dark) } }
+    fun setTheme(useDarkTheme: Boolean) {
+        this.useDarkTheme = useDarkTheme
+        spriteCollection.set(this.useDarkTheme)
+    }
+
+    fun setShowAllCards(show: Boolean) {
+        stackView.setShowAllCards(show)
+        for (row in rows.iterator()) {
+            for (view in row) {
+                view.setAlwaysShow(show)
+            }
+        }
     }
 
     fun save(save: Preferences) {
         save.putString(Const.SAVE_STACK, collectionString(stack))
         save.putString(Const.SAVE_DISCARD, collectionString(discard))
         save.putString(Const.SAVE_PEAKS, collectionString(peaks.values()))
+        save.flush()
         statKeeper.save(save)
     }
 
@@ -186,7 +199,7 @@ class GameState(private val assets: AssetManager, private var dark: Boolean) : V
             val card = cardsPool().read(str)
             (card.source as? Source.Cell)?.let { cell ->
                 peaks[Util.getIndex(cell)] = card
-                val view = cardViewPool().set(card, Util.getCellX(cell.column), Util.getCellY(cell.row), dark)
+                val view = cardViewPool().set(card, Util.getCellX(cell.column), Util.getCellY(cell.row), showAllCards)
                 rows[cell.row].add(view)
             }
         }

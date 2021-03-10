@@ -7,22 +7,20 @@ import com.badlogic.gdx.math.Vector2
 import ogz.tripeaks.*
 import ogz.tripeaks.data.Card
 
-class FadeOut(private val assets: AssetManager, useDarkTheme: Boolean) : View, Dynamic {
-    private var plate = Util.setPlateSprite(assets, Sprite(), useDarkTheme)
-    private var face = Sprite()
+class FadeOut(private val spriteCollection: SpriteCollection) : View, Dynamic {
     private var finished: (FadeOut) -> Unit = {}
     private val position = Vector2()
     private var alpha = 1f
     private var acc = 0f
     private var card: Card? = null
+    private val originalPosition = Vector2()
 
-    fun set(card: Card, x: Float, y: Float, finished: (anim: FadeOut) -> Unit, dark: Boolean): FadeOut {
+    fun set(card: Card, x: Float, y: Float, finished: (anim: FadeOut) -> Unit,): FadeOut {
         alpha = 1f
         acc = 0f
         position.set(x, y)
         this.finished = finished
         this.card = card
-        setTheme(dark)
         return this
     }
 
@@ -39,14 +37,18 @@ class FadeOut(private val assets: AssetManager, useDarkTheme: Boolean) : View, D
     }
 
     override fun draw(batch: SpriteBatch) {
-        plate.setPosition(position.x, position.y)
-        plate.draw(batch, alpha)
-        face.setPosition(position.x + Const.FACE_X, position.y + Const.FACE_Y)
-        face.draw(batch, alpha)
-    }
+        card?.let { card ->
+            originalPosition.set(spriteCollection.plate.x, spriteCollection.plate.y)
+            spriteCollection.plate.setPosition(position.x, position.y)
+            spriteCollection.plate.draw(batch, alpha)
+            spriteCollection.plate.setPosition(originalPosition.x, originalPosition.y)
 
-    override fun setTheme(dark: Boolean) {
-        Util.setPlateSprite(assets, plate,  dark)
-        card?.let { Util.setFaceSprite(assets, face, it, dark) }
+            val face = spriteCollection.faceList[Util.getSpriteIndex(card)]
+            originalPosition.set(face.x, face.y)
+            face.setPosition(position.x, position.y)
+            face.draw(batch, alpha)
+            face.setPosition(originalPosition.x, originalPosition.y)
+
+        }
     }
 }
