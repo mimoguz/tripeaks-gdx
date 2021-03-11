@@ -25,7 +25,7 @@ object Const {
     const val SAVE_UNDO_COUNT = "undoCount"
     const val SAVE_VALID = "valid"
     const val SEPARATOR = ", "
-    const val SIDE_FACE_OFFSET = 21f
+    const val SIDE_FACE_X = 21f
     const val SPRITE_CARD_BACK = "card_back"
     const val SPRITE_CARD_BACK_SLICE = "card_back_slice"
     const val SPRITE_DARK_PREFIX = "dark_"
@@ -36,7 +36,7 @@ object Const {
     const val SPRITE_SMALL_PREFIX = "small_"
     const val SPRITE_WIDTH = 27f
     const val VERTICAL_PADDING = 4f
-    val STACK_POSITION = Vector2( CONTENT_WIDTH - CELL_WIDTH * 4f, VERTICAL_PADDING)
+    val STACK_POSITION = Vector2( CONTENT_WIDTH - CELL_WIDTH * 4f + 1f, VERTICAL_PADDING)
     val DISCARD_POSITION = Vector2(CELL_WIDTH * 2f + 1f, VERTICAL_PADDING)
     val DARK_BACKGROUND: Color = Color.valueOf("232433ff")
     val LIGHT_BACKGROUND: Color = Color.valueOf("63a347ff")

@@ -37,7 +37,7 @@ class StackView(
             batch.draw(spriteCollection.plate, x, Const.STACK_POSITION.y)
             batch.draw(
                     spriteCollection.sideFaceList[Util.getSpriteIndex(card)],
-                    x + Const.SIDE_FACE_OFFSET,
+                    x + Const.SIDE_FACE_X,
                     Const.STACK_POSITION.y
             )
         }
