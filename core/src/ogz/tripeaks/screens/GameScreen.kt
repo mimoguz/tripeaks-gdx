@@ -94,11 +94,9 @@ class GameScreen(val game: Game, private var preferences: GamePreferences) : Ktx
             state.init()
         }
         preferences.load()
-        if (!setTheme(preferences.useDarkTheme)) {
-            setUi()
-        }
+        setUi()
         state.setShowAllCards(preferences.showAllCards)
-        state.setTheme(preferences.showAllCards)
+        state.setTheme(preferences.useDarkTheme)
     }
 
     private fun loadSavedGame(): Boolean {

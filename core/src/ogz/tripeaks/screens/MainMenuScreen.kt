@@ -32,7 +32,7 @@ class MainMenuScreen(val game: Game) : KtxScreen {
     }
 
     override fun show() {
-        val preferences = GamePreferences().apply { load() }
+        val preferences = GamePreferences().load()
         val skin = Scene2DSkin.defaultSkin
         if (preferences.useDarkTheme) {
             clearColor = Const.DARK_BACKGROUND

@@ -168,17 +168,23 @@ class GameState(
     }
 
     fun setTheme(useDarkTheme: Boolean) {
-        this.useDarkTheme = useDarkTheme
-        spriteCollection.set(this.useDarkTheme)
+        if (this.useDarkTheme != useDarkTheme) {
+            this.useDarkTheme = useDarkTheme
+            spriteCollection.set(this.useDarkTheme)
+        }
     }
 
     fun setShowAllCards(show: Boolean) {
-        stackView.setShowAllCards(show)
-        for (row in rows.iterator()) {
-            for (view in row) {
-                view.setAlwaysShow(show)
+        if (showAllCards != show) {
+            showAllCards = show
+            stackView.setShowAllCards(show)
+            for (row in rows.iterator()) {
+                for (view in row) {
+                    view.setAlwaysShow(show)
+                }
             }
         }
+
     }
 
     fun save(save: Preferences) {
