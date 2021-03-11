@@ -34,7 +34,7 @@ class GameState(
     private val rows = GdxArray<GdxArray<CardView>>()
     private val animations = GdxArray<FadeOut>()
     private val discardView by lazy { DiscardView(discard, spriteCollection) }
-    private val stackView by lazy { StackView(stack, spriteCollection) }
+    private val stackView by lazy { StackView(stack, spriteCollection, showAllCards) }
 
     val canDeal: Boolean get() = stack.isNotEmpty()
     val canUndo: Boolean get() = discard.size > 1

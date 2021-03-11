@@ -8,7 +8,7 @@ import java.util.*
 class StackView(
         private val stack: Stack<Card>,
         private val spriteCollection: SpriteCollection,
-        private var showAllCards: Boolean = true
+        private var showAllCards: Boolean
 ) : View {
 
     override fun draw(batch: SpriteBatch) {
