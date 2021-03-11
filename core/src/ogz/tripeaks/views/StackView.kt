@@ -24,7 +24,7 @@ class StackView(
     }
 
     private fun drawClosed(batch: SpriteBatch) {
-        for (index in 0 until stack.size - 1) {
+        for (index in 0 until stack.size) {
             val x = Const.STACK_POSITION.x - index * 6f
             batch.draw(spriteCollection.plate, x, Const.STACK_POSITION.y)
             batch.draw(spriteCollection.back, x, Const.STACK_POSITION.y)

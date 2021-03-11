@@ -2,7 +2,6 @@ package ogz.tripeaks.screens
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.OrthographicCamera
-import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.Stage
@@ -22,8 +21,7 @@ import ogz.tripeaks.views.GameState
 class GameScreen(val game: Game, private var preferences: GamePreferences) : KtxScreen {
     private val camera = OrthographicCamera()
     private val viewport = IntegerScalingViewport(Const.CONTENT_WIDTH.toInt(), Const.CONTENT_HEIGHT.toInt(), camera)
-    private val touchPoint3D = Vector3()
-    private val touchPoint2D = Vector2()
+    private val touchPoint = Vector3()
     private val stage = Stage(viewport)
     private var paused = false
     private var backgroundColor = if (preferences.useDarkTheme) Const.DARK_BACKGROUND else Const.LIGHT_BACKGROUND
@@ -76,10 +74,9 @@ class GameScreen(val game: Game, private var preferences: GamePreferences) : Ktx
         stage.draw()
 
         if (Gdx.input.justTouched() && !paused) {
-            touchPoint3D.set(Gdx.input.x.toFloat(), Gdx.input.y.toFloat(), 0f)
-            viewport.unproject(touchPoint3D)
-            touchPoint2D.set(touchPoint3D.x, touchPoint3D.y)
-            state.touch(touchPoint2D)
+            touchPoint.set(Gdx.input.x.toFloat(), Gdx.input.y.toFloat(), 0f)
+            viewport.unproject(touchPoint)
+            state.touch(touchPoint.x, touchPoint.y)
         }
     }
 
@@ -88,29 +85,29 @@ class GameScreen(val game: Game, private var preferences: GamePreferences) : Ktx
     }
 
     override fun resume() {
-        load()
-        if (!setTheme(Util.readDarkThemePreference())) {
-            setUi()
-        }
+        show()
         super.resume()
     }
 
     override fun show() {
-        if (!load()) {
+        if (!loadSavedGame()) {
             state.init()
         }
-        if (!setTheme(Util.readDarkThemePreference())) {
+        preferences.load()
+        if (!setTheme(preferences.useDarkTheme)) {
             setUi()
         }
+        state.setShowAllCards(preferences.showAllCards)
+        state.setTheme(preferences.showAllCards)
     }
 
-    private fun load(): Boolean {
-        val preferences = Gdx.app.getPreferences(Const.SAVE_NAME)
-        if (preferences.getBoolean(Const.SAVE_VALID, false)) {
+    private fun loadSavedGame(): Boolean {
+        val save = Gdx.app.getPreferences(Const.SAVE_NAME)
+        if (save.getBoolean(Const.SAVE_VALID, false)) {
             return try {
-                state.load(preferences)
-                preferences.putBoolean(Const.SAVE_VALID, false)
-                preferences.flush()
+                state.load(save)
+                save.putBoolean(Const.SAVE_VALID, false)
+                save.flush()
                 true
             } catch (_: Exception) {
                 false
