@@ -1,1 +1,1 @@
-A bare-bones tri peaks solitaire game.
+A tri peaks solitaire game.
