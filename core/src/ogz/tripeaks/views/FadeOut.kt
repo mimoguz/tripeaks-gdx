@@ -45,7 +45,7 @@ class FadeOut(private val spriteCollection: SpriteCollection) : View, Dynamic {
 
             val face = spriteCollection.faceList[Util.getSpriteIndex(card)]
             originalPosition.set(face.x, face.y)
-            face.setPosition(position.x, position.y)
+            face.setPosition(position.x + Const.FACE_X, position.y + Const.FACE_Y)
             face.draw(batch, alpha)
             face.setPosition(originalPosition.x, originalPosition.y)
 
