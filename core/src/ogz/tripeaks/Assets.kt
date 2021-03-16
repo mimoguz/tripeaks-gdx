@@ -23,7 +23,8 @@ fun AssetManager.loadSavedGame(asset: FontAssets) = load<BitmapFont>(asset.path)
 operator fun AssetManager.get(asset: FontAssets) = getAsset<BitmapFont>(asset.path)
 
 enum class TextureAssets(val path: String) {
-    Title("images/title.png"),
+    LightTitle("images/light_title.png"),
+    DarkTitle("images/dark_title.png"),
 }
 
 fun AssetManager.loadSavedGame(asset: TextureAssets) = load<Texture>(asset.path)

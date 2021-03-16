@@ -13,7 +13,7 @@ import ktx.scene2d.Scene2DSkin
 import ogz.tripeaks.*
 import ogz.tripeaks.data.GamePreferences
 
-class MainMenuScreen(val game: Game) : KtxScreen {
+class StartScreen(val game: Game) : KtxScreen {
 
     private val stage = Stage(
             IntegerScalingViewport(
@@ -37,10 +37,11 @@ class MainMenuScreen(val game: Game) : KtxScreen {
         if (preferences.useDarkTheme) {
             clearColor = Const.DARK_BACKGROUND
         }
+        val image = if (preferences.useDarkTheme) game.assets[TextureAssets.DarkTitle] else game.assets[TextureAssets.LightTitle]
         stage.actors.add(
-                Image(game.assets[TextureAssets.Title]).apply {
-                    setSize(118f, 50f)
-                    setPosition((Const.CONTENT_WIDTH - width) / 2, Const.CONTENT_HEIGHT / 2f + 8f)
+                Image(image).apply {
+                    setSize(300f, 168f)
+                    setPosition(0f, 0f)
                 },
 
                 TextButton("Start", skin, if (preferences.useDarkTheme) "dark" else "light").apply {
@@ -49,13 +50,13 @@ class MainMenuScreen(val game: Game) : KtxScreen {
                         override fun changed(event: ChangeEvent?, actor: Actor?) {
                             game.addScreen(GameScreen(game, preferences))
                             game.setScreen<GameScreen>()
-                            game.removeScreen<MainMenuScreen>()
+                            game.removeScreen<StartScreen>()
                             dispose()
                         }
 
                     })
                     width = 100f
-                    setPosition(Const.CONTENT_WIDTH / 2f - 50f, Const.CONTENT_HEIGHT / 2f - height - 8f)
+                    setPosition((Const.CONTENT_WIDTH - width) / 2f, (Const.CONTENT_HEIGHT - height) / 2f)
                 }
         )
         Gdx.input.inputProcessor = stage

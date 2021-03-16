@@ -33,8 +33,8 @@ class LoadingScreen(val game: Game) : KtxScreen {
 
         if (game.assets.isFinished) {
             setDefaultSkin()
-            game.addScreen(MainMenuScreen(game))
-            game.setScreen<MainMenuScreen>()
+            game.addScreen(StartScreen(game))
+            game.setScreen<StartScreen>()
             game.removeScreen<LoadingScreen>()
             dispose()
         }
