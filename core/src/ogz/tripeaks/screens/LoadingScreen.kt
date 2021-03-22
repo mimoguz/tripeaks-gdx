@@ -12,14 +12,11 @@ class LoadingScreen(val game: Game) : KtxScreen {
     private val viewport = IntegerScalingViewport(320, 200, camera)
 
     override fun show() {
-        for (asset in TextureAtlasAssets.values()) {
-            game.assets.loadSavedGame(asset)
-        }
-        for (asset in TextureAssets.values()) {
-            game.assets.loadSavedGame(asset)
-        }
-        for (asset in FontAssets.values()) {
-            game.assets.loadSavedGame(asset)
+        for (asset in TextureAtlasAssets.values()) game.assets.load(asset)
+        for (asset in TextureAssets.values()) game.assets.load(asset)
+        for (asset in FontAssets.values()) game.assets.load(asset)
+        for (asset in BundleAssets.values()) {
+            game.assets.load(asset)
         }
     }
 
@@ -91,15 +88,15 @@ class LoadingScreen(val game: Game) : KtxScreen {
                         background = skin["windowDark"]
                     }
                     checkBox {
-                        checkboxOn =skin["checkboxOnLight"]
-                        checkboxOff =skin["checkboxOffLight"]
+                        checkboxOn = skin["checkboxOnLight"]
+                        checkboxOff = skin["checkboxOffLight"]
                         font = game.assets[FontAssets.GameFont]
                         fontColor = skin["dark"]
                     }
                     checkBox("light", extend = defaultStyle)
                     checkBox(name = "dark", extend = defaultStyle) {
-                        checkboxOn =skin["checkboxOnDark"]
-                        checkboxOff =skin["checkboxOffDark"]
+                        checkboxOn = skin["checkboxOnDark"]
+                        checkboxOff = skin["checkboxOffDark"]
                         fontColor = skin["light"]
                     }
                 }

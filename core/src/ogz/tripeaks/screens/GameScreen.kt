@@ -19,8 +19,13 @@ import ogz.tripeaks.data.GamePreferences
 import ogz.tripeaks.views.GameState
 
 class GameScreen(val game: Game, private var preferences: GamePreferences) : KtxScreen {
+    private val bundle = game.assets[BundleAssets.Bundle]
     private val camera = OrthographicCamera()
-    private val viewport = IntegerScalingViewport(Const.CONTENT_WIDTH.toInt(), Const.CONTENT_HEIGHT.toInt(), camera)
+    private val viewport = IntegerScalingViewport(
+            Const.CONTENT_WIDTH.toInt(),
+            Const.CONTENT_HEIGHT.toInt(),
+            camera
+    )
     private val touchPoint = Vector3()
     private val stage = Stage(viewport)
     private var paused = false
@@ -114,7 +119,14 @@ class GameScreen(val game: Game, private var preferences: GamePreferences) : Ktx
         return false
     }
 
-    private fun makeImageButton(iconKey: String, buttonWidth: Float, buttonHeight: Float, x: Float, y: Float, onChange: () -> Unit): Button {
+    private fun makeImageButton(
+            iconKey: String,
+            buttonWidth: Float,
+            buttonHeight: Float,
+            x: Float,
+            y: Float,
+            onChange: () -> Unit
+    ): Button {
         val button = Button(Scene2DSkin.defaultSkin, selectTheme())
         val icon = if (preferences.useDarkTheme) iconKey + "Dark" else iconKey
         button.apply {
@@ -145,7 +157,11 @@ class GameScreen(val game: Game, private var preferences: GamePreferences) : Ktx
                 })
             }
 
-    private fun makeDialogToggle(text: String, value: Boolean, onChange: (checked: Boolean) -> Unit): TextButton =
+    private fun makeDialogToggle(
+            text: String,
+            value: Boolean,
+            onChange: (checked: Boolean) -> Unit
+    ): TextButton =
             CheckBox(text, Scene2DSkin.defaultSkin, selectTheme()).apply {
                 isChecked = value
                 addListener(object : ChangeListener() {
@@ -166,24 +182,24 @@ class GameScreen(val game: Game, private var preferences: GamePreferences) : Ktx
         val dialog = Dialog("", Scene2DSkin.defaultSkin, selectTheme())
         dialog.apply {
             val message =
-                    "You removed ${state.statKeeper.removedFromStack} card${if (state.statKeeper.removedFromStack == 1) "" else "s"} from the stack.\n\n" +
-                            "You used undo ${state.statKeeper.undoCount} time${if (state.statKeeper.undoCount == 1) "" else "s"}.\n\n" +
-                            "Your longest chain was ${state.statKeeper.longestChain} card${if (state.statKeeper.longestChain == 1) "" else "s"} long."
+                    bundle.format("fromStack", state.statKeeper.removedFromStack)  + "\n\n" +
+                    bundle.format("usedUndo", state.statKeeper.undoCount) + "\n\n" +
+                    bundle.format("longestChain", state.statKeeper.longestChain)
 
-            buttonTable.pad(0f, 4f, 0f, 4f)
+            buttonTable.pad(4f, 4f, 0f, 4f)
             buttonTable.defaults().width(110f)
             pad(16f, 24f, 16f, 24f)
             contentTable.apply {
-                add(Label("You won!", Scene2DSkin.defaultSkin, selectTheme()))
+                add(Label(bundle.get("won"), Scene2DSkin.defaultSkin, selectTheme()))
                 row()
                 add(Label(message, Scene2DSkin.defaultSkin, selectTheme()))
             }
-            buttonTable.add(makeDialogButton("Start new game") {
+            buttonTable.add(makeDialogButton(bundle.get("newGame")) {
                 dialog.hide()
                 paused = false
                 state.init()
             })
-            buttonTable.add(makeDialogButton("Exit game") { Gdx.app.exit() })
+            buttonTable.add(makeDialogButton(bundle.get("exit")) { Gdx.app.exit() })
         }
         paused = true
         dialog.show(stage)
@@ -194,31 +210,30 @@ class GameScreen(val game: Game, private var preferences: GamePreferences) : Ktx
         dialog.pad(3f, 12f, 10f, 12f)
         dialog.buttonTable.apply {
             defaults().width(180f).pad(1f)
-            //defaults().width(100f).height(34f)
-            add(makeDialogButton("Return to game") {
+            add(makeDialogButton(bundle.get("return")) {
                 dialog.hide()
                 paused = false
             })
             row()
-            add(makeDialogButton("Start new game") {
+            add(makeDialogButton(bundle.get("newGame")) {
                 paused = false
                 state.init()
                 dialog.hide()
             })
             row()
-            add(makeDialogToggle(" Use dark theme", preferences.useDarkTheme) { value ->
+            add(makeDialogToggle(" " + bundle.get("darkTheme"), preferences.useDarkTheme) { value ->
                 setTheme(value)
                 paused = false
                 dialog.hide()
             }.apply { align(Align.left) })
             row()
-            add(makeDialogToggle(" Show all cards", preferences.showAllCards) { value ->
+            add(makeDialogToggle(" " + bundle.get("showAll"), preferences.showAllCards) { value ->
                 setShowAllCards(value)
                 paused = false
                 dialog.hide()
             }.apply { align(Align.left) })
             row()
-            add(makeDialogButton("Exit game") { Gdx.app.exit() }.apply { width = 140f })
+            add(makeDialogButton(bundle.get("exit")) { Gdx.app.exit() }.apply { width = 140f })
                     .align(Align.center)
                     .padTop(18f)
         }
@@ -231,7 +246,7 @@ class GameScreen(val game: Game, private var preferences: GamePreferences) : Ktx
             preferences.showAllCards = show
             state.setShowAllCards(show)
             preferences.save()
-            return  true
+            return true
         }
         return false
     }

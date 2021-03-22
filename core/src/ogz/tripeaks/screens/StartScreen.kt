@@ -44,7 +44,11 @@ class StartScreen(val game: Game) : KtxScreen {
                     setPosition(0f, 0f)
                 },
 
-                TextButton("Start", skin, if (preferences.useDarkTheme) "dark" else "light").apply {
+                TextButton(
+                        game.assets[BundleAssets.Bundle].get("start"),
+                        skin,
+                        if (preferences.useDarkTheme) "dark" else "light"
+                ).apply {
                     pad(4f, 8f, 5f, 8f)
                     addListener(object : ChangeListener() {
                         override fun changed(event: ChangeEvent?, actor: Actor?) {
