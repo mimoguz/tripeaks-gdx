@@ -161,7 +161,7 @@ class GameScreen(val game: Game, private var preferences: GamePreferences) : Ktx
             text: String,
             value: Boolean,
             onChange: (checked: Boolean) -> Unit
-    ): TextButton =
+    ): CheckBox =
             CheckBox(text, Scene2DSkin.defaultSkin, selectTheme()).apply {
                 isChecked = value
                 addListener(object : ChangeListener() {

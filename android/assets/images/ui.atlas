@@ -55,29 +55,29 @@ buttonUpDark
 checkboxOffDark
   rotate: false
   xy: 92, 34
-  size: 18, 9
-  orig: 18, 9
+  size: 18, 10
+  orig: 18, 10
   offset: 0, 0
   index: -1
 checkboxOffLight
   rotate: false
   xy: 92, 23
-  size: 18, 9
-  orig: 18, 9
+  size: 18, 10
+  orig: 18, 10
   offset: 0, 0
   index: -1
 checkboxOnDark
   rotate: false
   xy: 74, 9
-  size: 18, 9
-  orig: 18, 9
+  size: 18, 10
+  orig: 18, 10
   offset: 0, 0
   index: -1
 checkboxOnLight
   rotate: false
   xy: 92, 45
-  size: 18, 9
-  orig: 18, 9
+  size: 18, 10
+  orig: 18, 10
   offset: 0, 0
   index: -1
 deal
