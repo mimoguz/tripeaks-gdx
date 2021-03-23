@@ -8,7 +8,7 @@ class GamePreferences(var useDarkTheme: Boolean = false, var showAllCards: Boole
     val themeKey: String
         get() = if (useDarkTheme) "dark" else "light"
 
-    val backgorundColor: Color
+    val backgroundColor: Color
         get() = if (useDarkTheme) Const.DARK_BACKGROUND else Const.LIGHT_BACKGROUND
 
     fun load(): GamePreferences {

@@ -29,7 +29,7 @@ class GameScreen(val game: Game, private var preferences: GamePreferences) : Ktx
     private val touchPoint = Vector3()
     private val stage = Stage(viewport)
     private var paused = false
-    private var backgroundColor = preferences.backgorundColor
+    private var backgroundColor = preferences.backgroundColor
     private val state = GameState(game.assets, preferences.useDarkTheme, preferences.showAllCards)
     private var dealButton = Button()
     private var undoButton = Button()
@@ -271,7 +271,7 @@ class GameScreen(val game: Game, private var preferences: GamePreferences) : Ktx
     private fun setTheme(useDarkTheme: Boolean): Boolean {
         if (preferences.useDarkTheme != useDarkTheme) {
             preferences.useDarkTheme = useDarkTheme
-            backgroundColor = preferences.backgorundColor
+            backgroundColor = preferences.backgroundColor
             state.setTheme(useDarkTheme)
             preferences.save()
             setUi()
