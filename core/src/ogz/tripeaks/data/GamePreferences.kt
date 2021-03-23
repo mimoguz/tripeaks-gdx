@@ -1,9 +1,16 @@
 package ogz.tripeaks.data
 
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.graphics.Color
 import ogz.tripeaks.Const
 
 class GamePreferences(var useDarkTheme: Boolean = false, var showAllCards: Boolean = false) {
+    val themeKey: String
+        get() = if (useDarkTheme) "dark" else "light"
+
+    val backgorundColor: Color
+        get() = if (useDarkTheme) Const.DARK_BACKGROUND else Const.LIGHT_BACKGROUND
+
     fun load(): GamePreferences {
         val preferences = Gdx.app.getPreferences(Const.PREFERENCES_NAME)
         useDarkTheme = preferences.getBoolean(Const.PREFERENCES_DARK_THEME, false)

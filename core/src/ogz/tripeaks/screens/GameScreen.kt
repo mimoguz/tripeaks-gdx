@@ -29,8 +29,7 @@ class GameScreen(val game: Game, private var preferences: GamePreferences) : Ktx
     private val touchPoint = Vector3()
     private val stage = Stage(viewport)
     private var paused = false
-    private var backgroundColor =
-        if (preferences.useDarkTheme) Const.DARK_BACKGROUND else Const.LIGHT_BACKGROUND
+    private var backgroundColor = preferences.backgorundColor
     private val state = GameState(game.assets, preferences.useDarkTheme, preferences.showAllCards)
     private var dealButton = Button()
     private var undoButton = Button()
@@ -128,7 +127,7 @@ class GameScreen(val game: Game, private var preferences: GamePreferences) : Ktx
         y: Float,
         onChange: () -> Unit
     ): Button {
-        val button = Button(Scene2DSkin.defaultSkin, selectTheme())
+        val button = Button(Scene2DSkin.defaultSkin, preferences.themeKey)
         val icon = if (preferences.useDarkTheme) iconKey + "Dark" else iconKey
         button.apply {
             addListener(object : ChangeListener() {
@@ -149,7 +148,7 @@ class GameScreen(val game: Game, private var preferences: GamePreferences) : Ktx
     }
 
     private fun makeDialogButton(text: String, onChange: () -> Unit): TextButton =
-        TextButton(text, Scene2DSkin.defaultSkin, selectTheme()).apply {
+        TextButton(text, Scene2DSkin.defaultSkin, preferences.themeKey).apply {
             pad(5f, 8f, 5f, 8f)
             addListener(object : ChangeListener() {
                 override fun changed(event: ChangeEvent?, actor: Actor?) {
@@ -163,7 +162,7 @@ class GameScreen(val game: Game, private var preferences: GamePreferences) : Ktx
         value: Boolean,
         onChange: (checked: Boolean) -> Unit
     ): CheckBox =
-        CheckBox(text, Scene2DSkin.defaultSkin, selectTheme()).apply {
+        CheckBox(text, Scene2DSkin.defaultSkin, preferences.themeKey).apply {
             isChecked = value
             addListener(object : ChangeListener() {
                 override fun changed(event: ChangeEvent?, actor: Actor?) {
@@ -180,19 +179,19 @@ class GameScreen(val game: Game, private var preferences: GamePreferences) : Ktx
     }
 
     private fun showEndGameDialog() {
-        val dialog = Dialog("", Scene2DSkin.defaultSkin, selectTheme())
+        val dialog = Dialog("", Scene2DSkin.defaultSkin, preferences.themeKey)
         dialog.apply {
             buttonTable.pad(4f, 4f, 0f, 4f)
             buttonTable.defaults().width(110f)
             pad(16f, 24f, 16f, 24f)
             contentTable.apply {
-                add(Label(bundle.get("won"), Scene2DSkin.defaultSkin, selectTheme()))
+                add(Label(bundle.get("won"), Scene2DSkin.defaultSkin, preferences.themeKey))
                 row()
                 add(
                     Label(
                         bundle.format("fromStack", state.statKeeper.removedFromStack),
                         Scene2DSkin.defaultSkin,
-                        selectTheme()
+                        preferences.themeKey
                     )
                 ).align(Align.left)
                 row()
@@ -200,7 +199,7 @@ class GameScreen(val game: Game, private var preferences: GamePreferences) : Ktx
                     Label(
                         bundle.format("usedUndo", state.statKeeper.undoCount),
                         Scene2DSkin.defaultSkin,
-                        selectTheme()
+                        preferences.themeKey
                     )
                 ).align(Align.left)
                 row()
@@ -208,7 +207,7 @@ class GameScreen(val game: Game, private var preferences: GamePreferences) : Ktx
                     Label(
                         bundle.format("longestChain", state.statKeeper.longestChain),
                         Scene2DSkin.defaultSkin,
-                        selectTheme()
+                        preferences.themeKey
                     )
                 ).align(Align.left)
             }
@@ -224,7 +223,7 @@ class GameScreen(val game: Game, private var preferences: GamePreferences) : Ktx
     }
 
     private fun showMenu() {
-        val dialog = Dialog("", Scene2DSkin.defaultSkin, selectTheme())
+        val dialog = Dialog("", Scene2DSkin.defaultSkin, preferences.themeKey)
         dialog.pad(3f, 12f, 10f, 12f)
         dialog.buttonTable.apply {
             defaults().width(180f).pad(1f)
@@ -272,7 +271,7 @@ class GameScreen(val game: Game, private var preferences: GamePreferences) : Ktx
     private fun setTheme(useDarkTheme: Boolean): Boolean {
         if (preferences.useDarkTheme != useDarkTheme) {
             preferences.useDarkTheme = useDarkTheme
-            backgroundColor = if (useDarkTheme) Const.DARK_BACKGROUND else Const.LIGHT_BACKGROUND
+            backgroundColor = preferences.backgorundColor
             state.setTheme(useDarkTheme)
             preferences.save()
             setUi()
@@ -316,6 +315,4 @@ class GameScreen(val game: Game, private var preferences: GamePreferences) : Ktx
 
         Gdx.input.inputProcessor = stage
     }
-
-    private fun selectTheme(): String = if (preferences.useDarkTheme) "dark" else "light"
 }

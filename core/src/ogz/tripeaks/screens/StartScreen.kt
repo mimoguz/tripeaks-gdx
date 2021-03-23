@@ -47,7 +47,7 @@ class StartScreen(val game: Game) : KtxScreen {
                 TextButton(
                         game.assets[BundleAssets.Bundle].get("start"),
                         skin,
-                        if (preferences.useDarkTheme) "dark" else "light"
+                        preferences.themeKey
                 ).apply {
                     pad(6f, 8f, 5f, 8f)
                     addListener(object : ChangeListener() {
