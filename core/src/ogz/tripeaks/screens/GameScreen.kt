@@ -22,14 +22,15 @@ class GameScreen(val game: Game, private var preferences: GamePreferences) : Ktx
     private val bundle = game.assets[BundleAssets.Bundle]
     private val camera = OrthographicCamera()
     private val viewport = IntegerScalingViewport(
-            Const.CONTENT_WIDTH.toInt(),
-            Const.CONTENT_HEIGHT.toInt(),
-            camera
+        Const.CONTENT_WIDTH.toInt(),
+        Const.CONTENT_HEIGHT.toInt(),
+        camera
     )
     private val touchPoint = Vector3()
     private val stage = Stage(viewport)
     private var paused = false
-    private var backgroundColor = if (preferences.useDarkTheme) Const.DARK_BACKGROUND else Const.LIGHT_BACKGROUND
+    private var backgroundColor =
+        if (preferences.useDarkTheme) Const.DARK_BACKGROUND else Const.LIGHT_BACKGROUND
     private val state = GameState(game.assets, preferences.useDarkTheme, preferences.showAllCards)
     private var dealButton = Button()
     private var undoButton = Button()
@@ -46,8 +47,8 @@ class GameScreen(val game: Game, private var preferences: GamePreferences) : Ktx
             save()
         } else {
             Gdx.app.getPreferences(Const.SAVE_NAME)
-                    .putBoolean(Const.SAVE_VALID, false)
-                    .flush()
+                .putBoolean(Const.SAVE_VALID, false)
+                .flush()
 
         }
         super.pause()
@@ -120,12 +121,12 @@ class GameScreen(val game: Game, private var preferences: GamePreferences) : Ktx
     }
 
     private fun makeImageButton(
-            iconKey: String,
-            buttonWidth: Float,
-            buttonHeight: Float,
-            x: Float,
-            y: Float,
-            onChange: () -> Unit
+        iconKey: String,
+        buttonWidth: Float,
+        buttonHeight: Float,
+        x: Float,
+        y: Float,
+        onChange: () -> Unit
     ): Button {
         val button = Button(Scene2DSkin.defaultSkin, selectTheme())
         val icon = if (preferences.useDarkTheme) iconKey + "Dark" else iconKey
@@ -138,38 +139,38 @@ class GameScreen(val game: Game, private var preferences: GamePreferences) : Ktx
             setSize(buttonWidth, buttonHeight)
             setPosition(x, y)
             children.add(
-                    Image(SpriteDrawable(game.assets[TextureAtlasAssets.Ui].createSprite(icon))).apply {
-                        setPosition((buttonWidth - width) / 2f, (buttonHeight - height) / 2f)
-                        touchable = Touchable.disabled
-                    }
+                Image(SpriteDrawable(game.assets[TextureAtlasAssets.Ui].createSprite(icon))).apply {
+                    setPosition((buttonWidth - width) / 2f, (buttonHeight - height) / 2f)
+                    touchable = Touchable.disabled
+                }
             )
         }
         return button
     }
 
     private fun makeDialogButton(text: String, onChange: () -> Unit): TextButton =
-            TextButton(text, Scene2DSkin.defaultSkin, selectTheme()).apply {
-                pad(5f, 8f, 5f, 8f)
-                addListener(object : ChangeListener() {
-                    override fun changed(event: ChangeEvent?, actor: Actor?) {
-                        onChange()
-                    }
-                })
-            }
+        TextButton(text, Scene2DSkin.defaultSkin, selectTheme()).apply {
+            pad(5f, 8f, 5f, 8f)
+            addListener(object : ChangeListener() {
+                override fun changed(event: ChangeEvent?, actor: Actor?) {
+                    onChange()
+                }
+            })
+        }
 
     private fun makeDialogToggle(
-            text: String,
-            value: Boolean,
-            onChange: (checked: Boolean) -> Unit
+        text: String,
+        value: Boolean,
+        onChange: (checked: Boolean) -> Unit
     ): CheckBox =
-            CheckBox(text, Scene2DSkin.defaultSkin, selectTheme()).apply {
-                isChecked = value
-                addListener(object : ChangeListener() {
-                    override fun changed(event: ChangeEvent?, actor: Actor?) {
-                        onChange(this@apply.isChecked)
-                    }
-                })
-            }
+        CheckBox(text, Scene2DSkin.defaultSkin, selectTheme()).apply {
+            isChecked = value
+            addListener(object : ChangeListener() {
+                override fun changed(event: ChangeEvent?, actor: Actor?) {
+                    onChange(this@apply.isChecked)
+                }
+            })
+        }
 
     private fun save() {
         val preferences = Gdx.app.getPreferences(Const.SAVE_NAME)
@@ -181,18 +182,35 @@ class GameScreen(val game: Game, private var preferences: GamePreferences) : Ktx
     private fun showEndGameDialog() {
         val dialog = Dialog("", Scene2DSkin.defaultSkin, selectTheme())
         dialog.apply {
-            val message =
-                    bundle.format("fromStack", state.statKeeper.removedFromStack)  + "\n\n" +
-                    bundle.format("usedUndo", state.statKeeper.undoCount) + "\n\n" +
-                    bundle.format("longestChain", state.statKeeper.longestChain)
-
             buttonTable.pad(4f, 4f, 0f, 4f)
             buttonTable.defaults().width(110f)
             pad(16f, 24f, 16f, 24f)
             contentTable.apply {
                 add(Label(bundle.get("won"), Scene2DSkin.defaultSkin, selectTheme()))
                 row()
-                add(Label(message, Scene2DSkin.defaultSkin, selectTheme()))
+                add(
+                    Label(
+                        bundle.format("fromStack", state.statKeeper.removedFromStack),
+                        Scene2DSkin.defaultSkin,
+                        selectTheme()
+                    )
+                ).align(Align.left)
+                row()
+                add(
+                    Label(
+                        bundle.format("usedUndo", state.statKeeper.undoCount),
+                        Scene2DSkin.defaultSkin,
+                        selectTheme()
+                    )
+                ).align(Align.left)
+                row()
+                add(
+                    Label(
+                        bundle.format("longestChain", state.statKeeper.longestChain),
+                        Scene2DSkin.defaultSkin,
+                        selectTheme()
+                    )
+                ).align(Align.left)
             }
             buttonTable.add(makeDialogButton(bundle.get("newGame")) {
                 dialog.hide()
@@ -234,8 +252,8 @@ class GameScreen(val game: Game, private var preferences: GamePreferences) : Ktx
             }.apply { align(Align.left) })
             row()
             add(makeDialogButton(bundle.get("exit")) { Gdx.app.exit() }.apply { width = 140f })
-                    .align(Align.center)
-                    .padTop(18f)
+                .align(Align.center)
+                .padTop(18f)
         }
         paused = true
         dialog.show(stage)
@@ -268,32 +286,32 @@ class GameScreen(val game: Game, private var preferences: GamePreferences) : Ktx
         stage.clear()
 
         dealButton = makeImageButton(
-                "deal",
-                Const.SPRITE_WIDTH,
-                Const.SPRITE_HEIGHT,
-                Const.STACK_POSITION.x + Const.CELL_WIDTH * 2f,
-                Const.STACK_POSITION.y
+            "deal",
+            Const.SPRITE_WIDTH,
+            Const.SPRITE_HEIGHT,
+            Const.STACK_POSITION.x + Const.CELL_WIDTH * 2f,
+            Const.STACK_POSITION.y
         ) { state.deal() }
 
         undoButton = makeImageButton(
-                "undo",
-                Const.SPRITE_WIDTH,
-                Const.SPRITE_HEIGHT,
-                Const.DISCARD_POSITION.x - Const.CELL_WIDTH * 2f,
-                Const.DISCARD_POSITION.y
+            "undo",
+            Const.SPRITE_WIDTH,
+            Const.SPRITE_HEIGHT,
+            Const.DISCARD_POSITION.x - Const.CELL_WIDTH * 2f,
+            Const.DISCARD_POSITION.y
         ) { state.undo() }
 
         stage.actors.addAll(dealButton, undoButton)
 
         // The new game button
         stage.actors.add(
-                makeImageButton(
-                        "new",
-                        Const.SPRITE_WIDTH,
-                        Const.SPRITE_WIDTH,
-                        Const.CONTENT_WIDTH - Const.SPRITE_WIDTH - 2f,
-                        Const.CONTENT_HEIGHT - Const.SPRITE_WIDTH - Const.VERTICAL_PADDING - 3f
-                ) { showMenu() }
+            makeImageButton(
+                "new",
+                Const.SPRITE_WIDTH,
+                Const.SPRITE_WIDTH,
+                Const.CONTENT_WIDTH - Const.SPRITE_WIDTH - 2f,
+                Const.CONTENT_HEIGHT - Const.SPRITE_WIDTH - Const.VERTICAL_PADDING - 3f
+            ) { showMenu() }
         )
 
         Gdx.input.inputProcessor = stage
