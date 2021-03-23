@@ -149,7 +149,7 @@ class GameScreen(val game: Game, private var preferences: GamePreferences) : Ktx
 
     private fun makeDialogButton(text: String, onChange: () -> Unit): TextButton =
             TextButton(text, Scene2DSkin.defaultSkin, selectTheme()).apply {
-                pad(4f, 8f, 5f, 8f)
+                pad(5f, 8f, 5f, 8f)
                 addListener(object : ChangeListener() {
                     override fun changed(event: ChangeEvent?, actor: Actor?) {
                         onChange()
