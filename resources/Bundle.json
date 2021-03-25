@@ -1,0 +1,12 @@
+{
+    "darkTheme": "Use dark theme",
+    "exit": "Exit game",
+    "fromStack": "You took {n, plural, =0 {no cards} one {one card} other {# cards}} from the stack.",
+    "longestChain": "Your longest chain was {n, plural, =0 {zero cards} one {one card} other {# cards}}.",
+    "newGame": "Start new game",
+    "return": "Return to game",
+    "showAll": "Show all cards",
+    "start": "Start",
+    "usedUndo": "You {n, plural, =0 {didn't use undo at all} one {used undo once} two {used undo twice} other {used undo # times}}.",
+    "won": "You won!"
+}
