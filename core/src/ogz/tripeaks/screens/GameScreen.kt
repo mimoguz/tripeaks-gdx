@@ -149,7 +149,7 @@ class GameScreen(val game: Game, private var preferences: GamePreferences) : Ktx
 
     private fun makeDialogButton(text: String, onChange: () -> Unit): TextButton =
         TextButton(text, Scene2DSkin.defaultSkin, preferences.themeKey).apply {
-            pad(5f, 8f, 5f, 8f)
+            pad(3f, 8f, 4f, 8f)
             addListener(object : ChangeListener() {
                 override fun changed(event: ChangeEvent?, actor: Actor?) {
                     onChange()
@@ -224,9 +224,9 @@ class GameScreen(val game: Game, private var preferences: GamePreferences) : Ktx
 
     private fun showMenu() {
         val dialog = Dialog("", Scene2DSkin.defaultSkin, preferences.themeKey)
-        dialog.pad(3f, 12f, 10f, 12f)
+        dialog.pad(4f, 12f, 11f, 12f)
         dialog.buttonTable.apply {
-            defaults().width(180f).pad(1f)
+            defaults().width(180f).pad(0f)
             add(makeDialogButton(bundle.get("return")) {
                 dialog.hide()
                 paused = false
@@ -252,7 +252,7 @@ class GameScreen(val game: Game, private var preferences: GamePreferences) : Ktx
             row()
             add(makeDialogButton(bundle.get("exit")) { Gdx.app.exit() }.apply { width = 140f })
                 .align(Align.center)
-                .padTop(18f)
+                .padTop(19f)
         }
         paused = true
         dialog.show(stage)

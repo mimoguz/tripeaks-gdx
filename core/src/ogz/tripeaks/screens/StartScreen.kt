@@ -47,7 +47,7 @@ class StartScreen(val game: Game) : KtxScreen {
                 skin,
                 preferences.themeKey
             ).apply {
-                pad(6f, 8f, 5f, 8f)
+                pad(4f, 8f, 5f, 8f)
                 addListener(object : ChangeListener() {
                     override fun changed(event: ChangeEvent?, actor: Actor?) {
                         game.addScreen(GameScreen(game, preferences))
