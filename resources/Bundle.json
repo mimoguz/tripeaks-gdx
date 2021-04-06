@@ -4,6 +4,7 @@
     "fromStack": "You took {n, plural, =0 {no cards} one {one card} other {# cards}} from the stack.",
     "longestChain": "Your longest chain was {n, plural, =0 {zero cards} one {one card} other {# cards}}.",
     "newGame": "Start new game",
+    "newGameShort": "New game",
     "return": "Return to game",
     "showAll": "Show all cards",
     "start": "Start",
