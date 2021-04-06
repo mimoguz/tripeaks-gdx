@@ -5,6 +5,6 @@ Pre-solved games option is on the roadmap.
 - Version 0.20 added end game statistics.
 - Version 0.30 added a new game mode.
 - Version 0.40 added localization support*.
-- Version 0.41 added German translation.
+- Version 0.41 added German translation. Thanks!
 
 *I need help for translations. If you like to, please open an issue in the issue tracker.
