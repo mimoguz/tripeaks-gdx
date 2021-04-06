@@ -38,8 +38,8 @@ class GameScreen(val game: Game, private var preferences: GamePreferences) : Ktx
         if (!state.won) {
             save()
         }
-        super.dispose()
         stage.dispose()
+        super.dispose()
     }
 
     override fun pause() {
