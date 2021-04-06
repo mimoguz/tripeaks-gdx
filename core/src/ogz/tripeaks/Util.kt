@@ -37,8 +37,6 @@ object Util {
     fun getCellY(row: Int): Float =
             Const.CONTENT_HEIGHT - (row + 2) * Const.CELL_HEIGHT - Const.VERTICAL_PADDING
 
-    fun readDarkThemePreference() = Gdx.app.getPreferences(Const.PREFERENCES_NAME).getBoolean(Const.PREFERENCES_DARK_THEME, false)
-
     fun setPlateSprite(assets: AssetManager, sprite: Sprite, useDarkTheme: Boolean): Sprite {
         val key =  if (useDarkTheme) Const.SPRITE_PLATE_DARK else Const.SPRITE_PLATE_LIGHT
         setRegion(assets, sprite, key)
