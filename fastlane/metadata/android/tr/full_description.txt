@@ -6,3 +6,4 @@ Basit bir tri peaks (üç tepe) solitaire oyunu.
 - Versiyon 0.20'de oyun sonu istatistikleri eklendi.
 - Versiyon 0.30'da açık kartlar oyun modu eklendi.
 - Versiyon 0.40'ta yerelleştirme desteği eklendi.
+- Version 0.41'de Almanca çeviri eklendi.
