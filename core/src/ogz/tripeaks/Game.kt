@@ -21,6 +21,7 @@ open class Game : KtxGame<KtxScreen>() {
     override fun dispose() {
         batch.dispose()
         font.dispose()
+        assets.dispose()
         super.dispose()
     }
 }
