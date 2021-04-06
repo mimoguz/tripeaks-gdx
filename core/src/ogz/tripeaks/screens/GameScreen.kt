@@ -211,7 +211,7 @@ class GameScreen(val game: Game, private var preferences: GamePreferences) : Ktx
                     )
                 ).align(Align.left)
             }
-            buttonTable.add(makeDialogButton(bundle.get("newGame")) {
+            buttonTable.add(makeDialogButton(bundle.get("newGameShort")) {
                 dialog.hide()
                 paused = false
                 state.init()
