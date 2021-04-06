@@ -43,9 +43,6 @@ object Util {
         return sprite
     }
 
-    inline fun setFaceSprite(assets: AssetManager, sprite: Sprite, card: Card, useDarkTheme: Boolean = false): Sprite =
-            setFaceSprite(assets, sprite, card.suit, card.rank, useDarkTheme)
-
     fun setFaceSprite(assets: AssetManager, sprite: Sprite, suit: Suit, rank: Rank, useDarkTheme: Boolean = false): Sprite {
         val key = (if (useDarkTheme) Const.SPRITE_DARK_PREFIX else Const.SPRITE_LIGHT_PREFIX) + getSpriteName(suit, rank)
         setRegion(assets, sprite, key)
