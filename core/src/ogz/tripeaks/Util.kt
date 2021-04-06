@@ -62,9 +62,6 @@ object Util {
         return sprite
     }
 
-    inline fun setSideFaceSprite(assets: AssetManager, sprite: Sprite, card: Card, dark: Boolean = false): Sprite =
-        setSideFaceSprite(assets, sprite, card.suit, card.rank, dark)
-
     fun setRegion(assets: AssetManager, sprite: Sprite, key: String) {
         val region = assets[TextureAtlasAssets.Cards].findRegion(key)
         sprite.setRegion(region)
