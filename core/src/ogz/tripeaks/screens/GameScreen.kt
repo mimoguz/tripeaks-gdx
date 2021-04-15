@@ -49,7 +49,6 @@ class GameScreen(val game: Game, private var preferences: GamePreferences) : Ktx
             Gdx.app.getPreferences(Const.SAVE_NAME)
                 .putBoolean(Const.SAVE_VALID, false)
                 .flush()
-
         }
         super.pause()
     }
