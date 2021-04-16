@@ -1,6 +1,6 @@
 Basit bir tri peaks (üç tepe) solitaire oyunu.
 
-Şuan için oyunlar rastgele üretiliyor. Önceden çözülmüş oyun desteği yol haritasında.
+Şuan için oyunlar sadece rastgele üretiliyor. Önceden çözülmüş oyun desteği yol haritasında.
 
 - Versiyon 0.11'de karanlık tema eklendi.
 - Versiyon 0.20'de oyun sonu istatistikleri eklendi.

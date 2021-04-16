@@ -1,5 +1,6 @@
-A tri peaks solitaire game. Currently only has randomly generated games.
-Pre-solved games option is on the roadmap.
+A tri peaks solitaire game.
+
+Currently only has randomly generated games. Pre-solved games option is on the roadmap.
 
 - Version 0.11 added the dark mode.
 - Version 0.20 added end game statistics.
