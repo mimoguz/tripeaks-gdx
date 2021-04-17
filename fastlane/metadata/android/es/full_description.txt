@@ -1,0 +1,3 @@
+Un juego de solitario tri peaks.
+
+Por ahora solo cuenta con juegos generados aleatoriamente. Una opción de juegos pre-resueltos está planeada para el futuro.

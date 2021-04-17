@@ -17,6 +17,7 @@ import ktx.scene2d.Scene2DSkin
 import ogz.tripeaks.*
 import ogz.tripeaks.data.GamePreferences
 import ogz.tripeaks.views.GameState
+import java.util.*
 
 class GameScreen(val game: Game, private var preferences: GamePreferences) : KtxScreen {
     private val bundle = game.assets[BundleAssets.Bundle]
@@ -183,7 +184,12 @@ class GameScreen(val game: Game, private var preferences: GamePreferences) : Ktx
         dialog.apply {
             buttonTable.pad(4f, 4f, 0f, 4f)
             buttonTable.defaults().width(110f)
-            pad(16f, 24f, 16f, 24f)
+            // TODO: Fix for all locales
+            if (bundle.locale.toString().toLowerCase(Locale.US) == "es") {
+                pad(16f, 4f, 16f, 4f)
+            } else {
+                pad(16f, 24f, 16f, 24f)
+            }
             contentTable.apply {
                 add(Label(bundle.get("won"), Scene2DSkin.defaultSkin, preferences.themeKey))
                 row()
