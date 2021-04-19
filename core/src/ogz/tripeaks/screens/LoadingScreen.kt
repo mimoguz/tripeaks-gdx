@@ -1,11 +1,15 @@
 package ogz.tripeaks.screens
 
 import com.badlogic.gdx.graphics.OrthographicCamera
+import com.badlogic.gdx.graphics.g2d.BitmapFont
+import com.badlogic.gdx.scenes.scene2d.ui.Skin
+import com.badlogic.gdx.utils.ObjectMap
 import ktx.app.KtxScreen
 import ktx.graphics.use
 import ktx.scene2d.Scene2DSkin
 import ktx.style.*
 import ogz.tripeaks.*
+import ogz.tripeaks.data.SkinData
 
 class LoadingScreen(val game: Game) : KtxScreen {
     private val camera = OrthographicCamera()
@@ -29,112 +33,86 @@ class LoadingScreen(val game: Game) : KtxScreen {
         }
 
         if (game.assets.isFinished) {
-            setDefaultSkin()
-            game.addScreen(StartScreen(game))
+            val skins = buildSkins()
+            Scene2DSkin.defaultSkin = skins["default"].skin
+            game.addScreen(StartScreen(game, skins))
             game.setScreen<StartScreen>()
             game.removeScreen<LoadingScreen>()
             dispose()
         }
     }
 
-    private fun setDefaultSkin() {
-        Scene2DSkin.defaultSkin =
-                skin(game.assets[TextureAtlasAssets.Ui]) { skin ->
-                    color("light", 242f / 255f, 204f / 255f, 143f / 255f, 1f)
-                    color("dark", 76f / 255f, 56f / 255f, 77f / 255f, 1f)
-                    label {
-                        font = game.assets[FontAssets.GameFont]
-                        fontColor = skin["dark"]
-                    }
-                    label("light", extend = defaultStyle)
-                    label("dark", extend = defaultStyle) {
-                        fontColor = skin["light"]
-                    }
-                    label("cjk", extend = defaultStyle) {
-                        font = game.assets[FontAssets.UnifontCjk16]
-                    }
-                    label("lightCjk", extend = "cjk")
-                    label("darkCjk", extend = "cjk") {
-                        fontColor = skin["light"]
-                    }
-                    button {
-                        up = skin["buttonUp"]
-                        down = skin["buttonDown"]
-                        disabled = skin["buttonDisabled"]
-                        pressedOffsetY = -1f
-                    }
-                    button("light", extend = defaultStyle)
-                    button("dark", extend = defaultStyle) {
-                        up = skin["buttonUpDark"]
-                        down = skin["buttonDownDark"]
-                        disabled = skin["buttonDisabledDark"]
-                    }
-                    textButton {
-                        up = skin["buttonUp"]
-                        down = skin["buttonDown"]
-                        disabled = skin["buttonDisabled"]
-                        font = game.assets[FontAssets.GameFont]
-                        fontColor = skin["dark"]
-                        pressedOffsetY = -1f
-                    }
-                    textButton("light", extend = defaultStyle)
-                    textButton("dark", extend = defaultStyle) {
-                        up = skin["buttonUpDark"]
-                        down = skin["buttonDownDark"]
-                        disabled = skin["buttonDisabledDark"]
-                        fontColor = skin["light"]
-                    }
-                    textButton("cjk", extend = defaultStyle) {
-                        font = game.assets[FontAssets.UnifontCjk16]
-                    }
-                    textButton("lightCjk", extend = "cjk")
-                    textButton("darkCjk", extend = "cjk") {
-                        up = skin["buttonUpDark"]
-                        down = skin["buttonDownDark"]
-                        disabled = skin["buttonDisabledDark"]
-                        fontColor = skin["light"]
-                    }
-                    window {
-                        titleFont = game.assets[FontAssets.GameFont]
-                        titleFontColor = skin["dark"]
-                        background = skin["window"]
-                    }
-                    window("light", extend = defaultStyle)
-                    window("dark", extend = defaultStyle) {
-                        titleFontColor = skin["light"]
-                        background = skin["windowDark"]
-                    }
-                    window("cjk", extend = defaultStyle) {
-                        titleFont = game.assets[FontAssets.UnifontCjk16]
-                    }
-                    window("lightCjk", extend = "cjk")
-                    window("darkCjk", extend = "cjk") {
-                        titleFontColor = skin["light"]
-                        background = skin["windowDark"]
-                    }
-                    checkBox {
-                        checkboxOn = skin["checkboxOnLight"]
-                        checkboxOff = skin["checkboxOffLight"]
-                        font = game.assets[FontAssets.GameFont]
-                        fontColor = skin["dark"]
-                    }
-                    checkBox("light", extend = defaultStyle)
-                    checkBox(name = "dark", extend = defaultStyle) {
-                        checkboxOn = skin["checkboxOnDark"]
-                        checkboxOff = skin["checkboxOffDark"]
-                        fontColor = skin["light"]
-                    }
-                    checkBox("cjk", extend = defaultStyle) {
-                        font = game.assets[FontAssets.UnifontCjk16]
-                    }
-                    checkBox("lightCjk", extend = "cjk")
-                    checkBox(name = "darkCjk", extend = "cjk") {
-                        checkboxOn = skin["checkboxOnDark"]
-                        checkboxOff = skin["checkboxOffDark"]
-                        fontColor = skin["light"]
-                    }
-                }
+    private fun buildSkins(): ObjectMap<String, SkinData> {
+        val default = makeCommonSkin(game.assets[FontAssets.GameFont])
+        val cjk = makeCommonSkin(game.assets[FontAssets.UnifontCjk16])
+        return ObjectMap<String, SkinData>(2).apply {
+            put("default", SkinData(default, 3f, 4f, 19f, 2f))
+            put("cjk", SkinData(cjk, -1f, 4f, 7f, 4f))
+        }
     }
+
+    private fun makeCommonSkin(skinFont: BitmapFont): Skin =
+        skin(game.assets[TextureAtlasAssets.Ui]) { skin ->
+            color("light", 242f / 255f, 204f / 255f, 143f / 255f, 1f)
+            color("dark", 76f / 255f, 56f / 255f, 77f / 255f, 1f)
+            label {
+                font = skinFont
+                fontColor = skin["dark"]
+            }
+            label("light", extend = defaultStyle)
+            label("dark", extend = defaultStyle) {
+                fontColor = skin["light"]
+            }
+            button {
+                up = skin["buttonUp"]
+                down = skin["buttonDown"]
+                disabled = skin["buttonDisabled"]
+                pressedOffsetY = -1f
+            }
+            button("light", extend = defaultStyle)
+            button("dark", extend = defaultStyle) {
+                up = skin["buttonUpDark"]
+                down = skin["buttonDownDark"]
+                disabled = skin["buttonDisabledDark"]
+            }
+            textButton {
+                up = skin["buttonUp"]
+                down = skin["buttonDown"]
+                disabled = skin["buttonDisabled"]
+                font = skinFont
+                fontColor = skin["dark"]
+                pressedOffsetY = -1f
+            }
+            textButton("light", extend = defaultStyle)
+            textButton("dark", extend = defaultStyle) {
+                up = skin["buttonUpDark"]
+                down = skin["buttonDownDark"]
+                disabled = skin["buttonDisabledDark"]
+                fontColor = skin["light"]
+            }
+            window {
+                titleFont = skinFont
+                titleFontColor = skin["dark"]
+                background = skin["window"]
+            }
+            window("light", extend = defaultStyle)
+            window("dark", extend = defaultStyle) {
+                titleFontColor = skin["light"]
+                background = skin["windowDark"]
+            }
+            checkBox {
+                checkboxOn = skin["checkboxOnLight"]
+                checkboxOff = skin["checkboxOffLight"]
+                font = skinFont
+                fontColor = skin["dark"]
+            }
+            checkBox("light", extend = defaultStyle)
+            checkBox(name = "dark", extend = defaultStyle) {
+                checkboxOn = skin["checkboxOnDark"]
+                checkboxOff = skin["checkboxOffDark"]
+                fontColor = skin["light"]
+            }
+        }
 
     override fun resize(width: Int, height: Int) {
         viewport.update(width, height)

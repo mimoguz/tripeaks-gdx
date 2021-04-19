@@ -7,12 +7,15 @@ import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener
+import com.badlogic.gdx.utils.ObjectMap
 import ktx.app.KtxScreen
 import ktx.scene2d.Scene2DSkin
 import ogz.tripeaks.*
 import ogz.tripeaks.data.GamePreferences
+import ogz.tripeaks.data.SkinData
 
-class StartScreen(val game: Game) : KtxScreen {
+class StartScreen(private val game: Game, private val skins: ObjectMap<String, SkinData>) :
+    KtxScreen {
 
     private val stage = Stage(
         IntegerScalingViewport(
@@ -50,7 +53,7 @@ class StartScreen(val game: Game) : KtxScreen {
                 pad(4f, 8f, 5f, 8f)
                 addListener(object : ChangeListener() {
                     override fun changed(event: ChangeEvent?, actor: Actor?) {
-                        game.addScreen(GameScreen(game, preferences))
+                        game.addScreen(GameScreen(game, preferences, skins))
                         game.setScreen<GameScreen>()
                         game.removeScreen<StartScreen>()
                         dispose()
