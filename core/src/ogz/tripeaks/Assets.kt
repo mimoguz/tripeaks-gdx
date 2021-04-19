@@ -17,7 +17,8 @@ fun AssetManager.load(asset: TextureAtlasAssets) = load<TextureAtlas>(asset.path
 operator fun AssetManager.get(asset: TextureAtlasAssets) = getAsset<TextureAtlas>(asset.path)
 
 enum class FontAssets(val path: String) {
-    GameFont("fonts/gamefont.fnt")
+    GameFont("fonts/gamefont_proportional.fnt"),
+    UnifontCjk16("fonts/unifont_cjk16.fnt"),
 }
 
 fun AssetManager.load(asset: FontAssets) = load<BitmapFont>(asset.path)

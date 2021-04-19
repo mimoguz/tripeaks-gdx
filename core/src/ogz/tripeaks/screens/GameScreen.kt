@@ -19,6 +19,8 @@ import ogz.tripeaks.data.GamePreferences
 import ogz.tripeaks.views.GameState
 import java.util.*
 
+// TODO: Handle locale dependent metrics better. Currently Chinese layout is just too hacky.
+
 class GameScreen(val game: Game, private var preferences: GamePreferences) : KtxScreen {
     private val bundle = game.assets[BundleAssets.Bundle]
     private val camera = OrthographicCamera()
@@ -148,28 +150,38 @@ class GameScreen(val game: Game, private var preferences: GamePreferences) : Ktx
         return button
     }
 
-    private fun makeDialogButton(text: String, onChange: () -> Unit): TextButton =
-        TextButton(text, Scene2DSkin.defaultSkin, preferences.themeKey).apply {
-            pad(3f, 8f, 4f, 8f)
+    private fun makeDialogButton(
+        text: String,
+        theme: String,
+        padding: Padding,
+        onChange: () -> Unit
+    ): TextButton {
+
+        return TextButton(text, Scene2DSkin.defaultSkin, theme).apply {
+            pad(padding.top, padding.left, padding.bottom, padding.right)
             addListener(object : ChangeListener() {
                 override fun changed(event: ChangeEvent?, actor: Actor?) {
                     onChange()
                 }
             })
         }
+    }
 
     private fun makeDialogToggle(
         text: String,
         value: Boolean,
+        theme: String,
+        padding: Padding,
         onChange: (checked: Boolean) -> Unit
     ): CheckBox =
-        CheckBox(text, Scene2DSkin.defaultSkin, preferences.themeKey).apply {
+        CheckBox(text, Scene2DSkin.defaultSkin, theme).apply {
             isChecked = value
             addListener(object : ChangeListener() {
                 override fun changed(event: ChangeEvent?, actor: Actor?) {
                     onChange(this@apply.isChecked)
                 }
             })
+            imageCell.padTop(padding.checkBoxTop)
         }
 
     private fun save() {
@@ -180,24 +192,28 @@ class GameScreen(val game: Game, private var preferences: GamePreferences) : Ktx
     }
 
     private fun showEndGameDialog() {
-        val dialog = Dialog("", Scene2DSkin.defaultSkin, preferences.themeKey)
+        val theme = preferences.themeKey +
+                if (bundle.locale.toString().toLowerCase(Locale.US) == "zh_cn") "Cjk" else ""
+        val padding = if (bundle.locale.toString().toLowerCase(Locale.US) == "zh_cn") Padding(
+            -1f,
+            8f,
+            4f,
+            8f,
+            4f
+        ) else Padding(3f, 8f, 4f, 8f, 1f)
+        val dialog = Dialog("", Scene2DSkin.defaultSkin, theme)
         dialog.apply {
             buttonTable.pad(4f, 4f, 0f, 4f)
             buttonTable.defaults().width(110f)
-            // TODO: Fix for all locales
-            if (bundle.locale.toString().toLowerCase(Locale.US) == "es") {
-                pad(16f, 4f, 16f, 4f)
-            } else {
-                pad(16f, 24f, 16f, 24f)
-            }
+            pad(16f, 24f, 16f, 24f)
             contentTable.apply {
-                add(Label(bundle.get("won"), Scene2DSkin.defaultSkin, preferences.themeKey))
+                add(Label(bundle.get("won"), Scene2DSkin.defaultSkin, theme))
                 row()
                 add(
                     Label(
                         bundle.format("fromStack", state.statKeeper.removedFromStack),
                         Scene2DSkin.defaultSkin,
-                        preferences.themeKey
+                        theme
                     )
                 ).align(Align.left)
                 row()
@@ -205,7 +221,7 @@ class GameScreen(val game: Game, private var preferences: GamePreferences) : Ktx
                     Label(
                         bundle.format("usedUndo", state.statKeeper.undoCount),
                         Scene2DSkin.defaultSkin,
-                        preferences.themeKey
+                        theme
                     )
                 ).align(Align.left)
                 row()
@@ -213,52 +229,78 @@ class GameScreen(val game: Game, private var preferences: GamePreferences) : Ktx
                     Label(
                         bundle.format("longestChain", state.statKeeper.longestChain),
                         Scene2DSkin.defaultSkin,
-                        preferences.themeKey
+                        theme
                     )
                 ).align(Align.left)
             }
-            buttonTable.add(makeDialogButton(bundle.get("newGameShort")) {
+            buttonTable.add(makeDialogButton(bundle.get("newGameShort"), theme, padding) {
                 dialog.hide()
                 paused = false
                 state.init()
             })
-            buttonTable.add(makeDialogButton(bundle.get("exit")) { Gdx.app.exit() })
+            buttonTable.add(makeDialogButton(bundle.get("exit"), theme, padding) { Gdx.app.exit() })
         }
         paused = true
         dialog.show(stage)
     }
 
     private fun showMenu() {
-        val dialog = Dialog("", Scene2DSkin.defaultSkin, preferences.themeKey)
+        val theme = preferences.themeKey +
+                if (bundle.locale.toString().toLowerCase(Locale.US) == "zh_cn") "Cjk" else ""
+        val padding = if (bundle.locale.toString().toLowerCase(Locale.US) == "zh_cn") Padding(
+            -1f,
+            8f,
+            4f,
+            8f,
+            4f
+        ) else Padding(3f, 8f, 4f, 8f, 1f)
+        val dialog = Dialog("", Scene2DSkin.defaultSkin, theme)
         dialog.pad(4f, 12f, 11f, 12f)
         dialog.buttonTable.apply {
             defaults().width(180f).pad(0f)
-            add(makeDialogButton(bundle.get("return")) {
+            add(makeDialogButton(bundle.get("return"), theme, padding) {
                 dialog.hide()
                 paused = false
             })
             row()
-            add(makeDialogButton(bundle.get("newGame")) {
+            add(makeDialogButton(bundle.get("newGame"), theme, padding) {
                 paused = false
                 state.init()
                 dialog.hide()
             })
             row()
-            add(makeDialogToggle(" " + bundle.get("darkTheme"), preferences.useDarkTheme) { value ->
-                setTheme(value)
-                paused = false
-                dialog.hide()
-            }.apply { align(Align.left) })
+            add(
+                makeDialogToggle(
+                    " " + bundle.get("darkTheme"),
+                    preferences.useDarkTheme,
+                    theme,
+                    padding
+                ) { value ->
+                    setTheme(value)
+                    paused = false
+                    dialog.hide()
+                }.apply { align(Align.left) })
             row()
-            add(makeDialogToggle(" " + bundle.get("showAll"), preferences.showAllCards) { value ->
-                setShowAllCards(value)
-                paused = false
-                dialog.hide()
-            }.apply { align(Align.left) })
+            add(
+                makeDialogToggle(
+                    " " + bundle.get("showAll"),
+                    preferences.showAllCards,
+                    theme,
+                    padding
+                ) { value ->
+                    setShowAllCards(value)
+                    paused = false
+                    dialog.hide()
+                }.apply { align(Align.left) })
             row()
-            add(makeDialogButton(bundle.get("exit")) { Gdx.app.exit() }.apply { width = 140f })
+            add(
+                makeDialogButton(
+                    bundle.get("exit"),
+                    theme,
+                    padding
+                ) { Gdx.app.exit() }.apply { width = 140f })
                 .align(Align.center)
-                .padTop(19f)
+                .padTop(if (bundle.locale.toString().toLowerCase(Locale.US) == "zh_cn") 7f else 19f)
         }
         paused = true
         dialog.show(stage)
@@ -321,4 +363,12 @@ class GameScreen(val game: Game, private var preferences: GamePreferences) : Ktx
 
         Gdx.input.inputProcessor = stage
     }
+
+    private data class Padding(
+        val top: Float,
+        val left: Float,
+        val bottom: Float,
+        val right: Float,
+        val checkBoxTop: Float
+    )
 }

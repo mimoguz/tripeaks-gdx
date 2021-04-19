@@ -46,8 +46,15 @@ class LoadingScreen(val game: Game) : KtxScreen {
                         font = game.assets[FontAssets.GameFont]
                         fontColor = skin["dark"]
                     }
-                    label("light", extend = defaultStyle) {}
+                    label("light", extend = defaultStyle)
                     label("dark", extend = defaultStyle) {
+                        fontColor = skin["light"]
+                    }
+                    label("cjk", extend = defaultStyle) {
+                        font = game.assets[FontAssets.UnifontCjk16]
+                    }
+                    label("lightCjk", extend = "cjk")
+                    label("darkCjk", extend = "cjk") {
                         fontColor = skin["light"]
                     }
                     button {
@@ -56,7 +63,7 @@ class LoadingScreen(val game: Game) : KtxScreen {
                         disabled = skin["buttonDisabled"]
                         pressedOffsetY = -1f
                     }
-                    button("light", extend = defaultStyle) {}
+                    button("light", extend = defaultStyle)
                     button("dark", extend = defaultStyle) {
                         up = skin["buttonUpDark"]
                         down = skin["buttonDownDark"]
@@ -70,8 +77,18 @@ class LoadingScreen(val game: Game) : KtxScreen {
                         fontColor = skin["dark"]
                         pressedOffsetY = -1f
                     }
-                    textButton("light", extend = defaultStyle) {}
+                    textButton("light", extend = defaultStyle)
                     textButton("dark", extend = defaultStyle) {
+                        up = skin["buttonUpDark"]
+                        down = skin["buttonDownDark"]
+                        disabled = skin["buttonDisabledDark"]
+                        fontColor = skin["light"]
+                    }
+                    textButton("cjk", extend = defaultStyle) {
+                        font = game.assets[FontAssets.UnifontCjk16]
+                    }
+                    textButton("lightCjk", extend = "cjk")
+                    textButton("darkCjk", extend = "cjk") {
                         up = skin["buttonUpDark"]
                         down = skin["buttonDownDark"]
                         disabled = skin["buttonDisabledDark"]
@@ -82,8 +99,16 @@ class LoadingScreen(val game: Game) : KtxScreen {
                         titleFontColor = skin["dark"]
                         background = skin["window"]
                     }
-                    window("light", extend = defaultStyle) {}
+                    window("light", extend = defaultStyle)
                     window("dark", extend = defaultStyle) {
+                        titleFontColor = skin["light"]
+                        background = skin["windowDark"]
+                    }
+                    window("cjk", extend = defaultStyle) {
+                        titleFont = game.assets[FontAssets.UnifontCjk16]
+                    }
+                    window("lightCjk", extend = "cjk")
+                    window("darkCjk", extend = "cjk") {
                         titleFontColor = skin["light"]
                         background = skin["windowDark"]
                     }
@@ -95,6 +120,15 @@ class LoadingScreen(val game: Game) : KtxScreen {
                     }
                     checkBox("light", extend = defaultStyle)
                     checkBox(name = "dark", extend = defaultStyle) {
+                        checkboxOn = skin["checkboxOnDark"]
+                        checkboxOff = skin["checkboxOffDark"]
+                        fontColor = skin["light"]
+                    }
+                    checkBox("cjk", extend = defaultStyle) {
+                        font = game.assets[FontAssets.UnifontCjk16]
+                    }
+                    checkBox("lightCjk", extend = "cjk")
+                    checkBox(name = "darkCjk", extend = "cjk") {
                         checkboxOn = skin["checkboxOnDark"]
                         checkboxOff = skin["checkboxOffDark"]
                         fontColor = skin["light"]
