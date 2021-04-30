@@ -1,0 +1,3 @@
+Basit bir tri peaks (üç tepe) solitaire oyunu.
+
+Şuan için oyunlar sadece rastgele üretiliyor. Önceden çözülmüş oyun desteği yol haritasında.
