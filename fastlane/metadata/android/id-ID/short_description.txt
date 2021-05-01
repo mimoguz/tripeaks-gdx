@@ -1,1 +1,1 @@
-Bir tri peaks solitaire oyunu.
+Permainan solitaire tiga puncak.

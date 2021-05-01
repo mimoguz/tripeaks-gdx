@@ -1,3 +1,3 @@
-Basit bir tri peaks (üç tepe) solitaire oyunu.
+Permainan solitaire tiga puncak sumber terbuka.
 
-Şuan için oyunlar sadece rastgele üretiliyor. Önceden çözülmüş oyun desteği yol haritasında.
+Saat ini hanya ada permainan yang dihasilkan secara acak. Opsi permainan yang sudah diselesaikan sebelumnya sedang direncanakan.

@@ -284,7 +284,7 @@ class GameScreen(
                     bundle.get("exit"),
                 ) { Gdx.app.exit() }.apply { width = 140f })
                 .align(Align.center)
-                .padTop(if (bundle.locale.toString().toLowerCase(Locale.US) == "zh_cn") 7f else 19f)
+                .padTop(skins[bundle.get("skinKey")].exitButtonTopMargin)
         }
         paused = true
         dialog.show(stage)

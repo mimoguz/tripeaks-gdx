@@ -46,7 +46,7 @@ class StartScreen(private val game: Game, private val skins: ObjectMap<String, S
             },
 
             TextButton(
-                game.assets[BundleAssets.Bundle].get("start"),
+                game.assets[BundleAssets.Bundle].get("start") + "(${java.util.Locale.getDefault().toLanguageTag()})",
                 skin,
                 preferences.themeKey
             ).apply {
