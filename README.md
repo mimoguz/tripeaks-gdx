@@ -17,14 +17,10 @@ A simple tri peaks solitaire game using [libGDX](https://libgdx.com/).
 ### Currently available in
 * English
 * German
+* Indonesian
 * Russian
+* Simplified Chinese
 * Spanish
 * Turkish
-* Simplified Chinese
-
-### Work in progress
-* Indonesian
 
 *I need help for translations. If you like to, please open an issue in the issue tracker.
-
-
