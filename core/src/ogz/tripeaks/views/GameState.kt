@@ -69,6 +69,10 @@ class GameState(
     }
 
     fun deal(): Card? {
+        if (Const.DEBUG) {
+            assert(stack.size + discard.size + peaks.size == 52)
+        }
+
         if (stack.isEmpty()) {
             return null
         }
@@ -82,6 +86,10 @@ class GameState(
     }
 
     fun undo(): Card? {
+        if (Const.DEBUG) {
+            assert(stack.size + discard.size + peaks.size == 52)
+        }
+
         if (discard.count() <= 1) {
             return null
         }
@@ -114,6 +122,10 @@ class GameState(
     }
 
     fun touch(x: Float, y: Float) {
+        if (Const.DEBUG) {
+            assert(stack.size + discard.size + peaks.size == 52)
+        }
+
         val cellX = (x / Const.CELL_WIDTH).toInt()
         val cellY = ((Const.CONTENT_HEIGHT - Const.VERTICAL_PADDING - y) / Const.CELL_HEIGHT).toInt()
         for (column in (cellX - 1)..cellX) {
@@ -148,20 +160,14 @@ class GameState(
     }
 
     override fun update(delta: Float) {
-        for (anim in animations) {
-            anim.update(delta)
-        }
+        animations.forEach { it.update(delta) }
     }
 
     override fun draw(batch: SpriteBatch) {
-        for (row in rows.iterator()) {
-            for (cardView in row.iterator()) {
-                cardView.draw(batch)
-            }
+        rows.forEach { row ->
+            row.forEach { it.draw(batch) }
         }
-        for (anim in animations) {
-            anim.draw(batch)
-        }
+        animations.forEach { it.draw(batch) }
         discardView.draw(batch)
         stackView.draw(batch)
     }
@@ -177,19 +183,16 @@ class GameState(
         if (showAllCards != show) {
             showAllCards = show
             stackView.setShowAllCards(show)
-            for (row in rows.iterator()) {
-                for (view in row) {
-                    view.setAlwaysShow(show)
-                }
+            rows.forEach { row ->
+                row.forEach { it.setAlwaysShow(show) }
             }
         }
-
     }
 
     fun save(save: Preferences) {
         save.putString(Const.SAVE_STACK, collectionString(stack))
         save.putString(Const.SAVE_DISCARD, collectionString(discard))
-        save.putString(Const.SAVE_PEAKS, collectionString(peaks.values()))
+        save.putString(Const.SAVE_PEAKS, collectionString(IntMap.Entries<Card>(peaks).map { it.value }))
         save.flush()
         statKeeper.save(save)
     }
@@ -232,7 +235,7 @@ class GameState(
 
     private fun resetCollections() {
         rows.forEach { row -> row.forEach { it?.let { cardViewPool(it) } } }
-        peaks.values().forEach { cardsPool(it) }
+        peaks.forEach { cardsPool(it.value) }
         stack.forEach { cardsPool(it) }
         discard.forEach { cardsPool(it) }
         animations.forEach { outAnimationPool(it) }
