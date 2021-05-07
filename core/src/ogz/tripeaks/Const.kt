@@ -27,7 +27,6 @@ object Const {
     const val SEPARATOR = ", "
     const val SIDE_FACE_X = 21f
     const val SPRITE_CARD_BACK = "card_back"
-    const val SPRITE_CARD_BACK_SLICE = "card_back_slice"
     const val SPRITE_DARK_PREFIX = "dark_"
     const val SPRITE_HEIGHT = 37f
     const val SPRITE_LIGHT_PREFIX = "light_"
@@ -40,5 +39,5 @@ object Const {
     val DISCARD_POSITION = Vector2(CELL_WIDTH * 2f + 1f, VERTICAL_PADDING)
     val DARK_BACKGROUND: Color = Color.valueOf("232433ff")
     val LIGHT_BACKGROUND: Color = Color.valueOf("63a347ff")
-    const val DEBUG: Boolean = true
+    const val DEBUG: Boolean = false
 }

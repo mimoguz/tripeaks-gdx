@@ -1,12 +1,13 @@
 package ogz.tripeaks.views
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
+import ktx.collections.GdxArray
 import ogz.tripeaks.*
 import ogz.tripeaks.data.Card
 import java.util.*
 
 class StackView(
-        private val stack: Stack<Card>,
+        private val stack: GdxArray<Card>,
         private val spriteCollection: SpriteCollection,
         private var showAllCards: Boolean
 ) : View {

@@ -3,10 +3,11 @@ package ogz.tripeaks.views
 import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
+import ktx.collections.GdxArray
 import ogz.tripeaks.*
 import ogz.tripeaks.data.Card
 
-class DiscardView(private val discard: java.util.Stack<Card>, private val spriteCollection: SpriteCollection)
+class DiscardView(private val discard: GdxArray<Card>, private val spriteCollection: SpriteCollection)
     : View {
 
     override fun draw(batch: SpriteBatch) {

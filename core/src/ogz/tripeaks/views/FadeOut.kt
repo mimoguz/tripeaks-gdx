@@ -51,4 +51,7 @@ class FadeOut(private val spriteCollection: SpriteCollection) : View, Dynamic {
 
         }
     }
+
+    override fun equals(other: Any?): Boolean =
+        other is FadeOut && (this.card?.equals(other.card) ?: false)
 }

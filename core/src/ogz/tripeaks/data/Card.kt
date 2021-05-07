@@ -24,8 +24,6 @@ class Card {
         return this
     }
 
-    inline fun getSpriteName() = Util.getSpriteName(suit, rank)
-
     fun areConsecutive(other: Card): Boolean {
         val distance = abs(rank.ordinal - other.rank.ordinal)
         return distance == 1 || distance == 12
@@ -49,6 +47,8 @@ class Card {
         return this
     }
 
-    override fun equals(other: Any?): Boolean = other !is Card || (other.rank == rank && other.suit == suit)
+    override fun equals(other: Any?): Boolean = other is Card && (other.rank == rank && other.suit == suit)
+
+    override fun hashCode(): Int = Pair(suit, rank).hashCode()
 }
 

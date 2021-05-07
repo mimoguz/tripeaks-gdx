@@ -11,7 +11,6 @@ class SpriteCollection(private val assets: AssetManager, useDarkTheme: Boolean) 
     val sideFaceList = GdxArray.with(*Array(52, { Sprite() }))
     val plate = Sprite()
     val back = Sprite()
-    val slicedBack = Sprite()
     init { set(useDarkTheme) }
 
     fun set(useDarkTheme: Boolean) {
@@ -22,7 +21,6 @@ class SpriteCollection(private val assets: AssetManager, useDarkTheme: Boolean) 
                 Util.setSideFaceSprite(assets, sideFaceList[idx], suit, rank, useDarkTheme)
                 Util.setPlateSprite(assets, plate, useDarkTheme)
                 Util.setRegion(assets, back, Const.SPRITE_CARD_BACK)
-                Util.setRegion(assets, slicedBack, Const.SPRITE_CARD_BACK_SLICE)
             }
         }
     }

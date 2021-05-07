@@ -12,16 +12,18 @@ import ogz.tripeaks.*
 import ogz.tripeaks.data.Card
 import ogz.tripeaks.data.Source
 import ogz.tripeaks.data.StatKeeper
+import java.lang.IllegalStateException
 import java.util.*
+import kotlin.collections.HashSet
 
 class GameState(
-        assets: AssetManager,
-        private var useDarkTheme: Boolean,
-        private var showAllCards: Boolean
+    assets: AssetManager,
+    private var useDarkTheme: Boolean,
+    private var showAllCards: Boolean
 ) : View, Dynamic {
 
-    private val stack = Stack<Card>()
-    private val discard = Stack<Card>()
+    private val stack = GdxArray<Card>()
+    private val discard = GdxArray<Card>()
     private val peaks = IntMap<Card>()
     private val spriteCollection = SpriteCollection(assets, useDarkTheme)
     val statKeeper = StatKeeper()
@@ -30,12 +32,17 @@ class GameState(
     private val cardViewPool = pool { CardView(spriteCollection) }
     private val outAnimationPool = pool { FadeOut(spriteCollection) }
 
-    private val rows = GdxArray<GdxArray<CardView>>()
+    private val rows: GdxArray<GdxArray<CardView>> = GdxArray.with(
+        GdxArray(),
+        GdxArray(),
+        GdxArray(),
+        GdxArray()
+    )
     private val animations = GdxArray<FadeOut>()
     private val discardView by lazy { DiscardView(discard, spriteCollection) }
     private val stackView by lazy { StackView(stack, spriteCollection, showAllCards) }
 
-    val canDeal: Boolean get() = stack.isNotEmpty()
+    val canDeal: Boolean get() = !stack.isEmpty
     val canUndo: Boolean get() = discard.size > 1
     val won: Boolean get() = peaks.isEmpty
 
@@ -49,37 +56,47 @@ class GameState(
                 when (column.value) {
                     Table.OPEN_CARD_SYMBOL, Table.CLOSED_CARD_SYMBOL -> {
                         val info = deck.pop()
-                        val source = Source.Cell(column.index, row.index)
-                        val card = cardsPool().set(info.suit, info.rank, source, column.value == Table.OPEN_CARD_SYMBOL)
-                        val view = cardViewPool().set(card, Util.getCellX(column.index), Util.getCellY(row.index), showAllCards)
+                        val cell = Source.Cell(column.index, row.index)
+                        val card = cardsPool().set(
+                            info.suit,
+                            info.rank,
+                            cell,
+                            column.value == Table.OPEN_CARD_SYMBOL
+                        )
+                        val view = cardViewPool().set(
+                            card,
+                            Util.getCellX(column.index),
+                            Util.getCellY(row.index),
+                            showAllCards
+                        )
                         rows[row.index].add(view)
-                        peaks[Util.getIndex(source.column, source.row)] = card
+                        peaks.put(cell, card)
                     }
                 }
             }
         }
 
         val discarded = deck.pop()
-        discard.push(cardsPool().set(discarded.suit, discarded.rank, Source.Stack, true))
+        discard.add(cardsPool().set(discarded.suit, discarded.rank, Source.Stack, true))
 
         for (i in 0..22) {
             val info = deck.pop()
-            stack.push(cardsPool().set(info.suit, info.rank, Source.Stack, false))
+            stack.add(cardsPool().set(info.suit, info.rank, Source.Stack, false))
         }
     }
 
     fun deal(): Card? {
         if (Const.DEBUG) {
-            assert(stack.size + discard.size + peaks.size == 52)
+            checkUnique()
         }
 
-        if (stack.isEmpty()) {
+        if (stack.isEmpty) {
             return null
         }
 
         val card = stack.pop()
         card.isOpen = true
-        discard.push(card)
+        discard.add(card)
         statKeeper.takeFromStack()
 
         return card
@@ -87,7 +104,7 @@ class GameState(
 
     fun undo(): Card? {
         if (Const.DEBUG) {
-            assert(stack.size + discard.size + peaks.size == 52)
+            checkUnique()
         }
 
         if (discard.count() <= 1) {
@@ -99,20 +116,22 @@ class GameState(
         when (val source = card.source) {
             is Source.Stack -> {
                 card.isOpen = false
-                stack.push(card)
+                stack.add(card)
                 statKeeper.backToStack()
             }
 
             is Source.Cell -> {
-                peaks[Util.getIndex(source)] = card
-                val view = cardViewPool().set(card, Util.getCellX(source.column), Util.getCellY(source.row), showAllCards)
+                peaks.put(source, card)
+                val view = cardViewPool().set(
+                    card,
+                    Util.getCellX(source.column),
+                    Util.getCellY(source.row),
+                    showAllCards
+                )
                 rows[source.row].add(view)
 
-                val leftUp = Util.getIndex(source.column - 1, source.row - 1)
-                peaks[leftUp, null]?.let { it.isOpen = false }
-
-                val rightUp = Util.getIndex(source.column + 1, source.row - 1)
-                peaks[rightUp, null]?.let { it.isOpen = false }
+                peaks.at(source.column - 1, source.row - 1)?.let { it.isOpen = false }
+                peaks.at(source.column + 1, source.row - 1)?.let { it.isOpen = false }
 
                 statKeeper.backToPeaks()
             }
@@ -123,33 +142,39 @@ class GameState(
 
     fun touch(x: Float, y: Float) {
         if (Const.DEBUG) {
-            assert(stack.size + discard.size + peaks.size == 52)
+            checkUnique()
         }
 
         val cellX = (x / Const.CELL_WIDTH).toInt()
-        val cellY = ((Const.CONTENT_HEIGHT - Const.VERTICAL_PADDING - y) / Const.CELL_HEIGHT).toInt()
+        val cellY =
+            ((Const.CONTENT_HEIGHT - Const.VERTICAL_PADDING - y) / Const.CELL_HEIGHT).toInt()
         for (column in (cellX - 1)..cellX) {
             for (row in (cellY - 1)..cellY) {
                 val cell = Util.getIndex(column, row)
-                if (peaks[cell, null]?.isOpen == true) {
-                    if (peaks[cell]?.areConsecutive(discard.peek()) != true) {
+                if (peaks.at(cell)?.isOpen == true) {
+                    if (peaks.at(cell)?.areConsecutive(discard.peek()) != true) {
                         return
                     }
                     val card = peaks.remove(cell)!!
-                    val view = rows[row].find { drawable ->
-                        drawable?.card?.equals(card) ?: false
-                    }!!
-                    rows[row].removeValue(view, true)
+                    val view = rows[row].find { it.card?.equals(card) ?: false }!!
+                    rows[row].removeValue(view, false)
                     cardViewPool(view)
-                    animations.add(outAnimationPool().set(card, Util.getCellX(column), Util.getCellY(row), ::whenOutAnimationFinished))
-                    discard.push(card)
+                    animations.add(
+                        outAnimationPool().set(
+                            card,
+                            Util.getCellX(column),
+                            Util.getCellY(row),
+                            ::whenOutAnimationFinished
+                        )
+                    )
+                    discard.add(card)
 
                     // Flip upper neighbors if they are clear.
                     if (isClear(column - 1, row - 1)) {
-                        peaks[Util.getIndex(column - 1, row - 1), null]?.let { it.isOpen = true }
+                        peaks.at(column - 1, row - 1)?.let { it.isOpen = true }
                     }
                     if (isClear(column + 1, row - 1)) {
-                        peaks[Util.getIndex(column + 1, row - 1), null]?.let { it.isOpen = true }
+                        peaks.at(column + 1, row - 1)?.let { it.isOpen = true }
                     }
 
                     statKeeper.takeFromPeaks()
@@ -192,7 +217,10 @@ class GameState(
     fun save(save: Preferences) {
         save.putString(Const.SAVE_STACK, collectionString(stack))
         save.putString(Const.SAVE_DISCARD, collectionString(discard))
-        save.putString(Const.SAVE_PEAKS, collectionString(IntMap.Entries<Card>(peaks).map { it.value }))
+        save.putString(
+            Const.SAVE_PEAKS,
+            collectionString(IntMap.Entries<Card>(peaks).map { it.value })
+        )
         save.flush()
         statKeeper.save(save)
     }
@@ -206,8 +234,13 @@ class GameState(
         for (str in savedPeaks) {
             val card = cardsPool().read(str)
             (card.source as? Source.Cell)?.let { cell ->
-                peaks[Util.getIndex(cell)] = card
-                val view = cardViewPool().set(card, Util.getCellX(cell.column), Util.getCellY(cell.row), showAllCards)
+                peaks.put(cell, card)
+                val view = cardViewPool().set(
+                    card,
+                    Util.getCellX(cell.column),
+                    Util.getCellY(cell.row),
+                    showAllCards
+                )
                 rows[cell.row].add(view)
             }
         }
@@ -215,15 +248,15 @@ class GameState(
         statKeeper.load(save)
     }
 
-    private fun readStack(text: String, collection: Stack<Card>) {
+    private fun readStack(text: String, collection: GdxArray<Card>) {
         val savedStack = text.split(Const.SEPARATOR)
         for (str in savedStack) {
-            collection.push(cardsPool().read(str))
+            collection.add(cardsPool().read(str))
         }
     }
 
     private fun whenOutAnimationFinished(anim: FadeOut) {
-        animations.removeValue(anim, true)
+        animations.removeValue(anim, false)
         outAnimationPool(anim)
     }
 
@@ -234,22 +267,28 @@ class GameState(
     }
 
     private fun resetCollections() {
-        rows.forEach { row -> row.forEach { it?.let { cardViewPool(it) } } }
+        rows.forEach { row -> row.forEach { cardViewPool(it) } }
         peaks.forEach { cardsPool(it.value) }
         stack.forEach { cardsPool(it) }
         discard.forEach { cardsPool(it) }
         animations.forEach { outAnimationPool(it) }
 
-        rows.clear()
+        rows.forEach { it.clear() }
         stack.clear()
         discard.clear()
         animations.clear()
-
-        for (layer in 0 until 4) {
-            rows.add(GdxArray())
-        }
     }
 
+    private fun checkUnique() {
+        val set = HashSet<Card>().apply {
+            addAll(stack)
+            addAll(discard)
+            addAll(IntMap.Entries<Card>(peaks).map { it.value })
+        }
+        if (set.size != 52) throw IllegalStateException("Missing or duplicate cards!")
+    }
+
+    @Suppress("NOTHING_TO_INLINE", "unused")
     companion object {
         fun collectionString(collection: Iterable<Card?>): String {
             val joiner = StringJoiner(Const.SEPARATOR)
@@ -257,6 +296,21 @@ class GameState(
                 card?.let { joiner.add(it.write()) }
             }
             return joiner.toString()
+        }
+
+        inline fun IntMap<Card>.at(column: Int, row: Int): Card? =
+            this[Util.getIndex(column, row), null]
+
+        inline fun IntMap<Card>.at(cell: Source.Cell): Card? = this[Util.getIndex(cell), null]
+
+        inline fun IntMap<Card>.at(key: Int): Card? = this[key, null]
+
+        inline fun IntMap<Card>.put(column: Int, row: Int, card: Card) {
+            this[Util.getIndex(column, row)] = card
+        }
+
+        inline fun IntMap<Card>.put(cell: Source.Cell, card: Card) {
+            this[Util.getIndex(cell)] = card
         }
     }
 }

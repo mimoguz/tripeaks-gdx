@@ -2,7 +2,10 @@ package ogz.tripeaks.views
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.math.Vector2
-import ogz.tripeaks.*
+import ogz.tripeaks.Const
+import ogz.tripeaks.SpriteCollection
+import ogz.tripeaks.Util
+import ogz.tripeaks.View
 import ogz.tripeaks.data.Card
 
 class CardView(private val spriteCollection: SpriteCollection) : View {
@@ -32,15 +35,19 @@ class CardView(private val spriteCollection: SpriteCollection) : View {
         if (card == null) {
             return
         }
-        batch.draw(spriteCollection.plate , position.x, position.y)
+        batch.draw(spriteCollection.plate, position.x, position.y)
         if (card!!.isOpen || alwaysShow) {
             batch.draw(
-                    spriteCollection.faceList[Util.getSpriteIndex(card!!)] ,
-                    position.x + Const.FACE_X,
-                    position.y + Const.FACE_Y
+                spriteCollection.faceList[Util.getSpriteIndex(card!!)],
+                position.x + Const.FACE_X,
+                position.y + Const.FACE_Y
             )
         } else {
             batch.draw(spriteCollection.back, position.x, position.y)
         }
     }
+
+    override fun equals(other: Any?): Boolean =
+        other is CardView && (this.card?.equals(other.card) ?: false)
+
 }
