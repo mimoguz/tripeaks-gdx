@@ -1,7 +1,5 @@
 package ogz.tripeaks.views
 
-import com.badlogic.gdx.assets.AssetManager
-import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.math.Vector2
 import ogz.tripeaks.*
@@ -15,7 +13,7 @@ class FadeOut(private val spriteCollection: SpriteCollection) : View, Dynamic {
     private var card: Card? = null
     private val originalPosition = Vector2()
 
-    fun set(card: Card, x: Float, y: Float, finished: (anim: FadeOut) -> Unit,): FadeOut {
+    fun set(card: Card, x: Float, y: Float, finished: (anim: FadeOut) -> Unit): FadeOut {
         alpha = 1f
         acc = 0f
         position.set(x, y)
@@ -48,10 +46,11 @@ class FadeOut(private val spriteCollection: SpriteCollection) : View, Dynamic {
             face.setPosition(position.x + Const.FACE_X, position.y + Const.FACE_Y)
             face.draw(batch, alpha)
             face.setPosition(originalPosition.x, originalPosition.y)
-
         }
     }
 
     override fun equals(other: Any?): Boolean =
         other is FadeOut && (this.card?.equals(other.card) ?: false)
+
+    override fun hashCode(): Int = card?.hashCode() ?: 0
 }

@@ -7,6 +7,7 @@ import com.badlogic.gdx.utils.IntMap
 import ktx.assets.invoke
 import ktx.assets.pool
 import ktx.collections.GdxArray
+import ktx.collections.GdxSet
 import ktx.collections.set
 import ogz.tripeaks.*
 import ogz.tripeaks.data.Card
@@ -38,7 +39,7 @@ class GameState(
         GdxArray(),
         GdxArray()
     )
-    private val animations = GdxArray<FadeOut>()
+    private val animations = GdxSet<FadeOut>()
     private val discardView by lazy { DiscardView(discard, spriteCollection) }
     private val stackView by lazy { StackView(stack, spriteCollection, showAllCards) }
 
@@ -256,7 +257,7 @@ class GameState(
     }
 
     private fun whenOutAnimationFinished(anim: FadeOut) {
-        animations.removeValue(anim, false)
+        animations.remove(anim)
         outAnimationPool(anim)
     }
 

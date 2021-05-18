@@ -8,6 +8,7 @@ import ogz.tripeaks.Util
 import ogz.tripeaks.View
 import ogz.tripeaks.data.Card
 
+@Suppress("MemberVisibilityCanBePrivate", "unused")
 class CardView(private val spriteCollection: SpriteCollection) : View {
     var card: Card? = null
     private val position: Vector2 = Vector2()
@@ -50,4 +51,5 @@ class CardView(private val spriteCollection: SpriteCollection) : View {
     override fun equals(other: Any?): Boolean =
         other is CardView && (this.card?.equals(other.card) ?: false)
 
+    override fun hashCode(): Int = card?.hashCode() ?: 0
 }
