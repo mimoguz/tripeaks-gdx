@@ -39,5 +39,4 @@ object Const {
     val DISCARD_POSITION = Vector2(CELL_WIDTH * 2f + 1f, VERTICAL_PADDING)
     val DARK_BACKGROUND: Color = Color.valueOf("232433ff")
     val LIGHT_BACKGROUND: Color = Color.valueOf("63a347ff")
-    const val DEBUG: Boolean = true
 }

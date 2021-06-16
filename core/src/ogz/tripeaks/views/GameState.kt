@@ -87,10 +87,6 @@ class GameState(
     }
 
     fun deal(): Card? {
-        if (Const.DEBUG) {
-            checkUnique()
-        }
-
         if (stack.isEmpty) {
             return null
         }
@@ -104,10 +100,6 @@ class GameState(
     }
 
     fun undo(): Card? {
-        if (Const.DEBUG) {
-            checkUnique()
-        }
-
         if (discard.count() <= 1) {
             return null
         }
@@ -142,10 +134,6 @@ class GameState(
     }
 
     fun touch(x: Float, y: Float) {
-        if (Const.DEBUG) {
-            checkUnique()
-        }
-
         val cellX = (x / Const.CELL_WIDTH).toInt()
         val cellY =
             ((Const.CONTENT_HEIGHT - Const.VERTICAL_PADDING - y) / Const.CELL_HEIGHT).toInt()
@@ -278,15 +266,6 @@ class GameState(
         stack.clear()
         discard.clear()
         animations.clear()
-    }
-
-    private fun checkUnique() {
-        val set = HashSet<Card>().apply {
-            addAll(stack)
-            addAll(discard)
-            addAll(IntMap.Entries<Card>(peaks).map { it.value })
-        }
-        if (set.size != 52) throw IllegalStateException("Missing or duplicate cards!")
     }
 
     @Suppress("NOTHING_TO_INLINE", "unused")
