@@ -1,6 +1,4 @@
-A tri peaks solitaire game.
-
-Currently only has randomly generated games. Pre-solved games option is on the roadmap.
+An open-source tri peaks solitaire game. Currently only has randomly generated games
 
 - Version 0.11 added the dark mode.
 - Version 0.20 added end game statistics.
@@ -11,5 +9,6 @@ Currently only has randomly generated games. Pre-solved games option is on the r
 - Version 0.43 added Spanish translation. Thanks!
 - Version 0.44 added Chinese translation. Thanks!
 - Version 0.45 added Indonesian translation. Thanks!
+- Version 0.46 added Brazilian Portuguese translation. Thanks!
 
 *I need help for translations. If you like to, please open an issue in the issue tracker.
