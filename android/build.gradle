@@ -19,8 +19,8 @@ android {
         applicationId "ogz.tripeaks"
         minSdkVersion 24
         targetSdkVersion 30
-        versionCode 12
-        versionName "0.46"
+        versionCode 13
+        versionName "0.46.1"
     }
     buildTypes {
         release {
