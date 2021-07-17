@@ -10,6 +10,6 @@ An open-source tri peaks solitaire game. Currently only has randomly generated g
 - Version 0.44 added Chinese translation. Thanks!
 - Version 0.45 added Indonesian translation. Thanks!
 - Version 0.46 added Brazilian Portuguese translation. Thanks!
-- Version 0.46.1 fixed the apk packaging issue.
+- Version 0.46.2 is the second fix release for the apk packaging issue.
 
 *I need help for translations. If you like to, please open an issue in the issue tracker.
