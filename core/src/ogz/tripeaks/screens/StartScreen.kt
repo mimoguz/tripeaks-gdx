@@ -1,59 +1,47 @@
 package ogz.tripeaks.screens
 
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.graphics.OrthographicCamera
+import com.badlogic.gdx.assets.AssetManager
+import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener
-import com.badlogic.gdx.utils.ObjectMap
+import com.badlogic.gdx.utils.viewport.Viewport
 import ktx.app.KtxScreen
 import ktx.scene2d.Scene2DSkin
 import ogz.tripeaks.*
-import ogz.tripeaks.data.GamePreferences
-import ogz.tripeaks.data.SkinData
+import ogz.tripeaks.util.GamePreferences
+import ogz.tripeaks.util.SkinData
 
-class StartScreen(private val game: Game, private val skins: ObjectMap<String, SkinData>) :
+class StartScreen(
+    private val game: Game,
+    private val assets: AssetManager,
+    private val viewport: Viewport,
+    private val batch: Batch,
+    private val skinData: SkinData,
+    private val preferences: GamePreferences
+) :
     KtxScreen {
 
-    private val stage = Stage(
-        IntegerScalingViewport(
-            Const.CONTENT_WIDTH.toInt(),
-            Const.CONTENT_HEIGHT.toInt(),
-            OrthographicCamera()
-        )
-    )
-
-    override fun dispose() {
-        stage.dispose()
-    }
-
-    override fun render(delta: Float) {
-        stage.act(delta)
-        stage.draw()
-    }
+    private val stage = Stage(viewport)
 
     override fun show() {
-        val preferences = GamePreferences().load()
         val skin = Scene2DSkin.defaultSkin
         val image =
-            if (preferences.useDarkTheme) game.assets[TextureAssets.DarkTitle] else game.assets[TextureAssets.LightTitle]
+            if (preferences.useDarkTheme) assets[TextureAssets.DarkTitle] else assets[TextureAssets.LightTitle]
         stage.actors.add(
             Image(image).apply {
                 setSize(300f, 168f)
                 setPosition(0f, 0f)
             },
 
-            TextButton(
-                game.assets[BundleAssets.Bundle].get("start"),
-                skin,
-                preferences.themeKey
-            ).apply {
-                pad(4f, 8f, 5f, 8f)
+            TextButton(assets[BundleAssets.Bundle].get("start"), skin, preferences.themeKey).apply {
+                pad(skinData.buttonPadTop, 8f, skinData.buttonPadBottom, 8f)
                 addListener(object : ChangeListener() {
                     override fun changed(event: ChangeEvent?, actor: Actor?) {
-                        game.addScreen(GameScreen(game, preferences, skins))
+                        game.addScreen(GameScreen(game, assets, viewport, batch, preferences, skinData))
                         game.setScreen<GameScreen>()
                         game.removeScreen<StartScreen>()
                         dispose()
@@ -72,5 +60,14 @@ class StartScreen(private val game: Game, private val skins: ObjectMap<String, S
 
     override fun resize(width: Int, height: Int) {
         stage.viewport.update(width, height)
+    }
+
+    override fun render(delta: Float) {
+        stage.act(delta)
+        stage.draw()
+    }
+
+    override fun dispose() {
+        stage.dispose()
     }
 }

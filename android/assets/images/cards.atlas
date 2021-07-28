@@ -32,1456 +32,1456 @@ card_light
   orig: 27, 37
   offset: 0, 0
   index: -1
-dark_club_01
+dark_card_01
   rotate: false
   xy: 473, 201
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-dark_club_02
+dark_card_02
   rotate: false
   xy: 237, 170
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-dark_club_03
+dark_card_03
   rotate: false
   xy: 77, 46
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-dark_club_04
+dark_card_04
   rotate: false
   xy: 217, 201
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-dark_club_05
+dark_card_05
   rotate: false
   xy: 141, 46
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-dark_club_06
+dark_card_06
   rotate: false
   xy: 61, 170
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-dark_club_07
+dark_card_07
   rotate: false
   xy: 1, 125
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-dark_club_08
+dark_card_08
   rotate: false
   xy: 125, 108
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-dark_club_09
+dark_card_09
   rotate: false
   xy: 345, 201
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-dark_club_10
+dark_card_10
   rotate: false
   xy: 189, 108
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-dark_club_11
+dark_card_11
   rotate: false
   xy: 93, 139
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-dark_club_12
+dark_card_12
   rotate: false
   xy: 105, 201
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-dark_club_13
+dark_card_13
   rotate: false
   xy: 173, 170
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-dark_diamond_01
+dark_card_14
   rotate: false
   xy: 189, 170
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-dark_diamond_02
+dark_card_15
   rotate: false
   xy: 31, 39
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-dark_diamond_03
+dark_card_16
   rotate: false
   xy: 189, 15
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-dark_diamond_04
+dark_card_17
   rotate: false
   xy: 109, 77
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-dark_diamond_05
+dark_card_18
   rotate: false
   xy: 329, 201
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-dark_diamond_06
+dark_card_19
   rotate: false
   xy: 173, 77
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-dark_diamond_07
+dark_card_20
   rotate: false
   xy: 77, 108
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-dark_diamond_08
+dark_card_21
   rotate: false
   xy: 1, 32
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-dark_diamond_09
+dark_card_22
   rotate: false
   xy: 157, 139
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-dark_diamond_10
+dark_card_23
   rotate: false
   xy: 457, 201
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-dark_diamond_11
+dark_card_24
   rotate: false
   xy: 221, 139
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-dark_diamond_12
+dark_card_25
   rotate: false
   xy: 61, 15
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-dark_diamond_13
+dark_card_26
   rotate: false
   xy: 201, 201
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-dark_heart_01
+dark_card_27
   rotate: false
   xy: 233, 201
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-dark_heart_02
+dark_card_28
   rotate: false
   xy: 157, 77
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-dark_heart_03
+dark_card_29
   rotate: false
   xy: 77, 170
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-dark_heart_04
+dark_card_30
   rotate: false
   xy: 57, 201
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-dark_heart_05
+dark_card_31
   rotate: false
   xy: 93, 15
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-dark_heart_06
+dark_card_32
   rotate: false
   xy: 393, 201
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-dark_heart_07
+dark_card_33
   rotate: false
   xy: 173, 46
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-dark_heart_08
+dark_card_34
   rotate: false
   xy: 109, 139
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-dark_heart_09
+dark_card_35
   rotate: false
   xy: 169, 201
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-dark_heart_10
+dark_card_36
   rotate: false
   xy: 125, 46
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-dark_heart_11
+dark_card_37
   rotate: false
   xy: 45, 163
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-dark_heart_12
+dark_card_38
   rotate: false
   xy: 205, 77
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-dark_heart_13
+dark_card_39
   rotate: false
   xy: 125, 139
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-dark_spade_01
+dark_card_40
   rotate: false
   xy: 93, 108
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-dark_spade_02
+dark_card_41
   rotate: false
   xy: 153, 201
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-dark_spade_03
+dark_card_42
   rotate: false
   xy: 173, 139
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-dark_spade_04
+dark_card_43
   rotate: false
   xy: 31, 70
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-dark_spade_05
+dark_card_44
   rotate: false
   xy: 253, 170
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-dark_spade_06
+dark_card_45
   rotate: false
   xy: 93, 46
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-dark_spade_07
+dark_card_46
   rotate: false
   xy: 313, 201
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-dark_spade_08
+dark_card_47
   rotate: false
   xy: 157, 46
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-dark_spade_09
+dark_card_48
   rotate: false
   xy: 61, 77
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-dark_spade_10
+dark_card_49
   rotate: false
   xy: 89, 201
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-dark_spade_11
+dark_card_50
   rotate: false
   xy: 141, 108
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-dark_spade_12
+dark_card_51
   rotate: false
   xy: 441, 201
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-dark_spade_13
+dark_card_52
   rotate: false
   xy: 205, 108
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-light_club_01
+light_card_01
   rotate: false
   xy: 221, 170
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-light_club_02
+light_card_02
   rotate: false
   xy: 77, 77
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-light_club_03
+light_card_03
   rotate: false
   xy: 121, 201
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-light_club_04
+light_card_04
   rotate: false
   xy: 157, 108
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-light_club_05
+light_card_05
   rotate: false
   xy: 31, 132
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-light_club_06
+light_card_06
   rotate: false
   xy: 237, 139
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-light_club_07
+light_card_07
   rotate: false
   xy: 77, 15
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-light_club_08
+light_card_08
   rotate: false
   xy: 297, 201
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-light_club_09
+light_card_09
   rotate: false
   xy: 141, 15
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-light_club_10
+light_card_10
   rotate: false
   xy: 61, 108
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-light_club_11
+light_card_11
   rotate: false
   xy: 73, 201
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-light_club_12
+light_card_12
   rotate: false
   xy: 125, 77
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-light_club_13
+light_card_13
   rotate: false
   xy: 425, 201
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-light_diamond_01
+light_card_14
   rotate: false
   xy: 61, 139
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-light_diamond_02
+light_card_15
   rotate: false
   xy: 29, 163
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-light_diamond_03
+light_card_16
   rotate: false
   xy: 157, 170
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-light_diamond_04
+light_card_17
   rotate: false
   xy: 377, 201
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-light_diamond_05
+light_card_18
   rotate: false
   xy: 157, 15
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-light_diamond_06
+light_card_19
   rotate: false
   xy: 61, 46
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-light_diamond_07
+light_card_20
   rotate: false
   xy: 137, 201
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-light_diamond_08
+light_card_21
   rotate: false
   xy: 141, 77
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-light_diamond_09
+light_card_22
   rotate: false
   xy: 31, 101
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-light_diamond_10
+light_card_23
   rotate: false
   xy: 173, 15
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-light_diamond_11
+light_card_24
   rotate: false
   xy: 93, 77
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-light_diamond_12
+light_card_25
   rotate: false
   xy: 249, 201
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-light_diamond_13
+light_card_26
   rotate: false
   xy: 173, 108
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-light_heart_01
+light_card_27
   rotate: false
   xy: 1, 1
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-light_heart_02
+light_card_28
   rotate: false
   xy: 109, 15
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-light_heart_03
+light_card_29
   rotate: false
   xy: 489, 201
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-light_heart_04
+light_card_30
   rotate: false
   xy: 189, 46
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-light_heart_05
+light_card_31
   rotate: false
   xy: 109, 108
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-light_heart_06
+light_card_32
   rotate: false
   xy: 265, 201
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-light_heart_07
+light_card_33
   rotate: false
   xy: 189, 139
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-light_heart_08
+light_card_34
   rotate: false
   xy: 77, 139
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-light_heart_09
+light_card_35
   rotate: false
   xy: 1, 63
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-light_heart_10
+light_card_36
   rotate: false
   xy: 141, 139
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-light_heart_11
+light_card_37
   rotate: false
   xy: 361, 201
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-light_heart_12
+light_card_38
   rotate: false
   xy: 205, 139
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-light_heart_13
+light_card_39
   rotate: false
   xy: 109, 170
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-light_spade_01
+light_card_40
   rotate: false
   xy: 93, 170
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-light_spade_02
+light_card_41
   rotate: false
   xy: 1, 94
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-light_spade_03
+light_card_42
   rotate: false
   xy: 109, 46
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-light_spade_04
+light_card_43
   rotate: false
   xy: 409, 201
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-light_spade_05
+light_card_44
   rotate: false
   xy: 189, 77
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-light_spade_06
+light_card_45
   rotate: false
   xy: 125, 170
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-light_spade_07
+light_card_46
   rotate: false
   xy: 185, 201
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-light_spade_08
+light_card_47
   rotate: false
   xy: 125, 15
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-light_spade_09
+light_card_48
   rotate: false
   xy: 31, 8
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-light_spade_10
+light_card_49
   rotate: false
   xy: 221, 108
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-light_spade_11
+light_card_50
   rotate: false
   xy: 141, 170
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-light_spade_12
+light_card_51
   rotate: false
   xy: 281, 201
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-light_spade_13
+light_card_52
   rotate: false
   xy: 205, 170
   size: 15, 30
   orig: 15, 30
   offset: 0, 0
   index: -1
-small_dark_diamond_01
+small_dark_card_14
   rotate: false
   xy: 24, 118
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_dark_heart_01
+small_dark_card_27
   rotate: false
   xy: 24, 118
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_dark_diamond_03
+small_dark_card_16
   rotate: false
   xy: 269, 163
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_dark_heart_03
+small_dark_card_29
   rotate: false
   xy: 269, 163
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_dark_diamond_06
+small_dark_card_19
   rotate: false
   xy: 47, 49
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_dark_heart_06
+small_dark_card_32
   rotate: false
   xy: 47, 49
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_dark_diamond_09
+small_dark_card_22
   rotate: false
   xy: 505, 194
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_dark_heart_09
+small_dark_card_35
   rotate: false
   xy: 505, 194
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_dark_diamond_11
+small_dark_card_24
   rotate: false
   xy: 205, 39
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_dark_heart_11
+small_dark_card_37
   rotate: false
   xy: 205, 39
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_dark_heart_02
+small_dark_card_28
   rotate: false
   xy: 276, 163
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_dark_diamond_02
+small_dark_card_15
   rotate: false
   xy: 276, 163
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_dark_heart_04
+small_dark_card_30
   rotate: false
   xy: 360, 163
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_dark_diamond_04
+small_dark_card_17
   rotate: false
   xy: 360, 163
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_dark_heart_05
+small_dark_card_31
   rotate: false
   xy: 54, 87
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_dark_diamond_05
+small_dark_card_18
   rotate: false
   xy: 54, 87
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_dark_heart_07
+small_dark_card_33
   rotate: false
   xy: 304, 163
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_dark_diamond_07
+small_dark_card_20
   rotate: false
   xy: 304, 163
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_dark_heart_08
+small_dark_card_34
   rotate: false
   xy: 17, 80
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_dark_diamond_08
+small_dark_card_21
   rotate: false
   xy: 17, 80
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_dark_heart_10
+small_dark_card_36
   rotate: false
   xy: 219, 39
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_dark_diamond_10
+small_dark_card_23
   rotate: false
   xy: 219, 39
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_dark_heart_12
+small_dark_card_38
   rotate: false
   xy: 332, 163
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_dark_diamond_12
+small_dark_card_25
   rotate: false
   xy: 332, 163
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_dark_heart_13
+small_dark_card_39
   rotate: false
   xy: 24, 42
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_dark_diamond_13
+small_dark_card_26
   rotate: false
   xy: 24, 42
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_dark_spade_01
+small_dark_card_40
   rotate: false
   xy: 17, 118
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_dark_club_01
+small_dark_card_01
   rotate: false
   xy: 17, 118
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_dark_spade_02
+small_dark_card_41
   rotate: false
   xy: 388, 163
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_dark_club_02
+small_dark_card_02
   rotate: false
   xy: 388, 163
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_dark_spade_03
+small_dark_card_42
   rotate: false
   xy: 237, 101
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_dark_club_03
+small_dark_card_03
   rotate: false
   xy: 237, 101
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_dark_spade_04
+small_dark_card_43
   rotate: false
   xy: 451, 163
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_dark_club_04
+small_dark_card_04
   rotate: false
   xy: 451, 163
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_dark_spade_05
+small_dark_card_44
   rotate: false
   xy: 339, 163
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_dark_club_05
+small_dark_card_05
   rotate: false
   xy: 339, 163
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_dark_spade_06
+small_dark_card_45
   rotate: false
   xy: 47, 125
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_dark_club_06
+small_dark_card_06
   rotate: false
   xy: 47, 125
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_dark_spade_07
+small_dark_card_46
   rotate: false
   xy: 409, 163
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_dark_club_07
+small_dark_card_07
   rotate: false
   xy: 409, 163
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_dark_spade_08
+small_dark_card_47
   rotate: false
   xy: 283, 163
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_dark_club_08
+small_dark_card_08
   rotate: false
   xy: 283, 163
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_dark_spade_09
+small_dark_card_48
   rotate: false
   xy: 472, 163
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_dark_club_09
+small_dark_card_09
   rotate: false
   xy: 472, 163
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_dark_spade_10
+small_dark_card_49
   rotate: false
   xy: 367, 163
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_dark_club_10
+small_dark_card_10
   rotate: false
   xy: 367, 163
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_dark_spade_11
+small_dark_card_50
   rotate: false
   xy: 47, 11
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_dark_club_11
+small_dark_card_11
   rotate: false
   xy: 47, 11
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_dark_spade_12
+small_dark_card_51
   rotate: false
   xy: 430, 163
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_dark_club_12
+small_dark_card_12
   rotate: false
   xy: 430, 163
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_dark_spade_13
+small_dark_card_52
   rotate: false
   xy: 311, 163
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_dark_club_13
+small_dark_card_13
   rotate: false
   xy: 311, 163
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_light_club_01
+small_light_card_01
   rotate: false
   xy: 458, 163
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_light_spade_01
+small_light_card_40
   rotate: false
   xy: 458, 163
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_light_club_02
+small_light_card_02
   rotate: false
   xy: 346, 163
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_light_spade_02
+small_light_card_41
   rotate: false
   xy: 346, 163
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_light_club_03
+small_light_card_03
   rotate: false
   xy: 47, 87
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_light_spade_03
+small_light_card_42
   rotate: false
   xy: 47, 87
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_light_club_04
+small_light_card_04
   rotate: false
   xy: 416, 163
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_light_spade_04
+small_light_card_43
   rotate: false
   xy: 416, 163
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_light_club_05
+small_light_card_05
   rotate: false
   xy: 290, 163
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_light_spade_05
+small_light_card_44
   rotate: false
   xy: 290, 163
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_light_club_07
+small_light_card_07
   rotate: false
   xy: 374, 163
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_light_spade_07
+small_light_card_46
   rotate: false
   xy: 374, 163
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_light_club_08
+small_light_card_08
   rotate: false
   xy: 54, 49
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_light_spade_08
+small_light_card_47
   rotate: false
   xy: 54, 49
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_light_club_09
+small_light_card_09
   rotate: false
   xy: 437, 163
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_light_spade_09
+small_light_card_48
   rotate: false
   xy: 437, 163
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_light_club_10
+small_light_card_10
   rotate: false
   xy: 318, 163
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_light_spade_10
+small_light_card_49
   rotate: false
   xy: 318, 163
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_light_club_11
+small_light_card_11
   rotate: false
   xy: 17, 42
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_light_spade_11
+small_light_card_50
   rotate: false
   xy: 17, 42
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_light_club_12
+small_light_card_12
   rotate: false
   xy: 395, 163
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_light_spade_12
+small_light_card_51
   rotate: false
   xy: 395, 163
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_light_club_13
+small_light_card_13
   rotate: false
   xy: 244, 101
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_light_spade_13
+small_light_card_52
   rotate: false
   xy: 244, 101
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_light_diamond_08
+small_light_card_21
   rotate: false
   xy: 17, 4
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_light_heart_08
+small_light_card_34
   rotate: false
   xy: 17, 4
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_light_heart_01
+small_light_card_27
   rotate: false
   xy: 402, 163
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_light_diamond_01
+small_light_card_14
   rotate: false
   xy: 402, 163
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_light_heart_02
+small_light_card_28
   rotate: false
   xy: 251, 101
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_light_diamond_02
+small_light_card_15
   rotate: false
   xy: 251, 101
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_light_heart_03
+small_light_card_29
   rotate: false
   xy: 465, 163
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_light_diamond_03
+small_light_card_16
   rotate: false
   xy: 465, 163
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_light_heart_04
+small_light_card_30
   rotate: false
   xy: 353, 163
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_light_diamond_04
+small_light_card_17
   rotate: false
   xy: 353, 163
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_light_heart_05
+small_light_card_31
   rotate: false
   xy: 54, 125
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_light_diamond_05
+small_light_card_18
   rotate: false
   xy: 54, 125
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_light_heart_06
+small_light_card_32
   rotate: false
   xy: 423, 163
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_light_diamond_06
+small_light_card_19
   rotate: false
   xy: 423, 163
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_light_heart_07
+small_light_card_33
   rotate: false
   xy: 297, 163
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_light_diamond_07
+small_light_card_20
   rotate: false
   xy: 297, 163
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_light_heart_09
+small_light_card_35
   rotate: false
   xy: 381, 163
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_light_diamond_09
+small_light_card_22
   rotate: false
   xy: 381, 163
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_light_heart_10
+small_light_card_36
   rotate: false
   xy: 54, 11
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_light_diamond_10
+small_light_card_23
   rotate: false
   xy: 54, 11
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_light_heart_11
+small_light_card_37
   rotate: false
   xy: 444, 163
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_light_diamond_11
+small_light_card_24
   rotate: false
   xy: 444, 163
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_light_heart_12
+small_light_card_38
   rotate: false
   xy: 325, 163
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_light_diamond_12
+small_light_card_25
   rotate: false
   xy: 325, 163
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_light_heart_13
+small_light_card_39
   rotate: false
   xy: 24, 80
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_light_diamond_13
+small_light_card_26
   rotate: false
   xy: 24, 80
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_light_spade_06
+small_light_card_45
   rotate: false
   xy: 24, 4
   size: 6, 37
   orig: 6, 37
   offset: 0, 0
   index: -1
-small_light_club_06
+small_light_card_06
   rotate: false
   xy: 24, 4
   size: 6, 37

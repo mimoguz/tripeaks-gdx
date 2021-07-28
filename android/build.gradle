@@ -11,6 +11,7 @@ android {
             assets.srcDirs = ['assets']
             jniLibs.srcDirs = ['libs']
         }
+
     }
     packagingOptions {
         exclude 'META-INF/robovm/ios/robovm.xml'
@@ -19,8 +20,8 @@ android {
         applicationId "ogz.tripeaks"
         minSdkVersion 24
         targetSdkVersion 30
-        versionCode 14
-        versionName "0.46.2"
+        versionCode 15
+        versionName "0.5a1"
     }
     buildTypes {
         release {
@@ -46,6 +47,7 @@ task copyAndroidNatives {
             def outputDir = null
             if (jar.name.endsWith("natives-arm64-v8a.jar")) outputDir = file("libs/arm64-v8a")
             if (jar.name.endsWith("natives-armeabi-v7a.jar")) outputDir = file("libs/armeabi-v7a")
+            if(jar.name.endsWith("natives-armeabi.jar")) outputDir = file("libs/armeabi")
             if(jar.name.endsWith("natives-x86_64.jar")) outputDir = file("libs/x86_64")
             if(jar.name.endsWith("natives-x86.jar")) outputDir = file("libs/x86")
             if(outputDir != null) {

@@ -12,7 +12,7 @@ buttonDisabled
   orig: 16, 16
   offset: 0, 0
   index: -1
-buttonDisabledDark
+buttonDisabled_dark
   rotate: false
   xy: 74, 38
   size: 16, 16
@@ -28,7 +28,7 @@ buttonDown
   orig: 16, 16
   offset: 0, 0
   index: -1
-buttonDownDark
+buttonDown_dark
   rotate: false
   xy: 56, 20
   size: 16, 16
@@ -44,7 +44,7 @@ buttonUp
   orig: 16, 16
   offset: 0, 0
   index: -1
-buttonUpDark
+buttonUp_dark
   rotate: false
   xy: 56, 38
   size: 16, 16
@@ -52,7 +52,7 @@ buttonUpDark
   orig: 16, 16
   offset: 0, 0
   index: -1
-checkboxOffDark
+checkboxOff_dark
   rotate: false
   xy: 92, 34
   size: 18, 10
@@ -66,7 +66,7 @@ checkboxOffLight
   orig: 18, 10
   offset: 0, 0
   index: -1
-checkboxOnDark
+checkboxOn_dark
   rotate: false
   xy: 74, 9
   size: 18, 10
@@ -87,21 +87,21 @@ deal
   orig: 16, 16
   offset: 0, 0
   index: -1
-dealDark
+deal_dark
   rotate: false
   xy: 2, 20
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
-new
+menu
   rotate: false
   xy: 74, 20
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
-newDark
+menu_dark
   rotate: false
   xy: 38, 20
   size: 16, 16
@@ -115,7 +115,7 @@ undo
   orig: 16, 16
   offset: 0, 0
   index: -1
-undoDark
+undo_dark
   rotate: false
   xy: 38, 38
   size: 16, 16
@@ -130,7 +130,7 @@ window
   orig: 16, 16
   offset: 0, 0
   index: -1
-windowDark
+window_dark
   rotate: false
   xy: 20, 2
   size: 16, 16

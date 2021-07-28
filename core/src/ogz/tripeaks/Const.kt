@@ -12,9 +12,6 @@ object Const {
     const val CONTENT_WIDTH = 300f
     const val FACE_X = 6f
     const val FACE_Y = 4f
-    const val PREFERENCES_DARK_THEME = "darkTheme"
-    const val PREFERENCES_NAME = "gamePreferences"
-    const val PREFERENCES_SHOW_ALL = "showAllCards"
     const val SAVE_CURRENT_CHAIN = "currentChain"
     const val SAVE_DISCARD = "discard"
     const val SAVE_LONGEST_CHAIN = "longestChain"
@@ -27,12 +24,12 @@ object Const {
     const val SEPARATOR = ", "
     const val SIDE_FACE_X = 21f
     const val SPRITE_CARD_BACK = "card_back"
-    const val SPRITE_DARK_PREFIX = "dark_"
+    const val SPRITE_DARK_PREFIX = "dark"
     const val SPRITE_HEIGHT = 37f
-    const val SPRITE_LIGHT_PREFIX = "light_"
+    const val SPRITE_LIGHT_PREFIX = "light"
     const val SPRITE_PLATE_DARK = "card_dark"
     const val SPRITE_PLATE_LIGHT = "card_light"
-    const val SPRITE_SMALL_PREFIX = "small_"
+    const val SPRITE_SMALL_PREFIX = "small"
     const val SPRITE_WIDTH = 27f
     const val VERTICAL_PADDING = 4f
     val STACK_POSITION = Vector2( CONTENT_WIDTH - CELL_WIDTH * 4f + 1f, VERTICAL_PADDING)
