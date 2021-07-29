@@ -6,15 +6,20 @@ import ktx.collections.*
 class BasicLayout : Layout {
 
     private val sockets = GdxArray.with(
+        // Row 0
         Socket(0, GdxIntArray.with(), GdxIntArray.with(3, 4), 0, 3, 0),
         Socket(1, GdxIntArray.with(), GdxIntArray.with(5, 6), 0, 9, 0),
         Socket(2, GdxIntArray.with(), GdxIntArray.with(7, 8), 0, 15, 0),
+
+        // Row 1
         Socket(3, GdxIntArray.with(0), GdxIntArray.with(9, 10), 1, 2, 1),
         Socket(4, GdxIntArray.with(0), GdxIntArray.with(10, 11), 1, 4, 1),
         Socket(5, GdxIntArray.with(1), GdxIntArray.with(12, 13), 1, 8, 1),
         Socket(6, GdxIntArray.with(1), GdxIntArray.with(13, 14), 1, 10, 1),
         Socket(7, GdxIntArray.with(2), GdxIntArray.with(15, 16), 1, 14, 1),
         Socket(8, GdxIntArray.with(2), GdxIntArray.with(16, 17), 1, 16, 1),
+
+        // Row 2
         Socket(9, GdxIntArray.with(3), GdxIntArray.with(18, 19), 2, 1, 2),
         Socket(10, GdxIntArray.with(3, 4), GdxIntArray.with(19, 20), 2, 3, 2),
         Socket(11, GdxIntArray.with(4), GdxIntArray.with(20, 21), 2, 5, 2),
@@ -24,6 +29,8 @@ class BasicLayout : Layout {
         Socket(15, GdxIntArray.with(7), GdxIntArray.with(24, 25), 2, 13, 2),
         Socket(16, GdxIntArray.with(7, 8), GdxIntArray.with(25, 26), 2, 15, 2),
         Socket(17, GdxIntArray.with(8), GdxIntArray.with(26, 27), 2, 17, 2),
+
+        // Row 3
         Socket(18, GdxIntArray.with(9), GdxIntArray.with(), 3, 0, 3),
         Socket(19, GdxIntArray.with(9, 10), GdxIntArray.with(), 3, 2, 3),
         Socket(20, GdxIntArray.with(10, 11), GdxIntArray.with(), 3, 4, 3),
@@ -61,7 +68,7 @@ class BasicLayout : Layout {
 
     companion object {
         private const val COLUMNS = 20
-        private const val ROWS = 4
+        private const val ROWS = 5
         const val TAG = "basicLayout"
     }
 }

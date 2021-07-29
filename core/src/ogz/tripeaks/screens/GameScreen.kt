@@ -17,9 +17,7 @@ import ktx.collections.toGdxArray
 import ktx.graphics.use
 import ogz.tripeaks.*
 import ogz.tripeaks.ecs.*
-import ogz.tripeaks.game.BasicLayout
-import ogz.tripeaks.game.GameState
-import ogz.tripeaks.game.Layout
+import ogz.tripeaks.game.*
 import ogz.tripeaks.util.*
 
 class GameScreen(
@@ -34,8 +32,8 @@ class GameScreen(
     private val engine = PooledEngine()
     private val entities = (0 until 52).map { engine.entity() }.toGdxArray()
     private val layouts = GdxMap<String, Layout>().apply {
-        val basicLayout = BasicLayout()
-        set(BasicLayout.TAG, basicLayout)
+        set(BasicLayout.TAG, BasicLayout())
+        set(Inverted2ndLayout.TAG, Inverted2ndLayout())
     }
     private var gameState =
         GameState(
@@ -45,8 +43,6 @@ class GameScreen(
         )
     private val sprites = SpriteCollection(assets, preferences.useDarkTheme)
     private val stage = Stage(viewport)
-    private val renderingSystem = CardRenderingSystem(batch, sprites, gameState)
-    private val animationRenderingSystem = CardAnimationRenderingSystem(batch, sprites, gameState)
 
     private val dealButton = ImageButton(
         skinData.skin,
@@ -75,8 +71,6 @@ class GameScreen(
     private var backgroundColor = preferences.backgroundColor
 
     override fun show() {
-        engine.addSystem(renderingSystem)
-        engine.addSystem(animationRenderingSystem)
         initUi()
         newGame()
     }
@@ -114,8 +108,11 @@ class GameScreen(
                 }
             }
         }
-        renderingSystem.state = gameState
-        animationRenderingSystem.state = gameState
+        engine.apply {
+            removeAllSystems()
+            addSystem(CardRenderingSystem(batch, sprites, gameState))
+            addSystem(CardAnimationRenderingSystem(batch, sprites, gameState))
+        }
         updateUi()
     }
 

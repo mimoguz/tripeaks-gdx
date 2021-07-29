@@ -6,20 +6,20 @@ import ogz.tripeaks.util.all
 
 class GameState(cards: IntArray, emptyDiscard: Boolean, val layout: Layout) {
     val sockets = GdxArray<SocketState>(layout.numberOfSockets)
-    val stack = GdxIntArray(23)
+    val stack = GdxIntArray()
     val discard = GdxIntArray(52)
     private val minDiscarded = if (emptyDiscard) 0 else 1
 
     val canUndo get() = discard.size > minDiscarded
     val canDeal get() = stack.size > 0
     val won get() = sockets.all { it.isEmpty }
-    val stalled get() = canDeal || (27 downTo 0).any { isOpen(it) }
+    val stalled get() = canDeal || ((layout.numberOfSockets - 1) downTo 0).any { isOpen(it) }
 
     init {
         require(cards.size == 52 && cards.distinct().size == cards.size)
-        for (i in 0 until 28) sockets.add(SocketState(cards[i], false))
-        for (i in (27 + minDiscarded) downTo 28) discard.add(cards[i])
-        for (i in 51 downTo (28 + minDiscarded)) {
+        for (i in 0 until layout.numberOfSockets) sockets.add(SocketState(cards[i], false))
+        for (i in (layout.numberOfSockets - 1 + minDiscarded) downTo layout.numberOfSockets) discard.add(cards[i])
+        for (i in 51 downTo (layout.numberOfSockets + minDiscarded)) {
             stack.add(cards[i])
         }
     }
@@ -28,7 +28,7 @@ class GameState(cards: IntArray, emptyDiscard: Boolean, val layout: Layout) {
      *  @return true if the action is performed, false otherwise.
      */
     fun take(socketIndex: Int): Boolean {
-        require(socketIndex in 0..27)
+        require(socketIndex in 0 until layout.numberOfSockets)
         if (isOpen(socketIndex) &&
             (discard.isEmpty || Card.areNeighbors(discard.peek(), sockets[socketIndex].card))) {
             sockets[socketIndex].isEmpty = true

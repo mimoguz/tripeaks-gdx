@@ -13,22 +13,15 @@ import kotlin.math.roundToInt
 class CardRenderingSystem(
     private val batch: Batch,
     private val sprites: SpriteCollection,
-    st: GameState
+    private val state: GameState
 ) :
     SortedIteratingSystem(allOf(CardRenderComponent::class).get(), compareBy {
-        it[CardRenderComponent.mapper]?.let { component -> st.layout[component.socketIndex].row }
+        it[CardRenderComponent.mapper]?.let { component -> state.layout[component.socketIndex].z }
     }) {
 
-    private var startX = 0f
-
-    var state: GameState = st
-        get() = field
-        set(value) {
-            field = value
-            startX = ((Const.CONTENT_WIDTH - Const.CELL_WIDTH * value.layout.numberOfColumns) / 2f + 0.5f)
-                .roundToInt()
-                .toFloat()
-        }
+    private val startX = ((Const.CONTENT_WIDTH - Const.CELL_WIDTH * state.layout.numberOfColumns) / 2f + 0.5f)
+        .roundToInt()
+        .toFloat()
 
     override fun update(deltaTime: Float) {
         forceSort()

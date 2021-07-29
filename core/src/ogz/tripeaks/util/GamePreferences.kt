@@ -4,12 +4,13 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
 import ogz.tripeaks.Const
 import ogz.tripeaks.game.BasicLayout
+import ogz.tripeaks.game.Inverted2ndLayout
 
 class GamePreferences(
     var useDarkTheme: Boolean = false,
     var showAllCards: Boolean = false,
     var startWithEmptyDiscard: Boolean = false,
-    var layout: String = BasicLayout.TAG
+    var layout: String = Inverted2ndLayout.TAG
 ) {
     val themeKey: String
         get() = if (useDarkTheme) "dark" else "light"
@@ -22,7 +23,7 @@ class GamePreferences(
         useDarkTheme = preferences.getBoolean(USE_DARK_THEME, false)
         showAllCards = preferences.getBoolean(SHOW_ALL, false)
         startWithEmptyDiscard = preferences.getBoolean(START_WITH_EMPTY_DISCARD, true)
-        layout = preferences.getString(START_WITH_EMPTY_DISCARD, BasicLayout.TAG)
+        layout = preferences.getString(START_WITH_EMPTY_DISCARD, Inverted2ndLayout.TAG)
         return this
     }
 

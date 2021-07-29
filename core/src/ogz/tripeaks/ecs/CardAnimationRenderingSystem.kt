@@ -17,10 +17,10 @@ import kotlin.math.roundToInt
 class CardAnimationRenderingSystem(
     private val batch: Batch,
     private val sprites: SpriteCollection,
-    st: GameState
+    private val state: GameState
 ) :
     SortedIteratingSystem(allOf(CardAnimationComponent::class).get(), compareBy {
-        it[CardAnimationComponent.mapper]?.let { component -> st.layout[component.socketIndex].z }
+        it[CardAnimationComponent.mapper]?.let { component -> state.layout[component.socketIndex].z }
     }) {
 
     override fun update(deltaTime: Float) {
@@ -30,16 +30,10 @@ class CardAnimationRenderingSystem(
 
     private val backupPosition = Vector2(0f, 0f)
 
-    private var startX = 0f
+    private val startX = ((Const.CONTENT_WIDTH - Const.CELL_WIDTH * state.layout.numberOfColumns) / 2f + 0.5f)
+        .roundToInt()
+        .toFloat()
 
-    var state: GameState = st
-        get() = field
-        set(value) {
-            field = value
-            startX = ((Const.CONTENT_WIDTH - Const.CELL_WIDTH * value.layout.numberOfColumns) / 2f + 0.5f)
-                .roundToInt()
-                .toFloat()
-        }
 
     override fun processEntity(entity: Entity, deltaTime: Float) {
         entity[CardAnimationComponent.mapper]?.let { component ->
