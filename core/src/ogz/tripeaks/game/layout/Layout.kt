@@ -1,4 +1,6 @@
-package ogz.tripeaks.game
+package ogz.tripeaks.game.layout
+
+import ogz.tripeaks.game.Socket
 
 interface Layout {
     val numberOfSockets: Int

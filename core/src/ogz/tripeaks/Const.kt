@@ -31,6 +31,8 @@ object Const {
     const val SPRITE_PLATE_LIGHT = "card_light"
     const val SPRITE_SMALL_PREFIX = "small"
     const val SPRITE_WIDTH = 27f
+    const val SPRITE_X = 1f
+    const val SPRITE_Y = 1f
     const val VERTICAL_PADDING = 4f
     val STACK_POSITION = Vector2( CONTENT_WIDTH - CELL_WIDTH * 4f + 1f, VERTICAL_PADDING)
     val DISCARD_POSITION = Vector2(CELL_WIDTH * 2f + 1f, VERTICAL_PADDING)

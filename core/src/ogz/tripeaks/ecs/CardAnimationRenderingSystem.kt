@@ -10,7 +10,6 @@ import ktx.ashley.get
 import ktx.ashley.remove
 import ogz.tripeaks.Const
 import ogz.tripeaks.game.GameState
-import ogz.tripeaks.game.BasicLayout
 import ogz.tripeaks.util.SpriteCollection
 import kotlin.math.roundToInt
 
@@ -42,9 +41,12 @@ class CardAnimationRenderingSystem(
             else {
                 val socket = state.layout[component.socketIndex]
                 val t = component.time / ANIMATION_TIME
-                val x = socket.column * Const.CELL_WIDTH + startX
-                val srcY =
-                    Const.CONTENT_HEIGHT - (socket.row + 2) * Const.CELL_HEIGHT - Const.VERTICAL_PADDING
+                val x = socket.column * Const.CELL_WIDTH + startX + Const.SPRITE_X
+                val srcY = Const.CONTENT_HEIGHT -
+                        socket.row * Const.CELL_HEIGHT -
+                        2f * Const.CELL_HEIGHT -
+                        Const.VERTICAL_PADDING -
+                        Const.SPRITE_Y
                 val y = MathUtils.round(srcY - t * DELTA_Y).toFloat()
                 val alpha = 1f - t
 

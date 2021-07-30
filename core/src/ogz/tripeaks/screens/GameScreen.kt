@@ -18,7 +18,9 @@ import ktx.graphics.use
 import ogz.tripeaks.*
 import ogz.tripeaks.ecs.*
 import ogz.tripeaks.game.*
+import ogz.tripeaks.game.layout.*
 import ogz.tripeaks.util.*
+import kotlin.math.roundToInt
 
 class GameScreen(
     private val game: Game,
@@ -34,6 +36,7 @@ class GameScreen(
     private val layouts = GdxMap<String, Layout>().apply {
         set(BasicLayout.TAG, BasicLayout())
         set(Inverted2ndLayout.TAG, Inverted2ndLayout())
+        set(DiamondsLayout.TAG, DiamondsLayout())
     }
     private var gameState =
         GameState(
@@ -199,8 +202,17 @@ class GameScreen(
     private fun onTouch() {
         val touchPoint = Vector3(Gdx.input.x.toFloat(), Gdx.input.y.toFloat(), 0f)
         viewport.unproject(touchPoint)
-        val column = (touchPoint.x / Const.CELL_WIDTH).toInt()
-        val row = ((Const.CONTENT_HEIGHT - Const.VERTICAL_PADDING - touchPoint.y) / Const.CELL_HEIGHT).toInt()
+
+        val x = touchPoint.x -
+                ((Const.CONTENT_WIDTH - Const.CELL_WIDTH * gameState.layout.numberOfColumns) * 0.5f + 0.5f)
+                    .roundToInt()
+                    .toFloat()
+        val y = Const.CONTENT_HEIGHT - touchPoint.y - Const.VERTICAL_PADDING
+        if (y < 0f || x < 0f) return
+
+        val column = (x/ Const.CELL_WIDTH).toInt()
+        val row = (y / Const.CELL_HEIGHT).toInt()
+
         if (column <= gameState.layout.numberOfColumns && row <= gameState.layout.numberOfRows) {
             for (rowOffset in 1 downTo -1) {
                 for (columnOffset in -1..1) {

@@ -1,11 +1,12 @@
-package ogz.tripeaks.game
+package ogz.tripeaks.game.layout
 
 import ktx.collections.*
+import ogz.tripeaks.game.Socket
 
 /** 28 sockets arranged in three peaks, indexed from 0 (top-left) to 27 (bottom-right).  */
-class Inverted2ndLayout : Layout {
+class Inverted2ndLayout : LayoutImpl() {
 
-    private val sockets = GdxArray.with(
+    override val sockets: GdxArray<Socket> = GdxArray.with(
         // Row 0
         Socket(0, GdxIntArray.with(), GdxIntArray.with(6, 7), 0, 3, 0),
         Socket(1, GdxIntArray.with(8), GdxIntArray.with(), 0, 6, 3),
@@ -45,28 +46,13 @@ class Inverted2ndLayout : Layout {
         Socket(29, GdxIntArray.with(20), GdxIntArray.with(), 3, 18, 3),
     )
 
-    private val cellMap = GdxMap<Int, Socket>()
-
-    private fun getCellIndex(column: Int, row: Int) = row * COLUMNS + column
-
     init {
-        sockets.items.forEach { socket ->
-            cellMap[getCellIndex(socket.column, socket.row)] = socket
-        }
+        super.init()
     }
-
-    override val numberOfSockets: Int get() = sockets.size
 
     override val numberOfColumns: Int get() = COLUMNS
 
     override val numberOfRows: Int get() = ROWS
-
-    override operator fun get(index: Int): Socket = sockets[index]
-
-    override fun lookup(column: Int, row: Int): Socket? {
-        val index = getCellIndex(column, row)
-        return if (cellMap.containsKey(index)) cellMap[index] else null
-    }
 
     companion object {
         private const val COLUMNS = 20

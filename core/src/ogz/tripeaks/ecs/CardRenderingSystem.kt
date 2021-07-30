@@ -31,8 +31,11 @@ class CardRenderingSystem(
     override fun processEntity(entity: Entity, deltaTime: Float) {
         entity[CardRenderComponent.mapper]?.let { component ->
             val socket = state.layout[component.socketIndex]
-            val x = socket.column * Const.CELL_WIDTH + startX
-            val y = Const.CONTENT_HEIGHT - (socket.row + 2) * Const.CELL_HEIGHT - Const.VERTICAL_PADDING
+            val x = socket.column * Const.CELL_WIDTH + startX + Const.SPRITE_X
+            val y = Const.CONTENT_HEIGHT -
+                    Const.VERTICAL_PADDING -
+                    socket.row * Const.CELL_HEIGHT -
+                    (Const.SPRITE_HEIGHT + Const.SPRITE_Y)
             // val y = startY - (socket.row + 2) * Const.CELL_HEIGHT
             batch.draw(sprites.plate, x, y)
             if (state.isOpen(component.socketIndex)) {

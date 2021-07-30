@@ -2,6 +2,7 @@ package ogz.tripeaks.game
 
 import ktx.collections.GdxArray
 import ktx.collections.GdxIntArray
+import ogz.tripeaks.game.layout.Layout
 import ogz.tripeaks.util.all
 
 class GameState(cards: IntArray, emptyDiscard: Boolean, val layout: Layout) {
