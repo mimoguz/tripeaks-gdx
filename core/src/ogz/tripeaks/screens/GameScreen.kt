@@ -15,10 +15,13 @@ import ktx.collections.GdxMap
 import ktx.collections.set
 import ktx.collections.toGdxArray
 import ktx.graphics.use
+import ktx.scene2d.actors
+import ktx.style.skin
 import ogz.tripeaks.*
 import ogz.tripeaks.ecs.*
 import ogz.tripeaks.game.*
 import ogz.tripeaks.game.layout.*
+import ogz.tripeaks.screens.dialogs.GameMenu
 import ogz.tripeaks.util.*
 import kotlin.math.roundToInt
 
@@ -46,6 +49,8 @@ class GameScreen(
         )
     private val sprites = SpriteCollection(assets, preferences.useDarkTheme)
     private val stage = Stage(viewport)
+    private var menu: GameMenu? = null
+    private var paused = false
 
     private val dealButton = ImageButton(
         skinData.skin,
@@ -69,7 +74,22 @@ class GameScreen(
         Const.SPRITE_WIDTH,
         Const.SPRITE_WIDTH,
         assets[TextureAtlasAssets.Ui].createSprite(if (preferences.useDarkTheme) "menu_dark" else "menu")
-    ) {}
+    ) {
+        if (menu != null) {
+            menu?.let {
+                it.isVisible = false
+                stage.actors.removeValue(it, true)
+                menu = null
+                paused = false
+            }
+        } else {
+            paused = true
+            val newMenu = GameMenu(skinData, preferences.themeKey)
+            stage.addActor(newMenu)
+            newMenu.isVisible = true
+            menu = newMenu
+        }
+    }
 
     private var backgroundColor = preferences.backgroundColor
 
@@ -79,7 +99,6 @@ class GameScreen(
     }
 
     override fun render(delta: Float) {
-        if (Gdx.input.justTouched()) onTouch()
         viewport.apply()
         stage.act(delta)
         ScreenUtils.clear(backgroundColor)
@@ -93,6 +112,8 @@ class GameScreen(
         batch.disableBlending()
 
         stage.draw()
+
+        if (Gdx.input.justTouched()) onTouch()
     }
 
     private fun newGame() {
@@ -200,6 +221,19 @@ class GameScreen(
     }
 
     private fun onTouch() {
+
+//        if (menu != null && paused) {
+//            menu?.let {
+//                it.isVisible = false
+//                stage.actors.removeValue(it, true)
+//                menu = null
+//                paused = false
+//            }
+//            return
+//        }
+
+        if (paused) return
+
         val touchPoint = Vector3(Gdx.input.x.toFloat(), Gdx.input.y.toFloat(), 0f)
         viewport.unproject(touchPoint)
 
