@@ -2,6 +2,8 @@ package ogz.tripeaks.screens
 
 import com.badlogic.ashley.core.PooledEngine
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.InputAdapter
+import com.badlogic.gdx.InputMultiplexer
 import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.math.Vector3
@@ -10,19 +12,32 @@ import com.badlogic.gdx.scenes.scene2d.Touchable
 import com.badlogic.gdx.utils.ScreenUtils
 import com.badlogic.gdx.utils.viewport.Viewport
 import ktx.app.KtxScreen
-import ktx.ashley.*
+import ktx.ashley.configureEntity
+import ktx.ashley.entity
+import ktx.ashley.remove
+import ktx.ashley.with
 import ktx.collections.GdxMap
 import ktx.collections.set
 import ktx.collections.toGdxArray
 import ktx.graphics.use
-import ktx.scene2d.actors
-import ktx.style.skin
-import ogz.tripeaks.*
-import ogz.tripeaks.ecs.*
-import ogz.tripeaks.game.*
-import ogz.tripeaks.game.layout.*
+import ogz.tripeaks.Const
+import ogz.tripeaks.Game
+import ogz.tripeaks.TextureAtlasAssets
+import ogz.tripeaks.ecs.CardAnimationComponent
+import ogz.tripeaks.ecs.CardAnimationRenderingSystem
+import ogz.tripeaks.ecs.CardRenderComponent
+import ogz.tripeaks.ecs.CardRenderingSystem
+import ogz.tripeaks.game.GameState
+import ogz.tripeaks.game.layout.BasicLayout
+import ogz.tripeaks.game.layout.DiamondsLayout
+import ogz.tripeaks.game.layout.Inverted2ndLayout
+import ogz.tripeaks.game.layout.Layout
+import ogz.tripeaks.get
 import ogz.tripeaks.screens.dialogs.GameMenu
-import ogz.tripeaks.util.*
+import ogz.tripeaks.util.GamePreferences
+import ogz.tripeaks.util.ImageButton
+import ogz.tripeaks.util.SkinData
+import ogz.tripeaks.util.SpriteCollection
 import kotlin.math.roundToInt
 
 class GameScreen(
@@ -32,7 +47,7 @@ class GameScreen(
     private val batch: Batch,
     private val preferences: GamePreferences,
     private val skinData: SkinData
-) : KtxScreen {
+) : KtxScreen, InputAdapter() {
 
     private val engine = PooledEngine()
     private val entities = (0 until 52).map { engine.entity() }.toGdxArray()
@@ -74,27 +89,13 @@ class GameScreen(
         Const.SPRITE_WIDTH,
         Const.SPRITE_WIDTH,
         assets[TextureAtlasAssets.Ui].createSprite(if (preferences.useDarkTheme) "menu_dark" else "menu")
-    ) {
-        if (menu != null) {
-            menu?.let {
-                it.isVisible = false
-                stage.actors.removeValue(it, true)
-                menu = null
-                paused = false
-            }
-        } else {
-            paused = true
-            val newMenu = GameMenu(skinData, preferences.themeKey)
-            stage.addActor(newMenu)
-            newMenu.isVisible = true
-            menu = newMenu
-        }
-    }
+    ) { showHideGameMenu() }
 
     private var backgroundColor = preferences.backgroundColor
 
     override fun show() {
         initUi()
+        Gdx.input.inputProcessor = InputMultiplexer(stage, this)
         newGame()
     }
 
@@ -112,8 +113,51 @@ class GameScreen(
         batch.disableBlending()
 
         stage.draw()
+    }
 
-        if (Gdx.input.justTouched()) onTouch()
+    override fun resize(width: Int, height: Int) {
+        viewport.update(width, height)
+    }
+
+    override fun dispose() {
+        stage.dispose()
+        super.dispose()
+    }
+
+    override fun touchDown(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
+        if (menu != null) {
+            showHideGameMenu()
+            return true
+        }
+
+//        if (paused) return false
+
+        val touchPoint = Vector3(Gdx.input.x.toFloat(), Gdx.input.y.toFloat(), 0f)
+        viewport.unproject(touchPoint)
+
+        val x = touchPoint.x -
+                ((Const.CONTENT_WIDTH - Const.CELL_WIDTH * gameState.layout.numberOfColumns) * 0.5f + 0.5f)
+                    .roundToInt()
+                    .toFloat()
+        val y = Const.CONTENT_HEIGHT - touchPoint.y - Const.VERTICAL_PADDING
+        if (y < 0f || x < 0f) return false
+
+        val column = (x / Const.CELL_WIDTH).toInt()
+        val row = (y / Const.CELL_HEIGHT).toInt()
+
+        if (column <= gameState.layout.numberOfColumns && row <= gameState.layout.numberOfRows) {
+            for (rowOffset in 1 downTo -1) {
+                for (columnOffset in -1..1) {
+                    val socket = gameState.layout.lookup(column + columnOffset, row + rowOffset)
+                    if (socket != null && gameState.isOpen(socket.index)) {
+                        take(socket.index)
+                        return true
+                    }
+                }
+            }
+        }
+
+        return false
     }
 
     private fun newGame() {
@@ -141,14 +185,19 @@ class GameScreen(
     }
 
     private fun initUi() {
-        dealButton.setPosition(Const.STACK_POSITION.x + Const.CELL_WIDTH * 2f, Const.STACK_POSITION.y)
-        undoButton.setPosition(Const.DISCARD_POSITION.x - Const.CELL_WIDTH * 2f, Const.DISCARD_POSITION.y)
+        dealButton.setPosition(
+            Const.STACK_POSITION.x + Const.CELL_WIDTH * 2f,
+            Const.STACK_POSITION.y
+        )
+        undoButton.setPosition(
+            Const.DISCARD_POSITION.x - Const.CELL_WIDTH * 2f,
+            Const.DISCARD_POSITION.y
+        )
         menuButton.setPosition(
             Const.CONTENT_WIDTH - Const.SPRITE_WIDTH - 2f,
             Const.CONTENT_HEIGHT - Const.SPRITE_WIDTH - Const.VERTICAL_PADDING - 3f
         )
         stage.actors.addAll(dealButton, undoButton, menuButton)
-        Gdx.input.inputProcessor = stage
     }
 
     private fun take(socketIndex: Int) {
@@ -220,52 +269,19 @@ class GameScreen(
         )
     }
 
-    private fun onTouch() {
-
-//        if (menu != null && paused) {
-//            menu?.let {
-//                it.isVisible = false
-//                stage.actors.removeValue(it, true)
-//                menu = null
-//                paused = false
-//            }
-//            return
-//        }
-
-        if (paused) return
-
-        val touchPoint = Vector3(Gdx.input.x.toFloat(), Gdx.input.y.toFloat(), 0f)
-        viewport.unproject(touchPoint)
-
-        val x = touchPoint.x -
-                ((Const.CONTENT_WIDTH - Const.CELL_WIDTH * gameState.layout.numberOfColumns) * 0.5f + 0.5f)
-                    .roundToInt()
-                    .toFloat()
-        val y = Const.CONTENT_HEIGHT - touchPoint.y - Const.VERTICAL_PADDING
-        if (y < 0f || x < 0f) return
-
-        val column = (x/ Const.CELL_WIDTH).toInt()
-        val row = (y / Const.CELL_HEIGHT).toInt()
-
-        if (column <= gameState.layout.numberOfColumns && row <= gameState.layout.numberOfRows) {
-            for (rowOffset in 1 downTo -1) {
-                for (columnOffset in -1..1) {
-                    val socket = gameState.layout.lookup(column + columnOffset, row + rowOffset)
-                    if (socket != null && gameState.isOpen(socket.index)) {
-                        take(socket.index)
-                        return
-                    }
-                }
+    private fun showHideGameMenu() {
+        if (menu != null) {
+            menu?.let {
+                it.isVisible = false
+                stage.actors.removeValue(it, true)
             }
+            menu = null
+        } else {
+            paused = true
+            val newMenu = GameMenu(skinData, preferences.themeKey, menuButton)
+            stage.addActor(newMenu)
+            newMenu.isVisible = true
+            menu = newMenu
         }
-    }
-
-    override fun resize(width: Int, height: Int) {
-        viewport.update(width, height)
-    }
-
-    override fun dispose() {
-        stage.dispose()
-        super.dispose()
     }
 }

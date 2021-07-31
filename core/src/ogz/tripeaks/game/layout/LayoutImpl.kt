@@ -22,6 +22,7 @@ abstract class LayoutImpl : Layout {
     override operator fun get(index: Int): Socket = sockets[index]
 
     override fun lookup(column: Int, row: Int): Socket? {
+        if (column >= numberOfColumns || row >= numberOfRows) return null
         val index = getCellIndex(column, row)
         return if (cellMap.containsKey(index)) cellMap[index] else null
     }
