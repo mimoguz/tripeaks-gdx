@@ -146,8 +146,8 @@ class GameScreen(
         val row = (y / Const.CELL_HEIGHT).toInt()
 
         if (column <= gameState.layout.numberOfColumns && row <= gameState.layout.numberOfRows) {
-            for (rowOffset in 1 downTo -1) {
-                for (columnOffset in -1..1) {
+            for (rowOffset in 0 downTo -1) {
+                for (columnOffset in 0 downTo -1) {
                     val socket = gameState.layout.lookup(column + columnOffset, row + rowOffset)
                     if (socket != null && gameState.isOpen(socket.index)) {
                         take(socket.index)
@@ -194,8 +194,8 @@ class GameScreen(
             Const.DISCARD_POSITION.y
         )
         menuButton.setPosition(
-            Const.CONTENT_WIDTH - Const.SPRITE_WIDTH - 2f,
-            Const.CONTENT_HEIGHT - Const.SPRITE_WIDTH - Const.VERTICAL_PADDING - 3f
+            Const.CONTENT_WIDTH - 2f * Const.CELL_WIDTH + Const.SPRITE_X,
+            Const.CONTENT_HEIGHT - menuButton.width - Const.VERTICAL_PADDING - Const.SPRITE_Y
         )
         stage.actors.addAll(dealButton, undoButton, menuButton)
     }

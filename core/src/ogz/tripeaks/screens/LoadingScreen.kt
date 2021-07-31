@@ -94,6 +94,20 @@ class LoadingScreen(
                 disabled = skin["buttonDisabled_dark"]
                 fontColor = skin["light"]
             }
+            textButton("menuItem_light") {
+                up = skin["menuItemUp"]
+                down = skin["menuItemDown"]
+                disabled = skin["menuItemUp"]
+                font = skinFont
+                fontColor = skin["dark"]
+            }
+            textButton("menuItem_dark") {
+                up = skin["menuItemUp_dark"]
+                down = skin["menuItemDown_dark"]
+                disabled = skin["menuItemUp_dark"]
+                font = skinFont
+                fontColor = skin["light"]
+            }
             window {
                 titleFont = skinFont
                 titleFontColor = skin["dark"]
@@ -105,8 +119,8 @@ class LoadingScreen(
                 background = skin["window_dark"]
             }
             checkBox {
-                checkboxOn = skin["checkboxOnLight"]
-                checkboxOff = skin["checkboxOffLight"]
+                checkboxOn = skin["checkboxOn"]
+                checkboxOff = skin["checkboxOff"]
                 font = skinFont
                 fontColor = skin["dark"]
             }

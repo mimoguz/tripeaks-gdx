@@ -5,13 +5,14 @@ import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup
 import com.badlogic.gdx.scenes.scene2d.ui.Window
 import com.badlogic.gdx.utils.Align
 import ogz.tripeaks.Const
+import ogz.tripeaks.screens.controls.MyMenuItem
 import ogz.tripeaks.screens.controls.MyTextButton
 import ogz.tripeaks.util.SkinData
 
 class GameMenu(skinData: SkinData, theme: String, attached: Actor) : Window("", skinData.skin, theme) {
 
-    val btn1 = MyTextButton("Button 1", skinData, theme)
-    val btn2 = MyTextButton("Button 2", skinData, theme)
+    val btn1 = MyMenuItem("Menu item 1", skinData, theme)
+    val btn2 = MyMenuItem("Menu item 2", skinData, theme)
 
     init {
         isModal = false
@@ -23,12 +24,12 @@ class GameMenu(skinData: SkinData, theme: String, attached: Actor) : Window("", 
             pad(0f)
         }
         add(layout)
-        pad(6f)
-        width = 112f
-        height = 64f
+        pad(4f, 4f, 6f, 4f)
+        width = 108f
+        height = 62f
         setPosition(
             attached.x + attached.width,
-            attached.y + 1f,
+            attached.y + 3f,
             Align.topRight
         )
     }
