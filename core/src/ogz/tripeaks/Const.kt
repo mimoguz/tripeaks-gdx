@@ -12,14 +12,10 @@ object Const {
     const val CONTENT_WIDTH = 300f
     const val FACE_X = 6f
     const val FACE_Y = 4f
-    const val SAVE_CURRENT_CHAIN = "currentChain"
     const val SAVE_DISCARD = "discard"
-    const val SAVE_LONGEST_CHAIN = "longestChain"
     const val SAVE_NAME = "save"
     const val SAVE_PEAKS = "peaks"
-    const val SAVE_REMOVED_FROM_STACK = "removedFromStack"
     const val SAVE_STACK = "stack"
-    const val SAVE_UNDO_COUNT = "undoCount"
     const val SAVE_VALID = "valid"
     const val SEPARATOR = ", "
     const val SIDE_FACE_X = 21f

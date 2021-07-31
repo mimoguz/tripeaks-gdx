@@ -57,7 +57,7 @@ class GameScreen(
         set(DiamondsLayout.TAG, DiamondsLayout())
     }
     private var gameState =
-        GameState(
+        GameState.create(
             (0 until 52).shuffled().toIntArray(),
             preferences.startWithEmptyDiscard,
             layouts[BasicLayout.TAG]
@@ -163,7 +163,7 @@ class GameScreen(
     private fun newGame() {
         entities.forEach { it.removeAll() } // Clear components
         gameState =
-            GameState(
+            GameState.create(
                 (0 until 52).shuffled().toIntArray(),
                 preferences.startWithEmptyDiscard,
                 if (layouts.containsKey(preferences.layout)) layouts[preferences.layout] else layouts[BasicLayout.TAG]

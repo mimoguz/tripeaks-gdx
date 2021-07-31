@@ -54,6 +54,8 @@ class DiamondsLayout : LayoutImpl() {
 
     override val numberOfRows: Int get() = ROWS
 
+    override val tag: String get() = BasicLayout.TAG
+
     companion object {
         private const val COLUMNS = 18
         private const val ROWS = 7

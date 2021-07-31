@@ -54,6 +54,8 @@ class Inverted2ndLayout : LayoutImpl() {
 
     override val numberOfRows: Int get() = ROWS
 
+    override val tag: String get() = TAG
+
     companion object {
         private const val COLUMNS = 20
         private const val ROWS = 5
