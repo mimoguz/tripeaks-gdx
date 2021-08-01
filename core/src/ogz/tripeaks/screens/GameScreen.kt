@@ -54,7 +54,7 @@ class GameScreen(
     private val sprites = SpriteCollection(assets, preferences.useDarkTheme)
     private val stage = Stage(viewport)
     private var menu: GameMenu? = null
-    private val stats = GameStats()
+    private val gameStats = GameStats()
     private var backgroundColor = preferences.backgroundColor
     private var stalled = false
 
@@ -98,7 +98,28 @@ class GameScreen(
     override fun show() {
         initUi()
         Gdx.input.inputProcessor = InputMultiplexer(stage, this)
-        newGame()
+        if (load()) {
+            initECS()
+            updateUi()
+        } else {
+            newGame()
+        }
+    }
+
+    override fun resume() {
+        show()
+        super.resume()
+    }
+
+    override fun pause() {
+        if (!gameState.won) {
+            save()
+        } else {
+            Gdx.app.getPreferences(SAVE_NAME)
+                .putBoolean(SAVE_IS_VALID, false)
+                .flush()
+        }
+        super.pause()
     }
 
     override fun render(delta: Float) {
@@ -168,11 +189,21 @@ class GameScreen(
                 preferences.startWithEmptyDiscard,
                 if (layouts.containsKey(preferences.layout)) layouts[preferences.layout] else layouts[BasicLayout.TAG]
             )
+        gameStats.reset()
+        stalled = false
+        initECS()
+        updateUi()
+    }
+
+    private fun initECS() {
+        entities.forEach { it.removeAll() } // Clear components
         gameState.sockets.withIndex().forEach { (index, socket) ->
-            engine.configureEntity(entities[socket.card]) {
-                with<CardRenderComponent> {
-                    socketIndex = index
-                    cardIndex = socket.card
+            if (!socket.isEmpty) {
+                engine.configureEntity(entities[socket.card]) {
+                    with<CardRenderComponent> {
+                        socketIndex = index
+                        cardIndex = socket.card
+                    }
                 }
             }
         }
@@ -181,9 +212,6 @@ class GameScreen(
             addSystem(CardRenderingSystem(batch, sprites, gameState))
             addSystem(CardAnimationRenderingSystem(batch, sprites, gameState))
         }
-        stats.reset()
-        stalled = false
-        updateUi()
     }
 
     private fun initUi() {
@@ -214,7 +242,7 @@ class GameScreen(
                 }
             }
             updateUi()
-            stats.takeFromPeaks()
+            gameStats.takeFromPeaks()
 
         }
     }
@@ -222,7 +250,7 @@ class GameScreen(
     private fun undo() {
         gameState.undo()?.let { socketIndex ->
             if (socketIndex >= 0) {
-                stats.backToPeaks()
+                gameStats.backToPeaks()
                 engine.configureEntity(entities[gameState.sockets[socketIndex].card]) {
                     entity.remove<CardAnimationComponent>()
                     with<CardRenderComponent> {
@@ -231,7 +259,7 @@ class GameScreen(
                     }
                 }
             } else {
-                stats.backToStack()
+                gameStats.backToStack()
             }
             updateUi()
         }
@@ -239,7 +267,7 @@ class GameScreen(
 
     private fun deal() {
         if (gameState.deal()) {
-            stats.takeFromStack()
+            gameStats.takeFromStack()
             updateUi()
         }
     }
@@ -282,9 +310,9 @@ class GameScreen(
             EndGameDialog(
                 skinData,
                 preferences.themeKey,
-                stats.removedFromStack,
-                stats.longestChain,
-                stats.undoCount,
+                gameStats.removedFromStack,
+                gameStats.longestChain,
+                gameStats.undoCount,
                 assets[BundleAssets.Bundle]
             ).apply {
                 exitButton.setAction { Gdx.app.exit() }
@@ -352,5 +380,40 @@ class GameScreen(
             stage.actors.removeValue(it, true)
         }
         menu = null
+    }
+
+    private fun save() {
+        val preferences = Gdx.app.getPreferences(SAVE_NAME)
+        preferences.clear()
+        gameState.save(preferences)
+        gameStats.save(preferences)
+        preferences.putBoolean(STALLED, stalled)
+        preferences.putBoolean(SAVE_IS_VALID, true)
+        preferences.flush()
+    }
+
+    private fun load(): Boolean {
+        val preferences = Gdx.app.getPreferences((SAVE_NAME))
+
+        val isValid = preferences.getBoolean(SAVE_IS_VALID)
+        if (!isValid) return  false
+        preferences.putBoolean(SAVE_IS_VALID, false)
+        preferences.flush()
+
+        val state = GameState.load(preferences, layouts)
+        if (state == null) return false
+
+        val statsLoaded = gameStats.load(preferences)
+        if (!statsLoaded) return false
+
+        stalled = preferences.getBoolean(STALLED, false)
+        gameState = state
+        return true
+    }
+
+    companion object {
+        const val SAVE_NAME = "save"
+        const val SAVE_IS_VALID = "valid"
+        const val STALLED = "stalled"
     }
 }

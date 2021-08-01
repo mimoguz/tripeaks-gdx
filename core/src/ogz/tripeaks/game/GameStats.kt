@@ -1,6 +1,9 @@
 package ogz.tripeaks.game
 
 import com.badlogic.gdx.Preferences
+import ktx.log.debug
+import ktx.log.logger
+import java.lang.Exception
 
 class GameStats {
     var currentChain: Int = 0
@@ -46,11 +49,17 @@ class GameStats {
     }
 
     fun load(preferences: Preferences): Boolean {
-        currentChain = preferences.getInteger(CURRENT_CHAIN, 0)
-        longestChain = preferences.getInteger(LONGEST_CHAIN, 0)
-        removedFromStack = preferences.getInteger(REMOVED_FROM_STACK, 0)
-        undoCount = preferences.getInteger(UNDO_COUNT, 0)
-        return true
+        return try {
+            currentChain = preferences.getInteger(CURRENT_CHAIN)
+            longestChain = preferences.getInteger(LONGEST_CHAIN)
+            removedFromStack = preferences.getInteger(REMOVED_FROM_STACK)
+            undoCount = preferences.getInteger(UNDO_COUNT)
+            true
+        } catch (e: Exception) {
+            log.debug { "Error loading game stats: ${e.message}" }
+            false
+        }
+
     }
 
     fun save(preferences: Preferences) {
@@ -69,5 +78,7 @@ class GameStats {
         const val LONGEST_CHAIN = "longestChain"
         const val REMOVED_FROM_STACK = "removedFromStack"
         const val UNDO_COUNT = "undoCount"
+
+        val log = logger<GameStats>()
     }
 }

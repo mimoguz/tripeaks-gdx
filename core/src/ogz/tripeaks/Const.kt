@@ -16,6 +16,7 @@ object Const {
     const val SAVE_NAME = "save"
     const val SAVE_PEAKS = "peaks"
     const val SAVE_STACK = "stack"
+
     const val SAVE_VALID = "valid"
     const val SEPARATOR = ", "
     const val SIDE_FACE_X = 21f

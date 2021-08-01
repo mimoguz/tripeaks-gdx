@@ -80,10 +80,12 @@ class GameState(
         val serializedSockets = sockets.map { it.serialize() }.joinToString(SEPARATOR)
         preferences.putString(SOCKETS, serializedSockets)
 
-        val serializedDiscard = discard.items.joinToString(SEPARATOR)
+        val discardCopy = discard.toArray()
+        val serializedDiscard = discardCopy.joinToString(SEPARATOR)
         preferences.putString(DISCARD, serializedDiscard)
 
-        val serializedStack = stack.items.joinToString(SEPARATOR)
+        val stackCopy = stack.toArray()
+        val serializedStack = stackCopy.joinToString(SEPARATOR)
         preferences.putString(STACK, serializedStack)
 
         preferences.putInteger(MIN_DISCARDED, minDiscarded)
@@ -92,7 +94,7 @@ class GameState(
     companion object {
         const val LAYOUT = "layout"
         const val DISCARD = "discard"
-        const val SOCKETS = "SOCKETS"
+        const val SOCKETS = "sockets"
         const val STACK = "stack"
         const val MIN_DISCARDED = "minDiscarded"
         const val SEPARATOR = ";"
@@ -103,8 +105,8 @@ class GameState(
             require(cards.size == 52 && cards.distinct().size == cards.size)
 
             val sockets = GdxArray<SocketState>(layout.numberOfSockets)
-            val stack = GdxIntArray()
-            val discard = GdxIntArray(52)
+            val stack = GdxIntArray.with()
+            val discard = GdxIntArray.with()
             val minDiscarded = if (emptyDiscard) 0 else 1
 
             for (i in 0 until layout.numberOfSockets) sockets.add(SocketState(cards[i], false))
@@ -128,12 +130,20 @@ class GameState(
                 socketStates.forEach(sockets::add)
 
                 val serializedDiscard = preferences.getString(DISCARD)
-                val discarded = serializedDiscard.split(SEPARATOR).map(Integer::parseInt)
-                val discard = GdxIntArray(discarded.size)
+                val discarded = if (serializedDiscard.isNotBlank()) {
+                    serializedDiscard.split(SEPARATOR).map(Integer::parseInt)
+                } else {
+                    listOf()
+                }
+                val discard = GdxIntArray((discarded.size))
                 discarded.forEach(discard::add)
 
                 val serializedStack = preferences.getString(STACK)
-                val stacked = serializedStack.split(SEPARATOR).map(Integer::parseInt)
+                val stacked = if (serializedStack.isNotBlank()) {
+                    serializedStack.split(SEPARATOR).map(Integer::parseInt)
+                } else {
+                    listOf()
+                }
                 val stack = GdxIntArray(stacked.size)
                 stacked.forEach(stack::add)
 
@@ -144,7 +154,7 @@ class GameState(
 
                 return GameState(layout, sockets, stack, discard, minDiscarded)
             } catch (e: Exception) {
-                log.error { "Error loading game state: ${e.message}" }
+                log.error { "Error loading game state: ${e.message}\n\n${e.stackTrace.joinToString("\n")}" }
             }
 
             return null
