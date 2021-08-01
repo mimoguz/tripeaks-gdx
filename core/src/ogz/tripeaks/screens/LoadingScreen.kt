@@ -125,10 +125,53 @@ class LoadingScreen(
                 fontColor = skin["dark"]
             }
             checkBox("light", extend = defaultStyle)
-            checkBox(name = "dark", extend = defaultStyle) {
+            checkBox("dark", extend = defaultStyle) {
                 checkboxOn = skin["checkboxOn_dark"]
                 checkboxOff = skin["checkboxOff_dark"]
                 fontColor = skin["light"]
+            }
+            val listStyleDefault =  list {
+                font = skinFont
+                fontColorSelected = skin["dark"]
+                fontColorUnselected = skin["dark"]
+                selection = skin["menuItemDown"]
+            }
+            list("light", extend = defaultStyle)
+            val listStyleDark = list("dark", extend = defaultStyle) {
+                fontColorSelected = skin["light"]
+                fontColorUnselected = skin["light"]
+                selection = skin["menuItemDown_dark"]
+            }
+            val scrollPaneStyleDefault =  scrollPane {
+                hScroll = skin["menuItemDown"]
+                hScrollKnob = skin["buttonUp"]
+                vScroll = skin["menuItemDown"]
+                vScrollKnob = skin["buttonUp"]
+                corner = skin["menuItem"]
+            }
+            scrollPane("light", extend = defaultStyle)
+            val scrollPaneStyleDark = scrollPane("dark", extend = defaultStyle) {
+                hScroll = skin["menuItemDown_dark"]
+                hScrollKnob = skin["buttonUp_dark"]
+                vScroll = skin["menuItemDown_dark"]
+                vScrollKnob = skin["buttonUp_dark"]
+                corner = skin["menuItem_dark"]
+            }
+            selectBox {
+                font = skinFont
+                fontColor = skin["dark"]
+                background = skin["buttonUp"]
+                backgroundOpen = skin["buttonDown"]
+                scrollStyle = scrollPaneStyleDefault
+                listStyle = listStyleDefault
+            }
+            selectBox("light", extend = defaultStyle)
+            selectBox("dark", extend = defaultStyle) {
+                fontColor = skin["light"]
+                background = skin["buttonUp_dark"]
+                backgroundOpen = skin["buttonDown_dark"]
+                scrollStyle = scrollPaneStyleDark
+                listStyle = listStyleDark
             }
         }
 
