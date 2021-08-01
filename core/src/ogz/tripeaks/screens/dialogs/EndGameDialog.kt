@@ -7,18 +7,23 @@ import com.badlogic.gdx.utils.I18NBundle
 import ogz.tripeaks.screens.controls.MyTextButton
 import ogz.tripeaks.util.SkinData
 
-class EndGameDialog(skinData: SkinData, theme: String, val res: I18NBundle) :
+class EndGameDialog(
+    skinData: SkinData,
+    theme: String,
+    removedFromStack: Int,
+    longestChain: Int,
+    usedUndo: Int,
+    val res: I18NBundle,
+) :
     Dialog("", skinData.skin, theme) {
 
-    val removedLabel = Label("", skinData.skin, theme)
-    val undoLabel = Label("", skinData.skin, theme)
-    val chainLabel = Label("", skinData.skin, theme)
     val newGameButton = MyTextButton(res.get("newGameShort"), skinData, theme)
     val exitButton = MyTextButton(res.get("exit"), skinData, theme)
 
     init {
-        buttonTable.pad(4f, 4f, 0f, 4f)
-        buttonTable.defaults().width(110f)
+        val removedLabel = Label(res.format("fromStack", removedFromStack), skinData.skin, theme)
+        val undoLabel = Label(res.format("usedUndo", usedUndo), skinData.skin, theme)
+        val chainLabel = Label(res.format("longestChain", longestChain), skinData.skin, theme)
         pad(16f, 24f, 16f, 24f)
         contentTable.apply {
             add(Label(res.get("won"), skinData.skin, theme))
@@ -29,27 +34,11 @@ class EndGameDialog(skinData: SkinData, theme: String, val res: I18NBundle) :
             row()
             add(chainLabel).align(Align.left)
         }
-        buttonTable.add(newGameButton)
-        buttonTable.add(exitButton)
-    }
-
-    fun setRemovedFromStack(value: Int) {
-        removedLabel.setText(res.format("fromStack", value))
-    }
-
-    fun setUsedUndo(value: Int) {
-        removedLabel.setText(res.format("usedUndo", value))
-    }
-
-    fun setLongestChain(value: Int) {
-        removedLabel.setText(res.format("longestChain", value))
-    }
-
-    fun setNewGameAction(value: () -> Unit) {
-        newGameButton.setAction(value)
-    }
-
-    fun setExitAction(value: () -> Unit) {
-        exitButton.setAction(value)
+        buttonTable.apply {
+            pad(4f, 4f, 0f, 4f)
+            defaults().width(110f)
+            add(newGameButton)
+            add(exitButton)
+        }
     }
 }

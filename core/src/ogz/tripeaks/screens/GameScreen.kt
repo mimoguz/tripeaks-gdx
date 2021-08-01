@@ -20,20 +20,20 @@ import ktx.collections.GdxMap
 import ktx.collections.set
 import ktx.collections.toGdxArray
 import ktx.graphics.use
-import ogz.tripeaks.Const
-import ogz.tripeaks.Game
-import ogz.tripeaks.TextureAtlasAssets
+import ogz.tripeaks.*
 import ogz.tripeaks.ecs.CardAnimationComponent
 import ogz.tripeaks.ecs.CardAnimationRenderingSystem
 import ogz.tripeaks.ecs.CardRenderComponent
 import ogz.tripeaks.ecs.CardRenderingSystem
 import ogz.tripeaks.game.GameState
+import ogz.tripeaks.game.GameStats
 import ogz.tripeaks.game.layout.BasicLayout
 import ogz.tripeaks.game.layout.DiamondsLayout
 import ogz.tripeaks.game.layout.Inverted2ndLayout
 import ogz.tripeaks.game.layout.Layout
-import ogz.tripeaks.get
+import ogz.tripeaks.screens.dialogs.EndGameDialog
 import ogz.tripeaks.screens.dialogs.GameMenu
+import ogz.tripeaks.screens.dialogs.StalledDialog
 import ogz.tripeaks.util.GamePreferences
 import ogz.tripeaks.util.ImageButton
 import ogz.tripeaks.util.SkinData
@@ -51,47 +51,49 @@ class GameScreen(
 
     private val engine = PooledEngine()
     private val entities = (0 until 52).map { engine.entity() }.toGdxArray()
+    private val sprites = SpriteCollection(assets, preferences.useDarkTheme)
+    private val stage = Stage(viewport)
+    private var menu: GameMenu? = null
+    private val stats = GameStats()
+    private var backgroundColor = preferences.backgroundColor
+    private var stalled = false
+
     private val layouts = GdxMap<String, Layout>().apply {
         set(BasicLayout.TAG, BasicLayout())
         set(Inverted2ndLayout.TAG, Inverted2ndLayout())
         set(DiamondsLayout.TAG, DiamondsLayout())
     }
-    private var gameState =
-        GameState.create(
-            (0 until 52).shuffled().toIntArray(),
-            preferences.startWithEmptyDiscard,
-            layouts[BasicLayout.TAG]
-        )
-    private val sprites = SpriteCollection(assets, preferences.useDarkTheme)
-    private val stage = Stage(viewport)
-    private var menu: GameMenu? = null
-    private var paused = false
+
+    private var gameState = GameState.create(
+        (0 until 52).shuffled().toIntArray(),
+        preferences.startWithEmptyDiscard,
+        layouts[BasicLayout.TAG]
+    )
+
 
     private val dealButton = ImageButton(
         skinData.skin,
         preferences.themeKey,
-        Const.SPRITE_WIDTH,
-        Const.SPRITE_HEIGHT,
+        Const.SPRITE_WIDTH + 2f,
+        Const.SPRITE_HEIGHT + 2f,
         assets[TextureAtlasAssets.Ui].createSprite(if (preferences.useDarkTheme) "deal_dark" else "deal")
-    ) { deal() }
+    ) { if (menu != null) removeGameMenu() else deal() }
 
     private val undoButton = ImageButton(
         skinData.skin,
         preferences.themeKey,
-        Const.SPRITE_WIDTH,
-        Const.SPRITE_HEIGHT,
+        Const.SPRITE_WIDTH + 2f,
+        Const.SPRITE_HEIGHT + 2f,
         assets[TextureAtlasAssets.Ui].createSprite(if (preferences.useDarkTheme) "undo_dark" else "undo")
-    ) { undo() }
+    ) { if (menu != null) removeGameMenu() else undo() }
 
     private val menuButton = ImageButton(
         skinData.skin,
         preferences.themeKey,
-        Const.SPRITE_WIDTH,
-        Const.SPRITE_WIDTH,
+        Const.SPRITE_WIDTH + 2f,
+        Const.SPRITE_WIDTH + 2f,
         assets[TextureAtlasAssets.Ui].createSprite(if (preferences.useDarkTheme) "menu_dark" else "menu")
     ) { showHideGameMenu() }
-
-    private var backgroundColor = preferences.backgroundColor
 
     override fun show() {
         initUi()
@@ -126,11 +128,9 @@ class GameScreen(
 
     override fun touchDown(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
         if (menu != null) {
-            showHideGameMenu()
+            removeGameMenu()
             return true
         }
-
-//        if (paused) return false
 
         val touchPoint = Vector3(Gdx.input.x.toFloat(), Gdx.input.y.toFloat(), 0f)
         viewport.unproject(touchPoint)
@@ -181,6 +181,8 @@ class GameScreen(
             addSystem(CardRenderingSystem(batch, sprites, gameState))
             addSystem(CardAnimationRenderingSystem(batch, sprites, gameState))
         }
+        stats.reset()
+        stalled = false
         updateUi()
     }
 
@@ -190,12 +192,12 @@ class GameScreen(
             Const.STACK_POSITION.y
         )
         undoButton.setPosition(
-            Const.DISCARD_POSITION.x - Const.CELL_WIDTH * 2f,
+            Const.DISCARD_POSITION.x - Const.CELL_WIDTH * 2f + Const.SPRITE_X,
             Const.DISCARD_POSITION.y
         )
         menuButton.setPosition(
             Const.CONTENT_WIDTH - 2f * Const.CELL_WIDTH + Const.SPRITE_X,
-            Const.CONTENT_HEIGHT - menuButton.width - Const.VERTICAL_PADDING - Const.SPRITE_Y
+            Const.CONTENT_HEIGHT - menuButton.width - Const.VERTICAL_PADDING
         )
         stage.actors.addAll(dealButton, undoButton, menuButton)
     }
@@ -212,14 +214,15 @@ class GameScreen(
                 }
             }
             updateUi()
-            if (gameState.won) won()
-            else if (gameState.stalled) stalled()
+            stats.takeFromPeaks()
+
         }
     }
 
     private fun undo() {
         gameState.undo()?.let { socketIndex ->
             if (socketIndex >= 0) {
+                stats.backToPeaks()
                 engine.configureEntity(entities[gameState.sockets[socketIndex].card]) {
                     entity.remove<CardAnimationComponent>()
                     with<CardRenderComponent> {
@@ -227,13 +230,18 @@ class GameScreen(
                         cardIndex = gameState.sockets[socketIndex].card
                     }
                 }
+            } else {
+                stats.backToStack()
             }
             updateUi()
         }
     }
 
     private fun deal() {
-        if (gameState.deal()) updateUi()
+        if (gameState.deal()) {
+            stats.takeFromStack()
+            updateUi()
+        }
     }
 
     private fun updateUi() {
@@ -241,47 +249,108 @@ class GameScreen(
         undoButton.isDisabled = !gameState.canUndo || gameState.won
         dealButton.touchable = if (dealButton.isDisabled) Touchable.disabled else Touchable.enabled
         undoButton.touchable = if (undoButton.isDisabled) Touchable.disabled else Touchable.enabled
+        if (gameState.won) won()
+        else if (gameState.stalled) stalled()
     }
 
     private fun stalled() {
+        if (!stalled) {
+            stalled = true
+            val dialog =
+                StalledDialog(skinData, preferences.themeKey, assets[BundleAssets.Bundle]).apply {
+                    val remove = {
+                        hide()
+                        stage.actors.removeValue(this, true)
+                    }
+                    exitButton.setAction { Gdx.app.exit() }
+                    newGameButton.setAction {
+                        newGame()
+                        remove()
+                    }
+                    undoButton.setAction {
+                        undo()
+                        remove()
+                    }
+                    returnButton.setAction { remove() }
+                }
+            dialog.show(stage)
+        }
     }
 
     private fun won() {
+        val dialog =
+            EndGameDialog(
+                skinData,
+                preferences.themeKey,
+                stats.removedFromStack,
+                stats.longestChain,
+                stats.undoCount,
+                assets[BundleAssets.Bundle]
+            ).apply {
+                exitButton.setAction { Gdx.app.exit() }
+                newGameButton.setAction {
+                    newGame()
+                    hide()
+                    stage.actors.removeValue(this, true)
+                }
+            }
+        dialog.show(stage)
     }
 
     private fun renderStack() {
         if (gameState.stack.isEmpty) return
         for (i in 0 until gameState.stack.size) {
-            val x = Const.STACK_POSITION.x - i * 6f
-            batch.draw(sprites.plate, x, Const.STACK_POSITION.y)
-            batch.draw(sprites.back, x, Const.STACK_POSITION.y)
+            val x = Const.STACK_POSITION.x - i * 6f + Const.SPRITE_X
+            batch.draw(sprites.plate, x, Const.STACK_POSITION.y + Const.SPRITE_Y)
+            batch.draw(sprites.back, x, Const.STACK_POSITION.y + Const.SPRITE_Y)
         }
     }
 
     private fun renderDiscard() {
         if (gameState.discard.isEmpty) return
         val cardIndex = gameState.discard.peek()
-        batch.draw(sprites.plate, Const.DISCARD_POSITION.x, Const.DISCARD_POSITION.y)
+        batch.draw(
+            sprites.plate,
+            Const.DISCARD_POSITION.x + Const.SPRITE_X,
+            Const.DISCARD_POSITION.y + Const.SPRITE_Y
+        )
         batch.draw(
             sprites.faces[cardIndex],
-            Const.DISCARD_POSITION.x + Const.FACE_X,
-            Const.DISCARD_POSITION.y + Const.FACE_Y
+            Const.DISCARD_POSITION.x + Const.FACE_X + Const.SPRITE_X,
+            Const.DISCARD_POSITION.y + Const.FACE_Y + Const.SPRITE_Y
         )
     }
 
     private fun showHideGameMenu() {
         if (menu != null) {
-            menu?.let {
-                it.isVisible = false
-                stage.actors.removeValue(it, true)
-            }
-            menu = null
+            removeGameMenu()
         } else {
-            paused = true
-            val newMenu = GameMenu(skinData, preferences.themeKey, menuButton)
+            val newMenu = GameMenu(
+                skinData,
+                preferences.themeKey,
+                assets[BundleAssets.Bundle],
+                menuButton
+            ).apply {
+                newGameButton.setAction {
+                    removeGameMenu()
+                    newGame()
+                }
+                exitButton.setAction {
+                    removeGameMenu()
+                    Gdx.app.exit()
+                }
+            }
             stage.addActor(newMenu)
             newMenu.isVisible = true
             menu = newMenu
         }
+    }
+
+    private fun removeGameMenu() {
+        menu?.let {
+            it.isVisible = false
+            stage.actors.removeValue(it, true)
+        }
+        menu = null
     }
 }

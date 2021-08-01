@@ -4,12 +4,10 @@ import com.badlogic.gdx.Preferences
 import ktx.collections.GdxArray
 import ktx.collections.GdxIntArray
 import ktx.collections.GdxMap
-import ktx.log.Logger
 import ktx.log.error
 import ktx.log.logger
 import ogz.tripeaks.game.layout.Layout
 import ogz.tripeaks.util.all
-import java.lang.Exception
 
 class GameState(
     val layout: Layout,
@@ -22,7 +20,12 @@ class GameState(
     val canUndo get() = discard.size > minDiscarded
     val canDeal get() = stack.size > 0
     val won get() = sockets.all { it.isEmpty }
-    val stalled get() = canDeal || ((layout.numberOfSockets - 1) downTo 0).any { isOpen(it) }
+    val stalled: Boolean
+        get() = !(canDeal ||
+                discard.isEmpty ||
+                ((layout.numberOfSockets - 1) downTo 0).any {
+                    isOpen(it) && Card.areNeighbors(discard.peek(), sockets[it].card)
+                })
 
     /** Takes a card from the table and put it to the discard.
      *  @return true if the action is performed, false otherwise.
@@ -136,7 +139,7 @@ class GameState(
 
                 val minDiscarded = preferences.getInteger(MIN_DISCARDED)
 
-                require((socketStates.count { !it.isEmpty } +  stack.size + discard.size) == 52)
+                require((socketStates.count { !it.isEmpty } + stack.size + discard.size) == 52)
                 require(minDiscarded in 0..1)
 
                 return GameState(layout, sockets, stack, discard, minDiscarded)
