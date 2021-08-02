@@ -165,16 +165,16 @@ class LoadingScreen(
             selectBox {
                 font = skinFont
                 fontColor = skin["dark"]
-                background = skin["buttonUp"]
-                backgroundOpen = skin["buttonDown"]
+                background = skin["selectBoxUp"]
+                backgroundOpen = skin["selectBoxDown"]
                 scrollStyle = scrollPaneStyleDefault
                 listStyle = listStyleDefault
             }
             selectBox("light", extend = defaultStyle)
             selectBox("dark", extend = defaultStyle) {
                 fontColor = skin["light"]
-                background = skin["buttonUp_dark"]
-                backgroundOpen = skin["buttonDown_dark"]
+                background = skin["selectBoxUp_dark"]
+                backgroundOpen = skin["selectBoxDown_dark"]
                 scrollStyle = scrollPaneStyleDark
                 listStyle = listStyleDark
             }

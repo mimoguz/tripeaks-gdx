@@ -26,10 +26,6 @@ import ogz.tripeaks.ecs.CardAnimationRenderingSystem
 import ogz.tripeaks.ecs.CardRenderComponent
 import ogz.tripeaks.ecs.CardRenderingSystem
 import ogz.tripeaks.game.GameState
-import ogz.tripeaks.game.GameStats
-import ogz.tripeaks.game.layout.BasicLayout
-import ogz.tripeaks.game.layout.DiamondsLayout
-import ogz.tripeaks.game.layout.Inverted2ndLayout
 import ogz.tripeaks.game.layout.Layout
 import ogz.tripeaks.screens.dialogs.EndGameDialog
 import ogz.tripeaks.screens.dialogs.GameMenu
@@ -55,7 +51,6 @@ class GameScreen(
     private val sprites = SpriteCollection(assets, preferences.useDarkTheme)
     private val stage = Stage(viewport)
     private var menu: GameMenu? = null
-    private val gameStats = GameStats()
     private var backgroundColor = preferences.backgroundColor
     private var stalled = false
 
@@ -63,46 +58,20 @@ class GameScreen(
         layoutList.forEach { map.set(it.tag, it) }
     }
 
-    private var gameState = GameState.create(
+    private var gameState = GameState.new(
         (0 until 52).shuffled().toIntArray(),
         preferences.startWithEmptyDiscard,
         layouts.get(preferences.layout, layoutList.first())
     )
 
-
-    private val dealButton = ImageButton(
-        skinData.skin,
-        preferences.themeKey,
-        Const.SPRITE_WIDTH + 2f,
-        Const.SPRITE_HEIGHT + 2f,
-        assets[TextureAtlasAssets.Ui].createSprite(if (preferences.useDarkTheme) "deal_dark" else "deal")
-    ) { if (menu != null) removeGameMenu() else deal() }
-
-    private val undoButton = ImageButton(
-        skinData.skin,
-        preferences.themeKey,
-        Const.SPRITE_WIDTH + 2f,
-        Const.SPRITE_HEIGHT + 2f,
-        assets[TextureAtlasAssets.Ui].createSprite(if (preferences.useDarkTheme) "undo_dark" else "undo")
-    ) { if (menu != null) removeGameMenu() else undo() }
-
-    private val menuButton = ImageButton(
-        skinData.skin,
-        preferences.themeKey,
-        Const.SPRITE_WIDTH + 2f,
-        Const.SPRITE_WIDTH + 2f,
-        assets[TextureAtlasAssets.Ui].createSprite(if (preferences.useDarkTheme) "menu_dark" else "menu")
-    ) { showHideGameMenu() }
+    private var dealButton = makeDealButton()
+    private var undoButton = makeUndoButton()
+    private var menuButton = makeMenuButton()
 
     override fun show() {
-        initUi()
+        stageSetup()
         Gdx.input.inputProcessor = InputMultiplexer(stage, this)
-        if (load()) {
-            initECS()
-            updateUi()
-        } else {
-            newGame()
-        }
+        if (!load()) newGame()
     }
 
     override fun resume() {
@@ -114,9 +83,7 @@ class GameScreen(
         if (!gameState.won) {
             save()
         } else {
-            Gdx.app.getPreferences(SAVE_NAME)
-                .putBoolean(SAVE_IS_VALID, false)
-                .flush()
+            GameState.clearSave()
         }
         super.pause()
     }
@@ -183,12 +150,11 @@ class GameScreen(
     private fun newGame() {
         entities.forEach { it.removeAll() } // Clear components
         gameState =
-            GameState.create(
+            GameState.new(
                 (0 until 52).shuffled().toIntArray(),
                 preferences.startWithEmptyDiscard,
                 layouts.get(preferences.layout, layoutList.first())
             )
-        gameStats.reset()
         stalled = false
         initECS()
         updateUi()
@@ -213,19 +179,8 @@ class GameScreen(
         }
     }
 
-    private fun initUi() {
-        dealButton.setPosition(
-            Const.STACK_POSITION.x + Const.CELL_WIDTH * 2f,
-            Const.STACK_POSITION.y
-        )
-        undoButton.setPosition(
-            Const.DISCARD_POSITION.x - Const.CELL_WIDTH * 2f + Const.SPRITE_X,
-            Const.DISCARD_POSITION.y
-        )
-        menuButton.setPosition(
-            Const.CONTENT_WIDTH - 2f * Const.CELL_WIDTH + Const.SPRITE_X,
-            Const.CONTENT_HEIGHT - menuButton.width - Const.VERTICAL_PADDING
-        )
+    private fun stageSetup() {
+        stage.clear()
         stage.actors.addAll(dealButton, undoButton, menuButton)
     }
 
@@ -241,15 +196,12 @@ class GameScreen(
                 }
             }
             updateUi()
-            gameStats.takeFromPeaks()
-
         }
     }
 
     private fun undo() {
         gameState.undo()?.let { socketIndex ->
             if (socketIndex >= 0) {
-                gameStats.backToPeaks()
                 engine.configureEntity(entities[gameState.sockets[socketIndex].card]) {
                     entity.remove<CardAnimationComponent>()
                     with<CardRenderComponent> {
@@ -257,18 +209,13 @@ class GameScreen(
                         cardIndex = gameState.sockets[socketIndex].card
                     }
                 }
-            } else {
-                gameStats.backToStack()
             }
             updateUi()
         }
     }
 
     private fun deal() {
-        if (gameState.deal()) {
-            gameStats.takeFromStack()
-            updateUi()
-        }
+        if (gameState.deal()) updateUi()
     }
 
     private fun updateUi() {
@@ -309,9 +256,9 @@ class GameScreen(
             EndGameDialog(
                 skinData,
                 preferences.themeKey,
-                gameStats.removedFromStack,
-                gameStats.longestChain,
-                gameStats.undoCount,
+                gameState.cardsRemovedFromStack,
+                gameState.longestChainLength,
+                gameState.undoCount,
                 assets[BundleAssets.Bundle]
             ).apply {
                 exitButton.setAction { Gdx.app.exit() }
@@ -354,7 +301,8 @@ class GameScreen(
         } else {
             val newMenu = GameMenu(
                 skinData,
-                preferences.themeKey,
+                preferences,
+                layoutList,
                 assets[BundleAssets.Bundle],
                 menuButton
             ).apply {
@@ -366,6 +314,8 @@ class GameScreen(
                     removeGameMenu()
                     Gdx.app.exit()
                 }
+                onThemeChanged = ::themeChanged
+                onOptionsDialogShown = ::removeGameMenu
             }
             stage.addActor(newMenu)
             newMenu.isVisible = true
@@ -382,44 +332,67 @@ class GameScreen(
     }
 
     private fun save() {
-        val preferences = Gdx.app.getPreferences(SAVE_NAME)
-        preferences.clear()
-        gameState.save(preferences)
-        gameStats.save(preferences)
-        preferences.putBoolean(STALLED, stalled)
-        preferences.putBoolean(SAVE_IS_VALID, true)
-        preferences.flush()
+        gameState.save()
     }
 
     private fun load(): Boolean {
-        val preferences = Gdx.app.getPreferences((SAVE_NAME))
-
-        val isValid = preferences.getBoolean(SAVE_IS_VALID)
-        if (!isValid) return  false
-        preferences.putBoolean(SAVE_IS_VALID, false)
-        preferences.flush()
-
-        val state = GameState.load(preferences, layouts)
+        val state = GameState.load(layouts)
         if (state == null) return false
-
-        val statsLoaded = gameStats.load(preferences)
-        if (!statsLoaded) return false
-
-        stalled = preferences.getBoolean(STALLED, false)
+        stalled = false
         gameState = state
+        initECS()
+        updateUi()
         return true
     }
 
-    companion object {
-        const val SAVE_NAME = "save"
-        const val SAVE_IS_VALID = "valid"
-        const val STALLED = "stalled"
+    private fun themeChanged(useDarkTheme: Boolean) {
+        sprites.set(useDarkTheme)
+        undoButton = makeUndoButton()
+        dealButton = makeDealButton()
+        menuButton = makeMenuButton()
+        backgroundColor = preferences.backgroundColor
+        stageSetup()
+        updateUi()
+    }
 
-        fun invalidateSave() {
-            val preferences = Gdx.app.getPreferences((SAVE_NAME))
-            preferences.clear()
-            preferences.putBoolean(SAVE_IS_VALID, false)
-            preferences.flush()
-        }
+    private fun makeDealButton() = ImageButton(
+        skinData.skin,
+        preferences.themeKey,
+        Const.SPRITE_WIDTH + 2f,
+        Const.SPRITE_HEIGHT + 2f,
+        assets[TextureAtlasAssets.Ui].createSprite(if (preferences.useDarkTheme) "deal_dark" else "deal")
+    ) { if (menu != null) removeGameMenu() else deal() }.apply {
+        setPosition(
+            Const.STACK_POSITION.x + Const.CELL_WIDTH * 2f,
+            Const.STACK_POSITION.y
+        )
+    }
+
+
+    private fun makeUndoButton() = ImageButton(
+        skinData.skin,
+        preferences.themeKey,
+        Const.SPRITE_WIDTH + 2f,
+        Const.SPRITE_HEIGHT + 2f,
+        assets[TextureAtlasAssets.Ui].createSprite(if (preferences.useDarkTheme) "undo_dark" else "undo")
+    ) { if (menu != null) removeGameMenu() else undo() }.apply {
+        setPosition(
+            Const.DISCARD_POSITION.x - Const.CELL_WIDTH * 2f + Const.SPRITE_X,
+            Const.DISCARD_POSITION.y
+        )
+    }
+
+
+    private fun makeMenuButton() = ImageButton(
+        skinData.skin,
+        preferences.themeKey,
+        Const.SPRITE_WIDTH + 2f,
+        Const.SPRITE_WIDTH + 2f,
+        assets[TextureAtlasAssets.Ui].createSprite(if (preferences.useDarkTheme) "menu_dark" else "menu")
+    ) { showHideGameMenu() }.apply {
+        setPosition(
+            Const.CONTENT_WIDTH - 2f * Const.CELL_WIDTH + Const.SPRITE_X,
+            Const.CONTENT_HEIGHT - width - Const.VERTICAL_PADDING
+        )
     }
 }

@@ -9,8 +9,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.viewport.Viewport
 import ktx.app.KtxScreen
-import ktx.scene2d.Scene2DSkin
 import ogz.tripeaks.*
+import ogz.tripeaks.game.GameState
 import ogz.tripeaks.game.layout.Layout
 import ogz.tripeaks.screens.controls.MyTextButton
 import ogz.tripeaks.screens.dialogs.OptionsDialog
@@ -31,11 +31,25 @@ class StartScreen(
     private val stage = Stage(viewport)
 
     override fun show() {
-        val skin = Scene2DSkin.defaultSkin
-        val image =
-            if (preferences.useDarkTheme) assets[TextureAssets.DarkTitle] else assets[TextureAssets.LightTitle]
+        initUi()
+    }
+
+    override fun resize(width: Int, height: Int) {
+        stage.viewport.update(width, height)
+    }
+
+    override fun render(delta: Float) {
+        stage.act(delta)
+        stage.draw()
+    }
+
+    override fun dispose() {
+        stage.dispose()
+    }
+
+    private fun initUi() {
         stage.actors.add(
-            Image(image).apply {
+            Image(if (preferences.useDarkTheme) assets[TextureAssets.DarkTitle] else assets[TextureAssets.LightTitle]).apply {
                 setSize(300f, 168f)
                 setPosition(0f, 0f)
             },
@@ -84,7 +98,8 @@ class StartScreen(
                                 layouts,
                                 assets[BundleAssets.Bundle]
                             )
-                            optionsDialog.onGameLayoutChanged = { GameScreen.invalidateSave() }
+                            optionsDialog.onGameLayoutChanged = { GameState.clearSave() }
+                            optionsDialog.onThemeChanged = { initUi() }
                             optionsDialog.show(this@StartScreen.stage)
                         }
                     }
@@ -101,18 +116,5 @@ class StartScreen(
             }
         )
         Gdx.input.inputProcessor = stage
-    }
-
-    override fun resize(width: Int, height: Int) {
-        stage.viewport.update(width, height)
-    }
-
-    override fun render(delta: Float) {
-        stage.act(delta)
-        stage.draw()
-    }
-
-    override fun dispose() {
-        stage.dispose()
     }
 }

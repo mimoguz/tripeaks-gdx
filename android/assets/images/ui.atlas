@@ -6,14 +6,14 @@ filter: Nearest, Nearest
 repeat: none
 basicLayout
   rotate: false
-  xy: 42, 82
+  xy: 42, 50
   size: 20, 11
   orig: 20, 11
   offset: 0, 0
   index: -1
 basicLayout_dark
   rotate: false
-  xy: 84, 115
+  xy: 104, 115
   size: 20, 11
   orig: 20, 11
   offset: 0, 0
@@ -74,98 +74,84 @@ buttonUp_dark
   index: -1
 checkboxOff
   rotate: false
-  xy: 84, 104
+  xy: 79, 93
   size: 18, 9
   orig: 18, 9
   offset: 0, 0
   index: -1
 checkboxOff_dark
   rotate: false
-  xy: 64, 82
+  xy: 99, 93
   size: 18, 9
   orig: 18, 9
   offset: 0, 0
   index: -1
 checkboxOn
   rotate: false
-  xy: 64, 93
+  xy: 102, 104
   size: 18, 9
   orig: 18, 9
   offset: 0, 0
   index: -1
 checkboxOn_dark
   rotate: false
-  xy: 64, 104
+  xy: 82, 104
   size: 18, 9
   orig: 18, 9
   offset: 0, 0
   index: -1
 deal
   rotate: false
-  xy: 2, 16
+  xy: 24, 17
   size: 11, 15
   orig: 11, 15
   offset: 0, 0
   index: -1
 deal_dark
   rotate: false
-  xy: 84, 87
+  xy: 64, 77
   size: 11, 15
   orig: 11, 15
   offset: 0, 0
   index: -1
 diamondsLayout
   rotate: false
-  xy: 42, 95
+  xy: 42, 63
   size: 20, 11
   orig: 20, 11
   offset: 0, 0
   index: -1
 diamondsLayout_dark
   rotate: false
-  xy: 106, 115
+  xy: 42, 76
   size: 20, 11
   orig: 20, 11
   offset: 0, 0
   index: -1
-downArrow
-  rotate: false
-  xy: 22, 47
-  size: 5, 4
-  orig: 5, 4
-  offset: 0, 0
-  index: -1
-downArrow_dark
-  rotate: false
-  xy: 97, 90
-  size: 5, 4
-  orig: 5, 4
-  offset: 0, 0
-  index: -1
 inverted2ndLayout
   rotate: false
-  xy: 62, 115
+  xy: 82, 115
   size: 20, 11
   orig: 20, 11
   offset: 0, 0
   index: -1
 inverted2ndLayout_dark
   rotate: false
-  xy: 42, 69
+  xy: 2, 16
   size: 20, 11
   orig: 20, 11
   offset: 0, 0
   index: -1
 menu
   rotate: false
-  xy: 22, 53
+  xy: 22, 34
   size: 15, 13
   orig: 15, 13
   offset: 0, 0
   index: -1
 menuItemDown
   rotate: false
-  xy: 104, 107
+  xy: 64, 69
   size: 6, 6
   split: 2, 2, 2, 2
   pad: 2, 2, 2, 2
@@ -174,7 +160,7 @@ menuItemDown
   index: -1
 menuItemDown_dark
   rotate: false
-  xy: 112, 107
+  xy: 64, 61
   size: 6, 6
   split: 2, 2, 2, 2
   pad: 2, 2, 2, 2
@@ -183,7 +169,7 @@ menuItemDown_dark
   index: -1
 menuItemUp
   rotate: false
-  xy: 97, 96
+  xy: 30, 9
   size: 6, 6
   split: 2, 2, 2, 2
   pad: 2, 2, 2, 2
@@ -192,7 +178,7 @@ menuItemUp
   index: -1
 menuItemUp_dark
   rotate: false
-  xy: 120, 107
+  xy: 64, 53
   size: 6, 6
   split: 2, 2, 2, 2
   pad: 2, 2, 2, 2
@@ -201,9 +187,45 @@ menuItemUp_dark
   index: -1
 menu_dark
   rotate: false
-  xy: 2, 33
+  xy: 62, 94
   size: 15, 13
   orig: 15, 13
+  offset: 0, 0
+  index: -1
+selectBoxDown
+  rotate: false
+  xy: 42, 89
+  size: 18, 17
+  split: 4, 4, 5, 5
+  pad: 4, 4, 5, 5
+  orig: 18, 17
+  offset: 0, 0
+  index: -1
+selectBoxDown_dark
+  rotate: false
+  xy: 22, 49
+  size: 18, 17
+  split: 4, 4, 5, 5
+  pad: 4, 4, 5, 5
+  orig: 18, 17
+  offset: 0, 0
+  index: -1
+selectBoxUp
+  rotate: false
+  xy: 62, 109
+  size: 18, 17
+  split: 4, 4, 5, 5
+  pad: 4, 4, 5, 5
+  orig: 18, 17
+  offset: 0, 0
+  index: -1
+selectBoxUp_dark
+  rotate: false
+  xy: 2, 29
+  size: 18, 17
+  split: 4, 4, 4, 4
+  pad: 4, 4, 4, 4
+  orig: 18, 17
   offset: 0, 0
   index: -1
 undo
@@ -215,7 +237,7 @@ undo
   index: -1
 undo_dark
   rotate: false
-  xy: 64, 68
+  xy: 16, 2
   size: 12, 12
   orig: 12, 12
   offset: 0, 0

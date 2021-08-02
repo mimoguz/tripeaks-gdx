@@ -5,20 +5,51 @@ import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup
 import com.badlogic.gdx.scenes.scene2d.ui.Window
 import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.I18NBundle
+import ogz.tripeaks.game.layout.Layout
 import ogz.tripeaks.screens.controls.MyMenuItem
+import ogz.tripeaks.util.GamePreferences
 import ogz.tripeaks.util.SkinData
 
-class GameMenu(skinData: SkinData, theme: String, res: I18NBundle, attached: Actor) :
-    Window("", skinData.skin, theme) {
+class GameMenu(
+    skinData: SkinData,
+    preferences: GamePreferences,
+    layouts: List<Layout>,
+    res: I18NBundle,
+    attached: Actor
+) :
+    Window("", skinData.skin, preferences.themeKey) {
 
-    val newGameButton = MyMenuItem(res.get("newGameShort") , skinData, theme)
-    val exitButton = MyMenuItem(res.get("exit"), skinData, theme)
+    var onThemeChanged: ((useDarkTheme: Boolean) -> Unit)? = null
+    var onOptionsDialogShown: (() -> Unit)? = null
+
+    val newGameButton = MyMenuItem(res.get("newGameShort"), skinData, preferences.themeKey)
+    val exitButton = MyMenuItem(res.get("exit"), skinData, preferences.themeKey)
+    val optionsButton = MyMenuItem(res.get("options"), skinData, preferences.themeKey).apply {
+        setAction {
+            val optionsDialog = OptionsDialog(
+                skinData,
+                preferences.themeKey,
+                preferences,
+                layouts,
+                res
+            )
+            optionsDialog.onThemeChanged = { useDarkTheme -> onThemeChanged?.invoke(useDarkTheme) }
+            onOptionsDialogShown?.invoke()
+            optionsDialog.show(this@GameMenu.stage)
+        }
+    }
 
     init {
         isModal = false
         isVisible = false
         val layout = HorizontalGroup().apply {
-            add(newGameButton).width(100f).height(24f).spaceBottom(4f)
+            defaults()
+                .space(0f)
+                .align(Align.left)
+                .pad(0f)
+            add(newGameButton).width(100f).height(24f)
+            row()
+            add(optionsButton).width(100f).height(24f)
             row()
             add(exitButton).width(100f).height(24f)
             pad(0f)
@@ -26,10 +57,10 @@ class GameMenu(skinData: SkinData, theme: String, res: I18NBundle, attached: Act
         add(layout)
         pad(4f, 4f, 6f, 4f)
         width = 108f
-        height = 62f
+        height = 82f
         setPosition(
             attached.x + attached.width,
-            attached.y + 3f,
+            attached.y + 2f,
             Align.topRight
         )
     }
