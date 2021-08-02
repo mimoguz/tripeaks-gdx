@@ -1,5 +1,6 @@
 package ogz.tripeaks.game
 
+import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Preferences
 import ktx.collections.GdxArray
 import ktx.collections.GdxIntArray
@@ -9,12 +10,16 @@ import ktx.log.logger
 import ogz.tripeaks.game.layout.Layout
 import ogz.tripeaks.util.all
 
-class GameState(
+class GameState private constructor(
     val layout: Layout,
     val sockets: GdxArray<SocketState>,
     val stack: GdxIntArray,
     val discard: GdxIntArray,
-    val minDiscarded: Int
+    val minDiscarded: Int,
+    longestChain: Int = 0,
+    currentChain: Int = 0,
+    removedFromStack: Int = 0,
+    undos: Int = 0
 ) {
 
     val canUndo get() = discard.size > minDiscarded
@@ -27,6 +32,19 @@ class GameState(
                     isOpen(it) && Card.areNeighbors(discard.peek(), sockets[it].card)
                 })
 
+    var currentChainLength = currentChain
+        private set
+
+    var longestChainLength = longestChain
+        private set
+
+    var cardsRemovedFromStack = removedFromStack
+        private set
+
+    var undoCount = undos
+        private set
+
+
     /** Takes a card from the table and put it to the discard.
      *  @return true if the action is performed, false otherwise.
      */
@@ -37,6 +55,8 @@ class GameState(
         ) {
             sockets[socketIndex].isEmpty = true
             discard.add(sockets[socketIndex].card)
+            currentChainLength++
+            longestChainLength = maxOf(currentChainLength, longestChainLength)
             return true
         }
         return false
@@ -48,6 +68,8 @@ class GameState(
     fun deal(): Boolean {
         if (!canDeal) return false
         discard.add(stack.pop())
+        currentChainLength = 0
+        cardsRemovedFromStack++
         return true
     }
 
@@ -57,15 +79,18 @@ class GameState(
     fun undo(): Int? {
         if (discard.size <= minDiscarded) return null
 
+        currentChainLength = 0
+        undoCount++
+
         val card = discard.pop()
         val socketIndex = sockets.indexOfFirst { it.card == card }
 
         if (socketIndex < 0) {
             stack.add(card)
-            return -1
+        } else {
+            sockets[socketIndex].isEmpty = false
         }
 
-        sockets[socketIndex].isEmpty = false
         return socketIndex
     }
 
@@ -74,8 +99,9 @@ class GameState(
         (!sockets[socketIndex].isEmpty) && layout[socketIndex].blockedBy.all { sockets[it].isEmpty }
 
 
-    fun save(preferences: Preferences) {
-        preferences.putString(LAYOUT, layout.tag)
+    fun save() {
+        val preferences = Gdx.app.getPreferences(SAVE_NAME)
+        preferences.clear()
 
         val serializedSockets = sockets.map { it.serialize() }.joinToString(SEPARATOR)
         preferences.putString(SOCKETS, serializedSockets)
@@ -88,7 +114,14 @@ class GameState(
         val serializedStack = stackCopy.joinToString(SEPARATOR)
         preferences.putString(STACK, serializedStack)
 
+        preferences.putString(LAYOUT, layout.tag)
+        preferences.putInteger(CURRENT_CHAIN, currentChainLength)
+        preferences.putInteger(LONGEST_CHAIN, longestChainLength)
+        preferences.putInteger(REMOVED_FROM_STACK, cardsRemovedFromStack)
+        preferences.putInteger(UNDO_COUNT, undoCount)
         preferences.putInteger(MIN_DISCARDED, minDiscarded)
+
+        preferences.flush()
     }
 
     companion object {
@@ -98,10 +131,15 @@ class GameState(
         const val STACK = "stack"
         const val MIN_DISCARDED = "minDiscarded"
         const val SEPARATOR = ";"
+        const val CURRENT_CHAIN = "currentChain"
+        const val LONGEST_CHAIN = "longestChain"
+        const val REMOVED_FROM_STACK = "removedFromStack"
+        const val UNDO_COUNT = "undoCount"
+        const val SAVE_NAME = "save"
 
         private val log = logger<GameState>()
 
-        fun create(cards: IntArray, emptyDiscard: Boolean, layout: Layout): GameState {
+        fun new(cards: IntArray, emptyDiscard: Boolean, layout: Layout): GameState {
             require(cards.size == 52 && cards.distinct().size == cards.size)
 
             val sockets = GdxArray<SocketState>(layout.numberOfSockets)
@@ -120,8 +158,12 @@ class GameState(
             return GameState(layout, sockets, stack, discard, minDiscarded)
         }
 
-        fun load(preferences: Preferences, layouts: GdxMap<String, Layout>): GameState? {
+        fun load(layouts: GdxMap<String, Layout>): GameState? {
+            val preferences = Gdx.app.getPreferences(SAVE_NAME)
+
             try {
+                if (!preferences.contains(LAYOUT)) return null
+
                 val layout = layouts[preferences.getString(LAYOUT)]
 
                 val serializedSockets = preferences.getString(SOCKETS)
@@ -149,15 +191,35 @@ class GameState(
 
                 val minDiscarded = preferences.getInteger(MIN_DISCARDED)
 
-                require((socketStates.count { !it.isEmpty } + stack.size + discard.size) == 52)
-                require(minDiscarded in 0..1)
+                val currentChain = preferences.getInteger(CURRENT_CHAIN)
+                val longestChain = preferences.getInteger(LONGEST_CHAIN)
+                val removedFromStack = preferences.getInteger(REMOVED_FROM_STACK)
+                val undos = preferences.getInteger(UNDO_COUNT)
 
-                return GameState(layout, sockets, stack, discard, minDiscarded)
+                require((socketStates.count { !it.isEmpty } + stack.size + discard.size) == 52)
+
+                return GameState(
+                    layout = layout,
+                    sockets = sockets,
+                    stack = stack,
+                    discard = discard,
+                    minDiscarded = minDiscarded,
+                    longestChain = longestChain,
+                    currentChain = currentChain,
+                    removedFromStack = removedFromStack,
+                    undos = undos
+                )
             } catch (e: Exception) {
                 log.error { "Error loading game state: ${e.message}\n\n${e.stackTrace.joinToString("\n")}" }
             }
 
             return null
+        }
+
+        fun clearSave() {
+            val preferences = Gdx.app.getPreferences(SAVE_NAME)
+            preferences.clear()
+            preferences.flush()
         }
     }
 }
