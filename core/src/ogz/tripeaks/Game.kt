@@ -7,8 +7,10 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.utils.viewport.Viewport
 import ktx.app.KtxGame
 import ktx.app.KtxScreen
+import ktx.collections.GdxArray
 import ktx.inject.Context
 import ktx.inject.register
+import ogz.tripeaks.game.layout.*
 import ogz.tripeaks.screens.LoadingScreen
 import ogz.tripeaks.util.GamePreferences
 import ogz.tripeaks.util.IntegerScalingViewport
@@ -29,9 +31,27 @@ open class Game : KtxGame<KtxScreen>() {
                 )
             )
             bindSingleton<Batch>(SpriteBatch())
+            bindSingleton(
+                Layouts(
+                    listOf(
+                        BasicLayout(),
+                        Inverted2ndLayout(),
+                        DiamondsLayout()
+                    )
+                )
+            )
         }
 
-        addScreen(LoadingScreen(this, context.inject(), context.inject(), context.inject(), context.inject()))
+        addScreen(
+            LoadingScreen(
+                this,
+                context.inject(),
+                context.inject(),
+                context.inject(),
+                context.inject(),
+                context.inject<Layouts>().list
+            )
+        )
         setScreen<LoadingScreen>()
         super.create()
     }

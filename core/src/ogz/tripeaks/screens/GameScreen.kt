@@ -46,7 +46,8 @@ class GameScreen(
     private val viewport: Viewport,
     private val batch: Batch,
     private val preferences: GamePreferences,
-    private val skinData: SkinData
+    private val skinData: SkinData,
+    private val layoutList: List<Layout>
 ) : KtxScreen, InputAdapter() {
 
     private val engine = PooledEngine()
@@ -58,16 +59,14 @@ class GameScreen(
     private var backgroundColor = preferences.backgroundColor
     private var stalled = false
 
-    private val layouts = GdxMap<String, Layout>().apply {
-        set(BasicLayout.TAG, BasicLayout())
-        set(Inverted2ndLayout.TAG, Inverted2ndLayout())
-        set(DiamondsLayout.TAG, DiamondsLayout())
+    private val layouts = GdxMap<String, Layout>().also { map ->
+        layoutList.forEach { map.set(it.tag, it) }
     }
 
     private var gameState = GameState.create(
         (0 until 52).shuffled().toIntArray(),
         preferences.startWithEmptyDiscard,
-        layouts[BasicLayout.TAG]
+        layouts.get(preferences.layout, layoutList.first())
     )
 
 
@@ -187,7 +186,7 @@ class GameScreen(
             GameState.create(
                 (0 until 52).shuffled().toIntArray(),
                 preferences.startWithEmptyDiscard,
-                if (layouts.containsKey(preferences.layout)) layouts[preferences.layout] else layouts[BasicLayout.TAG]
+                layouts.get(preferences.layout, layoutList.first())
             )
         gameStats.reset()
         stalled = false
@@ -415,5 +414,12 @@ class GameScreen(
         const val SAVE_NAME = "save"
         const val SAVE_IS_VALID = "valid"
         const val STALLED = "stalled"
+
+        fun invalidateSave() {
+            val preferences = Gdx.app.getPreferences((SAVE_NAME))
+            preferences.clear()
+            preferences.putBoolean(SAVE_IS_VALID, false)
+            preferences.flush()
+        }
     }
 }

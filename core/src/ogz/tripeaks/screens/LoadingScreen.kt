@@ -6,9 +6,11 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.scenes.scene2d.ui.Skin
 import com.badlogic.gdx.utils.viewport.Viewport
 import ktx.app.KtxScreen
+import ktx.collections.GdxArray
 import ktx.scene2d.Scene2DSkin
 import ktx.style.*
 import ogz.tripeaks.*
+import ogz.tripeaks.game.layout.Layout
 import ogz.tripeaks.util.GamePreferences
 import ogz.tripeaks.util.SkinData
 
@@ -17,7 +19,8 @@ class LoadingScreen(
     private val batch: Batch,
     private val viewport: Viewport,
     private val assets: AssetManager,
-    private val preferences: GamePreferences
+    private val preferences: GamePreferences,
+    private val layouts: List<Layout>
 ) :
     KtxScreen {
 
@@ -38,7 +41,7 @@ class LoadingScreen(
             val skinData = buildSkin(assets[BundleAssets.Bundle].get("skinKey"))
             Scene2DSkin.defaultSkin = skinData.skin
             game.context.bindSingleton(skinData)
-            game.addScreen(StartScreen(game, assets, viewport, batch, skinData, preferences))
+            game.addScreen(StartScreen(game, assets, viewport, batch, skinData, preferences, layouts))
             game.setScreen<StartScreen>()
             game.removeScreen<LoadingScreen>()
             dispose()
@@ -135,19 +138,21 @@ class LoadingScreen(
                 fontColorSelected = skin["dark"]
                 fontColorUnselected = skin["dark"]
                 selection = skin["menuItemDown"]
+                background = skin["window"]
             }
             list("light", extend = defaultStyle)
             val listStyleDark = list("dark", extend = defaultStyle) {
                 fontColorSelected = skin["light"]
                 fontColorUnselected = skin["light"]
                 selection = skin["menuItemDown_dark"]
+                background = skin["window_dark"]
             }
             val scrollPaneStyleDefault =  scrollPane {
                 hScroll = skin["menuItemDown"]
                 hScrollKnob = skin["buttonUp"]
                 vScroll = skin["menuItemDown"]
                 vScrollKnob = skin["buttonUp"]
-                corner = skin["menuItem"]
+                corner = skin["menuItemUp"]
             }
             scrollPane("light", extend = defaultStyle)
             val scrollPaneStyleDark = scrollPane("dark", extend = defaultStyle) {
@@ -155,7 +160,7 @@ class LoadingScreen(
                 hScrollKnob = skin["buttonUp_dark"]
                 vScroll = skin["menuItemDown_dark"]
                 vScrollKnob = skin["buttonUp_dark"]
-                corner = skin["menuItem_dark"]
+                corner = skin["menuItemUp_dark"]
             }
             selectBox {
                 font = skinFont

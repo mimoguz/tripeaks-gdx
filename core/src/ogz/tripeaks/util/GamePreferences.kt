@@ -11,7 +11,7 @@ class GamePreferences(
     var useDarkTheme: Boolean = false,
     var showAllCards: Boolean = false,
     var startWithEmptyDiscard: Boolean = false,
-    var layout: String = DiamondsLayout.TAG
+    var layout: String = BasicLayout.TAG
 ) {
     val themeKey: String
         get() = if (useDarkTheme) "dark" else "light"
@@ -24,7 +24,7 @@ class GamePreferences(
         useDarkTheme = preferences.getBoolean(USE_DARK_THEME, false)
         showAllCards = preferences.getBoolean(SHOW_ALL, false)
         startWithEmptyDiscard = preferences.getBoolean(START_WITH_EMPTY_DISCARD, true)
-        layout = preferences.getString(START_WITH_EMPTY_DISCARD, DiamondsLayout.TAG)
+        layout = preferences.getString(LAYOUT, BasicLayout.TAG)
         return this
     }
 
