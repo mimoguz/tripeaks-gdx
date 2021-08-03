@@ -101,7 +101,7 @@ class LoadingScreen(
                 up = skin["menuItemUp"]
                 down = skin["menuItemDown"]
                 disabled = skin["menuItemUp"]
-                over = skin["menuItemDown"]
+                over = skin["menuItemOver"]
                 font = skinFont
                 fontColor = skin["dark"]
             }
@@ -109,7 +109,7 @@ class LoadingScreen(
                 up = skin["menuItemUp_dark"]
                 down = skin["menuItemDown_dark"]
                 disabled = skin["menuItemUp_dark"]
-                over = skin["menuItemDown_dark"]
+                over = skin["menuItemOver_dark"]
                 font = skinFont
                 fontColor = skin["light"]
             }
@@ -140,6 +140,7 @@ class LoadingScreen(
                 fontColorSelected = skin["dark"]
                 fontColorUnselected = skin["dark"]
                 selection = skin["menuItemDown"]
+                over = skin["menuItemOver"]
                 background = skin["window"]
             }
             list("light", extend = defaultStyle)
@@ -147,6 +148,7 @@ class LoadingScreen(
                 fontColorSelected = skin["light"]
                 fontColorUnselected = skin["light"]
                 selection = skin["menuItemDown_dark"]
+                over = skin["menuItemOver_dark"]
                 background = skin["window_dark"]
             }
             val scrollPaneStyleDefault =  scrollPane {
