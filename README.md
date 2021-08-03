@@ -9,7 +9,7 @@ A simple tri peaks solitaire game using [libGDX](https://libgdx.com/).
 * [With show all cards option](fastlane/metadata/android/en-US/images/phoneScreenshots/3.png)
 * [End game dialog](fastlane/metadata/android/en-US/images/phoneScreenshots/4.png)
 
-## 0.5 branch, work in progress
+### 0.5 branch, work in progress
 
 * [New start screen](screenshots/b_0_5_start_screen.png)
 * [Options dialog](screenshots/b_0_5_options_dialog.png)
