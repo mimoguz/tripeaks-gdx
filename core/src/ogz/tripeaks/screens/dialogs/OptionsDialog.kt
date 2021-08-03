@@ -4,6 +4,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.*
 import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.I18NBundle
 import ktx.collections.toGdxArray
+import ogz.tripeaks.Const
 import ogz.tripeaks.game.layout.Layout
 import ogz.tripeaks.screens.controls.MyTextButton
 import ogz.tripeaks.util.GamePreferences
@@ -33,8 +34,8 @@ class OptionsDialog(
         }
     private val newGameLayout = SelectBox<String>(skinData.skin, gamePreferences.themeKey).also {
         it.setAlignment(Align.center)
-        it.style.listStyle.selection.topHeight = 6f
-        it.style.listStyle.selection.bottomHeight = 6f
+        it.style.listStyle.selection.topHeight = 4f
+        it.style.listStyle.selection.bottomHeight = 4f
     }
 
     init {
@@ -72,7 +73,7 @@ class OptionsDialog(
             setAction { hide() }
         }
 
-        pad(16f, 24f, 16f, 24f)
+        pad(12f, 24f, 12f, 24f)
         contentTable.apply {
             defaults()
                 .align(Align.left)
@@ -83,7 +84,7 @@ class OptionsDialog(
 
             add(Label(res.get("layout"), skinData.skin, gamePreferences.themeKey))
             row()
-            add(newGameLayout).width(220f).pad(0f, -1f, 0f, -1f)
+            add(newGameLayout).width(220f).height(Const.BUTTON_HEIGHT - 1f).pad(0f, -1f, 0f, -1f)
             row()
             add(showAllCards)
             row()
@@ -93,7 +94,7 @@ class OptionsDialog(
         }
         buttonTable.apply {
             pad(8f, 0f, 0f, 0f)
-            defaults().width(109f).align(Align.center).space(2f).pad(0f)
+            defaults().width(109f).height(Const.BUTTON_HEIGHT).align(Align.center).space(2f).pad(0f)
             add(saveButton)
             add(cancelButton)
         }

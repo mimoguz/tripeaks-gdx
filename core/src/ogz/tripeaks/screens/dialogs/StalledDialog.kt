@@ -4,6 +4,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Dialog
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.I18NBundle
+import ogz.tripeaks.Const
 import ogz.tripeaks.screens.controls.MyTextButton
 import ogz.tripeaks.util.SkinData
 
@@ -20,18 +21,18 @@ class StalledDialog(
     val returnButton = MyTextButton(res.get("return"), skinData, theme)
 
     init {
-        pad(16f, 24f, 16f, 24f)
+        pad(12f, 24f, 12f, 24f)
         contentTable.add(Label(res.get("stalled"), skinData.skin, theme))
         buttonTable.apply {
-            pad(4f, 4f, 0f, 4f)
-            defaults().width(110f).pad(0f).space(0f)
-            add(undoButton).spaceBottom(2f)
+            pad(0f, 4f, 0f, 4f)
+            defaults().width(110f).height(Const.BUTTON_HEIGHT).pad(0f).space(2f)
+            add(undoButton)
             row()
-            add(newGameButton).spaceBottom(2f)
+            add(newGameButton)
             row()
             add(returnButton)
             row()
-            add(exitButton).spaceTop(skinData.exitButtonTopMargin).pad(0f)
+            add(exitButton).spaceTop(skinData.exitButtonTopMargin - 2f)
         }
     }
 }

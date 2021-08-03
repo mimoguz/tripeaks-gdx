@@ -392,7 +392,7 @@ class GameScreen(
         assets[TextureAtlasAssets.Ui].createSprite(if (preferences.useDarkTheme) "undo_dark" else "undo")
     ) { if (menu != null) removeGameMenu() else undo() }.apply {
         setPosition(
-            Const.DISCARD_POSITION.x - Const.CELL_WIDTH * 2f + Const.SPRITE_X,
+            Const.DISCARD_POSITION.x - Const.CELL_WIDTH * 2f,
             Const.DISCARD_POSITION.y
         )
     }

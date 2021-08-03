@@ -57,8 +57,14 @@ class StartScreen(
             Table().apply {
                 width = 300f
                 height = 168f
-                defaults().space(4f).pad(0f).width(110f).align(Align.center)
                 setPosition(0f, 0f)
+                defaults()
+                    .space(4f)
+                    .pad(0f)
+                    .width(110f)
+                    .height(Const.BUTTON_HEIGHT)
+                    .align(Align.center)
+
                 add(
                     MyTextButton(
                         assets[BundleAssets.Bundle].get("start"),

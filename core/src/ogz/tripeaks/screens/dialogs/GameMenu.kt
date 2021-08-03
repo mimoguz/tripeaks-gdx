@@ -5,6 +5,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup
 import com.badlogic.gdx.scenes.scene2d.ui.Window
 import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.I18NBundle
+import ogz.tripeaks.Const
 import ogz.tripeaks.game.layout.Layout
 import ogz.tripeaks.screens.controls.MyMenuItem
 import ogz.tripeaks.util.GamePreferences
@@ -47,11 +48,11 @@ class GameMenu(
                 .space(0f)
                 .align(Align.left)
                 .pad(0f)
-            add(newGameButton).width(100f).height(24f)
+            add(newGameButton).width(100f).height(Const.BUTTON_HEIGHT - 1f)
             row()
-            add(optionsButton).width(100f).height(24f)
+            add(optionsButton).width(100f).height(Const.BUTTON_HEIGHT - 1f)
             row()
-            add(exitButton).width(100f).height(24f)
+            add(exitButton).width(100f).height(Const.BUTTON_HEIGHT - 1f)
             pad(0f)
         }
         add(layout)
