@@ -13,7 +13,8 @@ import kotlin.math.roundToInt
 class CardRenderingSystem(
     private val batch: Batch,
     private val sprites: SpriteCollection,
-    private val state: GameState
+    private val state: GameState,
+    var allOpen: Boolean = false
 ) :
     SortedIteratingSystem(allOf(CardRenderComponent::class).get(), compareBy {
         it[CardRenderComponent.mapper]?.let { component -> state.layout[component.socketIndex].z }
@@ -36,9 +37,8 @@ class CardRenderingSystem(
                     Const.VERTICAL_PADDING -
                     socket.row * Const.CELL_HEIGHT -
                     (Const.SPRITE_HEIGHT + Const.SPRITE_Y)
-            // val y = startY - (socket.row + 2) * Const.CELL_HEIGHT
             batch.draw(sprites.plate, x, y)
-            if (state.isOpen(component.socketIndex)) {
+            if (allOpen || state.isOpen(component.socketIndex)) {
                 batch.draw(sprites.faces[component.cardIndex], x + Const.FACE_X, y + Const.FACE_Y)
             } else {
                 batch.draw(sprites.back, x, y)

@@ -101,6 +101,7 @@ class LoadingScreen(
                 up = skin["menuItemUp"]
                 down = skin["menuItemDown"]
                 disabled = skin["menuItemUp"]
+                over = skin["menuItemDown"]
                 font = skinFont
                 fontColor = skin["dark"]
             }
@@ -108,6 +109,7 @@ class LoadingScreen(
                 up = skin["menuItemUp_dark"]
                 down = skin["menuItemDown_dark"]
                 disabled = skin["menuItemUp_dark"]
+                over = skin["menuItemDown_dark"]
                 font = skinFont
                 fontColor = skin["light"]
             }

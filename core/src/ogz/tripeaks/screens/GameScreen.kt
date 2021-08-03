@@ -12,28 +12,19 @@ import com.badlogic.gdx.scenes.scene2d.Touchable
 import com.badlogic.gdx.utils.ScreenUtils
 import com.badlogic.gdx.utils.viewport.Viewport
 import ktx.app.KtxScreen
-import ktx.ashley.configureEntity
-import ktx.ashley.entity
-import ktx.ashley.remove
-import ktx.ashley.with
+import ktx.ashley.*
 import ktx.collections.GdxMap
 import ktx.collections.set
 import ktx.collections.toGdxArray
 import ktx.graphics.use
 import ogz.tripeaks.*
-import ogz.tripeaks.ecs.CardAnimationComponent
-import ogz.tripeaks.ecs.CardAnimationRenderingSystem
-import ogz.tripeaks.ecs.CardRenderComponent
-import ogz.tripeaks.ecs.CardRenderingSystem
+import ogz.tripeaks.ecs.*
 import ogz.tripeaks.game.GameState
 import ogz.tripeaks.game.layout.Layout
 import ogz.tripeaks.screens.dialogs.EndGameDialog
 import ogz.tripeaks.screens.dialogs.GameMenu
 import ogz.tripeaks.screens.dialogs.StalledDialog
-import ogz.tripeaks.util.GamePreferences
-import ogz.tripeaks.util.ImageButton
-import ogz.tripeaks.util.SkinData
-import ogz.tripeaks.util.SpriteCollection
+import ogz.tripeaks.util.*
 import kotlin.math.roundToInt
 
 class GameScreen(
@@ -92,6 +83,7 @@ class GameScreen(
         viewport.apply()
         stage.act(delta)
         ScreenUtils.clear(backgroundColor)
+        engine.getSystem(CardRenderingSystem::class.java).allOpen = preferences.showAllCards
 
         batch.enableBlending()
         batch.use(viewport.camera) {
@@ -273,6 +265,30 @@ class GameScreen(
 
     private fun renderStack() {
         if (gameState.stack.isEmpty) return
+        if (preferences.showAllCards) renderStackOpen() else renderStackClosed()
+    }
+
+    private fun renderStackOpen() {
+        for (i in 0 until gameState.stack.size - 1) {
+            val x = Const.STACK_POSITION.x - i * 6f + Const.SPRITE_X
+            batch.draw(sprites.plate, x, Const.STACK_POSITION.y + Const.SPRITE_Y)
+            val cardIndex = gameState.stack[i]
+            val sprite = sprites.smallFaces[cardIndex]
+            batch.draw(sprite, x + Const.SPRITE_WIDTH - sprite.width, Const.STACK_POSITION.y + Const.SPRITE_Y)
+        }
+
+        val cardIndex = gameState.stack.peek()
+        val sprite = sprites.faces[cardIndex]
+        val x = Const.STACK_POSITION.x - (gameState.stack.size - 1) * 6f + Const.SPRITE_X
+        batch.draw(sprites.plate, x, Const.STACK_POSITION.y + Const.SPRITE_Y)
+        batch.draw(
+            sprite,
+            x + Const.FACE_X,
+            Const.STACK_POSITION.y + Const.SPRITE_Y + Const.FACE_Y
+        )
+    }
+
+    private fun renderStackClosed() {
         for (i in 0 until gameState.stack.size) {
             val x = Const.STACK_POSITION.x - i * 6f + Const.SPRITE_X
             batch.draw(sprites.plate, x, Const.STACK_POSITION.y + Const.SPRITE_Y)
@@ -367,7 +383,6 @@ class GameScreen(
             Const.STACK_POSITION.y
         )
     }
-
 
     private fun makeUndoButton() = ImageButton(
         skinData.skin,
