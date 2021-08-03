@@ -196,8 +196,8 @@ selectBoxDown
   rotate: false
   xy: 42, 89
   size: 18, 17
-  split: 4, 4, 5, 5
-  pad: 4, 4, 5, 5
+  split: 4, 9, 4, 4
+  pad: 4, 9, 4, 4
   orig: 18, 17
   offset: 0, 0
   index: -1
@@ -205,8 +205,8 @@ selectBoxDown_dark
   rotate: false
   xy: 22, 49
   size: 18, 17
-  split: 4, 4, 5, 5
-  pad: 4, 4, 5, 5
+  split: 4, 9, 4, 4
+  pad: 4, 9, 4, 4
   orig: 18, 17
   offset: 0, 0
   index: -1
@@ -214,8 +214,8 @@ selectBoxUp
   rotate: false
   xy: 62, 109
   size: 18, 17
-  split: 4, 4, 5, 5
-  pad: 4, 4, 5, 5
+  split: 4, 9, 4, 4
+  pad: 4, 9, 4, 4
   orig: 18, 17
   offset: 0, 0
   index: -1
@@ -223,8 +223,8 @@ selectBoxUp_dark
   rotate: false
   xy: 2, 29
   size: 18, 17
-  split: 4, 4, 4, 4
-  pad: 4, 4, 4, 4
+  split: 4, 9, 4, 4
+  pad: 4, 9, 4, 4
   orig: 18, 17
   offset: 0, 0
   index: -1
