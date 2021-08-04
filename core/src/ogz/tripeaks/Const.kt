@@ -4,20 +4,14 @@ import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.math.Vector2
 
 object Const {
-    const val CELL_HEIGHT = 20f
-    const val CELL_WIDTH = 15f
+    const val CELL_HEIGHT = 19f
+    const val CELL_WIDTH = 14f
     const val CONTENT_HEIGHT = 168f
     const val CONTENT_WIDTH = 300f
-    const val FACE_X = 6f
+    const val FACE_X = 5f
     const val FACE_Y = 4f
-    const val SPRITE_CARD_BACK = "card_back"
-    const val SPRITE_DARK_PREFIX = "dark"
     const val SPRITE_HEIGHT = 37f
-    const val SPRITE_LIGHT_PREFIX = "light"
-    const val SPRITE_PLATE_DARK = "card_dark"
-    const val SPRITE_PLATE_LIGHT = "card_light"
-    const val SPRITE_SMALL_PREFIX = "small"
-    const val SPRITE_WIDTH = 27f
+    const val SPRITE_WIDTH = 25f
     const val SPRITE_X = 1f
     const val SPRITE_Y = 1f
     const val VERTICAL_PADDING = 4f

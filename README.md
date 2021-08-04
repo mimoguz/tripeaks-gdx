@@ -14,8 +14,10 @@ A simple tri peaks solitaire game using [libGDX](https://libgdx.com/).
 * [New start screen](screenshots/b_0_5_start_screen.png)
 * [Options dialog](screenshots/b_0_5_options_dialog.png)
 * [Game menu](screenshots/b_0_5_menu.png)
-* [A new layout](screenshots/b_0_5_inverted_2n_layout.png)
-* [Another new layout](screenshots/b_0_5_diamonds_layout.png)
+* [Layout selection](screenshots/b_0_5_layouts.png)
+* [Inverted 2nd layout](screenshots/b_0_5_inverted_2nd_layout.png)
+* [Diamonds layout](screenshots/b_0_5_diamonds_layout.png)
+* ["Show all cards"](screenshots/b_0_5_all_cards.png)
 
 [<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png" alt="Get it on F-Droid" height="80">](https://f-droid.org/packages/ogz.tripeaks)
 [<img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" alt="Get it on Google Play" height="80">](https://play.google.com/store/apps/details?id=ogz.tripeaks&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1)

@@ -3,14 +3,13 @@ package ogz.tripeaks.util
 import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.graphics.g2d.Sprite
 import ktx.collections.GdxArray
-import ogz.tripeaks.Const
 import ogz.tripeaks.TextureAtlasAssets
 import ogz.tripeaks.get
 
 class SpriteCollection(private val assets: AssetManager, useDarkTheme: Boolean) {
     val faces: GdxArray<Sprite> = GdxArray.with(*Array(52) { Sprite() })
     val smallFaces: GdxArray<Sprite> = GdxArray.with(*Array(52) { Sprite() })
-    val plate = Sprite()
+    val card = Sprite()
     val back = Sprite()
 
     init {
@@ -22,8 +21,8 @@ class SpriteCollection(private val assets: AssetManager, useDarkTheme: Boolean) 
             setFaceSprite(cardIndex, useDarkTheme)
             setSideFaceSprite(cardIndex, useDarkTheme)
         }
-        setRegion(back, Const.SPRITE_CARD_BACK)
-        setPlateSprite(useDarkTheme)
+        setRegion(back, BACK)
+        setCardSprite(useDarkTheme)
     }
 
     private fun setRegion(sprite: Sprite, key: String) {
@@ -37,20 +36,29 @@ class SpriteCollection(private val assets: AssetManager, useDarkTheme: Boolean) 
         )
     }
 
-    private fun setPlateSprite(useDarkTheme: Boolean) {
-        val key =  if (useDarkTheme) Const.SPRITE_PLATE_DARK else Const.SPRITE_PLATE_LIGHT
-        setRegion(plate, key)
+    private fun setCardSprite(useDarkTheme: Boolean) {
+    val key =  "${if (useDarkTheme) DARK else LIGHT}_$CARD"
+        setRegion(card, key)
     }
 
     private fun setFaceSprite(cardIndex: Int, useDarkTheme: Boolean) {
-        val prefix = if (useDarkTheme) Const.SPRITE_DARK_PREFIX else Const.SPRITE_LIGHT_PREFIX
-        val key = "${prefix}_card_${(cardIndex + 1).toString().padStart(2, '0')}"
+        val prefix = if (useDarkTheme) DARK else LIGHT
+        val key = "${prefix}_${CARD}_$cardIndex"
+        print("$key -- ")
         setRegion(faces[cardIndex], key)
     }
 
     private fun setSideFaceSprite(cardIndex: Int, useDarkTheme: Boolean) {
-        val prefix = if (useDarkTheme) Const.SPRITE_DARK_PREFIX else Const.SPRITE_LIGHT_PREFIX
-        val key = "${Const.SPRITE_SMALL_PREFIX}_${prefix}_card_${(cardIndex + 1).toString().padStart(2, '0')}"
+        val prefix = if (useDarkTheme) DARK else LIGHT
+        val key = "${SMALL}_${prefix}_${CARD}_$cardIndex"
         setRegion(smallFaces[cardIndex], key)
+    }
+
+    companion object {
+        const val BACK = "card_back"
+        const val DARK = "dark"
+        const val LIGHT = "light"
+        const val CARD = "card"
+        const val SMALL = "small"
     }
 }

@@ -50,10 +50,10 @@ class CardAnimationRenderingSystem(
                 val y = MathUtils.round(srcY - t * DELTA_Y).toFloat()
                 val alpha = 1f - t
 
-                backupPosition.set(sprites.plate.x, sprites.plate.y)
-                sprites.plate.setPosition(MathUtils.round(x).toFloat(), MathUtils.round(y).toFloat())
-                sprites.plate.draw(batch, alpha)
-                sprites.plate.setPosition(backupPosition.x, backupPosition.y)
+                backupPosition.set(sprites.card.x, sprites.card.y)
+                sprites.card.setPosition(MathUtils.round(x).toFloat(), MathUtils.round(y).toFloat())
+                sprites.card.draw(batch, alpha)
+                sprites.card.setPosition(backupPosition.x, backupPosition.y)
 
                 val face = sprites.faces[component.cardIndex]
                 backupPosition.set(face.x, face.y)

@@ -37,9 +37,13 @@ class CardRenderingSystem(
                     Const.VERTICAL_PADDING -
                     socket.row * Const.CELL_HEIGHT -
                     (Const.SPRITE_HEIGHT + Const.SPRITE_Y)
-            batch.draw(sprites.plate, x, y)
-            if (allOpen || state.isOpen(component.socketIndex)) {
+            batch.draw(sprites.card, x, y)
+            if (state.isOpen(component.socketIndex)) {
                 batch.draw(sprites.faces[component.cardIndex], x + Const.FACE_X, y + Const.FACE_Y)
+            } else if (allOpen) {
+                batch.draw(sprites.faces[component.cardIndex], x + Const.FACE_X, y + Const.FACE_Y)
+                val smallSprite = sprites.smallFaces[component.cardIndex]
+                batch.draw(smallSprite, x + Const.SPRITE_WIDTH - smallSprite.width - 2f, y + Const.FACE_Y)
             } else {
                 batch.draw(sprites.back, x, y)
             }
