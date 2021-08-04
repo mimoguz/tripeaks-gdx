@@ -23,7 +23,7 @@ class GamePreferences(
         val preferences = Gdx.app.getPreferences(NAME)
         useDarkTheme = preferences.getBoolean(USE_DARK_THEME, false)
         showAllCards = preferences.getBoolean(SHOW_ALL, false)
-        startWithEmptyDiscard = preferences.getBoolean(START_WITH_EMPTY_DISCARD, true)
+        startWithEmptyDiscard = preferences.getBoolean(START_WITH_EMPTY_DISCARD, false)
         layout = preferences.getString(LAYOUT, BasicLayout.TAG)
         return this
     }
