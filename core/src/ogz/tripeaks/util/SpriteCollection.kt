@@ -44,7 +44,6 @@ class SpriteCollection(private val assets: AssetManager, useDarkTheme: Boolean) 
     private fun setFaceSprite(cardIndex: Int, useDarkTheme: Boolean) {
         val prefix = if (useDarkTheme) DARK else LIGHT
         val key = "${prefix}_${CARD}_$cardIndex"
-        print("$key -- ")
         setRegion(faces[cardIndex], key)
     }
 
