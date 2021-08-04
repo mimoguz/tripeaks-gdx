@@ -11,6 +11,7 @@ class SpriteCollection(private val assets: AssetManager, useDarkTheme: Boolean) 
     val smallFaces: GdxArray<Sprite> = GdxArray.with(*Array(52) { Sprite() })
     val card = Sprite()
     val back = Sprite()
+    val joker = Sprite()
 
     init {
         set(useDarkTheme)
@@ -21,8 +22,9 @@ class SpriteCollection(private val assets: AssetManager, useDarkTheme: Boolean) 
             setFaceSprite(cardIndex, useDarkTheme)
             setSideFaceSprite(cardIndex, useDarkTheme)
         }
-        setRegion(back, BACK)
+        setRegion(back, "card_back")
         setCardSprite(useDarkTheme)
+        setJokerSprite(useDarkTheme)
     }
 
     private fun setRegion(sprite: Sprite, key: String) {
@@ -37,27 +39,24 @@ class SpriteCollection(private val assets: AssetManager, useDarkTheme: Boolean) 
     }
 
     private fun setCardSprite(useDarkTheme: Boolean) {
-    val key =  "${if (useDarkTheme) DARK else LIGHT}_$CARD"
+    val key =  "${select(useDarkTheme)}_card"
         setRegion(card, key)
     }
 
     private fun setFaceSprite(cardIndex: Int, useDarkTheme: Boolean) {
-        val prefix = if (useDarkTheme) DARK else LIGHT
-        val key = "${prefix}_${CARD}_$cardIndex"
+        val key = "${select(useDarkTheme)}_card_$cardIndex"
         setRegion(faces[cardIndex], key)
     }
 
     private fun setSideFaceSprite(cardIndex: Int, useDarkTheme: Boolean) {
-        val prefix = if (useDarkTheme) DARK else LIGHT
-        val key = "${SMALL}_${prefix}_${CARD}_$cardIndex"
+        val key = "small_${select(useDarkTheme)}_card_$cardIndex"
         setRegion(smallFaces[cardIndex], key)
     }
 
-    companion object {
-        const val BACK = "card_back"
-        const val DARK = "dark"
-        const val LIGHT = "light"
-        const val CARD = "card"
-        const val SMALL = "small"
+    private  fun setJokerSprite(useDarkTheme: Boolean) {
+        val key = "${select(useDarkTheme)}_joker"
+        setRegion(joker, key)
     }
+
+    private fun select(useDarkTheme: Boolean) = if (useDarkTheme) "dark" else "light"
 }

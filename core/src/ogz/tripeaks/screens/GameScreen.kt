@@ -310,18 +310,25 @@ class GameScreen(
     }
 
     private fun renderDiscard() {
-        if (gameState.discard.isEmpty) return
-        val cardIndex = gameState.discard.peek()
-        batch.draw(
-            sprites.card,
-            Const.DISCARD_POSITION.x + Const.SPRITE_X,
-            Const.DISCARD_POSITION.y + Const.SPRITE_Y
-        )
-        batch.draw(
-            sprites.faces[cardIndex],
-            Const.DISCARD_POSITION.x + Const.FACE_X + Const.SPRITE_X,
-            Const.DISCARD_POSITION.y + Const.FACE_Y + Const.SPRITE_Y
-        )
+        if (gameState.discard.isEmpty)  {
+            batch.draw(
+                sprites.joker,
+                Const.DISCARD_POSITION.x + Const.SPRITE_X,
+                Const.DISCARD_POSITION.y + Const.SPRITE_Y
+            )
+        } else {
+            val cardIndex = gameState.discard.peek()
+            batch.draw(
+                sprites.card,
+                Const.DISCARD_POSITION.x + Const.SPRITE_X,
+                Const.DISCARD_POSITION.y + Const.SPRITE_Y
+            )
+            batch.draw(
+                sprites.faces[cardIndex],
+                Const.DISCARD_POSITION.x + Const.FACE_X + Const.SPRITE_X,
+                Const.DISCARD_POSITION.y + Const.FACE_Y + Const.SPRITE_Y
+            )
+        }
     }
 
     private fun showHideGameMenu() {
@@ -367,7 +374,7 @@ class GameScreen(
     private fun load(): Boolean {
         val state = GameState.load(layouts)
         if (state == null) return false
-        stalled = false
+        stalled = state.stalledOnce
         gameState = state
         initECS()
         updateUi()
