@@ -1,7 +1,6 @@
 package ogz.tripeaks.game
 
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.Preferences
 import ktx.collections.GdxArray
 import ktx.collections.GdxIntArray
 import ktx.collections.GdxMap
@@ -19,18 +18,26 @@ class GameState private constructor(
     longestChain: Int = 0,
     currentChain: Int = 0,
     removedFromStack: Int = 0,
-    undos: Int = 0
+    undos: Int = 0,
+    stalled1: Boolean = false
 ) {
+
+    var stalledOnce: Boolean = stalled1
+        private set
 
     val canUndo get() = discard.size > minDiscarded
     val canDeal get() = stack.size > 0
     val won get() = sockets.all { it.isEmpty }
     val stalled: Boolean
-        get() = !(canDeal ||
-                discard.isEmpty ||
-                ((layout.numberOfSockets - 1) downTo 0).any {
-                    isOpen(it) && Card.areNeighbors(discard.peek(), sockets[it].card)
-                })
+        get() {
+            val s = !(canDeal ||
+                    discard.isEmpty ||
+                    ((layout.numberOfSockets - 1) downTo 0).any {
+                        isOpen(it) && Card.areNeighbors(discard.peek(), sockets[it].card)
+                    })
+            stalledOnce = stalledOnce || s
+            return s
+        }
 
     var currentChainLength = currentChain
         private set
@@ -120,6 +127,7 @@ class GameState private constructor(
         preferences.putInteger(REMOVED_FROM_STACK, cardsRemovedFromStack)
         preferences.putInteger(UNDO_COUNT, undoCount)
         preferences.putInteger(MIN_DISCARDED, minDiscarded)
+        preferences.putBoolean(STALLED_ONCE, stalledOnce)
 
         preferences.flush()
     }
@@ -135,6 +143,7 @@ class GameState private constructor(
         const val LONGEST_CHAIN = "longestChain"
         const val REMOVED_FROM_STACK = "removedFromStack"
         const val UNDO_COUNT = "undoCount"
+        const val STALLED_ONCE = "stalledOnce"
         const val SAVE_NAME = "save"
 
         private val log = logger<GameState>()
@@ -195,6 +204,7 @@ class GameState private constructor(
                 val longestChain = preferences.getInteger(LONGEST_CHAIN)
                 val removedFromStack = preferences.getInteger(REMOVED_FROM_STACK)
                 val undos = preferences.getInteger(UNDO_COUNT)
+                val stalled1 = preferences.getBoolean(STALLED_ONCE)
 
                 require((socketStates.count { !it.isEmpty } + stack.size + discard.size) == 52)
 
@@ -207,7 +217,8 @@ class GameState private constructor(
                     longestChain = longestChain,
                     currentChain = currentChain,
                     removedFromStack = removedFromStack,
-                    undos = undos
+                    undos = undos,
+                    stalled1 = stalled1
                 )
             } catch (e: Exception) {
                 log.error { "Error loading game state: ${e.message}\n\n${e.stackTrace.joinToString("\n")}" }
