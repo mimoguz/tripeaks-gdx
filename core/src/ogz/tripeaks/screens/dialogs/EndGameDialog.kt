@@ -4,6 +4,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Dialog
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.I18NBundle
+import ogz.tripeaks.Const
 import ogz.tripeaks.screens.controls.MyTextButton
 import ogz.tripeaks.util.SkinData
 
@@ -36,7 +37,7 @@ class EndGameDialog(
         }
         buttonTable.apply {
             pad(4f, 4f, 0f, 4f)
-            defaults().width(110f)
+            defaults().width(109f).space(0f).height(Const.BUTTON_HEIGHT).pad(0f)
             add(newGameButton)
             add(exitButton)
         }

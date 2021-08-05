@@ -61,7 +61,7 @@ class GameMenu(
         height = 82f
         setPosition(
             attached.x + attached.width,
-            attached.y + 2f,
+            attached.y,
             Align.topRight
         )
     }
