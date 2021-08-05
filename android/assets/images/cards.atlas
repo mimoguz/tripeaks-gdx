@@ -382,7 +382,7 @@ dark_card_9
   orig: 15, 30
   offset: 0, 0
   index: -1
-dark_joker
+dark_empty
   rotate: false
   xy: 2, 139
   size: 25, 37
@@ -760,7 +760,7 @@ light_card_9
   orig: 15, 30
   offset: 0, 0
   index: -1
-light_joker
+light_empty
   rotate: false
   xy: 2, 178
   size: 25, 37
