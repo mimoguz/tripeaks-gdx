@@ -11,7 +11,7 @@ class SpriteCollection(private val assets: AssetManager, useDarkTheme: Boolean) 
     val smallFaces: GdxArray<Sprite> = GdxArray.with(*Array(52) { Sprite() })
     val card = Sprite()
     val back = Sprite()
-    val joker = Sprite()
+    val emptyCollection = Sprite()
 
     init {
         set(useDarkTheme)
@@ -24,7 +24,7 @@ class SpriteCollection(private val assets: AssetManager, useDarkTheme: Boolean) 
         }
         setRegion(back, "card_back")
         setCardSprite(useDarkTheme)
-        setJokerSprite(useDarkTheme)
+        setEmptyCollectionSprite(useDarkTheme)
     }
 
     private fun setRegion(sprite: Sprite, key: String) {
@@ -53,9 +53,9 @@ class SpriteCollection(private val assets: AssetManager, useDarkTheme: Boolean) 
         setRegion(smallFaces[cardIndex], key)
     }
 
-    private  fun setJokerSprite(useDarkTheme: Boolean) {
-        val key = "${select(useDarkTheme)}_joker"
-        setRegion(joker, key)
+    private  fun setEmptyCollectionSprite(useDarkTheme: Boolean) {
+        val key = "${select(useDarkTheme)}_empty"
+        setRegion(emptyCollection, key)
     }
 
     private fun select(useDarkTheme: Boolean) = if (useDarkTheme) "dark" else "light"

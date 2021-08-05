@@ -273,8 +273,13 @@ class GameScreen(
     }
 
     private fun renderStack() {
-        if (gameState.stack.isEmpty) return
-        if (preferences.showAllCards) renderStackOpen() else renderStackClosed()
+        if (gameState.stack.isEmpty) {
+            batch.draw(
+                sprites.emptyCollection,
+                Const.STACK_POSITION.x + Const.SPRITE_X,
+                Const.STACK_POSITION.y + Const.SPRITE_Y
+            )
+        } else if (preferences.showAllCards) renderStackOpen() else renderStackClosed()
     }
 
     private fun renderStackOpen() {
@@ -310,19 +315,19 @@ class GameScreen(
     }
 
     private fun renderDiscard() {
-        if (gameState.discard.isEmpty)  {
+        if (gameState.discard.isEmpty) {
             batch.draw(
-                sprites.joker,
+                sprites.emptyCollection,
                 Const.DISCARD_POSITION.x + Const.SPRITE_X,
                 Const.DISCARD_POSITION.y + Const.SPRITE_Y
             )
         } else {
-            val cardIndex = gameState.discard.peek()
             batch.draw(
                 sprites.card,
                 Const.DISCARD_POSITION.x + Const.SPRITE_X,
                 Const.DISCARD_POSITION.y + Const.SPRITE_Y
             )
+            val cardIndex = gameState.discard.peek()
             batch.draw(
                 sprites.faces[cardIndex],
                 Const.DISCARD_POSITION.x + Const.FACE_X + Const.SPRITE_X,
