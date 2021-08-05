@@ -1,4 +1,6 @@
-An open-source tri peaks solitaire game. Currently only has randomly generated games
+An open-source tri peaks solitaire game with multiple layout options.
+
+Currently only has randomly generated games
 
 - Version 0.11 added the dark mode.
 - Version 0.20 added end game statistics.
