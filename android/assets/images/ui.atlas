@@ -144,9 +144,9 @@ inverted2ndLayout_dark
   index: -1
 menu
   rotate: false
-  xy: 88, 73
-  size: 7, 10
-  orig: 7, 10
+  xy: 97, 71
+  size: 7, 12
+  orig: 7, 12
   offset: 0, 0
   index: -1
 menuItemDown
@@ -196,7 +196,7 @@ menuItemUp
   index: -1
 menuItemUp_dark
   rotate: false
-  xy: 97, 76
+  xy: 117, 106
   size: 7, 7
   split: 3, 3, 3, 3
   pad: 3, 3, 3, 3
@@ -205,9 +205,9 @@ menuItemUp_dark
   index: -1
 menu_dark
   rotate: false
-  xy: 117, 103
-  size: 7, 10
-  orig: 7, 10
+  xy: 88, 71
+  size: 7, 12
+  orig: 7, 12
   offset: 0, 0
   index: -1
 selectBoxDown
