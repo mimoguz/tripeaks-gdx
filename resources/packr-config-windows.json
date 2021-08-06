@@ -1,0 +1,12 @@
+{
+    "platform": "windows64",
+    "jdk": "OpenJDK16.zip",
+    "executable": "tripeaks",
+    "classpath": [ "desktop-1.0.jar" ],
+    "removelibs": [ "desktop-1.0.jar" ],
+    "mainclass": "com.my.app.MainClass",
+    "output": "out-windows64",
+    "verbose": true,
+    "mainClass": "ogz.tripeaks.desktop.DesktopLauncher",
+    "useZgcIfSupportedOs": true
+}
