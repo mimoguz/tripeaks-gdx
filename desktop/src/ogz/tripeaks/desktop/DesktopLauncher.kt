@@ -8,6 +8,13 @@ object DesktopLauncher {
     @JvmStatic
     fun main(arg: Array<String>) {
         val config = Lwjgl3ApplicationConfiguration()
+        config.setTitle("TriPeaks")
+        config.setWindowIcon(
+            "images/icon16.png",
+            "images/icon24.png",
+            "images/icon32.png",
+            "images/icon48.png",
+        )
         Lwjgl3Application(Game(), config)
     }
 }
