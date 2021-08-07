@@ -32,7 +32,7 @@ class GamePreferences(
         val preferences = Gdx.app.getPreferences(NAME)
         preferences.putBoolean(USE_DARK_THEME, useDarkTheme)
         preferences.putBoolean(SHOW_ALL, showAllCards)
-        preferences.putBoolean(SHOW_ALL, startWithEmptyDiscard)
+        preferences.putBoolean(START_WITH_EMPTY_DISCARD, startWithEmptyDiscard)
         preferences.putString(LAYOUT, layout)
         preferences.flush()
         return this
