@@ -37,7 +37,7 @@ class EndGameDialog(
         }
         buttonTable.apply {
             pad(4f, 4f, 0f, 4f)
-            defaults().width(109f).space(0f).height(Const.BUTTON_HEIGHT).pad(0f)
+            defaults().width(109f).space(2f).height(Const.BUTTON_HEIGHT).pad(0f)
             add(newGameButton)
             add(exitButton)
         }
