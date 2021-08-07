@@ -34,8 +34,12 @@ class OptionsDialog(
         }
     private val newGameLayout = SelectBox<String>(skinData.skin, gamePreferences.themeKey).also {
         it.setAlignment(Align.center)
-        it.style.listStyle.selection.topHeight = 4f
-        it.style.listStyle.selection.bottomHeight = 4f
+        it.style.listStyle.selection.apply {
+            topHeight = 4f
+            bottomHeight = 4f
+            leftWidth = 4f
+            rightWidth = 4f
+        }
     }
 
     init {

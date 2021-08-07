@@ -399,26 +399,26 @@ class GameScreen(
     private fun makeDealButton() = ImageButton(
         skinData.skin,
         preferences.themeKey,
-        Const.SPRITE_WIDTH + 2f,
-        Const.SPRITE_HEIGHT + 2f,
+        Const.SPRITE_WIDTH,
+        Const.SPRITE_HEIGHT,
         assets[TextureAtlasAssets.Ui].createSprite(if (preferences.useDarkTheme) "deal_dark" else "deal")
     ) { if (menu != null) removeGameMenu() else deal() }.apply {
         setPosition(
-            Const.STACK_POSITION.x + Const.CELL_WIDTH * 2f,
-            Const.STACK_POSITION.y
+            Const.STACK_POSITION.x + Const.CELL_WIDTH * 2f + Const.SPRITE_X,
+            Const.STACK_POSITION.y + Const.SPRITE_Y
         )
     }
 
     private fun makeUndoButton() = ImageButton(
         skinData.skin,
         preferences.themeKey,
-        Const.SPRITE_WIDTH + 2f,
-        Const.SPRITE_HEIGHT + 2f,
+        Const.SPRITE_WIDTH,
+        Const.SPRITE_HEIGHT,
         assets[TextureAtlasAssets.Ui].createSprite(if (preferences.useDarkTheme) "undo_dark" else "undo")
     ) { if (menu != null) removeGameMenu() else undo() }.apply {
         setPosition(
-            Const.DISCARD_POSITION.x - Const.CELL_WIDTH * 2f,
-            Const.DISCARD_POSITION.y
+            Const.DISCARD_POSITION.x - Const.CELL_WIDTH * 2f + Const.SPRITE_X,
+            Const.DISCARD_POSITION.y + Const.SPRITE_Y
         )
     }
 
@@ -426,13 +426,13 @@ class GameScreen(
     private fun makeMenuButton() = ImageButton(
         skinData.skin,
         preferences.themeKey,
-        Const.SPRITE_WIDTH + 2f,
-        Const.SPRITE_WIDTH + 2f,
+        Const.SPRITE_WIDTH,
+        Const.SPRITE_WIDTH,
         assets[TextureAtlasAssets.Ui].createSprite(if (preferences.useDarkTheme) "menu_dark" else "menu")
     ) { showHideGameMenu() }.apply {
         setPosition(
-            Const.STACK_POSITION.x + Const.CELL_WIDTH * 2f,
-            Const.CONTENT_HEIGHT - width - Const.VERTICAL_PADDING
+            Const.STACK_POSITION.x + Const.CELL_WIDTH * 2f + Const.SPRITE_X,
+            Const.CONTENT_HEIGHT - width - Const.VERTICAL_PADDING - Const.SPRITE_Y
         )
     }
 }

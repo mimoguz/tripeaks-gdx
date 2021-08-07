@@ -8,7 +8,7 @@ import ogz.tripeaks.util.SkinData
 
 class MyMenuItem(text: String, skinData: SkinData, theme: String) : TextButton(text, skinData.skin, "menuItem_$theme") {
     init {
-        pad(skinData.buttonPadTop, 4f, skinData.buttonPadBottom, 4f)
+        pad(skinData.buttonPadTop, 4f, skinData.buttonPadBottom - 1f, 4f)
         label.setAlignment(Align.left)
     }
 
