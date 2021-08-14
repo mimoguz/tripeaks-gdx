@@ -27,11 +27,11 @@ import ogz.tripeaks.ecs.CardRenderComponent
 import ogz.tripeaks.ecs.CardRenderingSystem
 import ogz.tripeaks.game.GameState
 import ogz.tripeaks.game.layout.Layout
+import ogz.tripeaks.screens.controls.MyImageButton
 import ogz.tripeaks.screens.dialogs.EndGameDialog
 import ogz.tripeaks.screens.dialogs.GameMenu
 import ogz.tripeaks.screens.dialogs.StalledDialog
 import ogz.tripeaks.util.GamePreferences
-import ogz.tripeaks.util.ImageButton
 import ogz.tripeaks.util.SkinData
 import ogz.tripeaks.util.SpriteCollection
 import kotlin.math.roundToInt
@@ -396,40 +396,39 @@ class GameScreen(
         updateUi()
     }
 
-    private fun makeDealButton() = ImageButton(
-        skinData.skin,
+    private fun makeDealButton() = MyImageButton(
+        assets[TextureAtlasAssets.Ui].createSprite(if (preferences.useDarkTheme) "deal_dark" else "deal"),
+        skinData,
         preferences.themeKey,
-        Const.SPRITE_WIDTH,
-        Const.SPRITE_HEIGHT,
-        assets[TextureAtlasAssets.Ui].createSprite(if (preferences.useDarkTheme) "deal_dark" else "deal")
-    ) { if (menu != null) removeGameMenu() else deal() }.apply {
+    ).apply {
+        setAction { if (menu != null) removeGameMenu() else deal() }
+        setSize( Const.SPRITE_WIDTH, Const.SPRITE_HEIGHT,)
         setPosition(
             Const.STACK_POSITION.x + Const.CELL_WIDTH * 2f + Const.SPRITE_X,
             Const.STACK_POSITION.y + Const.SPRITE_Y
         )
     }
 
-    private fun makeUndoButton() = ImageButton(
-        skinData.skin,
-        preferences.themeKey,
-        Const.SPRITE_WIDTH,
-        Const.SPRITE_HEIGHT,
-        assets[TextureAtlasAssets.Ui].createSprite(if (preferences.useDarkTheme) "undo_dark" else "undo")
-    ) { if (menu != null) removeGameMenu() else undo() }.apply {
+    private fun makeUndoButton() = MyImageButton(
+        assets[TextureAtlasAssets.Ui].createSprite(if (preferences.useDarkTheme) "undo_dark" else "undo"),
+        skinData,
+        preferences.themeKey
+    ).apply {
+        setAction { if (menu != null) removeGameMenu() else undo() }
+        setSize( Const.SPRITE_WIDTH, Const.SPRITE_HEIGHT,)
         setPosition(
             Const.DISCARD_POSITION.x - Const.CELL_WIDTH * 2f + Const.SPRITE_X,
             Const.DISCARD_POSITION.y + Const.SPRITE_Y
         )
     }
 
-
-    private fun makeMenuButton() = ImageButton(
-        skinData.skin,
-        preferences.themeKey,
-        Const.SPRITE_WIDTH,
-        Const.SPRITE_WIDTH,
-        assets[TextureAtlasAssets.Ui].createSprite(if (preferences.useDarkTheme) "menu_dark" else "menu")
-    ) { showHideGameMenu() }.apply {
+    private fun makeMenuButton() = MyImageButton(
+        assets[TextureAtlasAssets.Ui].createSprite(if (preferences.useDarkTheme) "menu_dark" else "menu"),
+        skinData,
+        preferences.themeKey
+    ).apply {
+        setAction { showHideGameMenu() }
+        setSize( Const.SPRITE_WIDTH, Const.SPRITE_WIDTH,)
         setPosition(
             Const.STACK_POSITION.x + Const.CELL_WIDTH * 2f + Const.SPRITE_X,
             Const.CONTENT_HEIGHT - width - Const.VERTICAL_PADDING - Const.SPRITE_Y
