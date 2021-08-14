@@ -25,7 +25,7 @@ class StalledDialog(
         contentTable.add(Label(res.get("stalled"), skinData.skin, theme))
         buttonTable.apply {
             pad(0f, 4f, 0f, 4f)
-            defaults().width(109f).height(Const.BUTTON_HEIGHT).pad(0f).space(2f)
+            defaults().width(150f).height(Const.BUTTON_HEIGHT).pad(0f).space(2f)
             add(undoButton)
             row()
             add(newGameButton)

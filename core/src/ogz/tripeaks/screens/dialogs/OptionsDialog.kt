@@ -90,15 +90,15 @@ class OptionsDialog(
             row()
             add(newGameLayout).width(220f).height(Const.BUTTON_HEIGHT - 1f).pad(0f, -1f, 0f, -1f)
             row()
-            add(showAllCards)
+            add(showAllCards).pad(2f, 0f, 2f, 0f)
             row()
-            add(startWithEmptyDiscard)
+            add(startWithEmptyDiscard).pad(2f, 0f, 2f, 0f)
             row()
-            add(useDarkTheme).align(Align.left)
+            add(useDarkTheme).align(Align.left).pad(2f, 0f, 0f, 0f)
         }
         buttonTable.apply {
             pad(8f, 0f, 0f, 0f)
-            defaults().width(109f).height(Const.BUTTON_HEIGHT).align(Align.center).space(2f).pad(0f)
+            defaults().width(108f).height(Const.BUTTON_HEIGHT).align(Align.center).space(4f).pad(0f)
             add(saveButton)
             add(cancelButton)
         }
