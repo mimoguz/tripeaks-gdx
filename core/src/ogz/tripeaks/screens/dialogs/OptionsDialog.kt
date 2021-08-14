@@ -1,6 +1,9 @@
 package ogz.tripeaks.screens.dialogs
 
-import com.badlogic.gdx.scenes.scene2d.ui.*
+import com.badlogic.gdx.scenes.scene2d.ui.CheckBox
+import com.badlogic.gdx.scenes.scene2d.ui.Dialog
+import com.badlogic.gdx.scenes.scene2d.ui.Label
+import com.badlogic.gdx.scenes.scene2d.ui.SelectBox
 import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.I18NBundle
 import ktx.collections.toGdxArray
@@ -16,18 +19,19 @@ class OptionsDialog(
     gamePreferences: GamePreferences,
     layouts: List<Layout>,
     val res: I18NBundle,
-) :
-    Dialog("", skinData.skin, theme) {
+) : Dialog("", skinData.skin, theme) {
 
     var onThemeChanged: ((useDarkTheme: Boolean) -> Unit)? = null
     var onGameLayoutChanged: ((layout: Layout) -> Unit)? = null
 
-    private val useDarkTheme = CheckBox(res.get("darkTheme"), skinData.skin, gamePreferences.themeKey).apply {
-        imageCell.padRight(4f)
-    }
-    private val showAllCards = CheckBox(res.get("showAll"), skinData.skin, gamePreferences.themeKey).apply {
-        imageCell.padRight(4f)
-    }
+    private val useDarkTheme =
+        CheckBox(res.get("darkTheme"), skinData.skin, gamePreferences.themeKey).apply {
+            imageCell.padRight(4f)
+        }
+    private val showAllCards =
+        CheckBox(res.get("showAll"), skinData.skin, gamePreferences.themeKey).apply {
+            imageCell.padRight(4f)
+        }
     private val startWithEmptyDiscard =
         CheckBox(res.get("emptyDiscard"), skinData.skin, gamePreferences.themeKey).apply {
             imageCell.padRight(4f)

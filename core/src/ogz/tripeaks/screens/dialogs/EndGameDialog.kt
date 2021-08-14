@@ -15,8 +15,7 @@ class EndGameDialog(
     longestChain: Int,
     usedUndo: Int,
     val res: I18NBundle,
-) :
-    Dialog("", skinData.skin, theme) {
+) : Dialog("", skinData.skin, theme) {
 
     val newGameButton = MyTextButton(res.get("newGameShort"), skinData, theme)
     val exitButton = MyTextButton(res.get("exit"), skinData, theme)

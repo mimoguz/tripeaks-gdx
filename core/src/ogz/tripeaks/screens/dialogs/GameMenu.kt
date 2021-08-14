@@ -17,8 +17,7 @@ class GameMenu(
     layouts: List<Layout>,
     res: I18NBundle,
     attached: Actor
-) :
-    Window("", skinData.skin, preferences.themeKey) {
+) : Window("", skinData.skin, preferences.themeKey) {
 
     var onThemeChanged: ((useDarkTheme: Boolean) -> Unit)? = null
     var onOptionsDialogShown: (() -> Unit)? = null

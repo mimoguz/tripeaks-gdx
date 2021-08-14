@@ -2,7 +2,6 @@ package ogz.tripeaks.screens.dialogs
 
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog
 import com.badlogic.gdx.scenes.scene2d.ui.Label
-import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.I18NBundle
 import ogz.tripeaks.Const
 import ogz.tripeaks.screens.controls.MyTextButton
@@ -12,8 +11,7 @@ class StalledDialog(
     skinData: SkinData,
     theme: String,
     val res: I18NBundle,
-) :
-    Dialog("", skinData.skin, theme) {
+) : Dialog("", skinData.skin, theme) {
 
     val newGameButton = MyTextButton(res.get("newGameShort"), skinData, theme)
     val exitButton = MyTextButton(res.get("exit"), skinData, theme)
