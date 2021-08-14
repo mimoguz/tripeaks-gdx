@@ -3,7 +3,7 @@ package ogz.tripeaks.game.layout
 import ktx.collections.*
 import ogz.tripeaks.game.Socket
 
-/** 28 sockets arranged in three peaks, indexed from 0 (top-left) to 27 (bottom-right).  */
+/** 30 sockets arranged in peak-valley-peak format.  */
 class Inverted2ndLayout : LayoutImpl() {
 
     override val sockets: GdxArray<Socket> = GdxArray.with(
