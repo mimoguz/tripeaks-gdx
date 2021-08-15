@@ -199,8 +199,8 @@ selectBoxUp_dark
   rotate: false
   xy: 56, 45
   size: 18, 15
-  split: 3, 3, 3, 3
-  pad: 3, 3, 3, 3
+  split: 8, 8, 3, 3
+  pad: 8, 8, 3, 3
   orig: 18, 15
   offset: 0, 0
   index: -1
