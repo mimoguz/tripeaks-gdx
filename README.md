@@ -4,20 +4,12 @@ A simple tri peaks solitaire game using [libGDX](https://libgdx.com/).
 
 ## Screenshots:
 
-* [UI in light theme](fastlane/metadata/android/en-US/images/phoneScreenshots/1.png)
-* [Menu](fastlane/metadata/android/en-US/images/phoneScreenshots/2.png)
-* [With show all cards option](fastlane/metadata/android/en-US/images/phoneScreenshots/3.png)
-* [End game dialog](fastlane/metadata/android/en-US/images/phoneScreenshots/4.png)
+* [Start screen](fastlane/metadata/android/en-US/images/phoneScreenshots/1.png)
+* [UI](fastlane/metadata/android/en-US/images/phoneScreenshots/2.png)
+* [Options dialog](fastlane/metadata/android/en-US/images/phoneScreenshots/3.png)
+* [A different layout, in dark theme](fastlane/metadata/android/en-US/images/phoneScreenshots/4.png)
+* [Another layout, with all cards visible](fastlane/metadata/android/en-US/images/phoneScreenshots/5.png)
 
-### 0.5 branch, work in progress
-
-* [Start screen](screenshots/b_0_5_start_screen.png)
-* [Options dialog](screenshots/b_0_5_options_dialog.png)
-* [Game menu](screenshots/b_0_5_menu.png)
-* [Layout selection](screenshots/b_0_5_layouts.png)
-* [Second peak inverted layout](screenshots/b_0_5_inverted_2nd_layout.png)
-* [Diamonds layout](screenshots/b_0_5_diamonds_layout.png)
-* ["Show all cards" & "Start with empty discard"](screenshots/b_0_5_all_cards.png)
 
 [<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png" alt="Get it on F-Droid" height="80">](https://f-droid.org/packages/ogz.tripeaks)
 [<img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" alt="Get it on Google Play" height="80">](https://play.google.com/store/apps/details?id=ogz.tripeaks&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1)
