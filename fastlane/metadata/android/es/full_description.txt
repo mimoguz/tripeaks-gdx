@@ -1,1 +1,1 @@
-Un juego de código-abierto de solitario tripeaks. Por ahora solo cuenta con juegos generados aleatoriamente.
+Un juego de solitario tri peaks de código abierto con varias opciones de diseño.

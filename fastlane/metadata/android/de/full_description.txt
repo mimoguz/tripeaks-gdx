@@ -1,1 +1,1 @@
-Ein quelloffenes Tri-Peaks Solitärspiel. Die Karten werden zurzeit nur zufallsbasiert generiert.
+Ein quelloffenes Tri Peaks Solitärspiel mit mehreren Gestaltungsoptionen.

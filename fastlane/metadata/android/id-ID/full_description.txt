@@ -1,1 +1,1 @@
-Permainan solitaire tiga puncak sumber terbuka. Saat ini hanya ada permainan yang dihasilkan secara acak.
+Permainan solitaire tri-puncak sumber terbuka dengan berbagai opsi tata letak.
