@@ -81,7 +81,7 @@ class OptionsDialog(
             setAction { hide() }
         }
 
-        pad(12f, 24f, 12f, 24f)
+        pad(8f, 24f, 12f, 24f)
         contentTable.apply {
             defaults()
                 .align(Align.left)
@@ -90,9 +90,9 @@ class OptionsDialog(
 
             pad(0f)
 
-            add(Label(res.get("layout"), skinData.skin, gamePreferences.themeKey))
+            add(Label(res.get("layout"), skinData.skin, gamePreferences.themeKey)).height(16f)
             row()
-            add(newGameLayout).width(220f).height(Const.BUTTON_HEIGHT - 1f).pad(0f, -1f, 0f, -1f)
+            add(newGameLayout).width(220f).height(Const.BUTTON_HEIGHT - 1f).pad(0f, -1f, 4f, -1f)
             row()
             add(showAllCards).pad(2f, 0f, 2f, 0f)
             row()

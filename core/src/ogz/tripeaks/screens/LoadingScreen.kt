@@ -51,7 +51,7 @@ class LoadingScreen(
     private fun buildSkin(key: String): SkinData {
         if (key == "cjk") {
             val skin = makeCommonSkin(assets[FontAssets.UnifontCjk16])
-            return SkinData(skin, 2f, 2f, 7f, 4f)
+            return SkinData(skin, 2f, 2f, 15f, 4f)
         } else {
             val skin = makeCommonSkin(assets[FontAssets.GameFont])
             return SkinData(skin, 3f, 4f, 19f, 2f)

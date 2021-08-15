@@ -26,7 +26,7 @@ class EndGameDialog(
         val chainLabel = Label(res.format("longestChain", longestChain), skinData.skin, theme)
         pad(16f, 24f, 16f, 24f)
         contentTable.apply {
-            add(Label(res.get("won"), skinData.skin, theme))
+            add(Label(res.get("won"), skinData.skin, theme)).height(16f)
             row()
             add(removedLabel).align(Align.left)
             row()

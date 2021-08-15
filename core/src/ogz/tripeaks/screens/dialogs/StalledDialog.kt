@@ -19,18 +19,18 @@ class StalledDialog(
     val returnButton = MyTextButton(res.get("return"), skinData, theme)
 
     init {
-        pad(12f, 24f, 12f, 24f)
-        contentTable.add(Label(res.get("stalled"), skinData.skin, theme))
+        pad(8f, 24f, 12f, 24f)
+        contentTable.add(Label(res.get("stalled"), skinData.skin, theme)).height(16f)
         buttonTable.apply {
             pad(0f, 4f, 0f, 4f)
-            defaults().width(150f).height(Const.BUTTON_HEIGHT).pad(0f).space(2f)
+            defaults().width(180f).height(Const.BUTTON_HEIGHT).pad(0f).space(4f)
             add(undoButton)
             row()
             add(newGameButton)
             row()
             add(returnButton)
             row()
-            add(exitButton).spaceTop(skinData.exitButtonTopMargin - 2f)
+            add(exitButton).spaceTop(skinData.exitButtonTopMargin)
         }
     }
 }
