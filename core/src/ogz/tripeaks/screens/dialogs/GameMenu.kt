@@ -22,7 +22,7 @@ class GameMenu(
     var onThemeChanged: ((useDarkTheme: Boolean) -> Unit)? = null
     var onOptionsDialogShown: (() -> Unit)? = null
 
-    val newGameButton = MyMenuItem(res.get("newGameShort"), skinData, preferences.themeKey)
+    val newGameButton = MyMenuItem(res.get("newGame"), skinData, preferences.themeKey)
     val exitButton = MyMenuItem(res.get("exit"), skinData, preferences.themeKey)
     val optionsButton = MyMenuItem(res.get("options"), skinData, preferences.themeKey).apply {
         setAction {
