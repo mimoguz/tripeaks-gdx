@@ -14,7 +14,7 @@ class StalledDialog(
 ) : Dialog("", skinData.skin, theme) {
 
     val newGameButton = MyTextButton(res.get("newGame"), skinData, theme)
-    val exitButton = MyTextButton(res.get("exit"), skinData, theme, true)
+    val exitButton = MyTextButton(res.get("exit"), skinData, theme)
     val undoButton = MyTextButton(res.get("undoLast"), skinData, theme)
     val returnButton = MyTextButton(res.get("return"), skinData, theme)
 

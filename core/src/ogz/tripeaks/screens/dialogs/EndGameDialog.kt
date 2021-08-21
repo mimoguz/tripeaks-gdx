@@ -18,7 +18,7 @@ class EndGameDialog(
 ) : Dialog("", skinData.skin, theme) {
 
     val newGameButton = MyTextButton(res.get("newGame"), skinData, theme)
-    val exitButton = MyTextButton(res.get("exit"), skinData, theme, true)
+    val exitButton = MyTextButton(res.get("exit"), skinData, theme)
 
     init {
         val removedLabel = Label(res.format("fromStack", removedFromStack), skinData.skin, theme)
