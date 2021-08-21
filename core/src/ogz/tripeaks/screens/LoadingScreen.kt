@@ -113,6 +113,19 @@ class LoadingScreen(
                 font = skinFont
                 fontColor = skin["light"]
             }
+            textButton("redButton_light") {
+                up = skin["redButtonUp"]
+                down = skin["redButtonDown"]
+                disabled = skin["redButtonDisabled"]
+                font = skinFont
+                fontColor = skin["light"]
+                pressedOffsetY = -1f
+            }
+            textButton("redButton_dark", extend = "redButton_light") {
+                up = skin["redButtonUp_dark"]
+                down = skin["redButtonDown_dark"]
+                disabled = skin["redButtonDisabled_dark"]
+            }
             window {
                 titleFont = skinFont
                 titleFontColor = skin["dark"]

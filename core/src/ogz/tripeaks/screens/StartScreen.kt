@@ -115,7 +115,8 @@ class StartScreen(
                     MyTextButton(
                         assets[BundleAssets.Bundle].get("exit"),
                         skinData,
-                        preferences.themeKey
+                        preferences.themeKey,
+                        true
                     ).apply {
                         setAction { Gdx.app.exit() }
                     })
