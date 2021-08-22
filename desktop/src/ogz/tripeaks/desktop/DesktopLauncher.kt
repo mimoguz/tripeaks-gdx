@@ -17,7 +17,7 @@ object DesktopLauncher {
                 "images/icon32.png",
                 "images/icon48.png",
             )
-            setWindowedMode(Const.CONTENT_WIDTH.toInt() * 7, Const.CONTENT_HEIGHT.toInt() * 7)
+            setWindowedMode(Const.CONTENT_WIDTH.toInt() * 4, Const.CONTENT_HEIGHT.toInt() * 4)
         }
         Lwjgl3Application(Game(), config)
     }
