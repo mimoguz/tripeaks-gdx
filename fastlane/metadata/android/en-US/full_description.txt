@@ -14,8 +14,12 @@ Currently only has randomly generated games
 - Version 0.46 added Brazilian Portuguese translation. Thanks!
 - Version 0.46.2 is the second fix release for the apk packaging issue.
 - Version 0.5 added:
-    - Two new game layouts,
-    - Starting with an empty discard pile option,
-    - Stalled game dialog.
+    * Two new game layouts,
+    * Starting with an empty discard pile option,
+    * Stalled game dialog.
+- Version 0.51
+    * Fixed dark mode select box graphics,
+    * Fixed a layout definition issue in the diamonds layout,
+    * Changed a few strings in Brazilian Portuguese, English, German, Spanish, and Turkish localizations.
 
 *I need help for translations. If you like to, please open an issue in the issue tracker.
