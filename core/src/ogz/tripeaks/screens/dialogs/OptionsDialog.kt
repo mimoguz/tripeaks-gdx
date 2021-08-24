@@ -92,7 +92,7 @@ class OptionsDialog(
 
             add(Label(res.get("layout"), skinData.skin, gamePreferences.themeKey)).height(16f)
             row()
-            add(newGameLayout).width(220f).height(Const.BUTTON_HEIGHT - 1f).pad(0f, -1f, 4f, -1f)
+            add(newGameLayout).width(220f).height(Const.BUTTON_HEIGHT - 1f).padBottom(4f)
             row()
             add(showAllCards).pad(2f, 0f, 2f, 0f)
             row()
