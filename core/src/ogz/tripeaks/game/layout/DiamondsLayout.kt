@@ -11,7 +11,7 @@ class DiamondsLayout : LayoutImpl() {
         // Row 0
         Socket(0, GdxIntArray.with(), GdxIntArray.with(3, 4), 0, 2, 0),
         Socket(1, GdxIntArray.with(), GdxIntArray.with(5, 6), 0, 8, 0),
-        Socket(2, GdxIntArray.with(), GdxIntArray.with(8, 8), 0, 14, 0),
+        Socket(2, GdxIntArray.with(), GdxIntArray.with(7, 8), 0, 14, 0),
 
         // Row 1
         Socket(3, GdxIntArray.with(0), GdxIntArray.with(9, 10), 1, 1, 1),
