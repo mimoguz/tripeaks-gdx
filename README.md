@@ -18,6 +18,7 @@ A simple tri peaks solitaire game using [libGDX](https://libgdx.com/).
 
 ### Currently available in
 * Brazilian Portuguese
+* Bulgarian
 * English
 * German
 * Indonesian
