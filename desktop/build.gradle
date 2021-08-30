@@ -5,7 +5,7 @@ sourceSets.main.resources.srcDirs = ["../android/assets"]
 project.ext.mainClassName = "ogz.tripeaks.desktop.DesktopLauncher"
 project.ext.assetsDir = new File("../android/assets")
 archivesBaseName = "tripeaks"
-version = "0.51"
+version = "0.52"
 
 task run(dependsOn: classes, type: JavaExec) {
     mainClass = project.mainClassName
