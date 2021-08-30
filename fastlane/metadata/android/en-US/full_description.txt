@@ -21,5 +21,6 @@ Currently only has randomly generated games
     * Fixed dark mode select box graphics,
     * Fixed a layout definition issue in the diamonds layout,
     * Changed a few strings in Brazilian Portuguese, English, German, Spanish, and Turkish localizations.
+- Version 0.52 added Bulgarian translation. Thanks!
 
 *I need help for translations. If you like to, please open an issue in the issue tracker.
