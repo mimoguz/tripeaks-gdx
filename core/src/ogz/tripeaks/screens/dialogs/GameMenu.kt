@@ -40,6 +40,7 @@ class GameMenu(
     }
 
     init {
+        val buttonWidth = 80f
         isModal = false
         isVisible = false
         val layout = HorizontalGroup().apply {
@@ -47,16 +48,16 @@ class GameMenu(
                 .space(0f)
                 .align(Align.left)
                 .pad(0f)
-            add(newGameButton).width(100f).height(Const.BUTTON_HEIGHT)
+            add(newGameButton).width(buttonWidth).height(Const.BUTTON_HEIGHT)
             row()
-            add(optionsButton).width(100f).height(Const.BUTTON_HEIGHT)
+            add(optionsButton).width(buttonWidth).height(Const.BUTTON_HEIGHT)
             row()
-            add(exitButton).width(100f).height(Const.BUTTON_HEIGHT)
+            add(exitButton).width(buttonWidth).height(Const.BUTTON_HEIGHT)
             pad(0f)
         }
         add(layout)
         pad(4f, 4f, 6f, 4f)
-        width = 108f
+        width = buttonWidth + 8f
         height = 82f
         setPosition(
             attached.x + attached.width,
