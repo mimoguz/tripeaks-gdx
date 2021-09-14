@@ -257,9 +257,9 @@ class GameScreen(
             EndGameDialog(
                 skinData,
                 preferences.themeKey,
-                gameState.cardsRemovedFromStack,
-                gameState.longestChainLength,
-                gameState.undoCount,
+                gameState.statistics.cardsRemovedFromStack,
+                gameState.statistics.longestChainLength,
+                gameState.statistics.undoCount,
                 assets[BundleAssets.Bundle]
             ).apply {
                 exitButton.setAction { Gdx.app.exit() }

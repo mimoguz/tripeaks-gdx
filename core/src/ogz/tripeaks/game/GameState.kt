@@ -15,13 +15,9 @@ class GameState private constructor(
     val stack: GdxIntArray,
     val discard: GdxIntArray,
     val minDiscarded: Int,
-    longestChain: Int = 0,
-    currentChain: Int = 0,
-    removedFromStack: Int = 0,
-    undos: Int = 0,
-    stalled1: Boolean = false
+    val stats: Statistics,
+    stalled1: Boolean
 ) {
-
     var stalledOnce: Boolean = stalled1
         private set
 
@@ -39,17 +35,7 @@ class GameState private constructor(
             return s
         }
 
-    var currentChainLength = currentChain
-        private set
-
-    var longestChainLength = longestChain
-        private set
-
-    var cardsRemovedFromStack = removedFromStack
-        private set
-
-    var undoCount = undos
-        private set
+    val statistics = stats
 
 
     /** Takes a card from the table and put it to the discard.
@@ -62,8 +48,7 @@ class GameState private constructor(
         ) {
             sockets[socketIndex].isEmpty = true
             discard.add(sockets[socketIndex].card)
-            currentChainLength++
-            longestChainLength = maxOf(currentChainLength, longestChainLength)
+            statistics.take()
             return true
         }
         return false
@@ -75,8 +60,7 @@ class GameState private constructor(
     fun deal(): Boolean {
         if (!canDeal) return false
         discard.add(stack.pop())
-        currentChainLength = 0
-        cardsRemovedFromStack++
+        stats.deal()
         return true
     }
 
@@ -85,9 +69,6 @@ class GameState private constructor(
      */
     fun undo(): Int? {
         if (discard.size <= minDiscarded) return null
-
-        currentChainLength = 0
-        undoCount++
 
         val card = discard.pop()
         val socketIndex = sockets.indexOfFirst { it.card == card }
@@ -98,6 +79,7 @@ class GameState private constructor(
             sockets[socketIndex].isEmpty = false
         }
 
+        stats.undo(socketIndex < 0)
         return socketIndex
     }
 
@@ -122,12 +104,9 @@ class GameState private constructor(
         preferences.putString(STACK, serializedStack)
 
         preferences.putString(LAYOUT, layout.tag)
-        preferences.putInteger(CURRENT_CHAIN, currentChainLength)
-        preferences.putInteger(LONGEST_CHAIN, longestChainLength)
-        preferences.putInteger(REMOVED_FROM_STACK, cardsRemovedFromStack)
-        preferences.putInteger(UNDO_COUNT, undoCount)
         preferences.putInteger(MIN_DISCARDED, minDiscarded)
         preferences.putBoolean(STALLED_ONCE, stalledOnce)
+        statistics.save(preferences)
 
         preferences.flush()
     }
@@ -139,10 +118,6 @@ class GameState private constructor(
         const val STACK = "stack"
         const val MIN_DISCARDED = "minDiscarded"
         const val SEPARATOR = ";"
-        const val CURRENT_CHAIN = "currentChain"
-        const val LONGEST_CHAIN = "longestChain"
-        const val REMOVED_FROM_STACK = "removedFromStack"
-        const val UNDO_COUNT = "undoCount"
         const val STALLED_ONCE = "stalledOnce"
         const val SAVE_NAME = "save"
 
@@ -164,7 +139,15 @@ class GameState private constructor(
                 stack.add(cards[i])
             }
 
-            return GameState(layout, sockets, stack, discard, minDiscarded)
+            return GameState(
+                layout,
+                sockets,
+                stack,
+                discard,
+                minDiscarded,
+                Statistics.getInstance(layout.tag).apply { startNewGame(layout.tag) },
+                false
+            )
         }
 
         fun load(layouts: GdxMap<String, Layout>): GameState? {
@@ -199,26 +182,20 @@ class GameState private constructor(
                 stacked.forEach(stack::add)
 
                 val minDiscarded = preferences.getInteger(MIN_DISCARDED)
-
-                val currentChain = preferences.getInteger(CURRENT_CHAIN)
-                val longestChain = preferences.getInteger(LONGEST_CHAIN)
-                val removedFromStack = preferences.getInteger(REMOVED_FROM_STACK)
-                val undos = preferences.getInteger(UNDO_COUNT)
                 val stalled1 = preferences.getBoolean(STALLED_ONCE)
+                val stats =
+                    Statistics.load(preferences, layout.tag, layouts.values().map { it.tag })
 
                 require((socketStates.count { !it.isEmpty } + stack.size + discard.size) == 52)
 
                 return GameState(
-                    layout = layout,
-                    sockets = sockets,
-                    stack = stack,
-                    discard = discard,
-                    minDiscarded = minDiscarded,
-                    longestChain = longestChain,
-                    currentChain = currentChain,
-                    removedFromStack = removedFromStack,
-                    undos = undos,
-                    stalled1 = stalled1
+                    layout,
+                    sockets,
+                    stack,
+                    discard,
+                    minDiscarded,
+                    stats,
+                    stalled1
                 )
             } catch (e: Exception) {
                 log.error { "Error loading game state: ${e.message}\n\n${e.stackTrace.joinToString("\n")}" }
