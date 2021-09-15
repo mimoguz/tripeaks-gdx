@@ -253,6 +253,7 @@ class GameScreen(
     }
 
     private fun won() {
+        gameState.onWin()
         val dialog =
             EndGameDialog(
                 skinData,
@@ -356,7 +357,7 @@ class GameScreen(
                     Gdx.app.exit()
                 }
                 onThemeChanged = ::themeChanged
-                onOptionsDialogShown = ::removeGameMenu
+                onNewDialogShown = ::removeGameMenu
             }
             stage.addActor(newMenu)
             newMenu.isVisible = true

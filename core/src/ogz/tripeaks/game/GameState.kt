@@ -83,6 +83,10 @@ class GameState private constructor(
         return socketIndex
     }
 
+    fun onWin() {
+        statistics.win()
+    }
+
     /** Checks if a socket is not blocked. */
     fun isOpen(socketIndex: Int) =
         (!sockets[socketIndex].isEmpty) && layout[socketIndex].blockedBy.all { sockets[it].isEmpty }
@@ -140,13 +144,13 @@ class GameState private constructor(
             }
 
             return GameState(
-                layout,
-                sockets,
-                stack,
-                discard,
-                minDiscarded,
-                Statistics.getInstance(layout.tag).apply { startNewGame(layout.tag) },
-                false
+                layout = layout,
+                sockets = sockets,
+                stack = stack,
+                discard = discard,
+                minDiscarded = minDiscarded,
+                stats = Statistics.getInstance(layout.tag).apply { startNewGame(layout.tag) },
+                stalled1 = false
             )
         }
 
@@ -189,13 +193,13 @@ class GameState private constructor(
                 require((socketStates.count { !it.isEmpty } + stack.size + discard.size) == 52)
 
                 return GameState(
-                    layout,
-                    sockets,
-                    stack,
-                    discard,
-                    minDiscarded,
-                    stats,
-                    stalled1
+                    layout = layout,
+                    sockets = sockets,
+                    stack = stack,
+                    discard = discard,
+                    minDiscarded = minDiscarded,
+                    stats = stats,
+                    stalled1 = stalled1
                 )
             } catch (e: Exception) {
                 log.error { "Error loading game state: ${e.message}\n\n${e.stackTrace.joinToString("\n")}" }

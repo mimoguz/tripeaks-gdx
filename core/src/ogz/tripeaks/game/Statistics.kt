@@ -120,28 +120,23 @@ class Statistics private constructor(
 
         private var instance: Statistics? = null
 
-        fun getInstance(currentLayout: String): Statistics {
-            if (instance != null) {
-                return instance!!
-            } else {
-                val stats = Statistics(
-                    games = 0,
-                    wins = 0,
-                    layoutStats = GdxMap(),
-                    longestChain = 0,
-                    currentChain = 0,
-                    removedFromStack = 0,
-                    undos = 0,
-                    layoutTag = currentLayout
-                )
-                instance = stats
-                return stats
-            }
+        fun getInstance(defaultLayout: String): Statistics {
+            instance = instance ?: Statistics(
+                games = 0,
+                wins = 0,
+                layoutStats = GdxMap(),
+                longestChain = 0,
+                currentChain = 0,
+                removedFromStack = 0,
+                undos = 0,
+                layoutTag = defaultLayout
+            )
+            return instance!!
         }
 
         fun load(
             preferences: Preferences,
-            currentLayout: String,
+            savedLayout: String,
             layouts: List<String>
         ): Statistics {
             val currentChain = preferences.getInteger(CURRENT_CHAIN)
@@ -159,18 +154,17 @@ class Statistics private constructor(
                 layoutStats[tag] = LayoutStatistics(tag, played, won, longestChain)
             }
 
-            val stats = Statistics(
-                games,
-                wins,
-                layoutStats,
-                longestChain,
-                currentChain,
-                removedFromStack,
-                undos,
-                currentLayout
+            instance = Statistics(
+                games = games,
+                wins = wins,
+                layoutStats = layoutStats,
+                longestChain = longestChain,
+                currentChain = currentChain,
+                removedFromStack = removedFromStack,
+                undos = undos,
+                layoutTag = savedLayout
             )
-            instance = stats
-            return stats;
+            return instance!!;
         }
     }
 }
