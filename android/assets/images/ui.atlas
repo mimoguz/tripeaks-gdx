@@ -24,7 +24,7 @@ buttonDisabled_dark
   index: -1
 buttonDown
   rotate: false
-  xy: 22, 44
+  xy: 20, 10
   size: 16, 16
   split: 3, 3, 4, 3
   pad: 3, 3, 4, 3
@@ -33,7 +33,7 @@ buttonDown
   index: -1
 buttonDown_dark
   rotate: false
-  xy: 29, 80
+  xy: 22, 63
   size: 16, 16
   split: 3, 3, 4, 3
   pad: 3, 3, 4, 3
@@ -51,7 +51,7 @@ buttonUp
   index: -1
 buttonUp_dark
   rotate: false
-  xy: 47, 80
+  xy: 40, 27
   size: 16, 16
   split: 3, 3, 3, 4
   pad: 3, 3, 3, 4
@@ -88,21 +88,21 @@ checkboxOn_dark
   index: -1
 deal
   rotate: false
-  xy: 20, 13
+  xy: 47, 81
   size: 11, 15
   orig: 11, 15
   offset: 0, 0
   index: -1
 deal_dark
   rotate: false
-  xy: 33, 13
+  xy: 78, 93
   size: 11, 15
   orig: 11, 15
   offset: 0, 0
   index: -1
 menu
   rotate: false
-  xy: 29, 2
+  xy: 119, 88
   size: 7, 9
   orig: 7, 9
   offset: 0, 0
@@ -127,7 +127,7 @@ menuItemDown_dark
   index: -1
 menuItemOver
   rotate: false
-  xy: 49, 101
+  xy: 27, 2
   size: 5, 5
   split: 1, 1, 1, 1
   pad: 1, 1, 1, 1
@@ -136,7 +136,7 @@ menuItemOver
   index: -1
 menuItemOver_dark
   rotate: false
-  xy: 38, 6
+  xy: 70, 85
   size: 5, 5
   split: 1, 1, 1, 1
   pad: 1, 1, 1, 1
@@ -145,7 +145,7 @@ menuItemOver_dark
   index: -1
 menuItemUp
   rotate: false
-  xy: 56, 103
+  xy: 34, 2
   size: 5, 5
   split: 1, 1, 1, 1
   pad: 1, 1, 1, 1
@@ -154,7 +154,7 @@ menuItemUp
   index: -1
 menuItemUp_dark
   rotate: false
-  xy: 50, 37
+  xy: 20, 2
   size: 5, 5
   split: 1, 1, 1, 1
   pad: 1, 1, 1, 1
@@ -163,14 +163,14 @@ menuItemUp_dark
   index: -1
 menu_dark
   rotate: false
-  xy: 20, 2
+  xy: 119, 99
   size: 7, 9
   orig: 7, 9
   offset: 0, 0
   index: -1
 redButtonDisabled
   rotate: false
-  xy: 40, 44
+  xy: 40, 45
   size: 16, 16
   split: 3, 3, 3, 4
   pad: 3, 3, 3, 4
@@ -188,7 +188,7 @@ redButtonDisabled_dark
   index: -1
 redButtonDown
   rotate: false
-  xy: 40, 62
+  xy: 40, 63
   size: 16, 16
   split: 3, 3, 4, 3
   pad: 3, 3, 4, 3
@@ -215,11 +215,47 @@ redButtonUp
   index: -1
 redButtonUp_dark
   rotate: false
-  xy: 22, 62
+  xy: 22, 45
   size: 16, 16
   split: 3, 3, 3, 4
   pad: 3, 3, 3, 4
   orig: 16, 16
+  offset: 0, 0
+  index: -1
+scroll
+  rotate: false
+  xy: 49, 98
+  size: 8, 8
+  split: 3, 3, 3, 3
+  pad: 3, 3, 3, 3
+  orig: 8, 8
+  offset: 0, 0
+  index: -1
+scrollKnob
+  rotate: false
+  xy: 22, 28
+  size: 16, 15
+  split: 3, 3, 4, 4
+  pad: 3, 3, 4, 4
+  orig: 16, 15
+  offset: 0, 0
+  index: -1
+scrollKnob_dark
+  rotate: false
+  xy: 29, 81
+  size: 16, 15
+  split: 3, 3, 4, 4
+  pad: 3, 3, 4, 4
+  orig: 16, 15
+  offset: 0, 0
+  index: -1
+scroll_dark
+  rotate: false
+  xy: 60, 82
+  size: 8, 8
+  split: 3, 3, 3, 3
+  pad: 3, 3, 3, 3
+  orig: 8, 8
   offset: 0, 0
   index: -1
 selectBoxDown
@@ -260,21 +296,21 @@ selectBoxUp_dark
   index: -1
 undo
   rotate: false
-  xy: 22, 30
+  xy: 91, 96
   size: 12, 12
   orig: 12, 12
   offset: 0, 0
   index: -1
 undo_dark
   rotate: false
-  xy: 36, 30
+  xy: 105, 96
   size: 12, 12
   orig: 12, 12
   offset: 0, 0
   index: -1
 window
   rotate: false
-  xy: 58, 44
+  xy: 60, 92
   size: 16, 16
   split: 2, 2, 2, 4
   pad: 4, 4, 4, 6
@@ -283,7 +319,7 @@ window
   index: -1
 window_dark
   rotate: false
-  xy: 58, 62
+  xy: 38, 9
   size: 16, 16
   split: 2, 2, 2, 4
   pad: 4, 4, 4, 6
