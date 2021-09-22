@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.scenes.scene2d.ui.Skin
 import com.badlogic.gdx.utils.viewport.Viewport
 import ktx.app.KtxScreen
-import ktx.collections.GdxArray
 import ktx.scene2d.Scene2DSkin
 import ktx.style.*
 import ogz.tripeaks.*
@@ -49,12 +48,10 @@ class LoadingScreen(
     }
 
     private fun buildSkin(key: String): SkinData {
-        if (key == "cjk") {
-            val skin = makeCommonSkin(assets[FontAssets.UnifontCjk16])
-            return SkinData(skin, 2f, 2f, 15f, 4f)
+        return if (key == "cjk") {
+            SkinData(makeCommonSkin(assets[FontAssets.UnifontCjk16]) , 2f, 2f, 15f, 4f)
         } else {
-            val skin = makeCommonSkin(assets[FontAssets.GameFont])
-            return SkinData(skin, 3f, 4f, 19f, 2f)
+            SkinData(makeCommonSkin(assets[FontAssets.GameFont]) , 3f, 4f, 19f, 2f)
         }
     }
 
@@ -70,13 +67,17 @@ class LoadingScreen(
                     font = skinFont
                     fontColor = skin["dark"]
                 }
+
                 label("light", extend = defaultStyle)
+
                 label("dark", extend = defaultStyle) {
                     fontColor = skin["light"]
                 }
+
                 label("title_light", extend = defaultStyle) {
                     fontColor = skin["emphasisLight"]
                 }
+
                 label("title_dark", extend = defaultStyle) {
                     fontColor = skin["emphasisDark"]
                 }
@@ -87,7 +88,9 @@ class LoadingScreen(
                     disabled = skin["buttonDisabled"]
                     pressedOffsetY = -1f
                 }
+
                 button("light", extend = defaultStyle)
+
                 button("dark", extend = defaultStyle) {
                     up = skin["buttonUp_dark"]
                     down = skin["buttonDown_dark"]
@@ -102,13 +105,16 @@ class LoadingScreen(
                     fontColor = skin["dark"]
                     pressedOffsetY = -1f
                 }
+
                 textButton("light", extend = defaultStyle)
+
                 textButton("dark", extend = defaultStyle) {
                     up = skin["buttonUp_dark"]
                     down = skin["buttonDown_dark"]
                     disabled = skin["buttonDisabled_dark"]
                     fontColor = skin["light"]
                 }
+
                 textButton("menuItem_light") {
                     up = skin["menuItemUp"]
                     down = skin["menuItemDown"]
@@ -117,6 +123,7 @@ class LoadingScreen(
                     font = skinFont
                     fontColor = skin["dark"]
                 }
+
                 textButton("menuItem_dark") {
                     up = skin["menuItemUp_dark"]
                     down = skin["menuItemDown_dark"]
@@ -125,6 +132,7 @@ class LoadingScreen(
                     font = skinFont
                     fontColor = skin["light"]
                 }
+
                 textButton("redButton_light") {
                     up = skin["redButtonUp"]
                     down = skin["redButtonDown"]
@@ -133,6 +141,7 @@ class LoadingScreen(
                     fontColor = skin["light"]
                     pressedOffsetY = -1f
                 }
+
                 textButton("redButton_dark", extend = "redButton_light") {
                     up = skin["redButtonUp_dark"]
                     down = skin["redButtonDown_dark"]
@@ -144,11 +153,14 @@ class LoadingScreen(
                     titleFontColor = skin["dark"]
                     background = skin["window"]
                 }
+
                 window("light", extend = defaultStyle)
+
                 window("dark", extend = defaultStyle) {
                     titleFontColor = skin["light"]
                     background = skin["window_dark"]
                 }
+
                 checkBox {
                     checkboxOn = skin["checkboxOn"]
                     checkboxOff = skin["checkboxOff"]
@@ -157,13 +169,14 @@ class LoadingScreen(
                 }
 
                 checkBox("light", extend = defaultStyle)
+
                 checkBox("dark", extend = defaultStyle) {
                     checkboxOn = skin["checkboxOn_dark"]
                     checkboxOff = skin["checkboxOff_dark"]
                     fontColor = skin["light"]
                 }
 
-                val listStyleDefault =  list {
+                val listStyleDefault = list {
                     font = skinFont
                     fontColorSelected = skin["dark"]
                     fontColorUnselected = skin["dark"]
@@ -171,7 +184,9 @@ class LoadingScreen(
                     over = skin["menuItemOver"]
                     background = skin["window"]
                 }
+
                 list("light", extend = defaultStyle)
+
                 val listStyleDark = list("dark", extend = defaultStyle) {
                     fontColorSelected = skin["light"]
                     fontColorUnselected = skin["light"]
@@ -180,13 +195,14 @@ class LoadingScreen(
                     background = skin["window_dark"]
                 }
 
-                val scrollPaneStyleDefault =  scrollPane {
+                val scrollPaneStyleDefault = scrollPane {
                     hScroll = skin["scroll"]
                     hScrollKnob = skin["scrollKnob"]
                     vScroll = skin["scroll"]
                     vScrollKnob = skin["scrollKnob"]
                     corner = skin["menuItemUp"]
                 }
+
                 scrollPane("light", extend = defaultStyle)
                 val scrollPaneStyleDark = scrollPane("dark", extend = defaultStyle) {
                     hScroll = skin["scroll_dark"]
@@ -204,7 +220,9 @@ class LoadingScreen(
                     scrollStyle = scrollPaneStyleDefault
                     listStyle = listStyleDefault
                 }
+
                 selectBox("light", extend = defaultStyle)
+
                 selectBox("dark", extend = defaultStyle) {
                     fontColor = skin["light"]
                     background = skin["selectBoxUp_dark"]
