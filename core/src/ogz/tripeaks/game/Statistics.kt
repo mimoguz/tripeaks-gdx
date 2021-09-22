@@ -6,9 +6,8 @@ import ktx.collections.getOrPut
 import ktx.collections.set
 import kotlin.math.max
 
+@Suppress("GDXKotlinUnsafeIterator")
 class Statistics private constructor(
-    games: Int,
-    wins: Int,
     layoutStats: GdxMap<String, LayoutStatistics>,
     longestChain: Int,
     currentChain: Int,
@@ -32,12 +31,6 @@ class Statistics private constructor(
         private set
 
     var undoCount = undos
-        private set
-
-    var gamesPlayed = games
-        private set
-
-    var gamesWon = wins
         private set
 
     val perLayoutStatistics = layoutStats
@@ -82,10 +75,8 @@ class Statistics private constructor(
         val layout =
             perLayoutStatistics.getOrPut(currentLayout) { LayoutStatistics(currentLayout, 0, 0, 0) }
         if (won) {
-            gamesWon++
             layout.won++
         }
-        gamesPlayed++
         layout.played++
         layout.longestChain = max(longestChainLength, layout.longestChain)
     }
@@ -96,8 +87,6 @@ class Statistics private constructor(
             putInteger(LONGEST_CHAIN, longestChainLength)
             putInteger(REMOVED_FROM_STACK, cardsRemovedFromStack)
             putInteger(UNDO_COUNT, undoCount)
-            putInteger(GAMES, gamesPlayed)
-            putInteger(WINS, gamesWon)
 
             for (layout in perLayoutStatistics.values()) {
                 putInteger("${layout.tag}_$LAYOUT_PLAYED", layout.played)
@@ -112,8 +101,6 @@ class Statistics private constructor(
         const val LONGEST_CHAIN = "longestChain"
         const val REMOVED_FROM_STACK = "removedFromStack"
         const val UNDO_COUNT = "undoCount"
-        const val GAMES = "gamesPlayed"
-        const val WINS = "gamesWon"
         const val LAYOUT_PLAYED = "Played"
         const val LAYOUT_WON = "Won"
         const val LAYOUT_LONGEST_CHAIN = "LongestChain"
@@ -122,8 +109,6 @@ class Statistics private constructor(
 
         fun getInstance(defaultLayout: String): Statistics {
             instance = instance ?: Statistics(
-                games = 0,
-                wins = 0,
                 layoutStats = GdxMap(),
                 longestChain = 0,
                 currentChain = 0,
@@ -143,20 +128,16 @@ class Statistics private constructor(
             val longestChain = preferences.getInteger(LONGEST_CHAIN)
             val removedFromStack = preferences.getInteger(REMOVED_FROM_STACK)
             val undos = preferences.getInteger(UNDO_COUNT)
-            val games = preferences.getInteger(GAMES, 0)
-            val wins = preferences.getInteger(WINS, 0)
 
             val layoutStats = GdxMap<String, LayoutStatistics>()
             for (tag in layouts) {
-                val played = preferences.getInteger("${tag}_$LAYOUT_PLAYED", 0)
-                val won = preferences.getInteger("${tag}_$LAYOUT_WON", 0)
-                val longestChain = preferences.getInteger("${tag}_$LAYOUT_LONGEST_CHAIN", 0)
-                layoutStats[tag] = LayoutStatistics(tag, played, won, longestChain)
+                val layoutPlayed = preferences.getInteger("${tag}_$LAYOUT_PLAYED", 0)
+                val layoutWon = preferences.getInteger("${tag}_$LAYOUT_WON", 0)
+                val layoutLongestChain = preferences.getInteger("${tag}_$LAYOUT_LONGEST_CHAIN", 0)
+                layoutStats[tag] = LayoutStatistics(tag, layoutPlayed, layoutWon, layoutLongestChain)
             }
 
             instance = Statistics(
-                games = games,
-                wins = wins,
                 layoutStats = layoutStats,
                 longestChain = longestChain,
                 currentChain = currentChain,
@@ -164,7 +145,7 @@ class Statistics private constructor(
                 undos = undos,
                 layoutTag = savedLayout
             )
-            return instance!!;
+            return instance!!
         }
     }
 }
