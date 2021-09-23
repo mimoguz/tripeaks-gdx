@@ -259,7 +259,7 @@ class GameScreen(
                 skinData,
                 preferences.themeKey,
                 gameState.statistics.cardsRemovedFromStack,
-                gameState.statistics.longestChainLength,
+                gameState.statistics.currentLongestChainLength,
                 gameState.statistics.undoCount,
                 assets[BundleAssets.Bundle]
             ).apply {

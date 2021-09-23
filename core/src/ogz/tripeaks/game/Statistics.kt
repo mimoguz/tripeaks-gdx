@@ -9,82 +9,87 @@ import kotlin.math.max
 @Suppress("GDXKotlinUnsafeIterator")
 class Statistics private constructor(
     layoutStats: GdxMap<String, LayoutStatistics>,
-    longestChain: Int,
+    currentLongestChain: Int,
     currentChain: Int,
     removedFromStack: Int,
     undos: Int,
     layoutTag: String,
 ) {
-    private var dirty = false
-    private var won = false
+
+    private var currentLayout = layoutStats.getOrPut(layoutTag) {
+        LayoutStatistics(layoutTag, 0, 0, 0)
+    }
+
+    private var dirty: Boolean = false
+        private set(value) {
+            if (!field && value) {
+                currentLayout.played++
+            }
+            field = value
+        }
+
+    private var won: Boolean = false
+        private set(value) {
+            if (!field && value) {
+                currentLayout.won++
+            }
+            field = value
+        }
+
+    val perLayoutStatistics = layoutStats
 
     var currentChainLength = currentChain
-        private set
-
-    var longestChainLength = longestChain
         private set
 
     var cardsRemovedFromStack = removedFromStack
         private set
 
-    var currentLayout = layoutTag
-        private set
-
     var undoCount = undos
         private set
 
-    val perLayoutStatistics = layoutStats
+    var currentLongestChainLength: Int = currentLongestChain
+        private set(value) {
+            field = value
+            currentLayout.longestChain = max(value, currentLayout.longestChain)
+        }
 
     fun win() {
         won = true
-        update(true)
     }
 
     fun startNewGame(layoutTag: String) {
-        if (dirty && !won) update(false)
+        currentLayout =
+            perLayoutStatistics.getOrPut(layoutTag) { LayoutStatistics(layoutTag, 0, 0, 0) }
         dirty = false
         won = false
-        currentLayout = layoutTag
-        longestChainLength = 0
+        currentLongestChainLength = 0
         cardsRemovedFromStack = 0
         currentChainLength = 0
         undoCount = 0
     }
 
     fun deal() {
-        longestChainLength = max(currentChainLength, longestChainLength)
         currentChainLength = 0
         cardsRemovedFromStack++
         dirty = true
     }
 
     fun undo(toStack: Boolean) {
-        undoCount++
-        longestChainLength = max(currentChainLength, longestChainLength)
         currentChainLength = 0
+        undoCount++
         if (toStack) cardsRemovedFromStack--
     }
 
     fun take() {
         currentChainLength++
-        longestChainLength = max(currentChainLength, longestChainLength)
+        currentLongestChainLength = max(currentChainLength, currentLongestChainLength)
         dirty = true
-    }
-
-    private fun update(won: Boolean) {
-        val layout =
-            perLayoutStatistics.getOrPut(currentLayout) { LayoutStatistics(currentLayout, 0, 0, 0) }
-        if (won) {
-            layout.won++
-        }
-        layout.played++
-        layout.longestChain = max(longestChainLength, layout.longestChain)
     }
 
     fun save(preferences: Preferences) {
         preferences.apply {
             putInteger(CURRENT_CHAIN, currentChainLength)
-            putInteger(LONGEST_CHAIN, longestChainLength)
+            putInteger(LONGEST_CHAIN, currentLongestChainLength)
             putInteger(REMOVED_FROM_STACK, cardsRemovedFromStack)
             putInteger(UNDO_COUNT, undoCount)
 
@@ -110,7 +115,7 @@ class Statistics private constructor(
         fun getInstance(defaultLayout: String): Statistics {
             instance = instance ?: Statistics(
                 layoutStats = GdxMap(),
-                longestChain = 0,
+                currentLongestChain = 0,
                 currentChain = 0,
                 removedFromStack = 0,
                 undos = 0,
@@ -134,12 +139,13 @@ class Statistics private constructor(
                 val layoutPlayed = preferences.getInteger("${tag}_$LAYOUT_PLAYED", 0)
                 val layoutWon = preferences.getInteger("${tag}_$LAYOUT_WON", 0)
                 val layoutLongestChain = preferences.getInteger("${tag}_$LAYOUT_LONGEST_CHAIN", 0)
-                layoutStats[tag] = LayoutStatistics(tag, layoutPlayed, layoutWon, layoutLongestChain)
+                layoutStats[tag] =
+                    LayoutStatistics(tag, layoutPlayed, layoutWon, layoutLongestChain)
             }
 
             instance = Statistics(
                 layoutStats = layoutStats,
-                longestChain = longestChain,
+                currentLongestChain = longestChain,
                 currentChain = currentChain,
                 removedFromStack = removedFromStack,
                 undos = undos,
