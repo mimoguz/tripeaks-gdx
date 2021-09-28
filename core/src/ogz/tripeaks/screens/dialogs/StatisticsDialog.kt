@@ -21,10 +21,12 @@ class StatisticsDialog(
     init {
         val titleStyle = "title_$theme"
 
-        pad(12f, 8f, 12f, 8f)
+        pad(12f, 24f, 12f, 11f)
 
         val table = Table(skinData.skin).apply {
-            defaults().align(Align.left).pad(0f).space(0f, 0f, 0f, 12f)
+            // debug()
+            align(Align.left)
+            defaults().align(Align.left).pad(0f).space(0f, 0f, 0f, 8f)
             width = 240f
 
             val games = statistics.perLayoutStatistics.values().sumOf { it.played }
