@@ -78,7 +78,8 @@ class StatisticsDialog(
         }
 
         buttonTable.apply {
-            pad(4f, 4f, 0f, 4f)
+            // More padding on the left to compensate uneven window padding:
+            pad(4f, 4f, 0f, 17f)
             defaults().width(108f).space(4f).height(Const.BUTTON_HEIGHT).pad(0f)
             add(MyTextButton(res.get("return"), skinData, theme).apply {
                 setAction { hide() }
