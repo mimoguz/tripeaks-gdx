@@ -13,10 +13,10 @@ import ogz.tripeaks.util.SkinData
 
 @Suppress("GDXKotlinUnsafeIterator")
 class StatisticsDialog(
-        skinData: SkinData,
-        theme: String,
-        statistics: Statistics,
-        val res: I18NBundle,
+    skinData: SkinData,
+    theme: String,
+    statistics: Statistics,
+    val res: I18NBundle,
 ) : Dialog("", skinData.skin, theme) {
     init {
         val titleStyle = "title_$theme"
@@ -39,15 +39,28 @@ class StatisticsDialog(
             row()
             add(Label("${res.get("statGames")}: $games", skinData.skin, theme))
             add(Label("${res.get("statWins")}: $wins", skinData.skin, theme))
-            add(Label("${res.get("statLongestChain")}: $longestChain", skinData.skin, theme)).spaceRight(0f)
+            add(
+                Label(
+                    "${res.get("statLongestChain")}: $longestChain",
+                    skinData.skin,
+                    theme
+                )
+            ).spaceRight(0f)
             row()
 
-            for (layout in statistics.perLayoutStatistics.values()) {
+            for (layout in statistics.perLayoutStatistics.values().filter { it.played > 0 }
+                .sortedByDescending { it.played }) {
                 add(Label(res.get(layout.tag), skinData.skin, titleStyle)).colspan(3).padTop(8f)
                 row()
                 add(Label("${res.get("statGames")}: ${layout.played}", skinData.skin, theme))
                 add(Label("${res.get("statWins")}: ${layout.won}", skinData.skin, theme))
-                add(Label("${res.get("statLongestChain")}: ${layout.longestChain}", skinData.skin, theme)).spaceRight(0f)
+                add(
+                    Label(
+                        "${res.get("statLongestChain")}: ${layout.longestChain}",
+                        skinData.skin,
+                        theme
+                    )
+                ).spaceRight(0f)
                 row()
             }
         }
