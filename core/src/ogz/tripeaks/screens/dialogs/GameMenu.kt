@@ -1,5 +1,7 @@
 package ogz.tripeaks.screens.dialogs
 
+import com.badlogic.gdx.assets.AssetManager
+import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup
 import com.badlogic.gdx.scenes.scene2d.ui.Window
@@ -17,40 +19,46 @@ class GameMenu(
     preferences: GamePreferences,
     layouts: List<Layout>,
     res: I18NBundle,
+    ui: TextureAtlas,
     attached: Actor
 ) : Window("", skinData.skin, preferences.themeKey) {
 
     var onThemeChanged: ((useDarkTheme: Boolean) -> Unit)? = null
     var onNewDialogShown: (() -> Unit)? = null
-
     val newGameButton = MyMenuItem(res.get("newGame"), skinData, preferences.themeKey)
     val exitButton = MyMenuItem(res.get("exit"), skinData, preferences.themeKey)
-    val statsButton = MyMenuItem(res.get("statistics"), skinData, preferences.themeKey).apply {
-        setAction {
-            val statsDialog = StatisticsDialog(
-                skinData,
-                preferences.themeKey,
-                Statistics.getInstance(layouts.first().tag),
-                res
-            )
-            onNewDialogShown?.invoke()
-            statsDialog.show(this@GameMenu.stage)
+
+    private val statsButton =
+        MyMenuItem(res.get("statistics"), skinData, preferences.themeKey).apply {
+            setAction {
+                val statsDialog = StatisticsDialog(
+                    skinData,
+                    preferences.themeKey,
+                    Statistics.getInstance(layouts.first().tag),
+                    res,
+                    ui
+                )
+                onNewDialogShown?.invoke()
+                statsDialog.show(this@GameMenu.stage)
+            }
         }
-    }
-    val optionsButton = MyMenuItem(res.get("options"), skinData, preferences.themeKey).apply {
-        setAction {
-            val optionsDialog = OptionsDialog(
-                skinData,
-                preferences.themeKey,
-                preferences,
-                layouts,
-                res
-            )
-            optionsDialog.onThemeChanged = { useDarkTheme -> onThemeChanged?.invoke(useDarkTheme) }
-            onNewDialogShown?.invoke()
-            optionsDialog.show(this@GameMenu.stage)
+
+    private val optionsButton =
+        MyMenuItem(res.get("options"), skinData, preferences.themeKey).apply {
+            setAction {
+                val optionsDialog = OptionsDialog(
+                    skinData,
+                    preferences.themeKey,
+                    preferences,
+                    layouts,
+                    res
+                )
+                optionsDialog.onThemeChanged =
+                    { useDarkTheme -> onThemeChanged?.invoke(useDarkTheme) }
+                onNewDialogShown?.invoke()
+                optionsDialog.show(this@GameMenu.stage)
+            }
         }
-    }
 
     init {
         val buttonWidth = 80f

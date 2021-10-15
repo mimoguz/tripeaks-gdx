@@ -100,6 +100,24 @@ deal_dark
   orig: 11, 15
   offset: 0, 0
   index: -1
+line_dark
+  rotate: false
+  xy: 91, 93
+  size: 3, 1
+  split: 1, 1, 0, 1
+  pad: 1, 1, 0, 0
+  orig: 3, 1
+  offset: 0, 0
+  index: -1
+line_light
+  rotate: false
+  xy: 70, 82
+  size: 3, 1
+  split: 1, 1, 0, 1
+  pad: 1, 1, 0, 0
+  orig: 3, 1
+  offset: 0, 0
+  index: -1
 menu
   rotate: false
   xy: 119, 88

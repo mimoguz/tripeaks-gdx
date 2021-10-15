@@ -346,6 +346,7 @@ class GameScreen(
                 preferences,
                 layoutList,
                 assets[BundleAssets.Bundle],
+                assets[TextureAtlasAssets.Ui],
                 menuButton
             ).apply {
                 newGameButton.setAction {
