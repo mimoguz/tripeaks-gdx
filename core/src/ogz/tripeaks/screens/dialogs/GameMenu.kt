@@ -51,6 +51,7 @@ class GameMenu(
                     preferences.themeKey,
                     preferences,
                     layouts,
+                    ui,
                     res
                 )
                 optionsDialog.onThemeChanged =

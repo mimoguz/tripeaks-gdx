@@ -102,6 +102,7 @@ class StartScreen(
                                 preferences.themeKey,
                                 preferences,
                                 layouts,
+                                assets[TextureAtlasAssets.Ui],
                                 assets[BundleAssets.Bundle]
                             )
                             optionsDialog.onGameLayoutChanged = { GameState.clearSave() }

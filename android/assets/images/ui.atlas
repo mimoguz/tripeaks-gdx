@@ -95,14 +95,14 @@ deal
   index: -1
 deal_dark
   rotate: false
-  xy: 78, 93
+  xy: 79, 93
   size: 11, 15
   orig: 11, 15
   offset: 0, 0
   index: -1
 line_dark
   rotate: false
-  xy: 91, 93
+  xy: 49, 112
   size: 3, 1
   split: 1, 1, 0, 1
   pad: 1, 1, 0, 0
@@ -111,7 +111,7 @@ line_dark
   index: -1
 line_light
   rotate: false
-  xy: 70, 82
+  xy: 92, 86
   size: 3, 1
   split: 1, 1, 0, 1
   pad: 1, 1, 0, 0
@@ -120,7 +120,7 @@ line_light
   index: -1
 menu
   rotate: false
-  xy: 119, 88
+  xy: 58, 34
   size: 7, 9
   orig: 7, 9
   offset: 0, 0
@@ -136,7 +136,7 @@ menuItemDown
   index: -1
 menuItemDown_dark
   rotate: false
-  xy: 49, 108
+  xy: 20, 2
   size: 5, 5
   split: 1, 1, 1, 1
   pad: 1, 1, 1, 1
@@ -145,7 +145,7 @@ menuItemDown_dark
   index: -1
 menuItemOver
   rotate: false
-  xy: 27, 2
+  xy: 58, 27
   size: 5, 5
   split: 1, 1, 1, 1
   pad: 1, 1, 1, 1
@@ -154,7 +154,7 @@ menuItemOver
   index: -1
 menuItemOver_dark
   rotate: false
-  xy: 70, 85
+  xy: 120, 103
   size: 5, 5
   split: 1, 1, 1, 1
   pad: 1, 1, 1, 1
@@ -163,7 +163,7 @@ menuItemOver_dark
   index: -1
 menuItemUp
   rotate: false
-  xy: 34, 2
+  xy: 56, 20
   size: 5, 5
   split: 1, 1, 1, 1
   pad: 1, 1, 1, 1
@@ -172,7 +172,7 @@ menuItemUp
   index: -1
 menuItemUp_dark
   rotate: false
-  xy: 20, 2
+  xy: 92, 89
   size: 5, 5
   split: 1, 1, 1, 1
   pad: 1, 1, 1, 1
@@ -181,9 +181,23 @@ menuItemUp_dark
   index: -1
 menu_dark
   rotate: false
-  xy: 119, 99
+  xy: 58, 45
   size: 7, 9
   orig: 7, 9
+  offset: 0, 0
+  index: -1
+options_dark
+  rotate: false
+  xy: 49, 98
+  size: 10, 10
+  orig: 10, 10
+  offset: 0, 0
+  index: -1
+options_light
+  rotate: false
+  xy: 60, 80
+  size: 10, 10
+  orig: 10, 10
   offset: 0, 0
   index: -1
 redButtonDisabled
@@ -242,7 +256,7 @@ redButtonUp_dark
   index: -1
 scroll
   rotate: false
-  xy: 49, 98
+  xy: 82, 83
   size: 8, 8
   split: 3, 3, 3, 3
   pad: 3, 3, 3, 3
@@ -269,7 +283,7 @@ scrollKnob_dark
   index: -1
 scroll_dark
   rotate: false
-  xy: 60, 82
+  xy: 72, 82
   size: 8, 8
   split: 3, 3, 3, 3
   pad: 3, 3, 3, 3
@@ -312,23 +326,37 @@ selectBoxUp_dark
   orig: 18, 15
   offset: 0, 0
   index: -1
+stats_dark
+  rotate: false
+  xy: 58, 68
+  size: 9, 10
+  orig: 9, 10
+  offset: 0, 0
+  index: -1
+stats_light
+  rotate: false
+  xy: 58, 56
+  size: 9, 10
+  orig: 9, 10
+  offset: 0, 0
+  index: -1
 undo
   rotate: false
-  xy: 91, 96
+  xy: 92, 96
   size: 12, 12
   orig: 12, 12
   offset: 0, 0
   index: -1
 undo_dark
   rotate: false
-  xy: 105, 96
+  xy: 106, 96
   size: 12, 12
   orig: 12, 12
   offset: 0, 0
   index: -1
 window
   rotate: false
-  xy: 60, 92
+  xy: 61, 92
   size: 16, 16
   split: 2, 2, 2, 4
   pad: 4, 4, 4, 6

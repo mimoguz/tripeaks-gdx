@@ -1,9 +1,7 @@
 package ogz.tripeaks.screens.dialogs
 
-import com.badlogic.gdx.scenes.scene2d.ui.CheckBox
-import com.badlogic.gdx.scenes.scene2d.ui.Dialog
-import com.badlogic.gdx.scenes.scene2d.ui.Label
-import com.badlogic.gdx.scenes.scene2d.ui.SelectBox
+import com.badlogic.gdx.graphics.g2d.TextureAtlas
+import com.badlogic.gdx.scenes.scene2d.ui.*
 import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.I18NBundle
 import ktx.collections.toGdxArray
@@ -18,7 +16,8 @@ class OptionsDialog(
     theme: String,
     gamePreferences: GamePreferences,
     layouts: List<Layout>,
-    val res: I18NBundle,
+    private val ui: TextureAtlas,
+    private val res: I18NBundle,
 ) : Dialog("", skinData.skin, theme) {
 
     var onThemeChanged: ((useDarkTheme: Boolean) -> Unit)? = null
@@ -81,7 +80,8 @@ class OptionsDialog(
             setAction { hide() }
         }
 
-        pad(8f, 24f, 12f, 24f)
+        pad(4f, 16f, 12f, 16f)
+
         contentTable.apply {
             defaults()
                 .align(Align.left)
@@ -90,6 +90,8 @@ class OptionsDialog(
 
             pad(0f)
 
+            add(Image(ui.findRegion("options_$theme"))).space(0f).align(Align.center)
+            row()
             add(Label(res.get("layout"), skinData.skin, gamePreferences.themeKey)).height(16f)
             row()
             add(newGameLayout).width(220f).height(Const.BUTTON_HEIGHT - 1f).padBottom(4f)
@@ -101,7 +103,7 @@ class OptionsDialog(
             add(useDarkTheme).align(Align.left).pad(2f, 0f, 0f, 0f)
         }
         buttonTable.apply {
-            pad(8f, 0f, 0f, 0f)
+            pad(0f, 0f, 0f, 0f)
             defaults().width(108f).height(Const.BUTTON_HEIGHT).align(Align.center).space(4f).pad(0f)
             add(saveButton)
             add(cancelButton)

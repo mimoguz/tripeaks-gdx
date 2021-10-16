@@ -1,15 +1,11 @@
 package ogz.tripeaks.screens.dialogs
 
-import com.badlogic.gdx.assets.AssetManager
-import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.scenes.scene2d.ui.*
 import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.I18NBundle
 import ogz.tripeaks.Const
-import ogz.tripeaks.TextureAtlasAssets
 import ogz.tripeaks.game.Statistics
-import ogz.tripeaks.get
 import ogz.tripeaks.screens.controls.MyTextButton
 import ogz.tripeaks.util.SkinData
 
@@ -24,7 +20,8 @@ class StatisticsDialog(
     init {
         val titleStyle = "title_$theme"
 
-        pad(12f, 16f, 12f, 4f)
+        pad(4f, 5f, 12f, 5f)
+
 
         val table = Table(skinData.skin).apply {
             // debug()
@@ -53,7 +50,8 @@ class StatisticsDialog(
 
             for (layout in statistics.perLayoutStatistics.values().filter { it.played > 0 }
                 .sortedByDescending { it.played }) {
-                add(Image(ui.findRegion("line_$theme"))).width(this.width - 20f).colspan(3).align(Align.left).padTop(5f).padBottom(-2f)
+                add(Image(ui.findRegion("line_$theme"))).width(this.width / 2f - 6f).colspan(3)
+                    .align(Align.left).padTop(5f).padBottom(-2f)
                 row()
                 add(Label(res.get(layout.tag), skinData.skin, titleStyle)).colspan(3).padTop(8f)
                 row()
@@ -79,12 +77,14 @@ class StatisticsDialog(
 
         contentTable.apply {
             pad(0f)
-            add(scroll).pad(0f).height(100f).width(table.width)
+            add(Image(ui.findRegion("stats_$theme"))).pad(0f).space(0f)
+            row()
+            add(scroll).pad(0f).padLeft(11f).height(96f).width(table.width)
         }
 
         buttonTable.apply {
             // More padding on the left to compensate uneven window padding:
-            pad(4f, 4f, 0f, 18f)
+            pad(4f, 4f, 0f, 4f)
             defaults().width(108f).space(4f).height(Const.BUTTON_HEIGHT).pad(0f)
             add(MyTextButton(res.get("return"), skinData, theme).apply {
                 setAction { hide() }
