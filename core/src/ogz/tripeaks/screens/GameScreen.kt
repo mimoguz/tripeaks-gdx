@@ -232,7 +232,11 @@ class GameScreen(
         if (!stalled) {
             stalled = true
             val dialog =
-                StalledDialog(skinData, preferences.themeKey, assets[BundleAssets.Bundle]).apply {
+                StalledDialog(
+                    skinData,
+                    preferences.themeKey,
+                    assets[BundleAssets.Bundle]
+                ).apply {
                     val remove = {
                         hide()
                         stage.actors.removeValue(this, true)
@@ -404,7 +408,7 @@ class GameScreen(
         preferences.themeKey,
     ).apply {
         setAction { if (menu != null) removeGameMenu() else deal() }
-        setSize( Const.SPRITE_WIDTH, Const.SPRITE_HEIGHT,)
+        setSize(Const.SPRITE_WIDTH, Const.SPRITE_HEIGHT)
         setPosition(
             Const.STACK_POSITION.x + Const.CELL_WIDTH * 2f + Const.SPRITE_X,
             Const.STACK_POSITION.y + Const.SPRITE_Y
@@ -417,7 +421,7 @@ class GameScreen(
         preferences.themeKey
     ).apply {
         setAction { if (menu != null) removeGameMenu() else undo() }
-        setSize( Const.SPRITE_WIDTH, Const.SPRITE_HEIGHT,)
+        setSize(Const.SPRITE_WIDTH, Const.SPRITE_HEIGHT)
         setPosition(
             Const.DISCARD_POSITION.x - Const.CELL_WIDTH * 2f + Const.SPRITE_X,
             Const.DISCARD_POSITION.y + Const.SPRITE_Y
@@ -430,7 +434,7 @@ class GameScreen(
         preferences.themeKey
     ).apply {
         setAction { showHideGameMenu() }
-        setSize( Const.SPRITE_WIDTH, Const.SPRITE_WIDTH,)
+        setSize(Const.SPRITE_WIDTH, Const.SPRITE_WIDTH)
         setPosition(
             Const.STACK_POSITION.x + Const.CELL_WIDTH * 2f + Const.SPRITE_X,
             Const.CONTENT_HEIGHT - width - Const.VERTICAL_PADDING - Const.SPRITE_Y

@@ -103,7 +103,7 @@ class OptionsDialog(
             add(useDarkTheme).align(Align.left).pad(2f, 0f, 0f, 0f)
         }
         buttonTable.apply {
-            pad(0f, 0f, 0f, 0f)
+            pad(4f, 0f, 0f, 0f)
             defaults().width(108f).height(Const.BUTTON_HEIGHT).align(Align.center).space(4f).pad(0f)
             add(saveButton)
             add(cancelButton)
