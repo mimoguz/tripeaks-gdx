@@ -22,6 +22,7 @@ A simple tri peaks solitaire game using [libGDX](https://libgdx.com/).
 * English
 * German
 * Indonesian
+* Italian  
 * Russian
 * Simplified Chinese
 * Spanish
