@@ -1,0 +1,4 @@
+Un gioco con codice sorgente aperto di solitario a tre picchi con multiple opzioni di layout.
+
+Finora solo partite randomaticamente generate.
+
