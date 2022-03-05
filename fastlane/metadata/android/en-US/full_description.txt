@@ -22,5 +22,7 @@ Currently only has randomly generated games
     * Fixed a layout definition issue in the diamonds layout,
     * Changed a few strings in Brazilian Portuguese, English, German, Spanish, and Turkish localizations.
 - Version 0.52 added Bulgarian translation. Thanks!
+- Version 1.0 added Italian translation. Thanks!
+- Version 1.0 added a simple statistics dialog.
 
 *I need help for translations. If you like to, please open an issue in the issue tracker.
