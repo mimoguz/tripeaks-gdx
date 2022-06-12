@@ -7,7 +7,7 @@ assignees: mimoguz
 
 ---
 
-# Bundle_??.properties file
+# Bundle_??.properties
 
 **Note:** This file uses Java MessageFormat syntax.
 
@@ -44,7 +44,7 @@ assignees: mimoguz
 
 # full_desctiption.txt
 
-Text: An open-source tri peaks solitaire game with multiple layout options. Currently only has randomly generated games
+Text: An open-source tri peaks solitaire game with multiple layout options. Currently only has randomly generated games.
 
 Translation: ...
 
