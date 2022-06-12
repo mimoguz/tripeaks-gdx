@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx
 import ktx.collections.GdxArray
 import ktx.collections.GdxIntArray
 import ktx.collections.GdxMap
-import ktx.log.error
 import ktx.log.logger
 import ogz.tripeaks.game.layout.Layout
 import ogz.tripeaks.util.all
@@ -99,13 +98,8 @@ class GameState private constructor(
         val serializedSockets = sockets.map { it.serialize() }.joinToString(SEPARATOR)
         preferences.putString(SOCKETS, serializedSockets)
 
-        val discardCopy = discard.toArray()
-        val serializedDiscard = discardCopy.joinToString(SEPARATOR)
-        preferences.putString(DISCARD, serializedDiscard)
-
-        val stackCopy = stack.toArray()
-        val serializedStack = stackCopy.joinToString(SEPARATOR)
-        preferences.putString(STACK, serializedStack)
+        preferences.putString(DISCARD, intArrayToString(discard))
+        preferences.putString(STACK, intArrayToString(stack))
 
         preferences.putString(LAYOUT, layout.tag)
         preferences.putInteger(MIN_DISCARDED, minDiscarded)
@@ -114,6 +108,10 @@ class GameState private constructor(
 
         preferences.flush()
     }
+
+    fun discardToString() = intArrayToString(discard)
+
+    fun stackToString() = intArrayToString(stack)
 
     companion object {
         const val LAYOUT = "layout"
@@ -167,23 +165,8 @@ class GameState private constructor(
                 val sockets = GdxArray<SocketState>(layout.numberOfSockets)
                 socketStates.forEach(sockets::add)
 
-                val serializedDiscard = preferences.getString(DISCARD)
-                val discarded = if (serializedDiscard.isNotBlank()) {
-                    serializedDiscard.split(SEPARATOR).map(Integer::parseInt)
-                } else {
-                    listOf()
-                }
-                val discard = GdxIntArray((discarded.size))
-                discarded.forEach(discard::add)
-
-                val serializedStack = preferences.getString(STACK)
-                val stacked = if (serializedStack.isNotBlank()) {
-                    serializedStack.split(SEPARATOR).map(Integer::parseInt)
-                } else {
-                    listOf()
-                }
-                val stack = GdxIntArray(stacked.size)
-                stacked.forEach(stack::add)
+                val discard = stringToIntArray(preferences.getString(DISCARD))
+                val stack =stringToIntArray(preferences.getString(STACK))
 
                 val minDiscarded = preferences.getInteger(MIN_DISCARDED)
                 val stalled1 = preferences.getBoolean(STALLED_ONCE)
@@ -212,6 +195,16 @@ class GameState private constructor(
             val preferences = Gdx.app.getPreferences(SAVE_NAME)
             preferences.clear()
             preferences.flush()
+        }
+
+        fun intArrayToString(intArray: GdxIntArray): String =
+            intArray.toArray().joinToString(SEPARATOR)
+
+        fun stringToIntArray(string: String): GdxIntArray {
+            val elements = string.split(SEPARATOR).map(Integer::parseInt)
+            val result = GdxIntArray(elements.size)
+            elements.forEach(result::add)
+            return result
         }
     }
 }

@@ -4,6 +4,7 @@ import com.badlogic.gdx.Preferences
 import ktx.collections.GdxMap
 import ktx.collections.getOrPut
 import ktx.collections.set
+import ktx.log.logger
 import kotlin.math.max
 
 @Suppress("GDXKotlinUnsafeIterator")
@@ -111,6 +112,7 @@ class Statistics private constructor(
         const val LAYOUT_LONGEST_CHAIN = "LongestChain"
 
         private var instance: Statistics? = null
+        private val log = logger<Statistics>()
 
         fun getInstance(defaultLayout: String): Statistics {
             instance = instance ?: Statistics(
@@ -136,11 +138,21 @@ class Statistics private constructor(
 
             val layoutStats = GdxMap<String, LayoutStatistics>()
             for (tag in layouts) {
-                val layoutPlayed = preferences.getInteger("${tag}_$LAYOUT_PLAYED", 0)
-                val layoutWon = preferences.getInteger("${tag}_$LAYOUT_WON", 0)
-                val layoutLongestChain = preferences.getInteger("${tag}_$LAYOUT_LONGEST_CHAIN", 0)
-                layoutStats[tag] =
-                    LayoutStatistics(tag, layoutPlayed, layoutWon, layoutLongestChain)
+                try {
+                    val layoutPlayed = preferences.getInteger("${tag}_$LAYOUT_PLAYED")
+                    val layoutWon = preferences.getInteger("${tag}_$LAYOUT_WON")
+                    val layoutLongestChain = preferences.getInteger("${tag}_$LAYOUT_LONGEST_CHAIN")
+                    layoutStats[tag] =
+                        LayoutStatistics(tag, layoutPlayed, layoutWon, layoutLongestChain)
+                } catch (e: Exception) {
+                    log.error {
+                        "Statistics for $tag doesn't exists of malformed: ${e.message}\n\n${
+                            e.stackTrace.joinToString(
+                                "\n"
+                            )
+                        }"
+                    }
+                }
             }
 
             instance = Statistics(
