@@ -12,7 +12,7 @@ assignees: mimoguz
 **Note:** This file uses Java MessageFormat syntax.
 
 * [Baeldung article](https://www.baeldung.com/java-localization-messages-formatting)
-*[JavaDoc](https://docs.oracle.com/javase/7/docs/api/java/text/MessageFormat.html)
+* [JavaDoc](https://docs.oracle.com/javase/7/docs/api/java/text/MessageFormat.html)
 
 ## File contents
 
