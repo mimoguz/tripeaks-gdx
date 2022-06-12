@@ -42,7 +42,7 @@ assignees: mimoguz
     statWins=Wins
     statLongestChain=The longest chain
 
-# full_desctiption.txt
+# full_description.txt
 
 Text: An open-source tri peaks solitaire game with multiple layout options. Currently only has randomly generated games.
 
