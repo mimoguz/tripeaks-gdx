@@ -1,6 +1,6 @@
 android {
-    buildToolsVersion "30.0.3"
-    compileSdkVersion 30
+    buildToolsVersion "33.0.0"
+    compileSdkVersion 33
     sourceSets {
         main {
             manifest.srcFile 'AndroidManifest.xml'
@@ -19,9 +19,9 @@ android {
     defaultConfig {
         applicationId "ogz.tripeaks"
         minSdkVersion 24
-        targetSdkVersion 30
-        versionCode 20
-        versionName "1.0"
+        targetSdkVersion 33
+        versionCode 21
+        versionName "1.0.1"
     }
     buildTypes {
         release {
