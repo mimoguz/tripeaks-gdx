@@ -1,28 +1,5 @@
-An open-source tri peaks solitaire game with multiple layout options.
+An open-source tri peaks solitaire game with multiple layout options. Currently only has randomly generated games.
 
-Currently only has randomly generated games
-
-- Version 0.11 added the dark mode.
-- Version 0.20 added end game statistics.
-- Version 0.30 added a new game mode.
-- Version 0.40 added localization support*.
-- Version 0.41 added German translation. Thanks!
-- Version 0.42 added Russian translation. Thanks!
-- Version 0.43 added Spanish translation. Thanks!
-- Version 0.44 added Chinese translation. Thanks!
-- Version 0.45 added Indonesian translation. Thanks!
-- Version 0.46 added Brazilian Portuguese translation. Thanks!
-- Version 0.46.2 is the second fix release for the apk packaging issue.
-- Version 0.5 added:
-    * Two new game layouts,
-    * Starting with an empty discard pile option,
-    * Stalled game dialog.
-- Version 0.51
-    * Fixed dark mode select box graphics,
-    * Fixed a layout definition issue in the diamonds layout,
-    * Changed a few strings in Brazilian Portuguese, English, German, Spanish, and Turkish localizations.
-- Version 0.52 added Bulgarian translation. Thanks!
-- Version 1.0 added Italian translation. Thanks!
-- Version 1.0 added a simple statistics dialog.
+- Version 1.0.1 added French translation. Thanks!
 
 *I need help for translations. If you like to, please open an issue in the issue tracker.
