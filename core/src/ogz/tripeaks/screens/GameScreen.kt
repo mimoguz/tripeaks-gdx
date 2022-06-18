@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.Touchable
+import com.badlogic.gdx.utils.ObjectMap
 import com.badlogic.gdx.utils.ScreenUtils
 import com.badlogic.gdx.utils.viewport.Viewport
 import ktx.app.KtxScreen
@@ -26,6 +27,7 @@ import ogz.tripeaks.ecs.CardAnimationRenderingSystem
 import ogz.tripeaks.ecs.CardRenderComponent
 import ogz.tripeaks.ecs.CardRenderingSystem
 import ogz.tripeaks.game.GameState
+import ogz.tripeaks.game.Statistics
 import ogz.tripeaks.game.layout.Layout
 import ogz.tripeaks.screens.controls.MyImageButton
 import ogz.tripeaks.screens.dialogs.EndGameDialog
@@ -71,7 +73,18 @@ class GameScreen(
     override fun show() {
         stageSetup()
         Gdx.input.inputProcessor = InputMultiplexer(stage, this)
-        if (!load()) newGame()
+        if (!load()) {
+            // Retry loading statistics
+            try {
+                val stats = Statistics.load(
+                    Gdx.app.getPreferences(GameState.SAVE_NAME),
+                    preferences.layout,
+                    ObjectMap.Values(layouts).map { it.tag })
+                newGame(stats);
+            } catch (_: Exception) {
+                newGame()
+            }
+        }
     }
 
     override fun resume() {
@@ -149,13 +162,20 @@ class GameScreen(
     }
 
     private fun newGame() {
+        newGame(null)
+    }
+
+    private fun newGame(stats: Statistics?) {
         entities.forEach { it.removeAll() } // Clear components
+        val cards = (0 until 52).shuffled().toIntArray();
+        val layout = layouts.get(preferences.layout, layoutList.first());
         gameState =
-            GameState.new(
-                (0 until 52).shuffled().toIntArray(),
-                preferences.startWithEmptyDiscard,
-                layouts.get(preferences.layout, layoutList.first())
-            )
+            if (stats == null) {
+                GameState.new(cards, preferences.startWithEmptyDiscard, layout)
+            } else {
+                GameState.new(cards, preferences.startWithEmptyDiscard, layout, stats)
+            }
+
         stalled = false
         initECS()
         updateUi()

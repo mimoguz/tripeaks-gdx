@@ -1,6 +1,7 @@
 package ogz.tripeaks.game
 
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.utils.ObjectMap
 import ktx.collections.GdxArray
 import ktx.collections.GdxIntArray
 import ktx.collections.GdxMap
@@ -125,7 +126,7 @@ class GameState private constructor(
 
         private val log = logger<GameState>()
 
-        fun new(cards: IntArray, emptyDiscard: Boolean, layout: Layout): GameState {
+        fun new(cards: IntArray, emptyDiscard: Boolean, layout: Layout, stats: Statistics): GameState {
             require(cards.size == 52 && cards.distinct().size == cards.size)
 
             val sockets = GdxArray<SocketState>(layout.numberOfSockets)
@@ -147,9 +148,13 @@ class GameState private constructor(
                 stack = stack,
                 discard = discard,
                 minDiscarded = minDiscarded,
-                stats = Statistics.getInstance(layout.tag).apply { startNewGame(layout.tag) },
+                stats = stats,
                 stalled1 = false
             )
+        }
+
+        fun new(cards: IntArray, emptyDiscard: Boolean, layout: Layout): GameState {
+            return new(cards, emptyDiscard, layout, Statistics.getInstance(layout.tag).apply { startNewGame(layout.tag) })
         }
 
         fun load(layouts: GdxMap<String, Layout>): GameState? {
@@ -171,7 +176,7 @@ class GameState private constructor(
                 val minDiscarded = preferences.getInteger(MIN_DISCARDED)
                 val stalled1 = preferences.getBoolean(STALLED_ONCE)
                 val stats =
-                    Statistics.load(preferences, layout.tag, layouts.values().map { it.tag })
+                    Statistics.load(preferences, layout.tag,  ObjectMap.Values(layouts).map { it.tag })
 
                 require((socketStates.count { !it.isEmpty } + stack.size + discard.size) == 52)
 
