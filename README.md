@@ -20,6 +20,7 @@ A simple tri peaks solitaire game using [libGDX](https://libgdx.com/).
 * Brazilian Portuguese
 * Bulgarian
 * English
+* French
 * German
 * Indonesian
 * Italian  
@@ -27,8 +28,5 @@ A simple tri peaks solitaire game using [libGDX](https://libgdx.com/).
 * Simplified Chinese
 * Spanish
 * Turkish
-
-### Work in progress
-* French
 
 *I need help for translations. If you like to, please open an issue in the issue tracker.
