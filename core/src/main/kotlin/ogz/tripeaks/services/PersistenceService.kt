@@ -18,11 +18,10 @@ class PersistenceService {
     fun saveGame(current: GameState) {
         try {
             val prefs = Gdx.app.getPreferences(SAVE_FILE)
-            val json = Json()
-            val serialized = json.toJson(current)
+            val json = Json().toJson(current)
             // Yes, I'm putting JSON in preferences.
             // Is there another easy and cross-platform way to write save data to correct place?
-            prefs.putString(SAVE_KEY, serialized)
+            prefs.putString(SAVE_KEY, json)
             prefs.flush()
         } catch (e: Exception) {
             logger.error("${Instant.now()} - Save error (unhandled): ${e.message}")

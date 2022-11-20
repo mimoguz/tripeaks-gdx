@@ -72,7 +72,7 @@ class GameState private constructor(
         state += 1
     }
 
-    /** Removes the card at the socket it you can. */
+    /** Removes the card at the socket it can. */
     fun take(socketIndex: Int): Boolean {
         require(socketIndex in 0 until layout.numberOfSockets)
         if (canTake(socketIndex)) {
