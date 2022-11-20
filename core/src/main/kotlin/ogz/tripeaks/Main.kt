@@ -110,7 +110,6 @@ class FirstScreen : KtxScreen {
     override fun pause() {
         super.pause()
         persistence.saveGame(state)
-        persistence.saveJson(state)
         logger.info("${Instant.now()} - Paused: ${state.currentState}, ${state.stalled}")
     }
 
