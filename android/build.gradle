@@ -1,92 +1,137 @@
-android {
-    buildToolsVersion "33.0.0"
-    compileSdkVersion 33
-    sourceSets {
-        main {
-            manifest.srcFile 'AndroidManifest.xml'
-            java.srcDirs = ['src']
-            aidl.srcDirs = ['src']
-            renderscript.srcDirs = ['src']
-            res.srcDirs = ['res']
-            assets.srcDirs = ['assets']
-            jniLibs.srcDirs = ['libs']
-        }
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
 
-    }
-    packagingOptions {
-        exclude 'META-INF/robovm/ios/robovm.xml'
-    }
-    defaultConfig {
-        applicationId "ogz.tripeaks"
-        minSdkVersion 24
-        targetSdkVersion 33
-        versionCode 21
-        versionName "1.0.1"
-    }
-    buildTypes {
-        release {
-            minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
-    }
+android {
+	compileSdkVersion 33
+	sourceSets {
+		main {
+			manifest.srcFile 'AndroidManifest.xml'
+			java.srcDirs = ['src/main/java', 'src/main/kotlin']
+			aidl.srcDirs = ['src/main/java', 'src/main/kotlin']
+			renderscript.srcDirs = ['src/main/java', 'src/main/kotlin']
+			res.srcDirs = ['res']
+			assets.srcDirs = ['../assets']
+			jniLibs.srcDirs = ['libs']
+		}
+	}
+	packagingOptions {
+		// Preventing from license violations (more or less):
+		pickFirst 'META-INF/LICENSE.txt'
+		pickFirst 'META-INF/LICENSE'
+		pickFirst 'META-INF/license.txt'
+		pickFirst 'META-INF/LGPL2.1'
+		pickFirst 'META-INF/NOTICE.txt'
+		pickFirst 'META-INF/NOTICE'
+		pickFirst 'META-INF/notice.txt'
+		// Excluding unnecessary meta-data:
+		exclude 'META-INF/robovm/ios/robovm.xml'
+		exclude 'META-INF/DEPENDENCIES.txt'
+		exclude 'META-INF/DEPENDENCIES'
+		exclude 'META-INF/dependencies.txt'
+	}
+	defaultConfig {
+		applicationId 'ogz.tripeaks'
+		minSdkVersion 19
+		targetSdkVersion 33
+		versionCode 1
+		versionName "1.0"
+		multiDexEnabled true
+	}
+	compileOptions {
+		sourceCompatibility "11"
+		targetCompatibility "11"
+		coreLibraryDesugaringEnabled true
+	}
+	kotlinOptions.jvmTarget = "1.8"
+	buildTypes {
+		release {
+			minifyEnabled false
+			proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+		}
+	}
+    buildToolsVersion '33.0.0'
+
 }
 
+repositories {
+	// needed for AAPT2, may be needed for other tools
+	google()
+}
 
-// called every time gradle gets executed, takes the native dependencies of
+configurations { natives }
+
+dependencies {
+	coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
+	implementation "com.badlogicgames.gdx:gdx-backend-android:$gdxVersion"
+	implementation project(':core')
+
+	natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-arm64-v8a"
+	natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi-v7a"
+	natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-x86"
+	natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-x86_64"
+
+	// This follows advice from https://blog.gradle.org/log4j-vulnerability
+	constraints {
+		implementation("org.apache.logging.log4j:log4j-core") {
+			version {
+				strictly("[2.18, 3[")
+				prefer("2.18.0")
+			}
+			because("CVE-2021-44228, CVE-2021-45046, CVE-2021-45105: Log4j vulnerable to remote code execution and other critical security vulnerabilities")
+		}
+	}
+}
+
+// Called every time gradle gets executed, takes the native dependencies of
 // the natives configuration, and extracts them to the proper libs/ folders
 // so they get packed with the APK.
-task copyAndroidNatives {
-    doFirst {
-        file("libs/armeabi/").mkdirs()
-        file("libs/armeabi-v7a/").mkdirs()
-        file("libs/arm64-v8a/").mkdirs()
-        file("libs/x86_64/").mkdirs()
-        file("libs/x86/").mkdirs()
+task copyAndroidNatives() {
+	doFirst {
+		file("libs/armeabi-v7a/").mkdirs()
+		file("libs/arm64-v8a/").mkdirs()
+		file("libs/x86_64/").mkdirs()
+		file("libs/x86/").mkdirs()
 
-        configurations.natives.copy().files.each { jar ->
-            def outputDir = null
-            if (jar.name.endsWith("natives-arm64-v8a.jar")) outputDir = file("libs/arm64-v8a")
-            if (jar.name.endsWith("natives-armeabi-v7a.jar")) outputDir = file("libs/armeabi-v7a")
-            if(jar.name.endsWith("natives-armeabi.jar")) outputDir = file("libs/armeabi")
-            if(jar.name.endsWith("natives-x86_64.jar")) outputDir = file("libs/x86_64")
-            if(jar.name.endsWith("natives-x86.jar")) outputDir = file("libs/x86")
-            if(outputDir != null) {
-                copy {
-                    from zipTree(jar)
-                    into outputDir
-                    include "*.so"
-                }
-            }
-        }
-    }
+		configurations.getByName("natives").copy().files.each { jar ->
+    	    def outputDir = null
+    	    if(jar.name.endsWith("natives-armeabi-v7a.jar")) outputDir = file("libs/armeabi-v7a")
+    	    if(jar.name.endsWith("natives-arm64-v8a.jar")) outputDir = file("libs/arm64-v8a")
+    	    if(jar.name.endsWith("natives-x86_64.jar")) outputDir = file("libs/x86_64")
+    	    if(jar.name.endsWith("natives-x86.jar")) outputDir = file("libs/x86")
+    	    if(outputDir != null) {
+    	        copy {
+    	            from zipTree(jar)
+    	            into outputDir
+    	            include "*.so"
+    	        }
+    	    }
+    	}
+	}
 }
-
-tasks.whenTaskAdded { packageTask ->
-    if (packageTask.name.contains("package") || packageTask.name.contains("assemble")) {
-        packageTask.dependsOn 'copyAndroidNatives'
-    }
+tasks.matching { it.name.contains("merge") && it.name.contains("JniLibFolders") }.configureEach { packageTask ->
+    packageTask.dependsOn 'copyAndroidNatives'
 }
 
 task run(type: Exec) {
-    def path
-    def localProperties = project.file("../local.properties")
-    if (localProperties.exists()) {
-        Properties properties = new Properties()
-        localProperties.withInputStream { instr ->
-            properties.load(instr)
-        }
-        def sdkDir = properties.getProperty('sdk.dir')
-        if (sdkDir) {
-            path = sdkDir
-        } else {
-            path = "$System.env.ANDROID_HOME"
-        }
-    } else {
-        path = "$System.env.ANDROID_HOME"
-    }
+	def path
+	def localProperties = project.file("../local.properties")
+	if (localProperties.exists()) {
+		Properties properties = new Properties()
+		localProperties.withInputStream { instr ->
+			properties.load(instr)
+		}
+		def sdkDir = properties.getProperty('sdk.dir')
+		if (sdkDir) {
+			path = sdkDir
+		} else {
+			path = "$System.env.ANDROID_SDK_ROOT"
+		}
+	} else {
+		path = "$System.env.ANDROID_SDK_ROOT"
+	}
 
-    def adb = path + "/platform-tools/adb"
-    commandLine "$adb", 'shell', 'am', 'start', '-n', 'ogz.tripeaks/ogz.tripeaks.AndroidLauncher'
+	def adb = path + "/platform-tools/adb"
+	commandLine "$adb", 'shell', 'am', 'start', '-n', 'ogz.tripeaks/ogz.tripeaks.android.AndroidLauncher'
 }
 
 eclipse.project.name = appName + "-android"

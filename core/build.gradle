@@ -1,6 +1,12 @@
-sourceCompatibility = 1.7
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+eclipse.project.name = appName + '-core'
 
-sourceSets.main.java.srcDirs = [ "src/" ]
-
-eclipse.project.name = appName + "-core"
+dependencies {
+	api "com.badlogicgames.ashley:ashley:$ashleyVersion"
+	api "com.badlogicgames.gdx:gdx:$gdxVersion"
+	api "io.github.libktx:ktx-app:$ktxVersion"
+	api "io.github.libktx:ktx-assets:$ktxVersion"
+	api "io.github.libktx:ktx-graphics:$ktxVersion"
+	api "io.github.libktx:ktx-collections:$ktxVersion"
+	api "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+}

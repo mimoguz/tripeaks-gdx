@@ -1,5 +1,0 @@
-char id=33   x=52    y=90    width=1     height=7     xoffset=1     yoffset=3     xadvance=4     page=0  chnl=15
-char id=39   x=126   y=102   width=1     height=3     xoffset=1     yoffset=3     xadvance=4     page=0  chnl=15
-char id=46   x=27    y=111   width=1     height=2     xoffset=1     yoffset=8     xadvance=4     page=0  chnl=15
-char id=161  x=126   y=72    width=1     height=7     xoffset=0     yoffset=5     xadvance=3     page=0  chnl=15
-char id=58   x=107   y=102   width=1     height=5     xoffset=1     yoffset=5     xadvance=3     page=0  chnl=15

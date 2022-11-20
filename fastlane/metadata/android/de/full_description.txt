@@ -1,1 +1,0 @@
-Ein quelloffenes Tri Peaks Solitärspiel mit mehreren Gestaltungsoptionen.

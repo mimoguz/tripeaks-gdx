@@ -1,1 +1,0 @@
-Un jeu de solitaire Tri Peaks open source avec plusieurs agencements disponibles. Les parties sont pour le moment générées aléatoirement.

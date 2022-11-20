@@ -1,5 +1,0 @@
-An open-source tri peaks solitaire game with multiple layout options. Currently only has randomly generated games.
-
-- Version 1.0.1 added French translation. Thanks!
-
-*I need help for translations. If you like to, please open an issue in the issue tracker.

@@ -1,1 +1,0 @@
-Um jogo de paciência tri peaks em código aberto, com diversos estilos de partida.

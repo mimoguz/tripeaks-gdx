@@ -1,93 +1,69 @@
 buildscript {
-    ext.kotlinVersion = '1.7.0'
+	repositories {
+		mavenCentral()
+		maven { url 'https://s01.oss.sonatype.org' }
+		mavenLocal()
+		google()
+		gradlePluginPortal()
+		maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
+		maven { url 'https://s01.oss.sonatype.org/content/repositories/snapshots/' }
+	}
+	dependencies {
+		classpath "com.android.tools.build:gradle:7.3.1"
+		classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
 
-    repositories {
-        mavenLocal()
-        mavenCentral()
-        gradlePluginPortal()
-        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
-        google()
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:7.2.1'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
-    }
+		// This follows advice from https://blog.gradle.org/log4j-vulnerability
+		constraints {
+			classpath("org.apache.logging.log4j:log4j-core") {
+				version {
+					strictly("[2.18, 3[")
+					prefer("2.18.0")
+				}
+				because("CVE-2021-44228, CVE-2021-45046, CVE-2021-45105: Log4j vulnerable to remote code execution and other critical security vulnerabilities")
+			}
+		}
+	}
 }
 
 allprojects {
-    apply plugin: "eclipse"
-
-    version = '1.0.1'
-    ext {
-        appName = "TriPeaks"
-        gdxVersion = '1.10.0'
-        roboVMVersion = '2.3.12'
-        box2DLightsVersion = '1.5'
-        ashleyVersion = '1.7.4'
-        aiVersion = '1.8.2'
-        gdxControllersVersion = '2.1.0'
-        ktxVersion = '1.10.0-b4'
-    }
-
-    repositories {
-        mavenLocal()
-        mavenCentral()
-        google()
-        gradlePluginPortal()
-        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
-        maven { url "https://oss.sonatype.org/content/repositories/releases/" }
-    }
+	apply plugin: 'eclipse'
+	apply plugin: 'idea'
 }
 
-project(":desktop") {
-    apply plugin: "kotlin"
+configure(subprojects - project(':android')) {
+	apply plugin: 'java-library'
+	apply plugin: 'kotlin'
+	sourceCompatibility = 11
+	compileJava {
+		options.incremental = true
+	}
+	dependencies {
+		// This follows advice from https://blog.gradle.org/log4j-vulnerability
+		constraints {
+			implementation("org.apache.logging.log4j:log4j-core") {
+				version {
+					strictly("[2.18, 3[")
+					prefer("2.18.0")
+				}
+				because("CVE-2021-44228, CVE-2021-45046, CVE-2021-45105: Log4j vulnerable to remote code execution and other critical security vulnerabilities")
+			}
+		}
+	}
 
-
-    dependencies {
-        implementation project(":core")
-        api "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
-        api "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
-        api "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
-    }
 }
 
-project(":android") {
-    apply plugin: "android"
-    apply plugin: "kotlin-android"
-
-    configurations { natives }
-
-    dependencies {
-        implementation project(":core")
-        api "com.badlogicgames.gdx:gdx-backend-android:$gdxVersion"
-        natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi-v7a"
-        natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-arm64-v8a"
-        natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-x86"
-        natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-x86_64"
-        api "com.badlogicgames.ashley:ashley:$ashleyVersion"
-        api "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
-    }
+subprojects {
+	version = '1.0.0'
+	ext.appName = 'tripeaks'
+	repositories {
+		mavenCentral()
+		maven { url 'https://s01.oss.sonatype.org' }
+		mavenLocal()
+		gradlePluginPortal()
+		maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
+		maven { url 'https://s01.oss.sonatype.org/content/repositories/snapshots/' }
+		maven { url 'https://jitpack.io' }
+	}
 }
 
-project(":core") {
-    apply plugin: "kotlin"
-
-
-    dependencies {
-        api "com.badlogicgames.gdx:gdx:$gdxVersion"
-        api "com.badlogicgames.ashley:ashley:$ashleyVersion"
-        api "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
-
-        api "io.github.libktx:ktx-app:$ktxVersion"
-        api "io.github.libktx:ktx-ashley:$ktxVersion"
-        api "io.github.libktx:ktx-assets:$ktxVersion"
-        api "io.github.libktx:ktx-collections:$ktxVersion"
-        api "io.github.libktx:ktx-graphics:$ktxVersion"
-        api "io.github.libktx:ktx-log:$ktxVersion"
-        api "io.github.libktx:ktx-inject:$ktxVersion"
-        api "io.github.libktx:ktx-math:$ktxVersion"
-        api "io.github.libktx:ktx-preferences:$ktxVersion"
-        api "io.github.libktx:ktx-scene2d:$ktxVersion"
-        api "io.github.libktx:ktx-style:$ktxVersion"
-    }
-}
+eclipse.project.name = 'tripeaks' + '-parent'

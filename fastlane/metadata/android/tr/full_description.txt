@@ -1,1 +1,0 @@
-Açık kaynak kodlu, birden fazla oyun düzeni seçeneği içeren basit bir tri peaks (üç tepe) solitaire oyunu.

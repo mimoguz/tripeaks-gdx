@@ -1,1 +1,0 @@
-Un juego de solitario tri peaks de código abierto con varias opciones de diseño.

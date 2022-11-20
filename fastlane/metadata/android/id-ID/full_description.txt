@@ -1,1 +1,0 @@
-Permainan solitaire tri-puncak sumber terbuka dengan berbagai opsi tata letak.
