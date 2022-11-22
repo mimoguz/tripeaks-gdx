@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.Texture.TextureFilter.Nearest
 import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.FrameBuffer
+import com.badlogic.gdx.graphics.glutils.ShaderProgram
 import com.badlogic.gdx.utils.Logger
 import ktx.app.KtxGame
 import ktx.app.KtxScreen
@@ -22,53 +23,55 @@ import java.time.Instant
 
 class Main : KtxGame<KtxScreen>() {
     override fun create() {
-        Gdx.graphics.isContinuousRendering = false
+        // Gdx.graphics.isContinuousRendering = false
         addScreen(FirstScreen())
         setScreen<FirstScreen>()
     }
 }
 
 class FirstScreen : KtxScreen {
-    private val card = Texture("card.png".toInternalFile(), true).apply { setFilter(Nearest, Nearest) }
-    private val shadow = Texture("shadow.png".toInternalFile(), true).apply { setFilter(Nearest, Nearest) }
+    private val card = Texture("images/card.png".toInternalFile(), true).apply { setFilter(Nearest, Nearest) }
+    private val shadow = Texture("images/shadow.png".toInternalFile(), true).apply { setFilter(Nearest, Nearest) }
+    private val corner = Texture("images/corner.png".toInternalFile(), true).apply { setFilter(Nearest, Nearest) }
+
+    private val batch = SpriteBatch()
+    private val viewport = CustomViewport(160, 200, 100, OrthographicCamera())
     private val cardSprite = Sprite(card)
     private val shadowSprite = Sprite(shadow)
-    private val corner = Texture("corner.png".toInternalFile(), true).apply { setFilter(Nearest, Nearest) }
-    private val batch = SpriteBatch()
     private val logger = Logger(FirstScreen::class.simpleName)
     private val persistence = PersistenceService()
     private var state: GameState
 
     private var frameBuffer = FrameBuffer(Pixmap.Format.RGB888, 160, 100, false)
-    private var viewport = CustomViewport(160, 200, 100, OrthographicCamera())
+    private var time: Float = 0f
 
     init {
         logger.level = Logger.DEBUG
         val save = persistence.loadGame()
         state = save ?: GameState()
-        state.unstall()
+
+        val fragment = javaClass.classLoader.getResource("shaders/dissolve.frag")?.readText()
+        val vertex = javaClass.classLoader.getResource("shaders/dissolve.vert")?.readText()
+        batch.shader = ShaderProgram(vertex, fragment)
+        logger.debug(batch.shader.log)
     }
 
     override fun render(delta: Float) {
         state.step()
-
-        cardSprite.rotation = ((state.currentState * -10) % 360).toFloat()
-        cardSprite.x = -120f + (state.currentState % 240).toFloat()
-        cardSprite.y = -18f
-
-        shadowSprite.rotation = cardSprite.rotation
-        shadowSprite.x = cardSprite.x
-        shadowSprite.y = cardSprite.y - 2f
+        time += delta / 3f
 
         viewport.apply()
 
         frameBuffer.begin()
         clearScreen(red = 0f, green = 1f, blue = 0f)
+
         batch.enableBlending()
         batch.use {
-            val alpha = 1f - (state.currentState % 240) / 240f
-            shadowSprite.draw(it, alpha)
-            cardSprite.draw(it, alpha)
+            it.setColor(1f, time % 1f, 1f, 1f)
+            it.draw(shadowSprite, -12f, -19f)
+            it.draw(cardSprite, -12f, -18f)
+            it.setColor(1f, 0f, 1f ,1f)
+
             it.draw(corner, frameBuffer.width / -2f, frameBuffer.height / 2f - 10f, 10f, 10f)
             it.draw(corner, frameBuffer.width / 2f - 10f, frameBuffer.height / -2f, 10f, 10f)
         }
