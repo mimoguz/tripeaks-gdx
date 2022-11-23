@@ -1,11 +1,10 @@
 package ogz.tripeaks
 
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.Pixmap
-import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.Texture.TextureFilter.Nearest
-import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.FrameBuffer
 import com.badlogic.gdx.graphics.glutils.ShaderProgram
@@ -14,8 +13,10 @@ import ktx.app.KtxGame
 import ktx.app.KtxScreen
 import ktx.app.clearScreen
 import ktx.assets.disposeSafely
-import ktx.assets.toInternalFile
 import ktx.graphics.use
+import ogz.tripeaks.assets.TextureAtlasAssets
+import ogz.tripeaks.assets.get
+import ogz.tripeaks.assets.load
 import ogz.tripeaks.graphics.CustomViewport
 import ogz.tripeaks.models.GameState
 import ogz.tripeaks.services.PersistenceService
@@ -30,14 +31,9 @@ class Main : KtxGame<KtxScreen>() {
 }
 
 class FirstScreen : KtxScreen {
-    private val card = Texture("images/card.png".toInternalFile(), true).apply { setFilter(Nearest, Nearest) }
-    private val shadow = Texture("images/shadow.png".toInternalFile(), true).apply { setFilter(Nearest, Nearest) }
-    private val corner = Texture("images/corner.png".toInternalFile(), true).apply { setFilter(Nearest, Nearest) }
-
+    private val assets = AssetManager()
     private val batch = SpriteBatch()
     private val viewport = CustomViewport(160, 200, 100, OrthographicCamera())
-    private val cardSprite = Sprite(card)
-    private val shadowSprite = Sprite(shadow)
     private val logger = Logger(FirstScreen::class.simpleName)
     private val persistence = PersistenceService()
     private var state: GameState
@@ -57,28 +53,56 @@ class FirstScreen : KtxScreen {
     }
 
     override fun render(delta: Float) {
+        if (!assets.isFinished) {
+            assets.update()
+            Gdx.graphics.requestRendering()
+            return
+        }
+
         state.step()
-        time += delta / 3f
+        time += delta
 
         viewport.apply()
 
-        frameBuffer.begin()
-        clearScreen(red = 0f, green = 1f, blue = 0f)
+        val cards = assets[TextureAtlasAssets.Cards]
+        val back = cards.findRegion("light_card")
+        val face = cards.findRegion("light_card_1")
 
+        frameBuffer.begin()
+        clearScreen(0.388235f, 0.662745f, 0.278431f, 1f)
         batch.enableBlending()
         batch.use {
             it.setColor(1f, time % 1f, 1f, 1f)
-            it.draw(shadowSprite, -12f, -19f)
-            it.draw(cardSprite, -12f, -18f)
-            it.setColor(1f, 0f, 1f ,1f)
-
-            it.draw(corner, frameBuffer.width / -2f, frameBuffer.height / 2f - 10f, 10f, 10f)
-            it.draw(corner, frameBuffer.width / 2f - 10f, frameBuffer.height / -2f, 10f, 10f)
+            it.draw(
+                back,
+                -12f,
+                -18f - (time % 1f) * 50f,
+                back.originalWidth / 2f,
+                back.originalHeight / 2f,
+                back.originalWidth.toFloat(),
+                back.originalHeight.toFloat(),
+                1f,
+                1f,
+                (time * 540f) % 360f
+            )
+            it.draw(
+                face,
+                -12f + 5f,
+                -18f + 4f - (time % 1f) * 50f,
+                face.originalWidth / 2f - 6f * (time % 1f),
+                face.originalHeight / 2f + 16f * (time % 1f),
+                face.originalWidth.toFloat(),
+                face.originalHeight.toFloat(),
+                1f,
+                1f,
+                (time * 540f) % 360f
+            )
+            it.setColor(1f, 0f, 1f, 1f)
         }
         batch.disableBlending()
         frameBuffer.end(viewport.screenX, viewport.screenY, viewport.screenWidth, viewport.screenHeight)
 
-        clearScreen(red = 0f, green = 0f, blue = 1f)
+        clearScreen(0f, 0f, 0f, 1f)
         val texture = frameBuffer.colorBufferTexture
         texture.setFilter(Nearest, Nearest)
         batch.use(viewport.camera) {
@@ -97,16 +121,20 @@ class FirstScreen : KtxScreen {
     }
 
     override fun dispose() {
-        card.disposeSafely()
-        shadow.disposeSafely()
-        corner.disposeSafely()
+        assets.disposeSafely()
         batch.disposeSafely()
     }
 
     override fun show() {
         super.show()
+
+        for (asset in TextureAtlasAssets.values()) {
+            assets.load(asset)
+        }
+
         val save = persistence.loadGame()
         state = save ?: GameState.startNew((0..51).shuffled().toIntArray(), null)
+
         logger.info("${Instant.now()} - Started: ${state.currentState}, ${state.stalled}")
     }
 
