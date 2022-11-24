@@ -27,16 +27,16 @@ class UiSkinBase(
     init {
         val skin = this
 
-        color("textColor", textColor.r, textColor.g, textColor.b, textColor.a)
-        color("emphasisColor", emphasisColor.r, emphasisColor.g, emphasisColor.b, emphasisColor.a)
+        color(TEXT_COLOR, textColor.r, textColor.g, textColor.b, textColor.a)
+        color(EMPHASIS_COLOR, emphasisColor.r, emphasisColor.g, emphasisColor.b, emphasisColor.a)
 
         label {
             font = uiFont
-            fontColor = skin["textColor"]
+            fontColor = skin[TEXT_COLOR]
         }
 
-        label("title", extend = defaultStyle) {
-            fontColor = skin["emphasisColor"]
+        label(TITLE_LABEL_STYLE, extend = defaultStyle) {
+            fontColor = skin[EMPHASIS_COLOR]
         }
 
         button {
@@ -51,22 +51,22 @@ class UiSkinBase(
             down = skin["buttonDown_$resourcePostfix"]
             disabled = skin["buttonDisabled_$resourcePostfix"]
             font = uiFont
-            fontColor = skin["textColor"]
+            fontColor = skin[TEXT_COLOR]
             pressedOffsetY = -1f
         }
 
-        textButton("menuItem") {
+        textButton(MENU_ITEM_BUTTON_STYLE) {
             up = skin["menuItemUp_$resourcePostfix"]
             down = skin["menuItemDown_$resourcePostfix"]
             disabled = skin["menuItemUp_$resourcePostfix"]
             over = skin["menuItemOver_$resourcePostfix"]
             font = uiFont
-            fontColor = skin["textColor"]
+            fontColor = skin[TEXT_COLOR]
         }
 
         window {
             titleFont = uiFont
-            titleFontColor = skin["textColor"]
+            titleFontColor = skin[TEXT_COLOR]
             background = skin["window_$resourcePostfix"]
         }
 
@@ -74,13 +74,13 @@ class UiSkinBase(
             checkboxOn = skin["checkboxOn_$resourcePostfix"]
             checkboxOff = skin["checkboxOff_$resourcePostfix"]
             font = uiFont
-            fontColor = skin["textColor"]
+            fontColor = skin[TEXT_COLOR]
         }
 
-        val skinListStyle =  list {
+        val skinListStyle = list {
             font = uiFont
-            fontColorSelected = skin["textColor"]
-            fontColorUnselected = skin["textColor"]
+            fontColorSelected = skin[TEXT_COLOR]
+            fontColorUnselected = skin[TEXT_COLOR]
             selection = skin["menuItemDown_$resourcePostfix"]
             over = skin["menuItemOver_$resourcePostfix"]
             background = skin["window_$resourcePostfix"]
@@ -96,11 +96,18 @@ class UiSkinBase(
 
         selectBox {
             font = uiFont
-            fontColor = skin["dark"]
-            background = skin["selectBoxUp"]
-            backgroundOpen = skin["selectBoxDown"]
+            fontColor = skin[TEXT_COLOR]
+            background = skin["selectBoxUp_$resourcePostfix"]
+            backgroundOpen = skin["selectBoxDown_$resourcePostfix"]
             scrollStyle = skinScrollPaneStyle
             listStyle = skinListStyle
         }
+    }
+
+    companion object {
+        private const val TEXT_COLOR = "textColor"
+        private const val EMPHASIS_COLOR = "emphasisColor"
+        const val TITLE_LABEL_STYLE = "title"
+        const val MENU_ITEM_BUTTON_STYLE = "menuItem"
     }
 }
