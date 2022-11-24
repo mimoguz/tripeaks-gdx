@@ -1,5 +1,6 @@
 package ogz.tripeaks.assets
 
+import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.scenes.scene2d.ui.Skin
@@ -20,28 +21,28 @@ class UiSkin(atlas: TextureAtlas, uiFont: BitmapFont) : Skin(atlas) {
     init {
         val skin = this
 
-        color("light", 242f / 255f, 204f / 255f, 143f / 255f, 1f)
-        color("dark", 76f / 255f, 56f / 255f, 77f / 255f, 1f)
-        color("emphasisLight", 184f / 255f, 55f / 255f, 68f / 255f, 1f)
-        color("emphasisDark", 224f / 255f, 122f / 255f, 95f / 255)
+        color("lightText", 242, 204, 143)
+        color("darkText", 76, 56, 77)
+        color("lightEmphasis", 184, 55, 68)
+        color("darkEmphasis", 224, 122, 95)
 
         label {
             font = uiFont
-            fontColor = skin["dark"]
+            fontColor = skin["darkText"]
         }
 
         label("light", extend = defaultStyle)
 
         label("dark", extend = defaultStyle) {
-            fontColor = skin["light"]
+            fontColor = skin["lightText"]
         }
 
         label("title_light", extend = defaultStyle) {
-            fontColor = skin["emphasisLight"]
+            fontColor = skin["lightEmphasis"]
         }
 
         label("title_dark", extend = defaultStyle) {
-            fontColor = skin["emphasisDark"]
+            fontColor = skin["darkEmphasis"]
         }
 
         button {
@@ -64,7 +65,7 @@ class UiSkin(atlas: TextureAtlas, uiFont: BitmapFont) : Skin(atlas) {
             down = skin["buttonDown"]
             disabled = skin["buttonDisabled"]
             font = uiFont
-            fontColor = skin["dark"]
+            fontColor = skin["darkText"]
             pressedOffsetY = -1f
         }
 
@@ -74,7 +75,7 @@ class UiSkin(atlas: TextureAtlas, uiFont: BitmapFont) : Skin(atlas) {
             up = skin["buttonUp_dark"]
             down = skin["buttonDown_dark"]
             disabled = skin["buttonDisabled_dark"]
-            fontColor = skin["light"]
+            fontColor = skin["lightText"]
         }
 
         textButton("menuItem_light") {
@@ -83,7 +84,7 @@ class UiSkin(atlas: TextureAtlas, uiFont: BitmapFont) : Skin(atlas) {
             disabled = skin["menuItemUp"]
             over = skin["menuItemOver"]
             font = uiFont
-            fontColor = skin["dark"]
+            fontColor = skin["darkText"]
         }
 
         textButton("menuItem_dark") {
@@ -92,7 +93,7 @@ class UiSkin(atlas: TextureAtlas, uiFont: BitmapFont) : Skin(atlas) {
             disabled = skin["menuItemUp_dark"]
             over = skin["menuItemOver_dark"]
             font = uiFont
-            fontColor = skin["light"]
+            fontColor = skin["lightText"]
         }
 
         textButton("redButton_light") {
@@ -100,7 +101,7 @@ class UiSkin(atlas: TextureAtlas, uiFont: BitmapFont) : Skin(atlas) {
             down = skin["redButtonDown"]
             disabled = skin["redButtonDisabled"]
             font = uiFont
-            fontColor = skin["light"]
+            fontColor = skin["lightText"]
             pressedOffsetY = -1f
         }
 
@@ -112,14 +113,14 @@ class UiSkin(atlas: TextureAtlas, uiFont: BitmapFont) : Skin(atlas) {
 
         window {
             titleFont = uiFont
-            titleFontColor = skin["dark"]
+            titleFontColor = skin["darkText"]
             background = skin["window"]
         }
 
         window("light", extend = defaultStyle)
 
         window("dark", extend = defaultStyle) {
-            titleFontColor = skin["light"]
+            titleFontColor = skin["lightText"]
             background = skin["window_dark"]
         }
 
@@ -127,7 +128,7 @@ class UiSkin(atlas: TextureAtlas, uiFont: BitmapFont) : Skin(atlas) {
             checkboxOn = skin["checkboxOn"]
             checkboxOff = skin["checkboxOff"]
             font = uiFont
-            fontColor = skin["dark"]
+            fontColor = skin["darkText"]
         }
 
         checkBox("light", extend = defaultStyle)
@@ -135,29 +136,29 @@ class UiSkin(atlas: TextureAtlas, uiFont: BitmapFont) : Skin(atlas) {
         checkBox("dark", extend = defaultStyle) {
             checkboxOn = skin["checkboxOn_dark"]
             checkboxOff = skin["checkboxOff_dark"]
-            fontColor = skin["light"]
+            fontColor = skin["lightText"]
         }
 
-        val listStyleDefault = list {
+        list {
             font = uiFont
-            fontColorSelected = skin["dark"]
-            fontColorUnselected = skin["dark"]
+            fontColorSelected = skin["darkText"]
+            fontColorUnselected = skin["darkText"]
             selection = skin["menuItemDown"]
             over = skin["menuItemOver"]
             background = skin["window"]
         }
 
-        list("light", extend = defaultStyle)
+        val listStyleLight = list("light", extend = defaultStyle)
 
         val listStyleDark = list("dark", extend = defaultStyle) {
-            fontColorSelected = skin["light"]
-            fontColorUnselected = skin["light"]
+            fontColorSelected = skin["lightText"]
+            fontColorUnselected = skin["lightText"]
             selection = skin["menuItemDown_dark"]
             over = skin["menuItemOver_dark"]
             background = skin["window_dark"]
         }
 
-        val scrollPaneStyleDefault = scrollPane {
+        scrollPane {
             hScroll = skin["scroll"]
             hScrollKnob = skin["scrollKnob"]
             vScroll = skin["scroll"]
@@ -165,7 +166,8 @@ class UiSkin(atlas: TextureAtlas, uiFont: BitmapFont) : Skin(atlas) {
             corner = skin["menuItemUp"]
         }
 
-        scrollPane("light", extend = defaultStyle)
+        val scrollPaneStyleLight = scrollPane("light", extend = defaultStyle)
+
         val scrollPaneStyleDark = scrollPane("dark", extend = defaultStyle) {
             hScroll = skin["scroll_dark"]
             hScrollKnob = skin["scrollKnob_dark"]
@@ -179,8 +181,8 @@ class UiSkin(atlas: TextureAtlas, uiFont: BitmapFont) : Skin(atlas) {
             fontColor = skin["dark"]
             background = skin["selectBoxUp"]
             backgroundOpen = skin["selectBoxDown"]
-            scrollStyle = scrollPaneStyleDefault
-            listStyle = listStyleDefault
+            scrollStyle = scrollPaneStyleLight
+            listStyle = listStyleLight
         }
 
         selectBox("light", extend = defaultStyle)
@@ -192,5 +194,9 @@ class UiSkin(atlas: TextureAtlas, uiFont: BitmapFont) : Skin(atlas) {
             scrollStyle = scrollPaneStyleDark
             listStyle = listStyleDark
         }
+    }
+
+    companion object {
+        private fun Skin.color(name: String, r: Int, g: Int, b: Int): Color = color(name, r / 255f, g / 255f, b / 255f)
     }
 }
