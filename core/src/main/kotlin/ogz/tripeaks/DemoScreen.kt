@@ -28,7 +28,8 @@ class DemoScreen(private val assets: AssetManager) : KtxScreen {
 
     private val batch = SpriteBatch()
     private val viewport = CustomViewport(160, 200, 100, OrthographicCamera())
-    private val stage = Stage(viewport)
+    private val stageViewport = CustomViewport(160, 200, 100, OrthographicCamera())
+    private val stage = Stage(stageViewport)
     private val logger = Logger(DemoScreen::class.simpleName)
     private val persistence = PersistenceService()
     private var state: GameState
@@ -49,9 +50,8 @@ class DemoScreen(private val assets: AssetManager) : KtxScreen {
 
     override fun render(delta: Float) {
         state.step()
-        time += delta
-
         viewport.apply()
+        stageViewport.apply()
         stage.act(delta)
 
         val cards = assets[TextureAtlasAssets.Cards]
@@ -90,7 +90,6 @@ class DemoScreen(private val assets: AssetManager) : KtxScreen {
             it.setColor(1f, 0f, 1f, 1f)
         }
         batch.disableBlending()
-        stage.draw()
         frameBuffer.end(viewport.screenX, viewport.screenY, viewport.screenWidth, viewport.screenHeight)
 
         clearScreen(0f, 0f, 0f, 1f)
@@ -109,6 +108,10 @@ class DemoScreen(private val assets: AssetManager) : KtxScreen {
                 1f
             )
         }
+
+        stage.draw()
+
+        time += delta
     }
 
     override fun dispose() {
