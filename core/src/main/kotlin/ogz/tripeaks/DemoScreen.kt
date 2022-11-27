@@ -2,6 +2,7 @@ package ogz.tripeaks
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.assets.AssetManager
+import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.Pixmap
 import com.badlogic.gdx.graphics.Texture
@@ -9,9 +10,14 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.FrameBuffer
 import com.badlogic.gdx.graphics.glutils.ShaderProgram
 import com.badlogic.gdx.math.Vector2
+import com.badlogic.gdx.scenes.scene2d.Action
+import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.Stage
+import com.badlogic.gdx.scenes.scene2d.ui.Button
 import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton
+import com.badlogic.gdx.scenes.scene2d.ui.Widget
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener
 import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.Logger
 import ktx.app.KtxScreen
@@ -20,7 +26,10 @@ import ktx.assets.disposeSafely
 import ktx.graphics.moveTo
 import ktx.graphics.use
 import ktx.scene2d.Scene2DSkin
+import ogz.tripeaks.assets.FontAssets
 import ogz.tripeaks.assets.TextureAtlasAssets
+import ogz.tripeaks.assets.UiSkin
+import ogz.tripeaks.assets.UiSkinBase
 import ogz.tripeaks.assets.get
 import ogz.tripeaks.graphics.CustomViewport
 import ogz.tripeaks.models.GameState
@@ -38,7 +47,8 @@ class DemoScreen(private val assets: AssetManager) : KtxScreen {
     private var state: GameState
 
     private var frameBuffer = FrameBuffer(Pixmap.Format.RGB888, 160, 100, false)
-    private var time: Float = 0f
+    private var time = 0f
+    private var isDark = false;
 
     init {
         logger.level = Logger.DEBUG
@@ -137,10 +147,37 @@ class DemoScreen(private val assets: AssetManager) : KtxScreen {
         uiStage.clear()
         uiStage.actors.add(container)
         container.run {
+            clear()
             align(Align.bottomLeft)
             setFillParent(true)
             add(TextButton("Bottom-left", Scene2DSkin.defaultSkin)).expand().align(Align.bottomLeft)
-            add(TextButton("Top-right", Scene2DSkin.defaultSkin)).expand().align(Align.topRight)
+            add(TextButton("Top-right", Scene2DSkin.defaultSkin).apply {
+                addListener(object : ChangeListener() {
+                    override fun changed(event: ChangeEvent?, actor: Actor?) {
+                        isDark = !isDark
+                        Scene2DSkin.defaultSkin =
+                            if (isDark)
+                                UiSkinBase(
+                                    assets[TextureAtlasAssets.Ui],
+                                    assets[FontAssets.GamePixels],
+                                    Color(242f / 255f, 204f / 255f, 143f / 255f, 1f),
+                                    Color(184f / 255f, 55f / 255f, 68f / 255f, 1f),
+                                    "dark"
+                                )
+                            else
+                                UiSkinBase(
+                                    assets[TextureAtlasAssets.Ui],
+                                    assets[FontAssets.GamePixels],
+                                    Color(76f / 244f, 56f / 255f, 77f / 255f, 1f),
+                                    Color(224 / 244f, 122f / 255f, 95f / 255f, 1f),
+                                    "light"
+                                )
+                        setupStage()
+                        container.invalidate()
+                        Gdx.graphics.requestRendering()
+                    }
+                })
+            }).expand().align(Align.topRight)
         }
     }
 

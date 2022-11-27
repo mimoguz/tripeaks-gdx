@@ -32,6 +32,7 @@ class LoadingScreen(private val game: Main) : KtxScreen {
             game.addScreen(DemoScreen(assets))
             game.setScreen<DemoScreen>()
             game.removeScreen<LoadingScreen>()
+            Gdx.graphics.requestRendering()
             dispose()
         } else {
             assets.update()
