@@ -8,15 +8,18 @@ import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.FrameBuffer
 import com.badlogic.gdx.graphics.glutils.ShaderProgram
+import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.scenes.scene2d.Stage
+import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton
+import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.Logger
 import ktx.app.KtxScreen
 import ktx.app.clearScreen
 import ktx.assets.disposeSafely
+import ktx.graphics.moveTo
 import ktx.graphics.use
 import ktx.scene2d.Scene2DSkin
-import ktx.scene2d.actors
 import ogz.tripeaks.assets.TextureAtlasAssets
 import ogz.tripeaks.assets.get
 import ogz.tripeaks.graphics.CustomViewport
@@ -28,8 +31,8 @@ class DemoScreen(private val assets: AssetManager) : KtxScreen {
 
     private val batch = SpriteBatch()
     private val viewport = CustomViewport(160, 200, 100, OrthographicCamera())
-    private val stageViewport = CustomViewport(160, 200, 100, OrthographicCamera())
-    private val stage = Stage(stageViewport)
+    private val uiStage = Stage(CustomViewport(160, 200, 100, OrthographicCamera()))
+    private val container = Table(Scene2DSkin.defaultSkin)
     private val logger = Logger(DemoScreen::class.simpleName)
     private val persistence = PersistenceService()
     private var state: GameState
@@ -51,8 +54,8 @@ class DemoScreen(private val assets: AssetManager) : KtxScreen {
     override fun render(delta: Float) {
         state.step()
         viewport.apply()
-        stageViewport.apply()
-        stage.act(delta)
+        uiStage.viewport.apply()
+        uiStage.act(delta)
 
         val cards = assets[TextureAtlasAssets.Cards]
         val back = cards.findRegion("light_card")
@@ -77,7 +80,7 @@ class DemoScreen(private val assets: AssetManager) : KtxScreen {
             )
             it.draw(
                 face,
-                -12f + 5f,
+                -15f,
                 -18f + 4f - (time % 1f) * 50f,
                 face.originalWidth / 2f - 6f * (time % 1f),
                 face.originalHeight / 2f + 16f * (time % 1f),
@@ -98,10 +101,10 @@ class DemoScreen(private val assets: AssetManager) : KtxScreen {
         batch.use(viewport.camera) {
             it.draw(
                 frameBuffer.colorBufferTexture,
-                frameBuffer.width / -2f,
-                frameBuffer.height / -2f,
-                frameBuffer.width.toFloat(),
-                frameBuffer.height.toFloat(),
+                viewport.worldWidth * -0.5f,
+                viewport.worldHeight * -0.5f,
+                viewport.worldWidth,
+                viewport.worldHeight,
                 0f,
                 0f,
                 1f,
@@ -109,7 +112,7 @@ class DemoScreen(private val assets: AssetManager) : KtxScreen {
             )
         }
 
-        stage.draw()
+        uiStage.draw()
 
         time += delta
     }
@@ -117,6 +120,7 @@ class DemoScreen(private val assets: AssetManager) : KtxScreen {
     override fun dispose() {
         assets.disposeSafely()
         batch.disposeSafely()
+        uiStage.disposeSafely()
     }
 
     override fun show() {
@@ -125,12 +129,19 @@ class DemoScreen(private val assets: AssetManager) : KtxScreen {
         state = save ?: GameState.startNew((0..51).shuffled().toIntArray(), null)
         logger.info("${Instant.now()} - Started: ${state.currentState}, ${state.stalled}")
         setupStage()
+        Gdx.input.inputProcessor = uiStage
     }
 
     private fun setupStage() {
-        val btn = TextButton("Button", Scene2DSkin.defaultSkin)
-        stage.clear()
-        stage.actors.add(btn)
+        uiStage.isDebugAll = true
+        uiStage.clear()
+        uiStage.actors.add(container)
+        container.run {
+            align(Align.bottomLeft)
+            setFillParent(true)
+            add(TextButton("Bottom-left", Scene2DSkin.defaultSkin)).expand().align(Align.bottomLeft)
+            add(TextButton("Top-right", Scene2DSkin.defaultSkin)).expand().align(Align.topRight)
+        }
     }
 
     override fun pause() {
@@ -150,10 +161,22 @@ class DemoScreen(private val assets: AssetManager) : KtxScreen {
     override fun resize(width: Int, height: Int) {
         super.resize(width, height)
         viewport.update(width, height)
+
+        uiStage.viewport.update(width, height)
+        // UI alignment hack
+        uiStage.viewport.camera.moveTo(Vector2(viewport.worldWidth * 0.5f, viewport.worldHeight * 0.5f))
+        container.setSize(viewport.worldWidth, viewport.worldHeight)
+        container.invalidate()
+        // end UI alignment hack
+
         if (width > 0 && height > 0) {
             frameBuffer.disposeSafely()
-            frameBuffer =
-                FrameBuffer(Pixmap.Format.RGB888, viewport.worldWidth.toInt(), viewport.worldHeight.toInt(), false)
+            frameBuffer = FrameBuffer(
+                Pixmap.Format.RGB888,
+                viewport.worldWidth.toInt(),
+                viewport.worldHeight.toInt(),
+                false
+            )
         }
     }
 }
