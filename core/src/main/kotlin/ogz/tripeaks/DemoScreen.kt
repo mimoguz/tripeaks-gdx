@@ -1,36 +1,42 @@
 package ogz.tripeaks
 
+import com.badlogic.ashley.core.PooledEngine
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.Pixmap
 import com.badlogic.gdx.graphics.Texture
+import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.FrameBuffer
 import com.badlogic.gdx.graphics.glutils.ShaderProgram
 import com.badlogic.gdx.math.Vector2
-import com.badlogic.gdx.scenes.scene2d.Action
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.Stage
-import com.badlogic.gdx.scenes.scene2d.ui.Button
 import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton
-import com.badlogic.gdx.scenes.scene2d.ui.Widget
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener
 import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.Logger
 import ktx.app.KtxScreen
 import ktx.app.clearScreen
+import ktx.ashley.entity
+import ktx.ashley.with
 import ktx.assets.disposeSafely
 import ktx.graphics.moveTo
 import ktx.graphics.use
 import ktx.scene2d.Scene2DSkin
 import ogz.tripeaks.assets.FontAssets
+import ogz.tripeaks.assets.TextureAssets
 import ogz.tripeaks.assets.TextureAtlasAssets
-import ogz.tripeaks.assets.UiSkin
 import ogz.tripeaks.assets.UiSkinBase
 import ogz.tripeaks.assets.get
+import ogz.tripeaks.ecs.AnimationComponent
+import ogz.tripeaks.ecs.AnimationSystem
+import ogz.tripeaks.ecs.RenderComponent
+import ogz.tripeaks.ecs.SpriteRenderingSystem
+import ogz.tripeaks.ecs.TransformComponent
 import ogz.tripeaks.graphics.CustomViewport
 import ogz.tripeaks.models.GameState
 import ogz.tripeaks.services.PersistenceService
@@ -44,6 +50,7 @@ class DemoScreen(private val assets: AssetManager) : KtxScreen {
     private val container = Table(Scene2DSkin.defaultSkin)
     private val logger = Logger(DemoScreen::class.simpleName)
     private val persistence = PersistenceService()
+    private val engine = PooledEngine()
     private var state: GameState
 
     private var frameBuffer = FrameBuffer(Pixmap.Format.RGB888, 160, 100, false)
@@ -100,7 +107,8 @@ class DemoScreen(private val assets: AssetManager) : KtxScreen {
                 1f,
                 (time * 540f) % 360f
             )
-            it.setColor(1f, 0f, 1f, 1f)
+            //engine.update(delta)
+            it.setColor(1f, 1f, 1f, 1f)
         }
         batch.disableBlending()
         frameBuffer.end(viewport.screenX, viewport.screenY, viewport.screenWidth, viewport.screenHeight)
@@ -140,6 +148,7 @@ class DemoScreen(private val assets: AssetManager) : KtxScreen {
         logger.info("${Instant.now()} - Started: ${state.currentState}, ${state.stalled}")
         setupStage()
         Gdx.input.inputProcessor = uiStage
+        setupECS()
     }
 
     private fun setupStage() {
@@ -178,6 +187,37 @@ class DemoScreen(private val assets: AssetManager) : KtxScreen {
                     }
                 })
             }).expand().align(Align.topRight)
+        }
+    }
+
+    private fun setupECS() {
+        val entities = engine.entities.toList()
+        entities.forEach(engine::removeEntity)
+        engine.apply {
+            removeAllSystems()
+            addSystem(AnimationSystem())
+            addSystem(SpriteRenderingSystem(batch))
+        }
+
+        engine.entity {
+            with<TransformComponent> {
+                position = Vector2(viewport.worldWidth * -0.5f, viewport.worldHeight * -0.5f)
+            }
+            with<RenderComponent> {
+                sprite = Sprite(assets[TextureAssets.LightTitle])
+                z = 10
+            }
+            with<AnimationComponent> {
+                timeRemaining = 0.5f
+                step = { render, _, timeLeft ->
+                    if (timeLeft <= 0) {
+                        false
+                    } else {
+                        render.color.set(0.01f, 1f - timeLeft * 2f, 1f, 1f)
+                        true
+                    }
+                }
+            }
         }
     }
 

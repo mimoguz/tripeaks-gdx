@@ -5,12 +5,12 @@ import com.badlogic.gdx.utils.Pool
 import ktx.ashley.mapperFor
 
 class AnimationComponent : Component, Pool.Poolable {
-    var time = 0f
-    var step: (RenderComponent, TransformComponent) -> Boolean = { _, _ -> true }
+    var timeRemaining = 0f
+    var step: (RenderComponent, TransformComponent, Float) -> Boolean = { _, _, _ -> true }
 
     override fun reset() {
-        time = 0f
-        step = { _, _ -> true }
+        timeRemaining = 0f
+        step = { _, _, _ -> true }
     }
 
     companion object {

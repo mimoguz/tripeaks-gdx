@@ -6,7 +6,7 @@ precision mediump float;
 #endif
 
 // I use that to pass various attributes.
-// Currently, r channel is used for dissolve animation time.
+// Currently, r channel is used for noise scale, and g channel is used for dissolve animation time.
 varying LOWP vec4 v_color;
 
 varying vec2 v_texCoords;
@@ -50,7 +50,7 @@ float fnoise(vec2 v) {
 
 void main() {
     vec4 color = texture2D(u_texture, v_texCoords);
-    float n = fnoise(vec2(v_texCoords.x * 256.0, v_texCoords.y * 128.0));
+    float n = fnoise(vec2(v_texCoords.x * color.r * 256.0, v_texCoords.y * color.r * 128.0));
     float dissolve = step(v_color.g, n * n);
     gl_FragColor = vec4(color.rgb, color.a * dissolve);
 }

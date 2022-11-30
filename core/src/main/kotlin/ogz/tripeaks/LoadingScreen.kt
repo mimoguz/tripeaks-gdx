@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.Color
 import ktx.app.KtxScreen
 import ktx.scene2d.Scene2DSkin
 import ogz.tripeaks.assets.FontAssets
+import ogz.tripeaks.assets.TextureAssets
 import ogz.tripeaks.assets.TextureAtlasAssets
 import ogz.tripeaks.assets.UiSkinBase
 import ogz.tripeaks.assets.get
@@ -16,8 +17,9 @@ class LoadingScreen(private val game: Main) : KtxScreen {
     private val assets = AssetManager()
 
     override fun show() {
-        TextureAtlasAssets.values().forEach { assets.load(it) }
-        FontAssets.values().forEach { assets.load(it) }
+        TextureAssets.values().forEach(assets::load)
+        TextureAtlasAssets.values().forEach(assets::load)
+        FontAssets.values().forEach(assets::load)
     }
 
     override fun render(delta: Float) {

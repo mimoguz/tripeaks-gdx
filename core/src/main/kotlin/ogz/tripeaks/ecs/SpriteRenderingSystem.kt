@@ -7,7 +7,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import ktx.ashley.allOf
 import ktx.ashley.get
 
-class SpriteRenderingSystem(private val batch: SpriteBatch, private val assets: AssetManager) : SortedIteratingSystem(
+class SpriteRenderingSystem(private val batch: SpriteBatch) : SortedIteratingSystem(
     allOf(RenderComponent::class, TransformComponent::class).get(),
     compareBy { it[RenderComponent.mapper]?.z }) {
 
