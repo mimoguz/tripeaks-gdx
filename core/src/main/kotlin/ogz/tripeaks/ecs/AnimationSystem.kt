@@ -14,7 +14,7 @@ class AnimationSystem : IteratingSystem(
         entity[RenderComponent.mapper]?.let { render ->
             entity[TransformComponent.mapper]?.let { transform ->
                 entity[AnimationComponent.mapper]?.let { animation ->
-                    if (!animation.step(render, transform, animation.timeRemaining)) {
+                    if (!animation.step(render, transform, animation)) {
                         engine.removeEntity(entity)
                     } else {
                         animation.timeRemaining -= deltaTime

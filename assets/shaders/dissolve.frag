@@ -51,6 +51,7 @@ float fnoise(vec2 v) {
 void main() {
     vec4 color = texture2D(u_texture, v_texCoords);
     float n = fnoise(vec2(v_texCoords.x * color.r * 256.0, v_texCoords.y * color.r * 128.0));
-    float dissolve = step(v_color.g, n * n);
+    //float dissolve = step(v_color.g, n * n);
+    float dissolve = smoothstep(v_color.g, v_color.g + 0.1, n * n);
     gl_FragColor = vec4(color.rgb, color.a * dissolve);
 }

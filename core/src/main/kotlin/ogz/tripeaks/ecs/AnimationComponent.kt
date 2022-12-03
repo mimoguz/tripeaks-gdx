@@ -6,7 +6,7 @@ import ktx.ashley.mapperFor
 
 class AnimationComponent : Component, Pool.Poolable {
     var timeRemaining = 0f
-    var step: (RenderComponent, TransformComponent, Float) -> Boolean = { _, _, _ -> true }
+    var step: (RenderComponent, TransformComponent, AnimationComponent) -> Boolean = { _, _, _ -> true }
 
     override fun reset() {
         timeRemaining = 0f
