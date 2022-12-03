@@ -31,7 +31,7 @@ import ktx.scene2d.Scene2DSkin
 import ogz.tripeaks.assets.FontAssets
 import ogz.tripeaks.assets.TextureAssets
 import ogz.tripeaks.assets.TextureAtlasAssets
-import ogz.tripeaks.assets.UiSkinBase
+import ogz.tripeaks.assets.UiSkin
 import ogz.tripeaks.assets.get
 import ogz.tripeaks.ecs.AnimationComponent
 import ogz.tripeaks.ecs.AnimationSystem
@@ -46,7 +46,6 @@ import java.time.Instant
 class DemoScreen(private val assets: AssetManager) : KtxScreen {
 
     private val batch = SpriteBatch()
-    private val defaultShader: ShaderProgram
     private val dissolveShader: ShaderProgram
     private val viewport = CustomViewport(160, 200, 100, OrthographicCamera())
     private val uiStage = Stage(CustomViewport(160, 200, 100, OrthographicCamera()))
@@ -67,7 +66,6 @@ class DemoScreen(private val assets: AssetManager) : KtxScreen {
         val fragment = javaClass.classLoader.getResource("shaders/dissolve.frag")?.readText()
         val vertex = javaClass.classLoader.getResource("shaders/dissolve.vert")?.readText()
         dissolveShader = ShaderProgram(vertex, fragment)
-        defaultShader = batch.shader
         logger.debug(batch.shader.log)
     }
 
@@ -83,16 +81,16 @@ class DemoScreen(private val assets: AssetManager) : KtxScreen {
         batch.enableBlending()
         batch.use {
             engine.update(delta)
+            it.setColor(1f, 1f, 1f, 1f)
         }
         batch.disableBlending()
         frameBuffer.end(viewport.screenX, viewport.screenY, viewport.screenWidth, viewport.screenHeight)
 
-        batch.shader = defaultShader
+        batch.shader = null
         clearScreen(0f, 0f, 0f, 1f)
         val texture = frameBuffer.colorBufferTexture
         texture.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest)
         batch.use(viewport.camera) {
-            it.setColor(1f, 1f, 1f, 1f)
             it.draw(
                 frameBuffer.colorBufferTexture,
                 viewport.worldWidth * -0.5f,
@@ -105,7 +103,6 @@ class DemoScreen(private val assets: AssetManager) : KtxScreen {
                 1f
             )
         }
-
         uiStage.draw()
     }
 
@@ -137,7 +134,7 @@ class DemoScreen(private val assets: AssetManager) : KtxScreen {
                         isDark = !isDark
                         Scene2DSkin.defaultSkin =
                             if (isDark)
-                                UiSkinBase(
+                                UiSkin(
                                     assets[TextureAtlasAssets.Ui],
                                     assets[FontAssets.GamePixels],
                                     Color(242f / 255f, 204f / 255f, 143f / 255f, 1f),
@@ -145,7 +142,7 @@ class DemoScreen(private val assets: AssetManager) : KtxScreen {
                                     "dark"
                                 )
                             else
-                                UiSkinBase(
+                                UiSkin(
                                     assets[TextureAtlasAssets.Ui],
                                     assets[FontAssets.GamePixels],
                                     Color(76f / 244f, 56f / 255f, 77f / 255f, 1f),

@@ -16,187 +16,98 @@ import ktx.style.selectBox
 import ktx.style.textButton
 import ktx.style.window
 
-class UiSkin(atlas: TextureAtlas, uiFont: BitmapFont) : Skin(atlas) {
+class UiSkin(
+    atlas: TextureAtlas,
+    uiFont: BitmapFont,
+    textColor: Color,
+    emphasisColor: Color,
+    resourcePostfix: String
+) : Skin(atlas) {
 
     init {
         val skin = this
 
-        color("lightText", 242, 204, 143)
-        color("darkText", 76, 56, 77)
-        color("lightEmphasis", 184, 55, 68)
-        color("darkEmphasis", 224, 122, 95)
+        color(TEXT_COLOR, textColor.r, textColor.g, textColor.b, textColor.a)
+        color(EMPHASIS_COLOR, emphasisColor.r, emphasisColor.g, emphasisColor.b, emphasisColor.a)
 
         label {
             font = uiFont
-            fontColor = skin["darkText"]
+            fontColor = skin[TEXT_COLOR]
         }
 
-        label("light", extend = defaultStyle)
-
-        label("dark", extend = defaultStyle) {
-            fontColor = skin["lightText"]
-        }
-
-        label("title_light", extend = defaultStyle) {
-            fontColor = skin["lightEmphasis"]
-        }
-
-        label("title_dark", extend = defaultStyle) {
-            fontColor = skin["darkEmphasis"]
+        label(TITLE_LABEL_STYLE, extend = defaultStyle) {
+            fontColor = skin[EMPHASIS_COLOR]
         }
 
         button {
-            up = skin["buttonUp"]
-            down = skin["buttonDown"]
-            disabled = skin["buttonDisabled"]
+            up = skin["buttonUp_$resourcePostfix"]
+            down = skin["buttonDown_$resourcePostfix"]
+            disabled = skin["buttonDisabled_$resourcePostfix"]
             pressedOffsetY = -1f
-        }
-
-        button("light", extend = defaultStyle)
-
-        button("dark", extend = defaultStyle) {
-            up = skin["buttonUp_dark"]
-            down = skin["buttonDown_dark"]
-            disabled = skin["buttonDisabled_dark"]
         }
 
         textButton {
-            up = skin["buttonUp"]
-            down = skin["buttonDown"]
-            disabled = skin["buttonDisabled"]
+            up = skin["buttonUp_$resourcePostfix"]
+            down = skin["buttonDown_$resourcePostfix"]
+            disabled = skin["buttonDisabled_$resourcePostfix"]
             font = uiFont
-            fontColor = skin["darkText"]
+            fontColor = skin[TEXT_COLOR]
             pressedOffsetY = -1f
         }
 
-        textButton("light", extend = defaultStyle)
-
-        textButton("dark", extend = defaultStyle) {
-            up = skin["buttonUp_dark"]
-            down = skin["buttonDown_dark"]
-            disabled = skin["buttonDisabled_dark"]
-            fontColor = skin["lightText"]
-        }
-
-        textButton("menuItem_light") {
-            up = skin["menuItemUp"]
-            down = skin["menuItemDown"]
-            disabled = skin["menuItemUp"]
-            over = skin["menuItemOver"]
+        textButton(MENU_ITEM_BUTTON_STYLE) {
+            up = skin["menuItemUp_$resourcePostfix"]
+            down = skin["menuItemDown_$resourcePostfix"]
+            disabled = skin["menuItemUp_$resourcePostfix"]
+            over = skin["menuItemOver_$resourcePostfix"]
             font = uiFont
-            fontColor = skin["darkText"]
-        }
-
-        textButton("menuItem_dark") {
-            up = skin["menuItemUp_dark"]
-            down = skin["menuItemDown_dark"]
-            disabled = skin["menuItemUp_dark"]
-            over = skin["menuItemOver_dark"]
-            font = uiFont
-            fontColor = skin["lightText"]
-        }
-
-        textButton("redButton_light") {
-            up = skin["redButtonUp"]
-            down = skin["redButtonDown"]
-            disabled = skin["redButtonDisabled"]
-            font = uiFont
-            fontColor = skin["lightText"]
-            pressedOffsetY = -1f
-        }
-
-        textButton("redButton_dark", extend = "redButton_light") {
-            up = skin["redButtonUp_dark"]
-            down = skin["redButtonDown_dark"]
-            disabled = skin["redButtonDisabled_dark"]
+            fontColor = skin[TEXT_COLOR]
         }
 
         window {
             titleFont = uiFont
-            titleFontColor = skin["darkText"]
-            background = skin["window"]
-        }
-
-        window("light", extend = defaultStyle)
-
-        window("dark", extend = defaultStyle) {
-            titleFontColor = skin["lightText"]
-            background = skin["window_dark"]
+            titleFontColor = skin[TEXT_COLOR]
+            background = skin["window_$resourcePostfix"]
         }
 
         checkBox {
-            checkboxOn = skin["checkboxOn"]
-            checkboxOff = skin["checkboxOff"]
+            checkboxOn = skin["checkboxOn_$resourcePostfix"]
+            checkboxOff = skin["checkboxOff_$resourcePostfix"]
             font = uiFont
-            fontColor = skin["darkText"]
+            fontColor = skin[TEXT_COLOR]
         }
 
-        checkBox("light", extend = defaultStyle)
-
-        checkBox("dark", extend = defaultStyle) {
-            checkboxOn = skin["checkboxOn_dark"]
-            checkboxOff = skin["checkboxOff_dark"]
-            fontColor = skin["lightText"]
-        }
-
-        list {
+        val skinListStyle = list {
             font = uiFont
-            fontColorSelected = skin["darkText"]
-            fontColorUnselected = skin["darkText"]
-            selection = skin["menuItemDown"]
-            over = skin["menuItemOver"]
-            background = skin["window"]
+            fontColorSelected = skin[TEXT_COLOR]
+            fontColorUnselected = skin[TEXT_COLOR]
+            selection = skin["menuItemDown_$resourcePostfix"]
+            over = skin["menuItemOver_$resourcePostfix"]
+            background = skin["window_$resourcePostfix"]
         }
 
-        val listStyleLight = list("light", extend = defaultStyle)
-
-        val listStyleDark = list("dark", extend = defaultStyle) {
-            fontColorSelected = skin["lightText"]
-            fontColorUnselected = skin["lightText"]
-            selection = skin["menuItemDown_dark"]
-            over = skin["menuItemOver_dark"]
-            background = skin["window_dark"]
-        }
-
-        scrollPane {
-            hScroll = skin["scroll"]
-            hScrollKnob = skin["scrollKnob"]
-            vScroll = skin["scroll"]
-            vScrollKnob = skin["scrollKnob"]
-            corner = skin["menuItemUp"]
-        }
-
-        val scrollPaneStyleLight = scrollPane("light", extend = defaultStyle)
-
-        val scrollPaneStyleDark = scrollPane("dark", extend = defaultStyle) {
-            hScroll = skin["scroll_dark"]
-            hScrollKnob = skin["scrollKnob_dark"]
-            vScroll = skin["scroll_dark"]
-            vScrollKnob = skin["scrollKnob_dark"]
-            corner = skin["menuItemUp_dark"]
+        val skinScrollPaneStyle = scrollPane {
+            hScroll = skin["scroll_$resourcePostfix"]
+            hScrollKnob = skin["scrollKnob_$resourcePostfix"]
+            vScroll = skin["scroll_$resourcePostfix"]
+            vScrollKnob = skin["scrollKnob_$resourcePostfix"]
+            corner = skin["menuItemUp_$resourcePostfix"]
         }
 
         selectBox {
             font = uiFont
-            fontColor = skin["dark"]
-            background = skin["selectBoxUp"]
-            backgroundOpen = skin["selectBoxDown"]
-            scrollStyle = scrollPaneStyleLight
-            listStyle = listStyleLight
-        }
-
-        selectBox("light", extend = defaultStyle)
-
-        selectBox("dark", extend = defaultStyle) {
-            fontColor = skin["light"]
-            background = skin["selectBoxUp_dark"]
-            backgroundOpen = skin["selectBoxDown_dark"]
-            scrollStyle = scrollPaneStyleDark
-            listStyle = listStyleDark
+            fontColor = skin[TEXT_COLOR]
+            background = skin["selectBoxUp_$resourcePostfix"]
+            backgroundOpen = skin["selectBoxDown_$resourcePostfix"]
+            scrollStyle = skinScrollPaneStyle
+            listStyle = skinListStyle
         }
     }
 
     companion object {
-        private fun Skin.color(name: String, r: Int, g: Int, b: Int): Color = color(name, r / 255f, g / 255f, b / 255f)
+        private const val TEXT_COLOR = "textColor"
+        private const val EMPHASIS_COLOR = "emphasisColor"
+        const val TITLE_LABEL_STYLE = "title"
+        const val MENU_ITEM_BUTTON_STYLE = "menuItem"
     }
 }
