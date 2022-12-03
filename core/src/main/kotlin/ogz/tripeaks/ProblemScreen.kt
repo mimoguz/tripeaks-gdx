@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.Pixmap
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.FrameBuffer
+import com.badlogic.gdx.graphics.glutils.ShaderProgram
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.Table
@@ -20,6 +21,7 @@ import ktx.assets.disposeSafely
 import ktx.graphics.use
 import ktx.scene2d.Scene2DSkin
 import ogz.tripeaks.assets.FontAssets
+import ogz.tripeaks.assets.TextureAssets
 import ogz.tripeaks.assets.TextureAtlasAssets
 import ogz.tripeaks.assets.UiSkin
 import ogz.tripeaks.assets.get
@@ -30,22 +32,36 @@ class ProblemScreen(private val assets: AssetManager) : KtxScreen {
     private val batch = SpriteBatch()
     private val viewport = CustomViewport(MIN_WORLD_WIDTH, MAX_WORLD_WIDTH, WORLD_HEIGHT, OrthographicCamera())
     private val uiStage = Stage(CustomViewport(MIN_WORLD_WIDTH, MAX_WORLD_WIDTH, WORLD_HEIGHT, OrthographicCamera()))
+    private val dissolveShader: ShaderProgram
+
     private var frameBuffer = FrameBuffer(Pixmap.Format.RGB888, MIN_WORLD_WIDTH, WORLD_HEIGHT, false)
     private var isDark = false
+    private var time = 0f
+
+    init {
+        val fragment = javaClass.classLoader.getResource("shaders/dissolve.frag")?.readText()
+        val vertex = javaClass.classLoader.getResource("shaders/dissolve.vert")?.readText()
+        dissolveShader = ShaderProgram(vertex, fragment)
+    }
 
     override fun render(delta: Float) {
         viewport.apply()
         uiStage.viewport.apply()
         uiStage.act(delta)
+        time = (time + delta) % 1f
 
         frameBuffer.begin()
         clearScreen(0.388235f, 0.662745f, 0.278431f, 1f)
+        batch.shader = dissolveShader
         batch.enableBlending()
         batch.use {
-            it.setColor(1f, 0.5f, 1f, 1f)
+            it.setColor(1f, time, 1f, 1f)
+            it.draw(assets[TextureAssets.LightTitle], viewport.worldWidth * -0.5f , viewport.worldHeight * -0.5f)
+            it.setColor(0.1f, time, 1f, 1f)
             it.draw(assets[TextureAtlasAssets.Cards].findRegion("light_card"), 0f, 0f)
         }
         batch.disableBlending()
+        batch.shader = null
         frameBuffer.end(viewport.screenX, viewport.screenY, viewport.screenWidth, viewport.screenHeight)
 
         clearScreen(0f, 0f, 0f, 1f)
@@ -124,17 +140,19 @@ class ProblemScreen(private val assets: AssetManager) : KtxScreen {
     override fun resize(width: Int, height: Int) {
         super.resize(width, height)
         viewport.update(width, height)
-        uiStage.viewport.update(width, height)
+        uiStage.viewport.update(width, height, true)
         frameBuffer = FrameBuffer(Pixmap.Format.RGB888, viewport.worldWidth.toInt(), viewport.worldHeight.toInt(), false)
     }
 
     companion object {
         const val MIN_WORLD_WIDTH = 160
-        const val MAX_WORLD_WIDTH = MIN_WORLD_WIDTH
+        const val MAX_WORLD_WIDTH = 200
         const val WORLD_HEIGHT = 100
-        val DARK_UI_TEXT = Color(242f / 255f, 204f / 255f, 143f / 255f, 1f)
-        val DARK_UI_EMPHASIS = Color(184f / 255f, 55f / 255f, 68f / 255f, 1f)
-        val LIGHT_UI_TEXT = Color(76f / 244f, 56f / 255f, 77f / 255f, 1f)
-        val LIGHT_UI_EMPHASIS = Color(224f / 244f, 122f / 255f, 95f / 255f, 1f)
+        val DARK_UI_TEXT = rgb(242, 204, 143)
+        val DARK_UI_EMPHASIS = rgb(184, 55, 68)
+        val LIGHT_UI_TEXT = rgb(76, 56, 77)
+        val LIGHT_UI_EMPHASIS = rgb(224, 122, 95)
+
+        private fun rgb(r: Int, g: Int, b: Int): Color = Color(r / 255f, g / 255f, b / 255f, 1f)
     }
 }

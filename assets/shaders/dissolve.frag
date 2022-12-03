@@ -14,7 +14,7 @@ varying vec2 v_texCoords;
 uniform sampler2D u_texture;
 
 // *******************************************************************************
-// Noise function : https://gamedev.stackexchange.com/a/166064 by Felipe Gutierrez
+// Noise function: https://gamedev.stackexchange.com/a/166064 by Felipe Gutierrez
 // *******************************************************************************
 
 float hash(vec2 v) {
@@ -44,14 +44,16 @@ float fnoise(vec2 v) {
 }
 
 // *******************************************************************************
-// End of noise function
+// End of the noise function
 // *******************************************************************************
-
 
 void main() {
     vec4 color = texture2D(u_texture, v_texCoords);
     float n = fnoise(vec2(v_texCoords.x * color.r * 256.0, v_texCoords.y * color.r * 128.0));
-    //float dissolve = step(v_color.g, n * n);
-    float dissolve = smoothstep(v_color.g, v_color.g + 0.1, n * n);
-    gl_FragColor = vec4(color.rgb, color.a * dissolve);
+    float alpha = smoothstep(v_color.g - 0.1, v_color.g + 0.1, n * n);
+
+    // Darken the edges:
+    color.rgb = mix(vec3(0.0, 0.0, 0.0), color.rgb, alpha);
+
+    gl_FragColor = vec4(color.rgb, color.a * alpha);
 }

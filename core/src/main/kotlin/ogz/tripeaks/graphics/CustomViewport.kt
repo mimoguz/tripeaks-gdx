@@ -21,7 +21,13 @@ class CustomViewport(
         val minRatio = min(screenWidth / minimumWorldWidth.toFloat(), screenHeight / constantWorldHeight.toFloat())
         val scale = max(minRatio.toInt(), 1)
         val viewportHeight = constantWorldHeight * scale
-        val width = min(screenWidth / scale, maximumWorldWidth)
+
+        var width = min(screenWidth / scale, maximumWorldWidth)
+        // Make sure width is even. It may pass the maximum width.
+        if (width % 2 != 0) {
+            width = if (width - 1 >= minimumWorldWidth) width - 1 else width + 1
+        }
+
         val viewportWidth = width * scale
 
         worldWidth = width.toFloat()
