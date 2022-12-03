@@ -55,9 +55,9 @@ class ProblemScreen(private val assets: AssetManager) : KtxScreen {
         batch.shader = dissolveShader
         batch.enableBlending()
         batch.use {
-            it.setColor(1f, time, 1f, 1f)
+            it.setColor(0.8f, time, 1f, 1f)
             it.draw(assets[TextureAssets.LightTitle], viewport.worldWidth * -0.5f , viewport.worldHeight * -0.5f)
-            it.setColor(0.1f, time, 1f, 1f)
+            it.setColor(1f, time, 1f, 1f)
             it.draw(assets[TextureAtlasAssets.Cards].findRegion("light_card"), 0f, 0f)
         }
         batch.disableBlending()

@@ -48,12 +48,12 @@ float fnoise(vec2 v) {
 // *******************************************************************************
 
 void main() {
-    vec4 color = texture2D(u_texture, v_texCoords);
-    float n = fnoise(vec2(v_texCoords.x * color.r * 256.0, v_texCoords.y * color.r * 128.0));
+    vec4 outColor = texture2D(u_texture, v_texCoords);
+    float n = fnoise(vec2(v_texCoords.x * 200.0 * v_color.r, v_texCoords.y  * 100.0 * v_color.r));
     float alpha = smoothstep(v_color.g - 0.1, v_color.g + 0.1, n * n);
 
     // Darken the edges:
-    color.rgb = mix(vec3(0.0, 0.0, 0.0), color.rgb, alpha);
+    outColor.rgb = mix(vec3(0.5, 0.2, 0.0), outColor.rgb, alpha);
 
-    gl_FragColor = vec4(color.rgb, color.a * alpha);
+    gl_FragColor = vec4(outColor.rgb, outColor.a * alpha);
 }
