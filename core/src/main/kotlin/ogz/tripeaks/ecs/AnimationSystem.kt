@@ -19,7 +19,7 @@ class AnimationSystem : IteratingSystem(
                     } else {
                         animation.timeRemaining -= deltaTime
                     }
-                    Gdx.graphics.requestRendering()
+                    // Gdx.graphics.requestRendering()
                 }
             }
         }

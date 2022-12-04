@@ -1,5 +1,6 @@
 package ogz.tripeaks
 
+import com.badlogic.ashley.core.PooledEngine
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.graphics.Color
@@ -9,6 +10,8 @@ import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.FrameBuffer
 import com.badlogic.gdx.graphics.glutils.ShaderProgram
+import com.badlogic.gdx.math.MathUtils
+import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.Table
@@ -17,6 +20,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener
 import com.badlogic.gdx.utils.Align
 import ktx.app.KtxScreen
 import ktx.app.clearScreen
+import ktx.ashley.entity
+import ktx.ashley.with
 import ktx.assets.disposeSafely
 import ktx.graphics.use
 import ktx.scene2d.Scene2DSkin
@@ -25,6 +30,11 @@ import ogz.tripeaks.assets.TextureAssets
 import ogz.tripeaks.assets.TextureAtlasAssets
 import ogz.tripeaks.assets.UiSkin
 import ogz.tripeaks.assets.get
+import ogz.tripeaks.ecs.AnimationComponent
+import ogz.tripeaks.ecs.AnimationSystem
+import ogz.tripeaks.ecs.RenderComponent
+import ogz.tripeaks.ecs.SpriteRenderingSystem
+import ogz.tripeaks.ecs.TransformComponent
 import ogz.tripeaks.graphics.CustomViewport
 
 class ProblemScreen(private val assets: AssetManager) : KtxScreen {
@@ -33,6 +43,7 @@ class ProblemScreen(private val assets: AssetManager) : KtxScreen {
     private val viewport = CustomViewport(MIN_WORLD_WIDTH, MAX_WORLD_WIDTH, WORLD_HEIGHT, OrthographicCamera())
     private val uiStage = Stage(CustomViewport(MIN_WORLD_WIDTH, MAX_WORLD_WIDTH, WORLD_HEIGHT, OrthographicCamera()))
     private val dissolveShader: ShaderProgram
+    private val engine = PooledEngine()
 
     private var frameBuffer = FrameBuffer(Pixmap.Format.RGB888, MIN_WORLD_WIDTH, WORLD_HEIGHT, false)
     private var isDark = false
@@ -57,8 +68,7 @@ class ProblemScreen(private val assets: AssetManager) : KtxScreen {
         batch.use {
             it.setColor(0.8f, time, 1f, 1f)
             it.draw(assets[TextureAssets.LightTitle], viewport.worldWidth * -0.5f , viewport.worldHeight * -0.5f)
-            it.setColor(1f, time, 1f, 1f)
-            it.draw(assets[TextureAtlasAssets.Cards].findRegion("light_card"), 0f, 0f)
+            engine.update(delta)
         }
         batch.disableBlending()
         batch.shader = null
@@ -80,8 +90,8 @@ class ProblemScreen(private val assets: AssetManager) : KtxScreen {
                 1f,
                 1f
             )
+            it.setColor(1f, 1f, 1f, 1f)
         }
-
         uiStage.draw()
     }
 
@@ -89,12 +99,21 @@ class ProblemScreen(private val assets: AssetManager) : KtxScreen {
         super.show()
         Gdx.input.inputProcessor = uiStage
         setupStage()
+        setupECS()
     }
 
     override fun dispose() {
         assets.disposeSafely()
         batch.disposeSafely()
         uiStage.disposeSafely()
+    }
+
+
+    override fun resize(width: Int, height: Int) {
+        super.resize(width, height)
+        viewport.update(width, height)
+        uiStage.viewport.update(width, height, true)
+        frameBuffer = FrameBuffer(Pixmap.Format.RGB888, viewport.worldWidth.toInt(), viewport.worldHeight.toInt(), false)
     }
 
     private fun switchSkin() {
@@ -137,11 +156,40 @@ class ProblemScreen(private val assets: AssetManager) : KtxScreen {
         uiStage.actors.add(container)
     }
 
-    override fun resize(width: Int, height: Int) {
-        super.resize(width, height)
-        viewport.update(width, height)
-        uiStage.viewport.update(width, height, true)
-        frameBuffer = FrameBuffer(Pixmap.Format.RGB888, viewport.worldWidth.toInt(), viewport.worldHeight.toInt(), false)
+    private fun setupECS() {
+        engine.apply {
+            removeAllSystems()
+            removeAllEntities()
+            addSystem(AnimationSystem())
+            addSystem(SpriteRenderingSystem(batch))
+        }
+
+        val cardDissolve = { render: RenderComponent, transform: TransformComponent, animation: AnimationComponent ->
+            val t = animation.timeRemaining % 1f
+            render.color.set(render.color.r, 1f - t, render.color.g, render.color.a)
+            transform.rotation = t * 360f
+            animation.timeRemaining >= 0f
+        }
+
+        engine.entity {
+            val sprite = assets[TextureAtlasAssets.Cards].findRegion("light_card")
+            with<TransformComponent> {
+                origin = Vector2(
+                    MathUtils.floor(sprite.regionWidth * 0.5f).toFloat(),
+                    MathUtils.floor(sprite.regionHeight * 0.5f).toFloat()
+                )
+                position = origin.cpy().scl(-1f, -1f)
+            }
+            with<RenderComponent> {
+                this.sprite = sprite
+                this.color.set(0.5f, 1f, 1f, 1f)
+                z = 0
+            }
+            with<AnimationComponent> {
+                timeRemaining = 10000f
+                step = cardDissolve
+            }
+        }
     }
 
     companion object {
