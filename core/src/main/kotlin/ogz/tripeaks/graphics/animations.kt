@@ -1,5 +1,6 @@
 package ogz.tripeaks.graphics
 
+import com.badlogic.gdx.graphics.glutils.ShaderProgram
 import ogz.tripeaks.ecs.AnimationComponent
 import ogz.tripeaks.ecs.RenderComponent
 import ogz.tripeaks.ecs.TransformComponent
@@ -9,7 +10,8 @@ typealias AnimationStep = (RenderComponent, TransformComponent, AnimationCompone
 class AnimationSet(
     val cardRemoved: AnimationStep,
     val faceRemoved: AnimationStep,
-    val screenTransition: AnimationStep
+    val screenTransition: AnimationStep,
+    val shaderProgram: ShaderProgram
 )
 
 sealed interface AnimationType {

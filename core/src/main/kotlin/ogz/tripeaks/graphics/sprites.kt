@@ -1,6 +1,7 @@
 package ogz.tripeaks.graphics
 
 import com.badlogic.gdx.assets.AssetManager
+import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import ogz.tripeaks.assets.TextureAssets
@@ -17,6 +18,7 @@ class SpriteSet(
     val face: IndexedSprite
     val smallFace: IndexedSprite
     val home: TextureRegion
+    val background: Color
 
     init {
         val prefix = if (isDark) "dark" else "light"
@@ -25,6 +27,9 @@ class SpriteSet(
         card = assets[TextureAtlasAssets.Cards].findRegion("${prefix}_card")
         back = assets[TextureAtlasAssets.Cards].findRegion("card_back_$backIndex")
         home = Sprite(if (isDark) assets[TextureAssets.LightTitle] else assets[TextureAssets.LightTitle])
+        background =
+            if (isDark) Color.valueOf("232433ff")
+            else Color.valueOf("63a347ff")
     }
 }
 
@@ -48,10 +53,10 @@ object CardSprite : SpriteType {
     override fun get(spriteSet: SpriteSet): TextureRegion = spriteSet.card
 }
 
-object BackSprite: SpriteType {
+object BackSprite : SpriteType {
     override fun get(spriteSet: SpriteSet): TextureRegion = spriteSet.back
 }
 
-object HomeSprite: SpriteType {
+object HomeSprite : SpriteType {
     override fun get(spriteSet: SpriteSet): TextureRegion = spriteSet.home
 }

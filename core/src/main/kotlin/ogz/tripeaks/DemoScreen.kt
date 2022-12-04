@@ -21,6 +21,7 @@ import com.badlogic.gdx.utils.Align
 import ktx.app.KtxScreen
 import ktx.app.clearScreen
 import ktx.ashley.entity
+import ktx.ashley.getSystem
 import ktx.ashley.with
 import ktx.assets.disposeSafely
 import ktx.graphics.use
@@ -35,7 +36,6 @@ import ogz.tripeaks.ecs.RenderComponent
 import ogz.tripeaks.ecs.SpriteRenderingSystem
 import ogz.tripeaks.ecs.TransformComponent
 import ogz.tripeaks.graphics.AnimationSet
-import ogz.tripeaks.graphics.BackSprite
 import ogz.tripeaks.graphics.CardRemovedAnimation
 import ogz.tripeaks.graphics.CardSprite
 import ogz.tripeaks.graphics.CustomViewport
@@ -50,53 +50,63 @@ class DemoScreen(private val assets: AssetManager) : KtxScreen {
     private val batch = SpriteBatch()
     private val viewport = CustomViewport(MIN_WORLD_WIDTH, MAX_WORLD_WIDTH, WORLD_HEIGHT, OrthographicCamera())
     private val uiStage = Stage(CustomViewport(MIN_WORLD_WIDTH, MAX_WORLD_WIDTH, WORLD_HEIGHT, OrthographicCamera()))
-    private val dissolveShader: ShaderProgram
     private val engine = PooledEngine()
-    private val spriteSet: SpriteSet
     private val animationSet: AnimationSet
 
+    private var spriteSet = SpriteSet(false, 0, assets)
     private var frameBuffer = FrameBuffer(Pixmap.Format.RGB888, MIN_WORLD_WIDTH, WORLD_HEIGHT, false)
     private var isDark = false
     private var time = 0f
 
     init {
-        val fragment = javaClass.classLoader.getResource("shaders/dissolve.frag")?.readText()
-        val vertex = javaClass.classLoader.getResource("shaders/dissolve.vert")?.readText()
-        dissolveShader = ShaderProgram(vertex, fragment)
-
-        spriteSet = SpriteSet(false, 0, assets)
         val faceHeight = FaceSprite(1).get(spriteSet).regionHeight
         val cardHeight = CardSprite.get(spriteSet).regionHeight
 
+        val fragment = javaClass.classLoader.getResource("shaders/dissolve.frag")?.readText()
+        val vertex = javaClass.classLoader.getResource("shaders/dissolve.vert")?.readText()
+
         animationSet = AnimationSet(
             cardRemoved = { render, transform, animation, delta ->
-                val st = animation.timeRemaining % 1f
-                if (st > 0.9f) {
+                val st = animation.timeRemaining % 2f
+                if (st > 1f) {
                     transform.position.set(transform.position.x, cardHeight * -0.5f)
-                    transform.scale.set(1f, 1f)
+                    transform.scale.set(1.001f, 1.001f)
+                    render.color.set(render.color.r, 1f, 1f, 1f)
+                } else {
+                    val rt = 1.0f - st
+                    render.color.set(render.color.r, st, 1f, 1f)
+                    transform.position.set(transform.position.x, transform.position.y - delta * rt * 400f)
+                    transform.scale.set(transform.scale.x + delta * rt, transform.scale.y + delta * 6f * rt)
                 }
-                render.color.set(render.color.r, 1f - st, 1f, 1f)
-                transform.position.set(transform.position.x, transform.position.y - delta * (1f - st) * 100f)
-                transform.scale.set(transform.scale.x - delta * 0.2f, transform.scale.y + delta * 1.5f)
                 animation.timeRemaining > 0f
             },
 
             faceRemoved = { render, transform, animation, delta ->
-                val st = animation.timeRemaining % 1f
-                if (st > 0.9f) {
+                val st = animation.timeRemaining % 2f
+                if (st > 1f) {
                     transform.position.set(transform.position.x, faceHeight * -0.5f)
                     transform.scale.set(1f, 1f)
+                    render.color.set(render.color.r, 1f, 1f, 1f)
+                } else {
+                    val rt = 1.0f - st
+                    render.color.set(render.color.r, st, 1f, 1f)
+                    transform.position.set(transform.position.x, transform.position.y - delta * (1.0f - st) * 350f)
+                    transform.scale.set(
+                        transform.scale.x + delta * rt,
+                        transform.scale.y + delta * 8f * rt
+                    )
                 }
-                render.color.set(render.color.r, 1f - st, 1f, 1f)
-                transform.position.set(transform.position.x, transform.position.y - delta * (1f - st) * 70f)
-                transform.scale.set(transform.scale.x + delta * 1.5f, transform.scale.y + delta * 2f)
                 animation.timeRemaining > 0f
             },
 
             screenTransition = { render, _, animation, _ ->
-                render.color.set(0.1f, 1f - animation.timeRemaining / 10f, 1f, 1f)
+                if (animation.timeRemaining <= 0.5f) {
+                    render.color.set(render.color.r, animation.timeRemaining * 2f, 1f, 1f)
+                }
                 animation.timeRemaining >= 0
-            }
+            },
+
+            shaderProgram = ShaderProgram(vertex, fragment)
         )
     }
 
@@ -107,8 +117,8 @@ class DemoScreen(private val assets: AssetManager) : KtxScreen {
         time = (time + delta) % 1f
 
         frameBuffer.begin()
-        clearScreen(0.388235f, 0.662745f, 0.278431f, 1f)
-        batch.shader = dissolveShader
+        clearScreen(spriteSet.background.r, spriteSet.background.g, spriteSet.background.b, 1f)
+        batch.shader = animationSet.shaderProgram
         batch.enableBlending()
         batch.use {
             engine.update(delta)
@@ -178,6 +188,8 @@ class DemoScreen(private val assets: AssetManager) : KtxScreen {
                     LIGHT_UI_EMPHASIS,
                     "light"
                 )
+        spriteSet = SpriteSet(isDark, 0, assets)
+        engine.getSystem<SpriteRenderingSystem>().spriteSet = spriteSet
         setupStage()
     }
 
@@ -217,12 +229,12 @@ class DemoScreen(private val assets: AssetManager) : KtxScreen {
 
             with<RenderComponent> {
                 this.spriteType = spriteType
-                color.set(0.2f, 1f, 1f, 1f)
+                color.set(0.01f, 1f, 1f, 1f)
                 z = 10
             }
 
             with<AnimationComponent> {
-                timeRemaining = 10f
+                timeRemaining = 5f
                 animationType = ScreenTransitionAnimation
             }
         }

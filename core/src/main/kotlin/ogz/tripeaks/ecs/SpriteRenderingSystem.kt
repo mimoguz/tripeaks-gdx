@@ -7,7 +7,7 @@ import ktx.ashley.allOf
 import ktx.ashley.get
 import ogz.tripeaks.graphics.SpriteSet
 
-class SpriteRenderingSystem(private val batch: SpriteBatch, private val spriteSet: SpriteSet) : SortedIteratingSystem(
+class SpriteRenderingSystem(private val batch: SpriteBatch, var spriteSet: SpriteSet) : SortedIteratingSystem(
     allOf(RenderComponent::class, TransformComponent::class).get(),
     compareBy { it[RenderComponent.mapper]?.z }) {
 
