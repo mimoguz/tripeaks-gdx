@@ -10,11 +10,13 @@ import ktx.ashley.mapperFor
 class TransformComponent : Component, Pool.Poolable {
     var position = Vector2(0f, 0f)
     var origin = Vector2(0f, 0f)
+    var scale = Vector2(1f, 1f)
     var rotation = 0f
 
     override fun reset() {
-        position = Vector2(0f, 0f)
-        origin = Vector2(0f, 0f)
+        position.set(0f, 0f)
+        origin.set(0f, 0f)
+        scale.set(1f, 1f)
         rotation = 0f
     }
 

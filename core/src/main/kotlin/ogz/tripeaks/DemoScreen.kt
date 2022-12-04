@@ -7,7 +7,6 @@ import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.Pixmap
 import com.badlogic.gdx.graphics.Texture
-import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.FrameBuffer
 import com.badlogic.gdx.graphics.glutils.ShaderProgram
@@ -19,17 +18,14 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener
 import com.badlogic.gdx.utils.Align
-import com.badlogic.gdx.utils.Logger
 import ktx.app.KtxScreen
 import ktx.app.clearScreen
 import ktx.ashley.entity
 import ktx.ashley.with
 import ktx.assets.disposeSafely
-import ktx.graphics.moveTo
 import ktx.graphics.use
 import ktx.scene2d.Scene2DSkin
 import ogz.tripeaks.assets.FontAssets
-import ogz.tripeaks.assets.TextureAssets
 import ogz.tripeaks.assets.TextureAtlasAssets
 import ogz.tripeaks.assets.UiSkin
 import ogz.tripeaks.assets.get
@@ -38,59 +34,94 @@ import ogz.tripeaks.ecs.AnimationSystem
 import ogz.tripeaks.ecs.RenderComponent
 import ogz.tripeaks.ecs.SpriteRenderingSystem
 import ogz.tripeaks.ecs.TransformComponent
+import ogz.tripeaks.graphics.AnimationSet
+import ogz.tripeaks.graphics.BackSprite
+import ogz.tripeaks.graphics.CardRemovedAnimation
+import ogz.tripeaks.graphics.CardSprite
 import ogz.tripeaks.graphics.CustomViewport
-import ogz.tripeaks.models.GameState
-import ogz.tripeaks.services.PersistenceService
-import java.time.Instant
+import ogz.tripeaks.graphics.FaceRemovedAnimation
+import ogz.tripeaks.graphics.FaceSprite
+import ogz.tripeaks.graphics.HomeSprite
+import ogz.tripeaks.graphics.ScreenTransitionAnimation
+import ogz.tripeaks.graphics.SpriteSet
 
 class DemoScreen(private val assets: AssetManager) : KtxScreen {
 
     private val batch = SpriteBatch()
+    private val viewport = CustomViewport(MIN_WORLD_WIDTH, MAX_WORLD_WIDTH, WORLD_HEIGHT, OrthographicCamera())
+    private val uiStage = Stage(CustomViewport(MIN_WORLD_WIDTH, MAX_WORLD_WIDTH, WORLD_HEIGHT, OrthographicCamera()))
     private val dissolveShader: ShaderProgram
-    private val viewport = CustomViewport(160, 200, 100, OrthographicCamera())
-    private val uiStage = Stage(CustomViewport(160, 200, 100, OrthographicCamera()))
-    private val logger = Logger(DemoScreen::class.simpleName)
-    private val persistence = PersistenceService()
     private val engine = PooledEngine()
-    private var state: GameState
-    private var container = Table(Scene2DSkin.defaultSkin)
+    private val spriteSet: SpriteSet
+    private val animationSet: AnimationSet
 
-    private var frameBuffer = FrameBuffer(Pixmap.Format.RGB888, 160, 100, false)
+    private var frameBuffer = FrameBuffer(Pixmap.Format.RGB888, MIN_WORLD_WIDTH, WORLD_HEIGHT, false)
     private var isDark = false
+    private var time = 0f
 
     init {
-        logger.level = Logger.DEBUG
-        val save = persistence.loadGame()
-        state = save ?: GameState()
-
         val fragment = javaClass.classLoader.getResource("shaders/dissolve.frag")?.readText()
         val vertex = javaClass.classLoader.getResource("shaders/dissolve.vert")?.readText()
         dissolveShader = ShaderProgram(vertex, fragment)
-        logger.debug(batch.shader.log)
+
+        spriteSet = SpriteSet(false, 0, assets)
+        val faceHeight = FaceSprite(1).get(spriteSet).regionHeight
+        val cardHeight = CardSprite.get(spriteSet).regionHeight
+
+        animationSet = AnimationSet(
+            cardRemoved = { render, transform, animation, delta ->
+                val st = animation.timeRemaining % 1f
+                if (st > 0.9f) {
+                    transform.position.set(transform.position.x, cardHeight * -0.5f)
+                    transform.scale.set(1f, 1f)
+                }
+                render.color.set(render.color.r, 1f - st, 1f, 1f)
+                transform.position.set(transform.position.x, transform.position.y - delta * (1f - st) * 100f)
+                transform.scale.set(transform.scale.x - delta * 0.2f, transform.scale.y + delta * 1.5f)
+                animation.timeRemaining > 0f
+            },
+
+            faceRemoved = { render, transform, animation, delta ->
+                val st = animation.timeRemaining % 1f
+                if (st > 0.9f) {
+                    transform.position.set(transform.position.x, faceHeight * -0.5f)
+                    transform.scale.set(1f, 1f)
+                }
+                render.color.set(render.color.r, 1f - st, 1f, 1f)
+                transform.position.set(transform.position.x, transform.position.y - delta * (1f - st) * 70f)
+                transform.scale.set(transform.scale.x + delta * 1.5f, transform.scale.y + delta * 2f)
+                animation.timeRemaining > 0f
+            },
+
+            screenTransition = { render, _, animation, _ ->
+                render.color.set(0.1f, 1f - animation.timeRemaining / 10f, 1f, 1f)
+                animation.timeRemaining >= 0
+            }
+        )
     }
 
     override fun render(delta: Float) {
-        state.step()
         viewport.apply()
         uiStage.viewport.apply()
         uiStage.act(delta)
+        time = (time + delta) % 1f
 
-        batch.shader = dissolveShader
         frameBuffer.begin()
         clearScreen(0.388235f, 0.662745f, 0.278431f, 1f)
+        batch.shader = dissolveShader
         batch.enableBlending()
         batch.use {
             engine.update(delta)
-            it.setColor(1f, 1f, 1f, 1f)
         }
         batch.disableBlending()
+        batch.shader = null
         frameBuffer.end(viewport.screenX, viewport.screenY, viewport.screenWidth, viewport.screenHeight)
 
-        batch.shader = null
         clearScreen(0f, 0f, 0f, 1f)
         val texture = frameBuffer.colorBufferTexture
         texture.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest)
         batch.use(viewport.camera) {
+            it.setColor(1f, 1f, 1f, 1f)
             it.draw(
                 frameBuffer.colorBufferTexture,
                 viewport.worldWidth * -0.5f,
@@ -102,8 +133,16 @@ class DemoScreen(private val assets: AssetManager) : KtxScreen {
                 1f,
                 1f
             )
+            it.setColor(1f, 1f, 1f, 1f)
         }
         uiStage.draw()
+    }
+
+    override fun show() {
+        super.show()
+        Gdx.input.inputProcessor = uiStage
+        setupStage()
+        setupECS()
     }
 
     override fun dispose() {
@@ -112,87 +151,111 @@ class DemoScreen(private val assets: AssetManager) : KtxScreen {
         uiStage.disposeSafely()
     }
 
-    override fun show() {
-        super.show()
-        val save = persistence.loadGame()
-        state = save ?: GameState.startNew((0..51).shuffled().toIntArray(), null)
-        logger.info("${Instant.now()} - Started: ${state.currentState}, ${state.stalled}")
+    override fun resize(width: Int, height: Int) {
+        super.resize(width, height)
+        viewport.update(width, height)
+        uiStage.viewport.update(width, height, true)
+        frameBuffer =
+            FrameBuffer(Pixmap.Format.RGB888, viewport.worldWidth.toInt(), viewport.worldHeight.toInt(), false)
+    }
+
+    private fun switchSkin() {
+        isDark = !isDark
+        Scene2DSkin.defaultSkin =
+            if (isDark)
+                UiSkin(
+                    assets[TextureAtlasAssets.Ui],
+                    assets[FontAssets.GamePixels],
+                    DARK_UI_TEXT,
+                    DARK_UI_EMPHASIS,
+                    "dark"
+                )
+            else
+                UiSkin(
+                    assets[TextureAtlasAssets.Ui],
+                    assets[FontAssets.GamePixels],
+                    LIGHT_UI_TEXT,
+                    LIGHT_UI_EMPHASIS,
+                    "light"
+                )
         setupStage()
-        Gdx.input.inputProcessor = uiStage
-        setupECS()
     }
 
     private fun setupStage() {
         uiStage.clear()
-        container = Table(Scene2DSkin.defaultSkin).apply {
+
+        val container = Table(Scene2DSkin.defaultSkin).apply {
             align(Align.bottomLeft)
-            setSize(viewport.worldWidth, viewport.worldHeight)
-            add(TextButton("Bottom-left", Scene2DSkin.defaultSkin)).expand().align(Align.bottomLeft)
-            add(TextButton("Top-right", Scene2DSkin.defaultSkin).apply {
+            val button = TextButton("Switch Theme", Scene2DSkin.defaultSkin).apply {
                 addListener(object : ChangeListener() {
                     override fun changed(event: ChangeEvent?, actor: Actor?) {
-                        isDark = !isDark
-                        Scene2DSkin.defaultSkin =
-                            if (isDark)
-                                UiSkin(
-                                    assets[TextureAtlasAssets.Ui],
-                                    assets[FontAssets.GamePixels],
-                                    Color(242f / 255f, 204f / 255f, 143f / 255f, 1f),
-                                    Color(184f / 255f, 55f / 255f, 68f / 255f, 1f),
-                                    "dark"
-                                )
-                            else
-                                UiSkin(
-                                    assets[TextureAtlasAssets.Ui],
-                                    assets[FontAssets.GamePixels],
-                                    Color(76f / 244f, 56f / 255f, 77f / 255f, 1f),
-                                    Color(224 / 244f, 122f / 255f, 95f / 255f, 1f),
-                                    "light"
-                                )
-                        setupStage()
+                        switchSkin()
                     }
                 })
-            }).expand().align(Align.topRight)
+            }
+            add(button)
         }
+
         uiStage.actors.add(container)
     }
 
     private fun setupECS() {
-        val entities = engine.entities.toList()
-        entities.forEach(engine::removeEntity)
         engine.apply {
             removeAllSystems()
-            addSystem(AnimationSystem())
-            addSystem(SpriteRenderingSystem(batch))
+            removeAllEntities()
+            addSystem(AnimationSystem(animationSet))
+            addSystem(SpriteRenderingSystem(batch, spriteSet))
         }
 
         engine.entity {
+            val spriteType = HomeSprite
+            val sprite = spriteType.get(spriteSet)
+
             with<TransformComponent> {
-                position = Vector2(viewport.worldWidth * -0.5f, viewport.worldHeight * -0.5f)
+                position = Vector2(sprite.regionWidth * -0.5f, sprite.regionHeight * -0.5f)
             }
+
             with<RenderComponent> {
-                sprite = Sprite(assets[TextureAssets.LightTitle])
-                color.set(0.01f, 1f, 1f ,1f)
+                this.spriteType = spriteType
+                color.set(0.2f, 1f, 1f, 1f)
                 z = 10
             }
+
             with<AnimationComponent> {
-                timeRemaining = 3f
-                step = { render, _, animation ->
-                    render.color.set(0.01f, 1f - animation.timeRemaining / 3f, 1f, 1f)
-                    animation.timeRemaining >= 0
-                }
+                timeRemaining = 10f
+                animationType = ScreenTransitionAnimation
             }
         }
 
-        val cardDissolve = { render: RenderComponent, transform: TransformComponent, animation: AnimationComponent ->
-            val t = animation.timeRemaining % 1f
-            render.color.set(render.color.r, 1f - t, render.color.g, render.color.a)
-            transform.rotation = t * 360f
-            animation.timeRemaining >= 0f
+        // Card
+        engine.entity {
+            val spriteType = CardSprite
+            val sprite = spriteType.get(spriteSet)
+
+            with<TransformComponent> {
+                origin = Vector2(
+                    MathUtils.floor(sprite.regionWidth * 0.5f).toFloat(),
+                    MathUtils.floor(sprite.regionHeight * 0.5f).toFloat()
+                )
+                position = origin.cpy().scl(-1f, -1f)
+            }
+
+            with<RenderComponent> {
+                this.spriteType = spriteType
+                this.color.set(0.8f, 1f, 1f, 1f)
+                z = 0
+            }
+
+            with<AnimationComponent> {
+                timeRemaining = 10000f
+                animationType = CardRemovedAnimation
+            }
         }
 
+        // Card face
         engine.entity {
-            val sprite = assets[TextureAtlasAssets.Cards].findRegion("light_card")
+            val spriteType = FaceSprite(1)
+            val sprite = spriteType.get(spriteSet)
             with<TransformComponent> {
                 origin = Vector2(
                     MathUtils.floor(sprite.regionWidth * 0.5f).toFloat(),
@@ -201,70 +264,26 @@ class DemoScreen(private val assets: AssetManager) : KtxScreen {
                 position = origin.cpy().scl(-1f, -1f)
             }
             with<RenderComponent> {
-                this.sprite = sprite
-                color.set(0.5f, 1f, 1f, 1f)
+                this.spriteType = spriteType
+                this.color.set(1f, 1f, 1f, 1f)
                 z = 1
             }
             with<AnimationComponent> {
                 timeRemaining = 10000f
-                step = cardDissolve
-            }
-        }
-
-        engine.entity {
-            val sprite = assets[TextureAtlasAssets.Cards].findRegion("light_card_1")
-            with<TransformComponent> {
-                origin = Vector2(
-                    MathUtils.floor(sprite.regionWidth * 0.5f).toFloat(),
-                    MathUtils.floor(sprite.regionHeight * 0.5f).toFloat()
-                )
-                position = origin.cpy().scl(-1f, -1f)
-            }
-            with<RenderComponent> {
-                this.sprite = sprite
-                color.set(1f, 1f, 1f, 1f)
-                z = 2
-            }
-            with<AnimationComponent> {
-                timeRemaining = 10000f
-                step = cardDissolve
+                animationType = FaceRemovedAnimation
             }
         }
     }
 
-    override fun pause() {
-        super.pause()
-        persistence.saveGame(state)
-        logger.info("${Instant.now()} - Paused: ${state.currentState}, ${state.stalled}")
-    }
+    companion object {
+        const val MIN_WORLD_WIDTH = 300
+        const val MAX_WORLD_WIDTH = 360
+        const val WORLD_HEIGHT = 168
+        val DARK_UI_TEXT = rgb(242, 204, 143)
+        val DARK_UI_EMPHASIS = rgb(184, 55, 68)
+        val LIGHT_UI_TEXT = rgb(76, 56, 77)
+        val LIGHT_UI_EMPHASIS = rgb(224, 122, 95)
 
-    override fun resume() {
-        super.resume()
-        val save = persistence.loadGame()
-        state = save ?: GameState.startNew((0..51).shuffled().toIntArray(), null)
-        logger.info("${Instant.now()} - Resumed: ${state.currentState}, ${state.stalled}")
-        Gdx.graphics.requestRendering()
-    }
-
-    override fun resize(width: Int, height: Int) {
-        super.resize(width, height)
-        viewport.update(width, height)
-
-        uiStage.viewport.update(width, height)
-        // UI alignment hack
-        uiStage.viewport.camera.moveTo(Vector2(viewport.worldWidth * 0.5f, viewport.worldHeight * 0.5f))
-        container.setSize(viewport.worldWidth, viewport.worldHeight)
-        container.invalidate()
-        // end UI alignment hack
-
-        if (width > 0 && height > 0) {
-            frameBuffer.disposeSafely()
-            frameBuffer = FrameBuffer(
-                Pixmap.Format.RGB888,
-                viewport.worldWidth.toInt(),
-                viewport.worldHeight.toInt(),
-                false
-            )
-        }
+        private fun rgb(r: Int, g: Int, b: Int): Color = Color(r / 255f, g / 255f, b / 255f, 1f)
     }
 }

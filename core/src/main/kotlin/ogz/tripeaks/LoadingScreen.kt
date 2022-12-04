@@ -31,8 +31,8 @@ class LoadingScreen(private val game: Main) : KtxScreen {
                 Color(224 / 244f, 122f / 255f, 95f / 255f, 1f),
                 "light"
             )
-            game.addScreen(ProblemScreen(assets))
-            game.setScreen<ProblemScreen>()
+            game.addScreen(DemoScreen(assets))
+            game.setScreen<DemoScreen>()
             game.removeScreen<LoadingScreen>()
             Gdx.graphics.requestRendering()
             dispose()

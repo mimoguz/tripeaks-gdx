@@ -4,7 +4,7 @@ size: 512, 256
 format: RGBA8888
 filter: Nearest, Nearest
 repeat: none
-card_back
+card_back_0
   rotate: false
   xy: 29, 217
   size: 25, 37

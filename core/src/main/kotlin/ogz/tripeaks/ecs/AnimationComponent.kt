@@ -3,14 +3,16 @@ package ogz.tripeaks.ecs
 import com.badlogic.ashley.core.Component
 import com.badlogic.gdx.utils.Pool
 import ktx.ashley.mapperFor
+import ogz.tripeaks.graphics.AnimationType
+import ogz.tripeaks.graphics.NoAnimation
 
 class AnimationComponent : Component, Pool.Poolable {
     var timeRemaining = 0f
-    var step: (RenderComponent, TransformComponent, AnimationComponent) -> Boolean = { _, _, _ -> true }
+    var animationType: AnimationType = NoAnimation
 
     override fun reset() {
         timeRemaining = 0f
-        step = { _, _, _ -> true }
+        animationType = NoAnimation
     }
 
     companion object {
