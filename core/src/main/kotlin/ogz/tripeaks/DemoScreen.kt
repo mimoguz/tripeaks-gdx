@@ -12,11 +12,8 @@ import com.badlogic.gdx.graphics.glutils.FrameBuffer
 import com.badlogic.gdx.graphics.glutils.ShaderProgram
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Vector2
-import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.Table
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton
-import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener
 import com.badlogic.gdx.utils.Align
 import ktx.app.KtxScreen
 import ktx.app.clearScreen
@@ -44,6 +41,7 @@ import ogz.tripeaks.graphics.FaceSprite
 import ogz.tripeaks.graphics.HomeSprite
 import ogz.tripeaks.graphics.ScreenTransitionAnimation
 import ogz.tripeaks.graphics.SpriteSet
+import ogz.tripeaks.ui.LabelButton
 
 class DemoScreen(private val assets: AssetManager) : KtxScreen {
 
@@ -76,7 +74,10 @@ class DemoScreen(private val assets: AssetManager) : KtxScreen {
                     val rt = 1.0f - st
                     render.color.set(render.color.r, st, 1f, 1f)
                     transform.position.set(transform.position.x, transform.position.y - delta * rt * 400f)
-                    transform.scale.set(transform.scale.x + delta * rt, transform.scale.y + delta * 6f * rt)
+                    transform.scale.set(
+                        transform.scale.x - delta * rt * 0.25f,
+                        transform.scale.y + delta * 6f * rt
+                    )
                 }
                 animation.timeRemaining > 0f
             },
@@ -92,7 +93,7 @@ class DemoScreen(private val assets: AssetManager) : KtxScreen {
                     render.color.set(render.color.r, st, 1f, 1f)
                     transform.position.set(transform.position.x, transform.position.y - delta * (1.0f - st) * 350f)
                     transform.scale.set(
-                        transform.scale.x + delta * rt,
+                        transform.scale.x - delta * rt * 0.5f,
                         transform.scale.y + delta * 8f * rt
                     )
                 }
@@ -196,19 +197,15 @@ class DemoScreen(private val assets: AssetManager) : KtxScreen {
     private fun setupStage() {
         uiStage.clear()
 
-        val container = Table(Scene2DSkin.defaultSkin).apply {
+        val button = LabelButton(Scene2DSkin.defaultSkin, "Switch Theme")
+        button.onClick(this::switchSkin)
+
+        val table = Table(Scene2DSkin.defaultSkin).apply {
             align(Align.bottomLeft)
-            val button = TextButton("Switch Theme", Scene2DSkin.defaultSkin).apply {
-                addListener(object : ChangeListener() {
-                    override fun changed(event: ChangeEvent?, actor: Actor?) {
-                        switchSkin()
-                    }
-                })
-            }
             add(button)
         }
 
-        uiStage.actors.add(container)
+        uiStage.actors.add(table)
     }
 
     private fun setupECS() {

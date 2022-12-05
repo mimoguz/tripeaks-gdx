@@ -26,7 +26,7 @@ class SpriteSet(
         smallFace = IndexedSprite("small_${prefix}_card", assets)
         card = assets[TextureAtlasAssets.Cards].findRegion("${prefix}_card")
         back = assets[TextureAtlasAssets.Cards].findRegion("card_back_$backIndex")
-        home = Sprite(if (isDark) assets[TextureAssets.LightTitle] else assets[TextureAssets.LightTitle])
+        home = Sprite(if (isDark) assets[TextureAssets.DarkTitle] else assets[TextureAssets.LightTitle])
         background =
             if (isDark) Color.valueOf("232433ff")
             else Color.valueOf("63a347ff")

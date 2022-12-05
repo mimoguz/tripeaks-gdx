@@ -9,6 +9,7 @@ import ktx.assets.load
 
 enum class TextureAssets(val path: String) {
     LightTitle("images/light_title.png"),
+    DarkTitle("images/dark_title.png"),
 }
 
 fun AssetManager.load(asset: TextureAssets) = load<Texture>(asset.path)
