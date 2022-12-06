@@ -7,7 +7,7 @@ import ktx.ashley.allOf
 import ktx.ashley.get
 import ogz.tripeaks.graphics.AnimationSet
 
-class AnimationSystem(private val animationSet: AnimationSet) : IteratingSystem(
+class AnimationSystem(var animationSet: AnimationSet) : IteratingSystem(
     allOf(RenderComponent::class, TransformComponent::class, AnimationComponent::class).get()
 ) {
 

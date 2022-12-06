@@ -9,7 +9,6 @@ import com.badlogic.gdx.graphics.Pixmap
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.FrameBuffer
-import com.badlogic.gdx.graphics.glutils.ShaderProgram
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.scenes.scene2d.Stage
@@ -18,6 +17,7 @@ import com.badlogic.gdx.utils.Align
 import ktx.app.KtxScreen
 import ktx.app.clearScreen
 import ktx.ashley.entity
+import ktx.ashley.get
 import ktx.ashley.getSystem
 import ktx.ashley.with
 import ktx.assets.disposeSafely
@@ -32,7 +32,7 @@ import ogz.tripeaks.ecs.AnimationSystem
 import ogz.tripeaks.ecs.RenderComponent
 import ogz.tripeaks.ecs.SpriteRenderingSystem
 import ogz.tripeaks.ecs.TransformComponent
-import ogz.tripeaks.graphics.AnimationSet
+import ogz.tripeaks.graphics.Animations
 import ogz.tripeaks.graphics.CardRemovedAnimation
 import ogz.tripeaks.graphics.CardSprite
 import ogz.tripeaks.graphics.CustomViewport
@@ -49,67 +49,12 @@ class DemoScreen(private val assets: AssetManager) : KtxScreen {
     private val viewport = CustomViewport(MIN_WORLD_WIDTH, MAX_WORLD_WIDTH, WORLD_HEIGHT, OrthographicCamera())
     private val uiStage = Stage(CustomViewport(MIN_WORLD_WIDTH, MAX_WORLD_WIDTH, WORLD_HEIGHT, OrthographicCamera()))
     private val engine = PooledEngine()
-    private val animationSet: AnimationSet
 
+    private var animationSet = Animations.Blinds
     private var spriteSet = SpriteSet(false, 0, assets)
     private var frameBuffer = FrameBuffer(Pixmap.Format.RGB888, MIN_WORLD_WIDTH, WORLD_HEIGHT, false)
     private var isDark = false
     private var time = 0f
-
-    init {
-        val faceHeight = FaceSprite(1).get(spriteSet).regionHeight
-        val cardHeight = CardSprite.get(spriteSet).regionHeight
-
-        val fragment = javaClass.classLoader.getResource("shaders/dissolve.frag")?.readText()
-        val vertex = javaClass.classLoader.getResource("shaders/dissolve.vert")?.readText()
-
-        animationSet = AnimationSet(
-            cardRemoved = { render, transform, animation, delta ->
-                val st = animation.timeRemaining % 2f
-                if (st > 1f) {
-                    transform.position.set(transform.position.x, cardHeight * -0.5f)
-                    transform.scale.set(1.001f, 1.001f)
-                    render.color.set(render.color.r, 1f, 1f, 1f)
-                } else {
-                    val rt = 1.0f - st
-                    render.color.set(render.color.r, st, 1f, 1f)
-                    transform.position.set(transform.position.x, transform.position.y - delta * rt * 400f)
-                    transform.scale.set(
-                        transform.scale.x - delta * rt * 0.25f,
-                        transform.scale.y + delta * 6f * rt
-                    )
-                }
-                animation.timeRemaining > 0f
-            },
-
-            faceRemoved = { render, transform, animation, delta ->
-                val st = animation.timeRemaining % 2f
-                if (st > 1f) {
-                    transform.position.set(transform.position.x, faceHeight * -0.5f)
-                    transform.scale.set(1f, 1f)
-                    render.color.set(render.color.r, 1f, 1f, 1f)
-                } else {
-                    val rt = 1.0f - st
-                    render.color.set(render.color.r, st, 1f, 1f)
-                    transform.position.set(transform.position.x, transform.position.y - delta * (1.0f - st) * 350f)
-                    transform.scale.set(
-                        transform.scale.x - delta * rt * 0.5f,
-                        transform.scale.y + delta * 8f * rt
-                    )
-                }
-                animation.timeRemaining > 0f
-            },
-
-            screenTransition = { render, _, animation, _ ->
-                if (animation.timeRemaining <= 0.5f) {
-                    render.color.set(render.color.r, animation.timeRemaining * 2f, 1f, 1f)
-                }
-                animation.timeRemaining >= 0
-            },
-
-            shaderProgram = ShaderProgram(vertex, fragment)
-        )
-    }
 
     override fun render(delta: Float) {
         viewport.apply()
@@ -194,15 +139,25 @@ class DemoScreen(private val assets: AssetManager) : KtxScreen {
         setupStage()
     }
 
+    private fun switchAnimation() {
+        animationSet = if (animationSet === Animations.Dissolve) Animations.Blinds else Animations.Dissolve
+        engine.getSystem<AnimationSystem>().animationSet = animationSet
+    }
+
     private fun setupStage() {
         uiStage.clear()
 
-        val button = LabelButton(Scene2DSkin.defaultSkin, "Switch Theme")
-        button.onClick(this::switchSkin)
+        val themeButton = LabelButton(Scene2DSkin.defaultSkin, "Switch Theme")
+        themeButton.onClick(this::switchSkin)
+
+        val animationButton = LabelButton(Scene2DSkin.defaultSkin, "Switch Animation")
+        animationButton.onClick(this::switchAnimation)
 
         val table = Table(Scene2DSkin.defaultSkin).apply {
             align(Align.bottomLeft)
-            add(button)
+            add(themeButton).align(Align.bottomLeft)
+            row()
+            add(animationButton).align(Align.bottomLeft)
         }
 
         uiStage.actors.add(table)
@@ -226,12 +181,12 @@ class DemoScreen(private val assets: AssetManager) : KtxScreen {
 
             with<RenderComponent> {
                 this.spriteType = spriteType
-                color.set(0.01f, 1f, 1f, 1f)
+                color.set(0.1f, 1f, 1f, 1f)
                 z = 10
             }
 
             with<AnimationComponent> {
-                timeRemaining = 5f
+                timeRemaining = 2f
                 animationType = ScreenTransitionAnimation
             }
         }
@@ -251,7 +206,7 @@ class DemoScreen(private val assets: AssetManager) : KtxScreen {
 
             with<RenderComponent> {
                 this.spriteType = spriteType
-                this.color.set(0.8f, 1f, 1f, 1f)
+                this.color.set(0.02f, 1f, 1f, 1f)
                 z = 0
             }
 
@@ -274,7 +229,7 @@ class DemoScreen(private val assets: AssetManager) : KtxScreen {
             }
             with<RenderComponent> {
                 this.spriteType = spriteType
-                this.color.set(1f, 1f, 1f, 1f)
+                this.color.set(0.01f, 1f, 1f, 1f)
                 z = 1
             }
             with<AnimationComponent> {

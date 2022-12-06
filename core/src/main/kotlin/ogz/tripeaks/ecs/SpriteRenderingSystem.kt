@@ -29,7 +29,7 @@ class SpriteRenderingSystem(private val batch: SpriteBatch, var spriteSet: Sprit
                         transform.origin.x,
                         transform.origin.y,
                         sprite.regionWidth.toFloat(),
-                        sprite.regionHeight.toFloat(),
+                        sprite.regionHeight.toFloat() + 1,
                         transform.scale.x,
                         transform.scale.y,
                         transform.rotation
