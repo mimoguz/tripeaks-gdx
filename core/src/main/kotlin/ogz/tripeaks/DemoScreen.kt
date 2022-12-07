@@ -17,7 +17,6 @@ import com.badlogic.gdx.utils.Align
 import ktx.app.KtxScreen
 import ktx.app.clearScreen
 import ktx.ashley.entity
-import ktx.ashley.get
 import ktx.ashley.getSystem
 import ktx.ashley.with
 import ktx.assets.disposeSafely
@@ -50,7 +49,7 @@ class DemoScreen(private val assets: AssetManager) : KtxScreen {
     private val uiStage = Stage(CustomViewport(MIN_WORLD_WIDTH, MAX_WORLD_WIDTH, WORLD_HEIGHT, OrthographicCamera()))
     private val engine = PooledEngine()
 
-    private var animationSet = Animations.Blinds
+    private var animationSet = Animations.BLINK
     private var spriteSet = SpriteSet(false, 0, assets)
     private var frameBuffer = FrameBuffer(Pixmap.Format.RGB888, MIN_WORLD_WIDTH, WORLD_HEIGHT, false)
     private var isDark = false
@@ -136,11 +135,12 @@ class DemoScreen(private val assets: AssetManager) : KtxScreen {
                 )
         spriteSet = SpriteSet(isDark, 0, assets)
         engine.getSystem<SpriteRenderingSystem>().spriteSet = spriteSet
+        Animations.ALL.forEach { it.param = if (isDark) 1f else 0f }
         setupStage()
     }
 
     private fun switchAnimation() {
-        animationSet = if (animationSet === Animations.Dissolve) Animations.Blinds else Animations.Dissolve
+        animationSet = if (animationSet === Animations.DISSOLVE) Animations.BLINK else Animations.DISSOLVE
         engine.getSystem<AnimationSystem>().animationSet = animationSet
     }
 

@@ -6,7 +6,7 @@ precision mediump float;
 #endif
 
 // I use that to pass various attributes.
-// Currently, r channel is used for noise scale, and g channel is used for dissolve animation time.
+// For this shader, r channel is noise scale, g channel is normalized remaining time, b channel is theme selection.
 varying LOWP vec4 v_color;
 
 varying vec2 v_texCoords;
