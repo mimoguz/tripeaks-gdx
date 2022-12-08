@@ -96,6 +96,7 @@ class DemoScreen(private val assets: AssetManager) : KtxScreen {
     override fun show() {
         super.show()
         Gdx.input.inputProcessor = uiStage
+        Animations.setTheme(isDark)
         setupStage()
         setupECS()
     }
@@ -135,7 +136,7 @@ class DemoScreen(private val assets: AssetManager) : KtxScreen {
                 )
         spriteSet = SpriteSet(isDark, 0, assets)
         engine.getSystem<SpriteRenderingSystem>().spriteSet = spriteSet
-        Animations.ALL.forEach { it.param = if (isDark) 1f else 0f }
+        Animations.setTheme(isDark)
         setupStage()
     }
 
@@ -154,8 +155,9 @@ class DemoScreen(private val assets: AssetManager) : KtxScreen {
         animationButton.onClick(this::switchAnimation)
 
         val table = Table(Scene2DSkin.defaultSkin).apply {
+            pad(2f)
             align(Align.bottomLeft)
-            add(themeButton).align(Align.bottomLeft)
+            add(themeButton).align(Align.bottomLeft).padBottom(2f)
             row()
             add(animationButton).align(Align.bottomLeft)
         }

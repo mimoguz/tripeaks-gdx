@@ -9,6 +9,7 @@ import ogz.tripeaks.ecs.TransformComponent
 typealias AnimationStep = (RenderComponent, TransformComponent, AnimationComponent, Float) -> Boolean
 
 interface AnimationSet {
+    val name: String
     val cardRemoved: AnimationStep
     val faceRemoved: AnimationStep
     val screenTransition: AnimationStep
@@ -44,6 +45,8 @@ object Animations {
     private const val FACE_WIDTH = 15
 
     val DISSOLVE = object : AnimationSet {
+
+        override val name = "dissolveAnimation"
 
         override val cardRemoved: AnimationStep = { render, transform, animation, delta ->
             val st = animation.timeRemaining % 2f
@@ -104,6 +107,9 @@ object Animations {
     }
 
     val BLINK = object : AnimationSet {
+
+        override val name = "blinkAnimation"
+
         override val cardRemoved: AnimationStep = { render, transform, animation, _ ->
             val st = animation.timeRemaining % 2f
             if (st > 1.5f) {
@@ -154,6 +160,11 @@ object Animations {
     }
 
     val ALL =  listOf(DISSOLVE, BLINK);
+
+    fun setTheme(dark: Boolean) {
+        val value = if (dark) 1f else 0f;
+        ALL.forEach { it.param = value }
+    }
 }
 
 

@@ -5,7 +5,7 @@ precision mediump float;
 #define LOWP
 #endif
 
-// I use that to pass various attributes.
+// I use vertex colors to pass various parameters.
 // For this shader, g channel is normalized remaining time, b channel is theme selection.
 varying LOWP vec4 v_color;
 

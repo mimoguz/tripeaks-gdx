@@ -5,7 +5,7 @@ precision mediump float;
 #define LOWP
 #endif
 
-// I use that to pass various attributes.
+// I use vertex colors to pass various parameters.
 // For this shader, r channel is noise scale, g channel is normalized remaining time, b channel is theme selection.
 varying LOWP vec4 v_color;
 
@@ -53,7 +53,8 @@ void main() {
     float alpha =  smoothstep(0.6, 0.9, min(n * n + v_color.g, 1.0));
 
     // Burnt edges:
-    outColor.rgb = mix(vec3(0.8, 0.4,  0.2), outColor.rgb, smoothstep(0.6, 0.9, alpha));
+    vec3 tint = mix(vec3(0.8, 0.4,  0.2), vec3(0.5, 0.2,  0.3), v_color.b);
+    outColor.rgb = mix(tint, outColor.rgb, smoothstep(0.6, 0.9, alpha));
 
     gl_FragColor = vec4(outColor.rgb, outColor.a * alpha);
 }
