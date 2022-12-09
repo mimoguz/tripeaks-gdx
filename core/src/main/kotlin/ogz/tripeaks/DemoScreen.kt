@@ -9,9 +9,12 @@ import com.badlogic.gdx.graphics.Pixmap
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.FrameBuffer
+import com.badlogic.gdx.graphics.glutils.ShaderProgram
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.scenes.scene2d.Stage
+import com.badlogic.gdx.scenes.scene2d.ui.Dialog
+import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.utils.Align
 import ktx.app.KtxScreen
@@ -54,6 +57,12 @@ class DemoScreen(private val assets: AssetManager) : KtxScreen {
     private var frameBuffer = FrameBuffer(Pixmap.Format.RGB888, MIN_WORLD_WIDTH, WORLD_HEIGHT, false)
     private var isDark = false
     private var time = 0f
+    private var dialogShowing = false
+
+    private val blurShader = ShaderProgram(
+        javaClass.classLoader.getResource("shaders/basic.vert")?.readText(),
+        javaClass.classLoader.getResource("shaders/blur.frag")?.readText()
+    )
 
     override fun render(delta: Float) {
         viewport.apply()
@@ -66,7 +75,7 @@ class DemoScreen(private val assets: AssetManager) : KtxScreen {
         batch.shader = animationSet.shaderProgram
         batch.enableBlending()
         batch.use {
-            engine.update(delta)
+            engine.update(if (dialogShowing) 0f else delta)
         }
         batch.disableBlending()
         batch.shader = null
@@ -75,6 +84,7 @@ class DemoScreen(private val assets: AssetManager) : KtxScreen {
         clearScreen(0f, 0f, 0f, 1f)
         val texture = frameBuffer.colorBufferTexture
         texture.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest)
+        batch.shader = if (dialogShowing) blurShader else null
         batch.use(viewport.camera) {
             it.setColor(1f, 1f, 1f, 1f)
             it.draw(
@@ -90,6 +100,7 @@ class DemoScreen(private val assets: AssetManager) : KtxScreen {
             )
             it.setColor(1f, 1f, 1f, 1f)
         }
+        batch.shader = null
         uiStage.draw()
     }
 
@@ -154,15 +165,39 @@ class DemoScreen(private val assets: AssetManager) : KtxScreen {
         val animationButton = LabelButton(Scene2DSkin.defaultSkin, "Switch Animation")
         animationButton.onClick(this::switchAnimation)
 
+        val dialogButton = LabelButton(Scene2DSkin.defaultSkin, "Open dialog")
+        dialogButton.onClick(this::openDialog)
+
         val table = Table(Scene2DSkin.defaultSkin).apply {
             pad(2f)
             align(Align.bottomLeft)
             add(themeButton).align(Align.bottomLeft).padBottom(2f)
             row()
-            add(animationButton).align(Align.bottomLeft)
+            add(animationButton).align(Align.bottomLeft).padBottom(2f)
+            row()
+            add(dialogButton).align(Align.bottomLeft)
         }
 
         uiStage.actors.add(table)
+    }
+
+    private fun openDialog() {
+        val dialog = Dialog("", Scene2DSkin.defaultSkin).also { dialog ->
+            dialog.contentTable.apply {
+                add(Label("UI test", Scene2DSkin.defaultSkin))
+                pad(4f, 8f,4f, 8f)
+            }
+            dialog.buttonTable.apply {
+                add(LabelButton(Scene2DSkin.defaultSkin, "Close").apply {
+                    onClick {
+                        dialog.hide()
+                        this@DemoScreen.dialogShowing = false
+                    }
+                })
+            }
+        }
+        dialogShowing = true
+        dialog.show(uiStage)
     }
 
     private fun setupECS() {
@@ -193,6 +228,8 @@ class DemoScreen(private val assets: AssetManager) : KtxScreen {
             }
         }
 
+        val x = 50f
+
         // Card
         engine.entity {
             val spriteType = CardSprite
@@ -203,7 +240,7 @@ class DemoScreen(private val assets: AssetManager) : KtxScreen {
                     MathUtils.floor(sprite.regionWidth * 0.5f).toFloat(),
                     MathUtils.floor(sprite.regionHeight * 0.5f).toFloat()
                 )
-                position = origin.cpy().scl(-1f, -1f)
+                position = origin.cpy().scl(-1f, -1f).add(x, 0f)
             }
 
             with<RenderComponent> {
@@ -227,7 +264,7 @@ class DemoScreen(private val assets: AssetManager) : KtxScreen {
                     MathUtils.floor(sprite.regionWidth * 0.5f).toFloat(),
                     MathUtils.floor(sprite.regionHeight * 0.5f).toFloat()
                 )
-                position = origin.cpy().scl(-1f, -1f)
+                position = origin.cpy().scl(-1f, -1f).add(x, 0f)
             }
             with<RenderComponent> {
                 this.spriteType = spriteType

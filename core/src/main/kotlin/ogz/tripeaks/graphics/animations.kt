@@ -43,6 +43,7 @@ object Animations {
     private const val CARD_WIDTH = 25
     private const val FACE_HEIGHT = 30
     private const val FACE_WIDTH = 15
+    private const val TEST_X = 50f
 
     val DISSOLVE = object : AnimationSet {
 
@@ -53,7 +54,7 @@ object Animations {
             if (st > 1f) {
                 transform.scale.set(1f, 1f)
                 transform.position.set(
-                    MathUtils.floor(CARD_WIDTH * -0.5f).toFloat(),
+                    MathUtils.floor(CARD_WIDTH * -0.5f).toFloat() + TEST_X,
                     MathUtils.floor(CARD_HEIGHT * -0.5f).toFloat(),
                 )
                 render.color.set(0.8f, 1f, param, 1f)
@@ -74,7 +75,7 @@ object Animations {
             if (st > 1f) {
                 transform.scale.set(1f, 1f)
                 transform.position.set(
-                    MathUtils.floor(FACE_WIDTH * -0.5f).toFloat(),
+                    MathUtils.floor(FACE_WIDTH * -0.5f).toFloat() + TEST_X,
                     MathUtils.floor(FACE_HEIGHT * -0.5f).toFloat(),
                 )
                 render.color.set(render.color.r, 1f, param, 1f)
@@ -116,7 +117,7 @@ object Animations {
                 render.color.set(1f, 0f, param, 1f)
                 transform.scale.set(1f, 1f)
                 transform.position.set(
-                    MathUtils.floor(CARD_WIDTH * -0.5f).toFloat(),
+                    MathUtils.floor(CARD_WIDTH * -0.5f).toFloat() + TEST_X,
                     MathUtils.floor(CARD_HEIGHT * -0.5f).toFloat(),
                 )
             } else if (st > 0.5f) {
@@ -133,7 +134,7 @@ object Animations {
                 render.color.set(1f, 0f, param, 1f)
                 transform.scale.set(1f, 1f)
                 transform.position.set(
-                    MathUtils.floor(FACE_WIDTH * -0.5f).toFloat(),
+                    MathUtils.floor(FACE_WIDTH * -0.5f).toFloat() + TEST_X,
                     MathUtils.floor(FACE_HEIGHT * -0.5f).toFloat(),
                 )
             } else if (st > 0.5f) {
