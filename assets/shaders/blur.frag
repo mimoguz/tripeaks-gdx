@@ -14,21 +14,21 @@ varying vec2 v_texCoords;
 uniform sampler2D u_texture;
 
 void main() {
-    vec4 outColor = texture2D(u_texture, v_texCoords)
-        + texture2D(u_texture, v_texCoords + vec2(0.0, 0.005))
-        + texture2D(u_texture, v_texCoords + vec2(0.003, 0.005))
+    vec4 outColor = texture2D(u_texture, v_texCoords);
+    vec4 blurSample =
+        texture2D(u_texture, v_texCoords + vec2(0.0, 0.005)) // Plus
+        //texture2D(u_texture, v_texCoords + vec2(0.002, 0.003)) // Diagonals
         + texture2D(u_texture, v_texCoords + vec2(0.003, 0.0))
-        + texture2D(u_texture, v_texCoords + vec2(0.003, -0.005))
+        //+ texture2D(u_texture, v_texCoords + vec2(0.002, -0.003))
         + texture2D(u_texture, v_texCoords + vec2(0.0, -0.005))
-        + texture2D(u_texture, v_texCoords + vec2(-0.003, -0.005))
-        + texture2D(u_texture, v_texCoords + vec2(-0.003, 0.0))
-        + texture2D(u_texture, v_texCoords + vec2(-0.003, 0.005));
-    outColor = outColor / 9.0;
-    float t = 1.0 - v_color.g;
-    float x = t * 2.1 + 0.5;
-    float alpha =  (sin(4.0 * x) + cos(x) + 1.5) / 3.2;
-    vec3 tint = mix(vec3(v_color.g, t, 0.0), vec3(v_color.g * 0.5 + 0.1, 0.0, t * 0.5), v_color.b);
-    vec3 rgb = mix(tint, outColor.rgb, alpha);
-    alpha = clamp(0.0, 1.0, alpha);
-    gl_FragColor = vec4(rgb, outColor.a * alpha);
+        //+ texture2D(u_texture, v_texCoords + vec2(-0.002, -0.003))
+        + texture2D(u_texture, v_texCoords + vec2(-0.003, 0.0));
+        //+ texture2D(u_texture, v_texCoords + vec2(-0.002, 0.003));
+    // 0.75 / 4 = 0.1875
+    gl_FragColor = vec4(
+        (outColor.r * 0.25 + blurSample.r * 0.1875) * 0.6,
+        (outColor.g * 0.25 + blurSample.g * 0.1875) * 0.6,
+        (outColor.b * 0.25 + blurSample.b * 0.1875) * 0.6,
+        outColor.a * 0.25 + blurSample.a * 0.1875
+    );
 }
