@@ -13,6 +13,8 @@ import ogz.tripeaks.ecs.AnimationSystem
 import ogz.tripeaks.ecs.SpriteRenderingSystem
 import ogz.tripeaks.graphics.Animations
 import ogz.tripeaks.graphics.SpriteSet
+import ogz.tripeaks.services.PooledMessageBox
+import ogz.tripeaks.services.TouchDown
 
 /**
  * Helper class to handle the secondary concerns for GameScreen. It keeps and monitors sprite set, animation set, and
@@ -22,6 +24,7 @@ import ogz.tripeaks.graphics.SpriteSet
 class GameScreenState(
     private val assets: AssetManager,
     private val engine: PooledEngine,
+    private val messageBox: PooledMessageBox,
     dark: Boolean = false
 ) : Disposable, InputAdapter() {
 
@@ -33,8 +36,6 @@ class GameScreenState(
     private var aspectRatio = 1f
 
     private var handleTouchDown = this::onTouchDownWhenDialogNotShowing
-
-    var onTouchDown : (Int, Int, Int, Int) -> Unit = {_, _, _, _ -> run {} }
 
     var setupRender: (SpriteBatch) -> Unit = this::setupWhenDialogNotShowing
         private set
@@ -112,7 +113,9 @@ class GameScreenState(
     }
 
     private fun onTouchDownWhenDialogNotShowing(x: Int, y: Int, pointer: Int, button: Int): Boolean {
-        onTouchDown(x, y, pointer, button)
+        val message = messageBox.getMessage<TouchDown>()?.apply { reset() } ?: TouchDown()
+        message.set(x, y, pointer, button)
+        messageBox.send(message)
         return true
     }
 

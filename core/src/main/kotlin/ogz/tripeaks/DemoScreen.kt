@@ -12,13 +12,13 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.FrameBuffer
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Vector2
-import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.Logger
+import com.badlogic.gdx.utils.Pool
 import ktx.app.KtxScreen
 import ktx.ashley.entity
 import ktx.ashley.with
@@ -43,9 +43,12 @@ import ogz.tripeaks.graphics.FaceSprite
 import ogz.tripeaks.graphics.HomeSprite
 import ogz.tripeaks.graphics.ScreenTransitionAnimation
 import ogz.tripeaks.screens.GameScreenState
+import ogz.tripeaks.services.PooledMessageBox
+import ogz.tripeaks.services.Receiver
+import ogz.tripeaks.services.TouchDown
 import ogz.tripeaks.ui.LabelButton
 
-class DemoScreen(private val assets: AssetManager) : KtxScreen {
+class DemoScreen(private val assets: AssetManager) : KtxScreen, Receiver<TouchDown> {
 
     private val logger = Logger(DemoScreen::class.java.simpleName)
 
@@ -53,10 +56,8 @@ class DemoScreen(private val assets: AssetManager) : KtxScreen {
     private val viewport = CustomViewport(MIN_WORLD_WIDTH, MAX_WORLD_WIDTH, WORLD_HEIGHT, OrthographicCamera())
     private val uiStage = Stage(CustomViewport(MIN_WORLD_WIDTH, MAX_WORLD_WIDTH, WORLD_HEIGHT, OrthographicCamera()))
     private val engine = PooledEngine()
-
-    private val gameScreenState = GameScreenState(assets, engine, false).apply {
-        onTouchDown = this@DemoScreen::onTouchDown
-    }
+    private val messageBox = PooledMessageBox()
+    private val gameScreenState = GameScreenState(assets, engine, messageBox, false)
 
     private var frameBuffer = FrameBuffer(Pixmap.Format.RGB888, MIN_WORLD_WIDTH, WORLD_HEIGHT, false)
     private var time = 0f
@@ -96,13 +97,17 @@ class DemoScreen(private val assets: AssetManager) : KtxScreen {
     }
 
     init {
-        engine.addSystem(AnimationSystem(gameScreenState.animationSet))
-        engine.addSystem(SpriteRenderingSystem(batch, gameScreenState.spriteSet))
         logger.level = Logger.INFO
     }
 
     override fun show() {
         super.show()
+        engine.addSystem(AnimationSystem(gameScreenState.animationSet))
+        engine.addSystem(SpriteRenderingSystem(batch, gameScreenState.spriteSet))
+        messageBox.addPool(object : Pool<TouchDown>() {
+            override fun newObject(): TouchDown = TouchDown()
+        })
+        messageBox.register(this)
         Gdx.input.inputProcessor = InputMultiplexer(uiStage, gameScreenState)
         setupStage()
         setupECS()
@@ -113,6 +118,7 @@ class DemoScreen(private val assets: AssetManager) : KtxScreen {
         batch.disposeSafely()
         uiStage.disposeSafely()
         gameScreenState.disposeSafely()
+        messageBox.disposeSafely()
     }
 
     override fun resize(width: Int, height: Int) {
@@ -122,6 +128,13 @@ class DemoScreen(private val assets: AssetManager) : KtxScreen {
         frameBuffer =
             FrameBuffer(Pixmap.Format.RGB888, viewport.worldWidth.toInt(), viewport.worldHeight.toInt(), false)
         gameScreenState.onResize(viewport.worldWidth, viewport.worldHeight)
+    }
+
+    override fun receive(msg: TouchDown) {
+        val pos = Vector2(msg.x.toFloat(), msg.y.toFloat())
+        viewport.unproject(pos)
+        logger.info("Touch event {x: ${pos.x}, y: ${pos.y}, pointer:${msg.pointer}, button: ${msg.button}}")
+        messageBox.returnMessage<TouchDown>(msg)
     }
 
     private fun onTouchDown(x: Int, y: Int, pointer: Int, button: Int) {
