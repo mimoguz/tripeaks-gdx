@@ -61,7 +61,7 @@ class DemoScreen(private val assets: AssetManager) : KtxScreen {
 
     private val blurShader = ShaderProgram(
         javaClass.classLoader.getResource("shaders/basic.vert")?.readText(),
-        javaClass.classLoader.getResource("shaders/blur.frag")?.readText()
+        javaClass.classLoader.getResource("shaders/pixelate.frag")?.readText()
     )
 
     override fun render(delta: Float) {
@@ -86,9 +86,9 @@ class DemoScreen(private val assets: AssetManager) : KtxScreen {
         texture.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest)
         batch.shader = if (dialogShowing) blurShader else null
         batch.use(viewport.camera) {
-            it.setColor(1f, 1f, 1f, 1f)
+            it.setColor(if (dialogShowing) viewport.worldHeight / viewport.worldWidth else 1f, 1f, 1f, 1f)
             it.draw(
-                frameBuffer.colorBufferTexture,
+                texture,
                 viewport.worldWidth * -0.5f,
                 viewport.worldHeight * -0.5f,
                 viewport.worldWidth,
