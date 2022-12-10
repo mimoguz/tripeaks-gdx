@@ -3,12 +3,15 @@ package ogz.tripeaks.screens
 import com.badlogic.ashley.core.PooledEngine
 import com.badlogic.gdx.InputAdapter
 import com.badlogic.gdx.assets.AssetManager
+import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.ShaderProgram
 import com.badlogic.gdx.utils.Disposable
+import com.badlogic.gdx.utils.viewport.Viewport
 import ktx.app.clearScreen
 import ktx.ashley.getSystem
 import ktx.assets.disposeSafely
+import ktx.graphics.use
 import ogz.tripeaks.ecs.AnimationSystem
 import ogz.tripeaks.ecs.SpriteRenderingSystem
 import ogz.tripeaks.graphics.Animations
@@ -17,14 +20,14 @@ import ogz.tripeaks.services.PooledMessageBox
 import ogz.tripeaks.services.TouchDown
 
 /**
- * Helper class to handle the secondary concerns for GameScreen. It keeps and monitors sprite set, animation set, and
- * dialog state. Its methods should be used for setting up relevant parameters for rendering, and updating the ECS.
- * It's also used as input processor for GameScreen.
+ * Helper class to handle the secondary concerns for GameScreen.
+ * It's also an input processor that relays a TouchDown message on touch.
  */
 class GameScreenState(
     private val assets: AssetManager,
     private val engine: PooledEngine,
     private val messageBox: PooledMessageBox,
+    private val viewport: Viewport,
     dark: Boolean = false
 ) : Disposable, InputAdapter() {
 
@@ -33,15 +36,12 @@ class GameScreenState(
         javaClass.classLoader.getResource("shaders/pixelate.frag")?.readText()
     )
 
-    private var aspectRatio = 1f
-
+    private var runEngine: (Float) -> Unit = engine::update
     private var handleTouchDown = this::onTouchDownWhenDialogNotShowing
 
-    var setupRender: (SpriteBatch) -> Unit = this::setupWhenDialogNotShowing
+    var renderScreen: (SpriteBatch, Texture) -> Unit = this::renderWhenDialogNotShowing
         private set
 
-    var runEngine: (Float) -> Unit = engine::update
-        private set
 
     var animationSet = Animations.BLINK
         set(value) {
@@ -64,30 +64,24 @@ class GameScreenState(
         set(value) {
             field = value
             if (value) {
-                setupRender =  this::setupWhenDialogShowing
-                runEngine =  this::runWhenDialogShowing
-                handleTouchDown =  this::onTouchDownWhenDialogShowing
+                renderScreen = this::renderWhenDialogShowing
+                runEngine = this::runWhenDialogShowing
+                handleTouchDown = this::onTouchDownWhenDialogShowing
             } else {
-                setupRender = this::setupWhenDialogNotShowing
+                renderScreen = this::renderWhenDialogNotShowing
                 runEngine = engine::update
                 handleTouchDown = this::onTouchDownWhenDialogNotShowing
             }
         }
 
-    fun onResize(worldWidth: Float, worldHeight: Float) {
-        aspectRatio = worldHeight / worldWidth
-    }
-
-    fun setupFrameBufferRender(batch: SpriteBatch): Unit {
+    fun renderFrameBuffer(batch: SpriteBatch, delta: Float) {
         clearScreen(spriteSet.background.r, spriteSet.background.g, spriteSet.background.b, 1f)
         batch.shader = animationSet.shaderProgram
         batch.enableBlending()
-    }
-
-    fun resetBatch(batch: SpriteBatch) {
-        batch.disableBlending()
-        batch.shader = null
-        batch.setColor(1f, 1f, 1f, 1f)
+        batch.use {
+            runEngine(delta)
+        }
+        resetBatch(batch)
     }
 
     override fun dispose() {
@@ -96,18 +90,48 @@ class GameScreenState(
 
     override fun touchDown(x: Int, y: Int, pointer: Int, button: Int): Boolean = handleTouchDown(x, y, pointer, button)
 
-    private fun setupWhenDialogShowing(batch: SpriteBatch) {
+    private fun renderWhenDialogShowing(batch: SpriteBatch, fbTexture: Texture) {
         clearScreen(0f, 0f, 0f, 1f)
         batch.shader = pixelateShader
-        batch.setColor(aspectRatio, 1f, 1f, 1f)
+        batch.use(viewport.camera) {
+            it.setColor(1f, 1f, 1f, 1f)
+            it.shader.setUniformf("u_worldSize", viewport.worldWidth, viewport.worldHeight)
+            it.draw(
+                fbTexture,
+                viewport.worldWidth * -0.5f,
+                viewport.worldHeight * -0.5f,
+                viewport.worldWidth,
+                viewport.worldHeight,
+                0f,
+                0f,
+                1f,
+                1f
+            )
+        }
+        resetBatch(batch)
     }
 
-    private fun setupWhenDialogNotShowing(batch: SpriteBatch) {
-        clearScreen(0f, 0f, 0f, 1f)
+    private fun renderWhenDialogNotShowing(batch: SpriteBatch, fbTexture: Texture) {
         batch.shader = null
         batch.setColor(1f, 1f, 1f, 1f)
+        batch.use(viewport.camera) {
+            it.setColor(1f, 1f, 1f, 1f)
+            it.draw(
+                fbTexture,
+                viewport.worldWidth * -0.5f,
+                viewport.worldHeight * -0.5f,
+                viewport.worldWidth,
+                viewport.worldHeight,
+                0f,
+                0f,
+                1f,
+                1f
+            )
+        }
+        resetBatch(batch)
     }
 
+    @Suppress("UNUSED_PARAMETER")
     private fun runWhenDialogShowing(delta: Float) {
         engine.update(0f)
     }
@@ -119,8 +143,14 @@ class GameScreenState(
         return true
     }
 
+    @Suppress("UNUSED_PARAMETER")
     private fun onTouchDownWhenDialogShowing(x: Int, y: Int, pointer: Int, button: Int): Boolean {
         return false
+    }
+
+    private fun resetBatch(batch: SpriteBatch) {
+        batch.disableBlending()
+        batch.shader = null
     }
 }
 

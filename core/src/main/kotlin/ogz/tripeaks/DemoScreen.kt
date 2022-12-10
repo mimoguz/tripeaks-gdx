@@ -20,10 +20,10 @@ import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.Logger
 import com.badlogic.gdx.utils.Pool
 import ktx.app.KtxScreen
+import ktx.app.clearScreen
 import ktx.ashley.entity
 import ktx.ashley.with
 import ktx.assets.disposeSafely
-import ktx.graphics.use
 import ktx.scene2d.Scene2DSkin
 import ogz.tripeaks.assets.FontAssets
 import ogz.tripeaks.assets.TextureAtlasAssets
@@ -57,7 +57,7 @@ class DemoScreen(private val assets: AssetManager) : KtxScreen, Receiver<TouchDo
     private val uiStage = Stage(CustomViewport(MIN_WORLD_WIDTH, MAX_WORLD_WIDTH, WORLD_HEIGHT, OrthographicCamera()))
     private val engine = PooledEngine()
     private val messageBox = PooledMessageBox()
-    private val gameScreenState = GameScreenState(assets, engine, messageBox, false)
+    private val gameScreenState = GameScreenState(assets, engine, messageBox, viewport, false)
 
     private var frameBuffer = FrameBuffer(Pixmap.Format.RGB888, MIN_WORLD_WIDTH, WORLD_HEIGHT, false)
     private var time = 0f
@@ -69,30 +69,14 @@ class DemoScreen(private val assets: AssetManager) : KtxScreen, Receiver<TouchDo
         time = (time + delta) % 1f
 
         frameBuffer.begin()
-        gameScreenState.setupFrameBufferRender(batch)
-        batch.use {
-            gameScreenState.runEngine(delta)
-        }
-        gameScreenState.resetBatch(batch)
+        gameScreenState.renderFrameBuffer(batch, delta)
         frameBuffer.end(viewport.screenX, viewport.screenY, viewport.screenWidth, viewport.screenHeight)
 
         val texture = frameBuffer.colorBufferTexture
         texture.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest)
-        gameScreenState.setupRender(batch)
-        batch.use(viewport.camera) {
-            it.draw(
-                texture,
-                viewport.worldWidth * -0.5f,
-                viewport.worldHeight * -0.5f,
-                viewport.worldWidth,
-                viewport.worldHeight,
-                0f,
-                0f,
-                1f,
-                1f
-            )
-        }
-        gameScreenState.resetBatch(batch)
+        clearScreen(0f, 0f, 0f, 1f)
+        gameScreenState.renderScreen(batch, texture)
+
         uiStage.draw()
     }
 
@@ -125,22 +109,19 @@ class DemoScreen(private val assets: AssetManager) : KtxScreen, Receiver<TouchDo
         super.resize(width, height)
         viewport.update(width, height)
         uiStage.viewport.update(width, height, true)
-        frameBuffer =
-            FrameBuffer(Pixmap.Format.RGB888, viewport.worldWidth.toInt(), viewport.worldHeight.toInt(), false)
-        gameScreenState.onResize(viewport.worldWidth, viewport.worldHeight)
+        frameBuffer = FrameBuffer(
+            Pixmap.Format.RGB888,
+            viewport.worldWidth.toInt(),
+            viewport.worldHeight.toInt(),
+            false
+        )
     }
 
-    override fun receive(msg: TouchDown) {
-        val pos = Vector2(msg.x.toFloat(), msg.y.toFloat())
+    override fun receive(message: TouchDown) {
+        val pos = Vector2(message.x.toFloat(), message.y.toFloat())
         viewport.unproject(pos)
-        logger.info("Touch event {x: ${pos.x}, y: ${pos.y}, pointer:${msg.pointer}, button: ${msg.button}}")
-        messageBox.returnMessage<TouchDown>(msg)
-    }
-
-    private fun onTouchDown(x: Int, y: Int, pointer: Int, button: Int) {
-        val pos = Vector2(x.toFloat(), y.toFloat())
-        viewport.unproject(pos)
-        logger.info("Touch event {x: ${pos.x}, y: ${pos.y}, pointer:$pointer, button: $button}")
+        logger.info("Touch event {x: ${pos.x}, y: ${pos.y}, pointer:${message.pointer}, button: ${message.button}}")
+        messageBox.returnMessage<TouchDown>(message)
     }
 
     private fun switchSkin() {
