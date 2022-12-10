@@ -2,6 +2,7 @@ package ogz.tripeaks
 
 import com.badlogic.ashley.core.PooledEngine
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.InputMultiplexer
 import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.OrthographicCamera
@@ -9,18 +10,17 @@ import com.badlogic.gdx.graphics.Pixmap
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.FrameBuffer
-import com.badlogic.gdx.graphics.glutils.ShaderProgram
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Vector2
+import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.utils.Align
+import com.badlogic.gdx.utils.Logger
 import ktx.app.KtxScreen
-import ktx.app.clearScreen
 import ktx.ashley.entity
-import ktx.ashley.getSystem
 import ktx.ashley.with
 import ktx.assets.disposeSafely
 import ktx.graphics.use
@@ -42,27 +42,24 @@ import ogz.tripeaks.graphics.FaceRemovedAnimation
 import ogz.tripeaks.graphics.FaceSprite
 import ogz.tripeaks.graphics.HomeSprite
 import ogz.tripeaks.graphics.ScreenTransitionAnimation
-import ogz.tripeaks.graphics.SpriteSet
+import ogz.tripeaks.screens.GameScreenState
 import ogz.tripeaks.ui.LabelButton
 
 class DemoScreen(private val assets: AssetManager) : KtxScreen {
+
+    private val logger = Logger(DemoScreen::class.java.simpleName)
 
     private val batch = SpriteBatch()
     private val viewport = CustomViewport(MIN_WORLD_WIDTH, MAX_WORLD_WIDTH, WORLD_HEIGHT, OrthographicCamera())
     private val uiStage = Stage(CustomViewport(MIN_WORLD_WIDTH, MAX_WORLD_WIDTH, WORLD_HEIGHT, OrthographicCamera()))
     private val engine = PooledEngine()
 
-    private var animationSet = Animations.BLINK
-    private var spriteSet = SpriteSet(false, 0, assets)
-    private var frameBuffer = FrameBuffer(Pixmap.Format.RGB888, MIN_WORLD_WIDTH, WORLD_HEIGHT, false)
-    private var isDark = false
-    private var time = 0f
-    private var dialogShowing = false
+    private val gameScreenState = GameScreenState(assets, engine, false).apply {
+        onTouchDown = this@DemoScreen::onTouchDown
+    }
 
-    private val blurShader = ShaderProgram(
-        javaClass.classLoader.getResource("shaders/basic.vert")?.readText(),
-        javaClass.classLoader.getResource("shaders/pixelate.frag")?.readText()
-    )
+    private var frameBuffer = FrameBuffer(Pixmap.Format.RGB888, MIN_WORLD_WIDTH, WORLD_HEIGHT, false)
+    private var time = 0f
 
     override fun render(delta: Float) {
         viewport.apply()
@@ -71,22 +68,17 @@ class DemoScreen(private val assets: AssetManager) : KtxScreen {
         time = (time + delta) % 1f
 
         frameBuffer.begin()
-        clearScreen(spriteSet.background.r, spriteSet.background.g, spriteSet.background.b, 1f)
-        batch.shader = animationSet.shaderProgram
-        batch.enableBlending()
+        gameScreenState.setupFrameBufferRender(batch)
         batch.use {
-            engine.update(if (dialogShowing) 0f else delta)
+            gameScreenState.runEngine(delta)
         }
-        batch.disableBlending()
-        batch.shader = null
+        gameScreenState.resetBatch(batch)
         frameBuffer.end(viewport.screenX, viewport.screenY, viewport.screenWidth, viewport.screenHeight)
 
-        clearScreen(0f, 0f, 0f, 1f)
         val texture = frameBuffer.colorBufferTexture
         texture.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest)
-        batch.shader = if (dialogShowing) blurShader else null
+        gameScreenState.setupRender(batch)
         batch.use(viewport.camera) {
-            it.setColor(if (dialogShowing) viewport.worldHeight / viewport.worldWidth else 1f, 1f, 1f, 1f)
             it.draw(
                 texture,
                 viewport.worldWidth * -0.5f,
@@ -98,16 +90,20 @@ class DemoScreen(private val assets: AssetManager) : KtxScreen {
                 1f,
                 1f
             )
-            it.setColor(1f, 1f, 1f, 1f)
         }
-        batch.shader = null
+        gameScreenState.resetBatch(batch)
         uiStage.draw()
+    }
+
+    init {
+        engine.addSystem(AnimationSystem(gameScreenState.animationSet))
+        engine.addSystem(SpriteRenderingSystem(batch, gameScreenState.spriteSet))
+        logger.level = Logger.INFO
     }
 
     override fun show() {
         super.show()
-        Gdx.input.inputProcessor = uiStage
-        Animations.setTheme(isDark)
+        Gdx.input.inputProcessor = InputMultiplexer(uiStage, gameScreenState)
         setupStage()
         setupECS()
     }
@@ -116,6 +112,7 @@ class DemoScreen(private val assets: AssetManager) : KtxScreen {
         assets.disposeSafely()
         batch.disposeSafely()
         uiStage.disposeSafely()
+        gameScreenState.disposeSafely()
     }
 
     override fun resize(width: Int, height: Int) {
@@ -124,12 +121,19 @@ class DemoScreen(private val assets: AssetManager) : KtxScreen {
         uiStage.viewport.update(width, height, true)
         frameBuffer =
             FrameBuffer(Pixmap.Format.RGB888, viewport.worldWidth.toInt(), viewport.worldHeight.toInt(), false)
+        gameScreenState.onResize(viewport.worldWidth, viewport.worldHeight)
+    }
+
+    private fun onTouchDown(x: Int, y: Int, pointer: Int, button: Int) {
+        val pos = Vector2(x.toFloat(), y.toFloat())
+        viewport.unproject(pos)
+        logger.info("Touch event {x: ${pos.x}, y: ${pos.y}, pointer:$pointer, button: $button}")
     }
 
     private fun switchSkin() {
-        isDark = !isDark
+        gameScreenState.isDark = !gameScreenState.isDark
         Scene2DSkin.defaultSkin =
-            if (isDark)
+            if (gameScreenState.isDark)
                 UiSkin(
                     assets[TextureAtlasAssets.Ui],
                     assets[FontAssets.GamePixels],
@@ -145,15 +149,13 @@ class DemoScreen(private val assets: AssetManager) : KtxScreen {
                     LIGHT_UI_EMPHASIS,
                     "light"
                 )
-        spriteSet = SpriteSet(isDark, 0, assets)
-        engine.getSystem<SpriteRenderingSystem>().spriteSet = spriteSet
-        Animations.setTheme(isDark)
         setupStage()
     }
 
     private fun switchAnimation() {
-        animationSet = if (animationSet === Animations.DISSOLVE) Animations.BLINK else Animations.DISSOLVE
-        engine.getSystem<AnimationSystem>().animationSet = animationSet
+        gameScreenState.animationSet =
+            if (gameScreenState.animationSet === Animations.DISSOLVE) Animations.BLINK
+            else Animations.DISSOLVE
     }
 
     private fun setupStage() {
@@ -185,32 +187,27 @@ class DemoScreen(private val assets: AssetManager) : KtxScreen {
         val dialog = Dialog("", Scene2DSkin.defaultSkin).also { dialog ->
             dialog.contentTable.apply {
                 add(Label("UI test", Scene2DSkin.defaultSkin))
-                pad(4f, 8f,4f, 8f)
+                pad(4f, 8f, 4f, 8f)
             }
             dialog.buttonTable.apply {
                 add(LabelButton(Scene2DSkin.defaultSkin, "Close").apply {
                     onClick {
                         dialog.hide()
-                        this@DemoScreen.dialogShowing = false
+                        this@DemoScreen.gameScreenState.dialogShowing = false
                     }
                 })
             }
         }
-        dialogShowing = true
+        gameScreenState.dialogShowing = true
         dialog.show(uiStage)
     }
 
     private fun setupECS() {
-        engine.apply {
-            removeAllSystems()
-            removeAllEntities()
-            addSystem(AnimationSystem(animationSet))
-            addSystem(SpriteRenderingSystem(batch, spriteSet))
-        }
+        engine.removeAllEntities()
 
         engine.entity {
             val spriteType = HomeSprite
-            val sprite = spriteType.get(spriteSet)
+            val sprite = spriteType.get(gameScreenState.spriteSet)
 
             with<TransformComponent> {
                 position = Vector2(sprite.regionWidth * -0.5f, sprite.regionHeight * -0.5f)
@@ -233,7 +230,7 @@ class DemoScreen(private val assets: AssetManager) : KtxScreen {
         // Card
         engine.entity {
             val spriteType = CardSprite
-            val sprite = spriteType.get(spriteSet)
+            val sprite = spriteType.get(gameScreenState.spriteSet)
 
             with<TransformComponent> {
                 origin = Vector2(
@@ -258,7 +255,7 @@ class DemoScreen(private val assets: AssetManager) : KtxScreen {
         // Card face
         engine.entity {
             val spriteType = FaceSprite(1)
-            val sprite = spriteType.get(spriteSet)
+            val sprite = spriteType.get(gameScreenState.spriteSet)
             with<TransformComponent> {
                 origin = Vector2(
                     MathUtils.floor(sprite.regionWidth * 0.5f).toFloat(),
