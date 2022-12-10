@@ -6,6 +6,7 @@ precision mediump float;
 #endif
 
 #define PIXEL_DENSITY 128.0
+#define DARKENING 0.6
 
 // I use vertex colors to pass various parameters.
 // For this shader, r channel is aspect ratio.
@@ -20,9 +21,9 @@ void main() {
     vec2 uv = round(v_texCoords * pixelScaling) / pixelScaling;
     vec4 outColor = texture2D(u_texture, uv);
     gl_FragColor = vec4(
-        outColor.r * 0.6,
-        outColor.g * 0.6,
-        outColor.b * 0.6,
+        outColor.r * DARKENING,
+        outColor.g * DARKENING,
+        outColor.b * DARKENING,
         outColor.a
     );
 }
