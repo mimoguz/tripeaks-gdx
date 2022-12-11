@@ -14,13 +14,11 @@ import ktx.graphics.use
 
 class RenderHelper(private val batch: SpriteBatch, private val viewport: Viewport, private val engine: PooledEngine) : Disposable {
 
-    private var screenShader: ShaderProgram? = null
-
     private var renderMethod = this::renderScreen
 
     private val blurShader = ShaderProgram(
-        javaClass.classLoader.getResource("shaders/basic.vert")?.readText(),
-        javaClass.classLoader.getResource("shaders/pixelate.frag")?.readText()
+        javaClass.classLoader.getResource("shaders/basic.vert")!!.readText(),
+        javaClass.classLoader.getResource("shaders/pixelate.frag")!!.readText()
     )
 
     var fbShader: ShaderProgram? = null
@@ -30,7 +28,6 @@ class RenderHelper(private val batch: SpriteBatch, private val viewport: Viewpor
     var blurred: Boolean = false
         set(value) {
             field = value
-            screenShader = if (value) blurShader else null
             renderMethod = if (value) this::renderScreenBlurred else this::renderScreen
         }
 
