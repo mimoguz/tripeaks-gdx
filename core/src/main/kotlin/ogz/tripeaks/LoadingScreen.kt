@@ -11,6 +11,7 @@ import ogz.tripeaks.assets.TextureAtlasAssets
 import ogz.tripeaks.assets.UiSkin
 import ogz.tripeaks.assets.get
 import ogz.tripeaks.assets.load
+import ogz.tripeaks.screens.GameScreen
 
 class LoadingScreen(private val game: Main) : KtxScreen {
 
@@ -31,8 +32,8 @@ class LoadingScreen(private val game: Main) : KtxScreen {
                 Color(224 / 244f, 122f / 255f, 95f / 255f, 1f),
                 "light"
             )
-            game.addScreen(DemoScreen(assets))
-            game.setScreen<DemoScreen>()
+            game.addScreen(GameScreen(assets))
+            game.setScreen<GameScreen>()
             game.removeScreen<LoadingScreen>()
             Gdx.graphics.requestRendering()
             dispose()

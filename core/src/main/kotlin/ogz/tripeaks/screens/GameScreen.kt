@@ -1,4 +1,4 @@
-package ogz.tripeaks
+package ogz.tripeaks.screens
 
 import com.badlogic.ashley.core.PooledEngine
 import com.badlogic.gdx.Gdx
@@ -7,7 +7,6 @@ import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.Pixmap
-import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.FrameBuffer
 import com.badlogic.gdx.math.MathUtils
@@ -20,8 +19,8 @@ import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.Logger
 import com.badlogic.gdx.utils.Pool
 import ktx.app.KtxScreen
-import ktx.app.clearScreen
 import ktx.ashley.entity
+import ktx.ashley.getSystem
 import ktx.ashley.with
 import ktx.assets.disposeSafely
 import ktx.scene2d.Scene2DSkin
@@ -42,66 +41,62 @@ import ogz.tripeaks.graphics.FaceRemovedAnimation
 import ogz.tripeaks.graphics.FaceSprite
 import ogz.tripeaks.graphics.HomeSprite
 import ogz.tripeaks.graphics.ScreenTransitionAnimation
-import ogz.tripeaks.screens.GameScreenState
+import ogz.tripeaks.graphics.SpriteSet
 import ogz.tripeaks.services.PooledMessageBox
 import ogz.tripeaks.services.Receiver
 import ogz.tripeaks.services.TouchDown
 import ogz.tripeaks.ui.LabelButton
 
-class DemoScreen(private val assets: AssetManager) : KtxScreen, Receiver<TouchDown> {
+class GameScreen(private val assets: AssetManager) : KtxScreen, Receiver<TouchDown> {
 
-    private val logger = Logger(DemoScreen::class.java.simpleName)
+    private val logger = Logger(GameScreen::class.java.simpleName)
 
     private val batch = SpriteBatch()
     private val viewport = CustomViewport(MIN_WORLD_WIDTH, MAX_WORLD_WIDTH, WORLD_HEIGHT, OrthographicCamera())
     private val uiStage = Stage(CustomViewport(MIN_WORLD_WIDTH, MAX_WORLD_WIDTH, WORLD_HEIGHT, OrthographicCamera()))
     private val engine = PooledEngine()
     private val messageBox = PooledMessageBox()
-    private val gameScreenState = GameScreenState(assets, engine, messageBox, viewport, false)
+    private val renderHelper = RenderHelper(batch, viewport, engine)
+    private val touchHandler = TouchHandler(messageBox)
+
+    private var spriteSet = SpriteSet(false, 0, assets)
+    private var animationSet = Animations.DISSOLVE
 
     private var frameBuffer = FrameBuffer(Pixmap.Format.RGB888, MIN_WORLD_WIDTH, WORLD_HEIGHT, false)
-    private var time = 0f
+
+    init {
+        logger.level = Logger.INFO
+        renderHelper.fbShader = animationSet.shaderProgram
+        renderHelper.clearColor = LIGHT_UI_BG
+    }
 
     override fun render(delta: Float) {
         viewport.apply()
         uiStage.viewport.apply()
         uiStage.act(delta)
-        time = (time + delta) % 1f
-
-        frameBuffer.begin()
-        gameScreenState.renderFrameBuffer(batch, delta)
-        frameBuffer.end(viewport.screenX, viewport.screenY, viewport.screenWidth, viewport.screenHeight)
-
-        val texture = frameBuffer.colorBufferTexture
-        texture.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest)
-        clearScreen(0f, 0f, 0f, 1f)
-        gameScreenState.renderScreen(batch, texture)
-
+        renderHelper.render(frameBuffer, delta)
         uiStage.draw()
-    }
-
-    init {
-        logger.level = Logger.INFO
     }
 
     override fun show() {
         super.show()
-        engine.addSystem(AnimationSystem(gameScreenState.animationSet))
-        engine.addSystem(SpriteRenderingSystem(batch, gameScreenState.spriteSet))
+        engine.addSystem(AnimationSystem(animationSet))
+        engine.addSystem(SpriteRenderingSystem(batch, spriteSet))
         messageBox.addPool(object : Pool<TouchDown>() {
             override fun newObject(): TouchDown = TouchDown()
         })
         messageBox.register(this)
-        Gdx.input.inputProcessor = InputMultiplexer(uiStage, gameScreenState)
+        Gdx.input.inputProcessor = InputMultiplexer(uiStage, touchHandler)
         setupStage()
         setupECS()
     }
 
     override fun dispose() {
+        messageBox.unregister(this)
+        renderHelper.disposeSafely()
         assets.disposeSafely()
         batch.disposeSafely()
         uiStage.disposeSafely()
-        gameScreenState.disposeSafely()
         messageBox.disposeSafely()
     }
 
@@ -118,16 +113,19 @@ class DemoScreen(private val assets: AssetManager) : KtxScreen, Receiver<TouchDo
     }
 
     override fun receive(message: TouchDown) {
-        val pos = Vector2(message.x.toFloat(), message.y.toFloat())
+        val pos = Vector2(message.screenX.toFloat(), message.screenY.toFloat())
         viewport.unproject(pos)
         logger.info("Touch event {x: ${pos.x}, y: ${pos.y}, pointer:${message.pointer}, button: ${message.button}}")
         messageBox.returnMessage<TouchDown>(message)
     }
 
     private fun switchSkin() {
-        gameScreenState.isDark = !gameScreenState.isDark
+        spriteSet = SpriteSet(!spriteSet.isDark, 0, assets)
+        engine.getSystem<SpriteRenderingSystem>().spriteSet = spriteSet
+        renderHelper.clearColor = if (spriteSet.isDark) DARK_UI_BG else LIGHT_UI_BG
+        Animations.setTheme(spriteSet.isDark)
         Scene2DSkin.defaultSkin =
-            if (gameScreenState.isDark)
+            if (spriteSet.isDark)
                 UiSkin(
                     assets[TextureAtlasAssets.Ui],
                     assets[FontAssets.GamePixels],
@@ -147,9 +145,11 @@ class DemoScreen(private val assets: AssetManager) : KtxScreen, Receiver<TouchDo
     }
 
     private fun switchAnimation() {
-        gameScreenState.animationSet =
-            if (gameScreenState.animationSet === Animations.DISSOLVE) Animations.BLINK
+        animationSet =
+            if (animationSet === Animations.DISSOLVE) Animations.BLINK
             else Animations.DISSOLVE
+        renderHelper.fbShader = animationSet.shaderProgram
+        engine.getSystem<AnimationSystem>().animationSet = animationSet
     }
 
     private fun setupStage() {
@@ -187,12 +187,14 @@ class DemoScreen(private val assets: AssetManager) : KtxScreen, Receiver<TouchDo
                 add(LabelButton(Scene2DSkin.defaultSkin, "Close").apply {
                     onClick {
                         dialog.hide()
-                        this@DemoScreen.gameScreenState.dialogShowing = false
+                        this@GameScreen.touchHandler.slient = false
+                        this@GameScreen.renderHelper.blurred = false
                     }
                 })
             }
         }
-        gameScreenState.dialogShowing = true
+        touchHandler.slient = true
+        renderHelper.blurred = true
         dialog.show(uiStage)
     }
 
@@ -201,7 +203,7 @@ class DemoScreen(private val assets: AssetManager) : KtxScreen, Receiver<TouchDo
 
         engine.entity {
             val spriteType = HomeSprite
-            val sprite = spriteType.get(gameScreenState.spriteSet)
+            val sprite = spriteType.get(spriteSet)
 
             with<TransformComponent> {
                 position = Vector2(sprite.regionWidth * -0.5f, sprite.regionHeight * -0.5f)
@@ -224,7 +226,7 @@ class DemoScreen(private val assets: AssetManager) : KtxScreen, Receiver<TouchDo
         // Card
         engine.entity {
             val spriteType = CardSprite
-            val sprite = spriteType.get(gameScreenState.spriteSet)
+            val sprite = spriteType.get(spriteSet)
 
             with<TransformComponent> {
                 origin = Vector2(
@@ -249,7 +251,7 @@ class DemoScreen(private val assets: AssetManager) : KtxScreen, Receiver<TouchDo
         // Card face
         engine.entity {
             val spriteType = FaceSprite(1)
-            val sprite = spriteType.get(gameScreenState.spriteSet)
+            val sprite = spriteType.get(spriteSet)
             with<TransformComponent> {
                 origin = Vector2(
                     MathUtils.floor(sprite.regionWidth * 0.5f).toFloat(),
@@ -277,6 +279,8 @@ class DemoScreen(private val assets: AssetManager) : KtxScreen, Receiver<TouchDo
         val DARK_UI_EMPHASIS = rgb(184, 55, 68)
         val LIGHT_UI_TEXT = rgb(76, 56, 77)
         val LIGHT_UI_EMPHASIS = rgb(224, 122, 95)
+        val DARK_UI_BG = Color.valueOf("232433ff")
+        val LIGHT_UI_BG = Color.valueOf("63a347ff")
 
         private fun rgb(r: Int, g: Int, b: Int): Color = Color(r / 255f, g / 255f, b / 255f, 1f)
     }

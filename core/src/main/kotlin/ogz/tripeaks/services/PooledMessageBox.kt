@@ -53,20 +53,20 @@ interface Receiver<M> {
     fun receive(message: M)
 }
 
-class TouchDown(var x: Int, var y: Int, var pointer: Int, var button: Int) : Message {
+class TouchDown(var screenX: Int, var screenY: Int, var pointer: Int, var button: Int) : Message {
 
     constructor() : this(Int.MIN_VALUE, Int.MIN_VALUE, Int.MIN_VALUE, Int.MIN_VALUE)
 
     override fun reset() {
-        x = Int.MIN_VALUE
-        y = Int.MIN_VALUE
+        screenX = Int.MIN_VALUE
+        screenY = Int.MIN_VALUE
         pointer = Int.MIN_VALUE
         button = Int.MIN_VALUE
     }
 
     fun set( x: Int, y: Int, pointer: Int, button: Int) {
-        this.x = x
-        this.y = y
+        this.screenX = x
+        this.screenY = y
         this.pointer = pointer
         this.button = button
     }
