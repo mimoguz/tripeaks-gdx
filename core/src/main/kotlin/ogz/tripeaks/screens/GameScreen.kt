@@ -42,6 +42,8 @@ import ogz.tripeaks.graphics.FaceSprite
 import ogz.tripeaks.graphics.HomeSprite
 import ogz.tripeaks.graphics.ScreenTransitionAnimation
 import ogz.tripeaks.graphics.SpriteSet
+import ogz.tripeaks.models.GameState
+import ogz.tripeaks.services.PersistenceService
 import ogz.tripeaks.services.PooledMessageBox
 import ogz.tripeaks.services.Receiver
 import ogz.tripeaks.services.TouchDown
@@ -64,6 +66,8 @@ class GameScreen(private val assets: AssetManager) : KtxScreen, Receiver<TouchDo
 
     private var frameBuffer = FrameBuffer(Pixmap.Format.RGB888, MIN_WORLD_WIDTH, WORLD_HEIGHT, false)
 
+    private var play: GameState? = null
+
     init {
         logger.level = Logger.INFO
         renderHelper.fbShader = animationSet.shaderProgram
@@ -80,6 +84,11 @@ class GameScreen(private val assets: AssetManager) : KtxScreen, Receiver<TouchDo
 
     override fun show() {
         super.show()
+
+        play = PersistenceService().loadGame() ?: GameState.startNew(IntArray(52) { it }, null)
+        play?.statistics?.unregister()
+        play?.statistics?.register(messageBox)
+
         engine.addSystem(AnimationSystem(animationSet))
         engine.addSystem(SpriteRenderingSystem(batch, spriteSet))
         messageBox.addPool(object : Pool<TouchDown>() {
@@ -89,6 +98,16 @@ class GameScreen(private val assets: AssetManager) : KtxScreen, Receiver<TouchDo
         Gdx.input.inputProcessor = InputMultiplexer(uiStage, touchHandler)
         setupStage()
         setupECS()
+    }
+
+    override fun resume() {
+        super.resume()
+        play = play ?: PersistenceService().loadGame()
+    }
+
+    override fun pause() {
+        super.pause()
+        play?.also { PersistenceService().saveGame(it) }
     }
 
     override fun dispose() {
@@ -104,12 +123,14 @@ class GameScreen(private val assets: AssetManager) : KtxScreen, Receiver<TouchDo
         super.resize(width, height)
         viewport.update(width, height)
         uiStage.viewport.update(width, height, true)
-        frameBuffer = FrameBuffer(
-            Pixmap.Format.RGB888,
-            viewport.worldWidth.toInt(),
-            viewport.worldHeight.toInt(),
-            false
-        )
+        if (viewport.worldHeight > 0 && viewport.worldWidth > 0) {
+            frameBuffer = FrameBuffer(
+                Pixmap.Format.RGB888,
+                viewport.worldWidth.toInt(),
+                viewport.worldHeight.toInt(),
+                false
+            )
+        }
     }
 
     override fun receive(message: TouchDown) {

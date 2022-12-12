@@ -7,7 +7,7 @@ import ogz.tripeaks.models.layout.Layout
 
 @Suppress("unused")
 class GameState private constructor(
-    private var state: Int,
+    var statistics: PlayStatistics,
     private var layout: Layout,
     private var sockets: GdxArray<SocketState>,
     private var stack: GdxIntArray,
@@ -26,7 +26,7 @@ class GameState private constructor(
      * use GameState::startNew method instead.
      */
     constructor() : this(
-        state = 0,
+        statistics = PlayStatistics(BasicLayout.TAG),
         layout = BasicLayout(),
         sockets = GdxArray(),
         stack = GdxIntArray(),
@@ -34,9 +34,6 @@ class GameState private constructor(
         canEmptyDiscard = true,
         stalledBefore = true,
     )
-
-    val currentState: Int
-        get() = state
 
     /** Are there any moves we can take back? */
     val canUndo: Boolean
@@ -67,10 +64,6 @@ class GameState private constructor(
     /** Is the game stalled? */
     val stalled: Boolean
         get() = !(discard.isEmpty || canTakeAny || canDeal)
-
-    fun step() {
-        state += 1
-    }
 
     /** Removes the card at the socket it can. */
     fun take(socketIndex: Int): Boolean {
@@ -103,12 +96,13 @@ class GameState private constructor(
     // TODO: Do I really need a return value here?
     /**
      * Undo the last move, and return the cards socket number (-1 if the card came form the stack).
+     * Return Int.MIN_VALUE if the is nothing to undo.
      * It's return value is used to update tableau visuals.
      */
-    fun undo(): Int? {
+    fun undo(): Int {
         // Discard is empty, there are no moves to undo.
         if (!canUndo) {
-            return null
+            Int.MIN_VALUE
         }
 
         val card = discard.pop()
@@ -138,6 +132,7 @@ class GameState private constructor(
             require(cards.size == 52 && cards.distinct().size == cards.size && cards.all { it in 0..51 })
 
             val layout = BasicLayout()
+            val statistics = PlayStatistics(layout.tag)
             val emptyDiscard = false
             val sockets = GdxArray<SocketState>(layout.numberOfSockets)
             val stack = GdxIntArray.with()
@@ -158,7 +153,7 @@ class GameState private constructor(
             }
 
             return GameState(
-                state = 0,
+                statistics = statistics,
                 layout = layout,
                 sockets = sockets,
                 stack = stack,

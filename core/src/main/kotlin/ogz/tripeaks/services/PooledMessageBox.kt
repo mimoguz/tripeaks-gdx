@@ -49,7 +49,7 @@ class PooledMessageBox : Disposable {
 
 interface Message : Poolable
 
-interface Receiver<M> {
+fun interface Receiver<M> {
     fun receive(message: M)
 }
 
@@ -69,5 +69,38 @@ class TouchDown(var screenX: Int, var screenY: Int, var pointer: Int, var button
         this.screenY = y
         this.pointer = pointer
         this.button = button
+    }
+}
+
+class Undo(var target: Int) : Message {
+
+    override fun reset() {
+        target = 0
+    }
+
+    val targetIsInvalid
+        get() = target < -1
+
+    val targetIsDeck
+        get() = target == -1
+
+    val targetIsTableau
+        get() = target > -1
+}
+
+class Take(var socketIndex: Int): Message {
+
+    override fun reset() {
+        socketIndex = Int.MIN_VALUE
+    }
+
+    val isValid
+        get() = socketIndex >= 0
+}
+
+class Deal(): Message {
+
+    override fun reset() {
+        // Nothing to do
     }
 }
