@@ -5,6 +5,9 @@ import ktx.collections.GdxIntArray
 import ogz.tripeaks.models.layout.BasicLayout
 import ogz.tripeaks.models.layout.Layout
 
+/**
+ * GameScreen should use this directly.
+ */
 @Suppress("unused")
 class GameState private constructor(
     var statistics: GameStatistics,
@@ -20,7 +23,6 @@ class GameState private constructor(
      */
     private var stalledBefore: Boolean,
 ) {
-
     /**
      * Empty constructor that's required for de-serialization. Don't use this directly,
      * use GameState::startNew method instead.
@@ -74,6 +76,7 @@ class GameState private constructor(
             sockets[socketIndex].isEmpty = true
             discard.add(sockets[socketIndex].card)
             stalledBefore = stalledBefore || stalled
+            statistics.onTake()
             return true
         }
         return false
@@ -84,6 +87,7 @@ class GameState private constructor(
         if (canDeal) {
             discard.add(stack.pop())
             stalledBefore = stalledBefore || stalled
+            statistics.onDeal()
             return true
         }
         return false
@@ -107,14 +111,14 @@ class GameState private constructor(
 
         val card = discard.pop()
         val socketIndex = sockets.indexOfFirst { it.card == card }
-        if (socketIndex < 0) {
+        if (socketIndex == -1) {
             // Card wasn't from the tableau.
             stack.add(card)
         } else {
             // Restore the socket.
             sockets[socketIndex].isEmpty = false
         }
-
+        statistics.onUndo(socketIndex)
         return socketIndex
     }
 

@@ -5,23 +5,39 @@ import com.badlogic.gdx.utils.Json
 import com.badlogic.gdx.utils.Logger
 import com.badlogic.gdx.utils.SerializationException
 import ogz.tripeaks.models.GameState
+import ogz.tripeaks.models.PlayerStatistics
 import java.time.Instant
 
 class PersistenceService {
-
     private val logger = Logger(PersistenceService::class.simpleName)
 
     init {
         logger.level = Logger.ERROR
     }
 
-    fun saveGame(current: GameState) {
+    fun saveGameState(current: GameState) {
+        save(current, SAVE_FILE, SAVE_KEY)
+    }
+
+    fun loadGameState(): GameState? {
+        return load(GameState::class.java, SAVE_FILE, SAVE_KEY)
+    }
+
+    fun savePlayerStatistics(current: PlayerStatistics) {
+        save(current, STATISTICS_FILE, STATISTICS_KEY)
+    }
+
+    fun loadPlayerStatistics(): PlayerStatistics? {
+        return load(PlayerStatistics::class.java, STATISTICS_FILE, STATISTICS_KEY)
+    }
+
+    private fun <T> save(current: T, file: String, key: String) {
         try {
-            val prefs = Gdx.app.getPreferences(SAVE_FILE)
+            val prefs = Gdx.app.getPreferences(file)
             val json = Json().toJson(current)
             // Yes, I'm putting JSON in preferences.
             // Is there another easy and cross-platform way to write save data to correct place?
-            prefs.putString(SAVE_KEY, json)
+            prefs.putString(key, json)
             prefs.flush()
         } catch (e: Exception) {
             logger.error("${Instant.now()} - Save error (unhandled): ${e.message}")
@@ -29,12 +45,12 @@ class PersistenceService {
         }
     }
 
-    fun loadGame(): GameState? {
-        val prefs = Gdx.app.getPreferences(SAVE_FILE)
+    private fun <T> load(cls: Class<T>, file: String, key: String): T? {
+        val prefs = Gdx.app.getPreferences(file)
         try {
-            val save = prefs.getString(SAVE_KEY, null) ?: return null
+            val save = prefs.getString(key, null) ?: return null
             val json = Json()
-            return json.fromJson(GameState::class.java, save)
+            return json.fromJson(cls, save)
         } catch (e: Exception) {
             when (e) {
                 is NullPointerException,
@@ -53,6 +69,9 @@ class PersistenceService {
     companion object {
         const val SAVE_FILE = "ogz.tripeaks.save.preferences"
         const val SAVE_KEY = "save"
+
+        const val STATISTICS_FILE = "ogz.tripeaks.statistics.preferences"
+        const val STATISTICS_KEY = "statistics"
     }
 }
 

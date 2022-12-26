@@ -1,10 +1,10 @@
 package ogz.tripeaks.screens
 
 import com.badlogic.gdx.InputAdapter
-import ogz.tripeaks.services.PooledMessageBox
+import ogz.tripeaks.services.MessageBox
 import ogz.tripeaks.services.TouchDown
 
-class TouchHandler(private val messageBox: PooledMessageBox) : InputAdapter() {
+class TouchHandler(private val messageBox: MessageBox) : InputAdapter() {
 
     var slient = false
 

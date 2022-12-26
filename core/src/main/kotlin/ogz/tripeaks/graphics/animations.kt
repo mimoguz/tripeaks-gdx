@@ -160,7 +160,7 @@ object Animations {
         override var param: Float = 0f
     }
 
-    val ALL =  listOf(DISSOLVE, BLINK);
+    val ALL =  listOf(DISSOLVE, BLINK)
 
     fun setTheme(dark: Boolean) {
         val value = if (dark) 1f else 0f;

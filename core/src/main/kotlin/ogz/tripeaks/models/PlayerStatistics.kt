@@ -3,24 +3,23 @@ package ogz.tripeaks.models
 import com.badlogic.gdx.utils.Json
 import com.badlogic.gdx.utils.JsonValue
 import ktx.collections.GdxArray
-import ogz.tripeaks.services.FirstMove
-import ogz.tripeaks.services.PooledMessageBox
+import ktx.collections.gdxArrayOf
+import ogz.tripeaks.services.Messages
+import ogz.tripeaks.services.MessageBox
 import ogz.tripeaks.services.Receiver
-import ogz.tripeaks.services.Win
 
 class PlayerStatistics(
     var played: Int,
     var won: Int,
     var layoutStatistics: GdxArray<LayoutStatistics>,
 ) : Json.Serializable {
+    constructor() : this(played = 0, won = 0, layoutStatistics = gdxArrayOf())
 
-    constructor() : this(played = 0, won = 0, layoutStatistics = GdxArray.of(LayoutStatistics::class.java))
+    private val winReceiver: Receiver<Messages.Win> = Receiver { addWin(it.gameStatistics) }
+    private val firstMoveReceiver: Receiver<Messages.FirstMove> = Receiver { updatePlayed() }
+    private var messageBox: MessageBox? = null
 
-    private val winReceiver: Receiver<Win> = Receiver { addWin(it.gameStatistics) }
-    private val firstMoveReceiver: Receiver<FirstMove> = Receiver { updatePlayed() }
-    private var messageBox: PooledMessageBox? = null
-
-    fun register(messageBox: PooledMessageBox) {
+    fun register(messageBox: MessageBox) {
         this.messageBox = messageBox
         messageBox.register(winReceiver)
         messageBox.register(firstMoveReceiver)
@@ -35,10 +34,7 @@ class PlayerStatistics(
         played += 1
     }
 
-    private fun addWin(gameStatistics: GameStatistics?) {
-        if (gameStatistics == null) {
-            return
-        }
+    private fun addWin(gameStatistics: GameStatistics) {
         won += 1
         var stats = layoutStatistics.find { it.tag == gameStatistics.layoutTag }
         if (stats == null) {

@@ -17,7 +17,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.Logger
-import com.badlogic.gdx.utils.Pool
 import ktx.app.KtxScreen
 import ktx.ashley.entity
 import ktx.ashley.getSystem
@@ -44,12 +43,12 @@ import ogz.tripeaks.graphics.ScreenTransitionAnimation
 import ogz.tripeaks.graphics.SpriteSet
 import ogz.tripeaks.models.GameState
 import ogz.tripeaks.services.PersistenceService
-import ogz.tripeaks.services.PooledMessageBox
+import ogz.tripeaks.services.MessageBox
 import ogz.tripeaks.services.Receiver
-import ogz.tripeaks.services.TouchDown
+import ogz.tripeaks.services.Messages
 import ogz.tripeaks.ui.LabelButton
 
-class GameScreen(private val assets: AssetManager) : KtxScreen, Receiver<TouchDown> {
+class GameScreen(private val assets: AssetManager) : KtxScreen, Receiver<Messages.TouchDown> {
 
     private val logger = Logger(GameScreen::class.java.simpleName)
 
@@ -57,7 +56,7 @@ class GameScreen(private val assets: AssetManager) : KtxScreen, Receiver<TouchDo
     private val viewport = CustomViewport(MIN_WORLD_WIDTH, MAX_WORLD_WIDTH, WORLD_HEIGHT, OrthographicCamera())
     private val uiStage = Stage(CustomViewport(MIN_WORLD_WIDTH, MAX_WORLD_WIDTH, WORLD_HEIGHT, OrthographicCamera()))
     private val engine = PooledEngine()
-    private val messageBox = PooledMessageBox()
+    private val messageBox = MessageBox()
     private val renderHelper = RenderHelper(batch, viewport, engine)
     private val touchHandler = TouchHandler(messageBox)
 
@@ -85,15 +84,10 @@ class GameScreen(private val assets: AssetManager) : KtxScreen, Receiver<TouchDo
     override fun show() {
         super.show()
 
-        play = PersistenceService().loadGame() ?: GameState.startNew(IntArray(52) { it }, null)
-        play?.statistics?.unregister()
-        play?.statistics?.register(messageBox)
+        play = PersistenceService().loadGameState() ?: GameState.startNew(IntArray(52) { it }, null)
 
         engine.addSystem(AnimationSystem(animationSet))
         engine.addSystem(SpriteRenderingSystem(batch, spriteSet))
-        messageBox.addPool(object : Pool<TouchDown>() {
-            override fun newObject(): TouchDown = TouchDown()
-        })
         messageBox.register(this)
         Gdx.input.inputProcessor = InputMultiplexer(uiStage, touchHandler)
         setupStage()
@@ -102,12 +96,12 @@ class GameScreen(private val assets: AssetManager) : KtxScreen, Receiver<TouchDo
 
     override fun resume() {
         super.resume()
-        play = play ?: PersistenceService().loadGame()
+        play = play ?: PersistenceService().loadGameState()
     }
 
     override fun pause() {
         super.pause()
-        play?.also { PersistenceService().saveGame(it) }
+        play?.also { PersistenceService().saveGameState(it) }
     }
 
     override fun dispose() {
@@ -133,11 +127,10 @@ class GameScreen(private val assets: AssetManager) : KtxScreen, Receiver<TouchDo
         }
     }
 
-    override fun receive(message: TouchDown) {
+    override fun receive(message: Messages.TouchDown) {
         val pos = Vector2(message.screenX.toFloat(), message.screenY.toFloat())
         viewport.unproject(pos)
         logger.info("Touch event {x: ${pos.x}, y: ${pos.y}, pointer:${message.pointer}, button: ${message.button}}")
-        messageBox.returnMessage<TouchDown>(message)
     }
 
     private fun switchSkin() {
@@ -300,8 +293,8 @@ class GameScreen(private val assets: AssetManager) : KtxScreen, Receiver<TouchDo
         val DARK_UI_EMPHASIS = rgb(184, 55, 68)
         val LIGHT_UI_TEXT = rgb(76, 56, 77)
         val LIGHT_UI_EMPHASIS = rgb(224, 122, 95)
-        val DARK_UI_BG = Color.valueOf("232433ff")
-        val LIGHT_UI_BG = Color.valueOf("63a347ff")
+        val DARK_UI_BG: Color = Color.valueOf("232433ff")
+        val LIGHT_UI_BG: Color = Color.valueOf("63a347ff")
 
         private fun rgb(r: Int, g: Int, b: Int): Color = Color(r / 255f, g / 255f, b / 255f, 1f)
     }
