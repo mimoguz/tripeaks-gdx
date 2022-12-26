@@ -1,5 +1,6 @@
 package ogz.tripeaks.models
 
+import com.badlogic.gdx.utils.Disposable
 import com.badlogic.gdx.utils.Json
 import com.badlogic.gdx.utils.JsonValue
 import ktx.collections.GdxArray
@@ -12,12 +13,16 @@ class PlayerStatistics(
     var played: Int,
     var won: Int,
     var layoutStatistics: GdxArray<LayoutStatistics>,
-) : Json.Serializable {
+) : Json.Serializable, Disposable {
     constructor() : this(played = 0, won = 0, layoutStatistics = gdxArrayOf())
 
     private val winReceiver: Receiver<Messages.Win> = Receiver { addWin(it.gameStatistics) }
     private val firstMoveReceiver: Receiver<Messages.FirstMove> = Receiver { updatePlayed() }
     private var messageBox: MessageBox? = null
+
+    override fun dispose() {
+        unregister()
+    }
 
     fun register(messageBox: MessageBox) {
         this.messageBox = messageBox
