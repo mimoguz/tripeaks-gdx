@@ -10,7 +10,7 @@ import ogz.tripeaks.services.Receiver
 import ogz.tripeaks.services.Take
 import ogz.tripeaks.services.Undo
 
-class PlayStatistics(private var tag: String) : Json.Serializable {
+class GameStatistics(private var tag: String) : Json.Serializable {
     constructor() : this("")
 
     private val dealReceiver: Receiver<Deal> = Receiver { onDeal() }
@@ -77,18 +77,19 @@ class PlayStatistics(private var tag: String) : Json.Serializable {
     }
 
     override fun write(json: Json) {
-        val serializable = SerializablePlayStatistics(tag, chains, undoCounter)
-        json.writeValue(PlayStatistics::class.java.simpleName, serializable)
+        val serializable = SerializableGameStatistics(tag, chains, undoCounter)
+        json.writeValue(GameStatistics::class.java.simpleName, serializable)
     }
 
     override fun read(json: Json, jsonData: JsonValue) {
-        val serializable = json.readValue(PlayStatistics::class.java.simpleName, SerializablePlayStatistics::class.java, jsonData)
+        val serializable = json.readValue(GameStatistics::class.java.simpleName, SerializableGameStatistics::class.java, jsonData)
         this.chains = serializable.chains!!
         this.tag = serializable.tag!!
         this.undoCounter = serializable.undoCounter
     }
 
     companion object {
+
         private fun max(array: GdxIntArray, initialValue: Int = Int.MIN_VALUE): Int {
             var max = initialValue
             for (i in 0 until array.size) {
@@ -97,7 +98,7 @@ class PlayStatistics(private var tag: String) : Json.Serializable {
             return max
         }
 
-        private class SerializablePlayStatistics(var tag: String?, var chains: GdxIntArray?, var undoCounter: Int) {
+        private class SerializableGameStatistics(var tag: String?, var chains: GdxIntArray?, var undoCounter: Int) {
             constructor(): this(null, null, 0)
         }
     }

@@ -3,6 +3,8 @@ package ogz.tripeaks.services
 import com.badlogic.gdx.utils.Disposable
 import com.badlogic.gdx.utils.Pool
 import com.badlogic.gdx.utils.Pool.Poolable
+import ogz.tripeaks.models.GameStatistics
+import ogz.tripeaks.models.LayoutStatistics
 import kotlin.reflect.KClass
 
 class PooledMessageBox : Disposable {
@@ -102,5 +104,21 @@ class Deal(): Message {
 
     override fun reset() {
         // Nothing to do
+    }
+}
+
+class FirstMove(): Message {
+
+    override fun reset() {
+        // Nothing to do
+    }
+}
+
+class Win(var gameStatistics: GameStatistics?): Message {
+
+    constructor() : this(null)
+
+    override fun reset() {
+        gameStatistics = null
     }
 }

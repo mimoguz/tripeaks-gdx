@@ -7,7 +7,7 @@ import ogz.tripeaks.models.layout.Layout
 
 @Suppress("unused")
 class GameState private constructor(
-    var statistics: PlayStatistics,
+    var statistics: GameStatistics,
     private var layout: Layout,
     private var sockets: GdxArray<SocketState>,
     private var stack: GdxIntArray,
@@ -26,7 +26,7 @@ class GameState private constructor(
      * use GameState::startNew method instead.
      */
     constructor() : this(
-        statistics = PlayStatistics(BasicLayout.TAG),
+        statistics = GameStatistics(BasicLayout.TAG),
         layout = BasicLayout(),
         sockets = GdxArray(),
         stack = GdxIntArray(),
@@ -132,7 +132,7 @@ class GameState private constructor(
             require(cards.size == 52 && cards.distinct().size == cards.size && cards.all { it in 0..51 })
 
             val layout = BasicLayout()
-            val statistics = PlayStatistics(layout.tag)
+            val statistics = GameStatistics(layout.tag)
             val emptyDiscard = false
             val sockets = GdxArray<SocketState>(layout.numberOfSockets)
             val stack = GdxIntArray.with()
