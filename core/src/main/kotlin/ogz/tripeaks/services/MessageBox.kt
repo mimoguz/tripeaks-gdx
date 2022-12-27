@@ -5,7 +5,7 @@ import kotlin.reflect.KClass
 
 interface Message
 
-fun interface Receiver<M> {
+fun interface Receiver<M : Message> {
     fun receive(message: M)
 }
 
