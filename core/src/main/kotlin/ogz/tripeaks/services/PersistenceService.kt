@@ -40,7 +40,7 @@ class PersistenceService {
             prefs.putString(key, json)
             prefs.flush()
         } catch (e: Exception) {
-            logger.error("${Instant.now()} - Save error (unhandled): ${e.message}")
+            logger.error("${Instant.now()} - Error during saving $key (unhandled): ${e.message}")
             throw e
         }
     }
@@ -55,11 +55,11 @@ class PersistenceService {
             when (e) {
                 is NullPointerException,
                 is SerializationException -> {
-                    logger.error("${Instant.now()} - Malformed save: ${e.message}")
+                    logger.error("${Instant.now()} - Malformed save $key: ${e.message}")
                     return null
                 }
                 else -> {
-                    logger.error("${Instant.now()} - Error during load (unhandled): ${e.message}")
+                    logger.error("${Instant.now()} - Error during loading $key (unhandled): ${e.message}")
                     throw e
                 }
             }

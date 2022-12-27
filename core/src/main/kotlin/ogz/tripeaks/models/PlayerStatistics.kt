@@ -13,16 +13,12 @@ class PlayerStatistics(
     var played: Int,
     var won: Int,
     var layoutStatistics: GdxArray<LayoutStatistics>,
-) : Json.Serializable, Disposable {
+) : Json.Serializable {
     constructor() : this(played = 0, won = 0, layoutStatistics = gdxArrayOf())
 
     private val winReceiver: Receiver<Messages.Win> = Receiver { addWin(it.gameStatistics) }
     private val firstMoveReceiver: Receiver<Messages.FirstMove> = Receiver { updatePlayed() }
     private var messageBox: MessageBox? = null
-
-    override fun dispose() {
-        unregister()
-    }
 
     fun register(messageBox: MessageBox) {
         this.messageBox = messageBox
@@ -60,7 +56,7 @@ class PlayerStatistics(
 
     override fun read(json: Json, jsonData: JsonValue) {
         val serializable = json.readValue(
-            GameStatistics::class.java.simpleName,
+            PlayerStatistics::class.java.simpleName,
             SerializablePlayerStatistics::class.java, jsonData
         )
         this.won = serializable.won

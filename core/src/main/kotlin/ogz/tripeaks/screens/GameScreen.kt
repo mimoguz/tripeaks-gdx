@@ -4,8 +4,6 @@ import com.badlogic.ashley.core.PooledEngine
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.InputMultiplexer
 import com.badlogic.gdx.assets.AssetManager
-import com.badlogic.gdx.graphics.Color
-import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.Pixmap
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.FrameBuffer
@@ -22,6 +20,7 @@ import ktx.ashley.entity
 import ktx.ashley.getSystem
 import ktx.ashley.with
 import ktx.assets.disposeSafely
+import ktx.inject.Context
 import ktx.scene2d.Scene2DSkin
 import ogz.tripeaks.assets.FontAssets
 import ogz.tripeaks.assets.TextureAtlasAssets
@@ -42,27 +41,35 @@ import ogz.tripeaks.graphics.HomeSprite
 import ogz.tripeaks.graphics.ScreenTransitionAnimation
 import ogz.tripeaks.graphics.SpriteSet
 import ogz.tripeaks.models.GameState
-import ogz.tripeaks.services.PersistenceService
+import ogz.tripeaks.screens.Constants.DARK_UI_BG
+import ogz.tripeaks.screens.Constants.DARK_UI_EMPHASIS
+import ogz.tripeaks.screens.Constants.DARK_UI_TEXT
+import ogz.tripeaks.screens.Constants.LIGHT_UI_BG
+import ogz.tripeaks.screens.Constants.LIGHT_UI_EMPHASIS
+import ogz.tripeaks.screens.Constants.LIGHT_UI_TEXT
+import ogz.tripeaks.screens.Constants.MIN_WORLD_WIDTH
+import ogz.tripeaks.screens.Constants.WORLD_HEIGHT
 import ogz.tripeaks.services.MessageBox
-import ogz.tripeaks.services.Receiver
 import ogz.tripeaks.services.Messages
+import ogz.tripeaks.services.PersistenceService
+import ogz.tripeaks.services.Receiver
 import ogz.tripeaks.ui.LabelButton
 
-class GameScreen(private val assets: AssetManager) : KtxScreen, Receiver<Messages.TouchDown> {
+class GameScreen(private val context: Context) : KtxScreen, Receiver<Messages.TouchDown> {
 
     private val logger = Logger(GameScreen::class.java.simpleName)
 
-    private val batch = SpriteBatch()
-    private val viewport = CustomViewport(MIN_WORLD_WIDTH, MAX_WORLD_WIDTH, WORLD_HEIGHT, OrthographicCamera())
-    private val uiStage = Stage(CustomViewport(MIN_WORLD_WIDTH, MAX_WORLD_WIDTH, WORLD_HEIGHT, OrthographicCamera()))
+    private val assets = context.inject<AssetManager>()
+    private val messageBox = context.inject<MessageBox>()
+    private val batch = context.inject<SpriteBatch>()
+    private val viewport = context.inject<CustomViewport>()
+    private val uiStage = context.inject<Stage>()
+
     private val engine = PooledEngine()
-    private val messageBox = MessageBox()
     private val renderHelper = RenderHelper(batch, viewport, engine)
     private val touchHandler = TouchHandler(messageBox)
-
     private var spriteSet = SpriteSet(false, 0, assets)
     private var animationSet = Animations.DISSOLVE
-
     private var frameBuffer = FrameBuffer(Pixmap.Format.RGB888, MIN_WORLD_WIDTH, WORLD_HEIGHT, false)
 
     private var play: GameState? = null
@@ -71,6 +78,7 @@ class GameScreen(private val assets: AssetManager) : KtxScreen, Receiver<Message
         logger.level = Logger.INFO
         renderHelper.fbShader = animationSet.shaderProgram
         renderHelper.clearColor = LIGHT_UI_BG
+        messageBox.register(this)
     }
 
     override fun render(delta: Float) {
@@ -85,6 +93,7 @@ class GameScreen(private val assets: AssetManager) : KtxScreen, Receiver<Message
         super.show()
 
         play = PersistenceService().loadGameState() ?: GameState.startNew(IntArray(52) { it }, null)
+        messageBox.send(Messages.FirstMove)
 
         engine.addSystem(AnimationSystem(animationSet))
         engine.addSystem(SpriteRenderingSystem(batch, spriteSet))
@@ -95,22 +104,19 @@ class GameScreen(private val assets: AssetManager) : KtxScreen, Receiver<Message
     }
 
     override fun resume() {
+        play = play ?: PersistenceService().loadGameState() ?: GameState.startNew(IntArray(52) { it }, null)
         super.resume()
-        play = play ?: PersistenceService().loadGameState()
     }
 
     override fun pause() {
-        super.pause()
         play?.also { PersistenceService().saveGameState(it) }
+        super.pause()
     }
 
     override fun dispose() {
         messageBox.unregister(this)
         renderHelper.disposeSafely()
-        assets.disposeSafely()
-        batch.disposeSafely()
-        uiStage.disposeSafely()
-        messageBox.disposeSafely()
+        frameBuffer.disposeSafely()
     }
 
     override fun resize(width: Int, height: Int) {
@@ -283,19 +289,5 @@ class GameScreen(private val assets: AssetManager) : KtxScreen, Receiver<Message
                 animationType = FaceRemovedAnimation
             }
         }
-    }
-
-    companion object {
-        const val MIN_WORLD_WIDTH = 300
-        const val MAX_WORLD_WIDTH = 360
-        const val WORLD_HEIGHT = 168
-        val DARK_UI_TEXT = rgb(242, 204, 143)
-        val DARK_UI_EMPHASIS = rgb(184, 55, 68)
-        val LIGHT_UI_TEXT = rgb(76, 56, 77)
-        val LIGHT_UI_EMPHASIS = rgb(224, 122, 95)
-        val DARK_UI_BG: Color = Color.valueOf("232433ff")
-        val LIGHT_UI_BG: Color = Color.valueOf("63a347ff")
-
-        private fun rgb(r: Int, g: Int, b: Int): Color = Color(r / 255f, g / 255f, b / 255f, 1f)
     }
 }
