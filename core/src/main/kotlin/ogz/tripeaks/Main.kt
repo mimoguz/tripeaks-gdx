@@ -6,15 +6,16 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.scenes.scene2d.Stage
 import ktx.app.KtxGame
 import ktx.app.KtxScreen
-import ktx.assets.disposeSafely
 import ktx.inject.Context
 import ogz.tripeaks.graphics.CustomViewport
+import ogz.tripeaks.models.GameState
 import ogz.tripeaks.models.PlayerStatistics
-import ogz.tripeaks.screens.Constants
+import ogz.tripeaks.models.Settings
 import ogz.tripeaks.screens.Constants.MAX_WORLD_WIDTH
 import ogz.tripeaks.screens.Constants.MIN_WORLD_WIDTH
 import ogz.tripeaks.screens.Constants.WORLD_HEIGHT
 import ogz.tripeaks.services.MessageBox
+import ogz.tripeaks.services.Message.Companion as Msg
 import ogz.tripeaks.services.PersistenceService
 
 class Main : KtxGame<KtxScreen>() {
@@ -23,6 +24,7 @@ class Main : KtxGame<KtxScreen>() {
     private val persistence = PersistenceService()
     private val messageBox = MessageBox()
     private val assets = AssetManager()
+    private var settings: Settings? = null
     private lateinit var batch: SpriteBatch
     private lateinit var viewport: CustomViewport
     private lateinit var uiStage: Stage
@@ -33,7 +35,6 @@ class Main : KtxGame<KtxScreen>() {
         batch = SpriteBatch()
         viewport = CustomViewport(MIN_WORLD_WIDTH, MAX_WORLD_WIDTH, WORLD_HEIGHT, OrthographicCamera())
         uiStage = Stage(CustomViewport(MIN_WORLD_WIDTH, MAX_WORLD_WIDTH, WORLD_HEIGHT, OrthographicCamera()))
-        // TODO: Preferences as a singleton and a receiver, and new game supplier that depends on it
         context.apply {
             bindSingleton(assets)
             bindSingleton(batch)
@@ -41,7 +42,11 @@ class Main : KtxGame<KtxScreen>() {
             bindSingleton(persistence)
             bindSingleton(uiStage)
             bindSingleton(viewport)
+            bind(this@Main::newGame)
         }
+
+        settings = persistence.loadSettings() ?: Settings()
+        settings?.let { messageBox.register(it) }
 
         playerStatistics = persistence.loadPlayerStatistics() ?: PlayerStatistics()
         playerStatistics?.register(messageBox)
@@ -51,14 +56,24 @@ class Main : KtxGame<KtxScreen>() {
     }
 
     override fun pause() {
-        playerStatistics?.let { persistence.savePlayerStatistics(it) }
-        playerStatistics?.unregister()
+        playerStatistics?.let {
+            persistence.savePlayerStatistics(it)
+            it.unregister()
+        }
+        settings?.let {
+            persistence.saveSettings(it)
+            messageBox.unregister(it)
+        }
         super.pause()
     }
 
     override fun resume() {
         playerStatistics = playerStatistics ?: persistence.loadPlayerStatistics() ?: PlayerStatistics()
         playerStatistics?.register(messageBox)
+
+        settings = settings ?: persistence.loadSettings() ?: Settings()
+        settings?.let { messageBox.register(it) }
+
         super.resume()
     }
 
@@ -66,5 +81,7 @@ class Main : KtxGame<KtxScreen>() {
         context.dispose()
         super.dispose()
     }
+
+    private fun newGame() : GameState = settings!!.newGame()
 }
 

@@ -6,6 +6,7 @@ import com.badlogic.gdx.utils.Logger
 import com.badlogic.gdx.utils.SerializationException
 import ogz.tripeaks.models.GameState
 import ogz.tripeaks.models.PlayerStatistics
+import ogz.tripeaks.models.Settings
 import java.time.Instant
 
 class PersistenceService {
@@ -29,6 +30,14 @@ class PersistenceService {
 
     fun loadPlayerStatistics(): PlayerStatistics? {
         return load(PlayerStatistics::class.java, STATISTICS_FILE, STATISTICS_KEY)
+    }
+
+    fun saveSettings(current: Settings) {
+        save(current, SETTINGS_FILE, SETTINGS_KEY)
+    }
+
+    fun loadSettings(): Settings? {
+        return load(Settings::class.java, SETTINGS_FILE, SETTINGS_KEY)
     }
 
     private fun <T> save(current: T, file: String, key: String) {
@@ -67,6 +76,9 @@ class PersistenceService {
     }
 
     companion object {
+        const val SETTINGS_FILE = "ogz.tripeaks.settings.preferences"
+        const val SETTINGS_KEY = "settings"
+
         const val SAVE_FILE = "ogz.tripeaks.save.preferences"
         const val SAVE_KEY = "save"
 

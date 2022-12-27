@@ -3,10 +3,8 @@ package ogz.tripeaks.services
 import com.badlogic.gdx.utils.Disposable
 import kotlin.reflect.KClass
 
-interface Message
-
 fun interface Receiver<M : Message> {
-    fun receive(message: M)
+    fun receive(message: M): Any?
 }
 
 class MessageBox : Disposable {
@@ -26,6 +24,16 @@ class MessageBox : Disposable {
 
     inline fun <reified M : Message> send(message: M) {
         receivers[M::class]?.forEach { it.receive(message) }
+    }
+
+    inline fun <reified M : Message> ask(message: Message): Any? {
+        receivers[M::class]?.forEach { receiver ->
+            val result = receiver.receive(message)
+            if (result != null) {
+                return result
+            }
+        }
+        return null
     }
 
     override fun dispose() {

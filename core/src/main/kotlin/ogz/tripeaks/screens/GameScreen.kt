@@ -49,13 +49,13 @@ import ogz.tripeaks.screens.Constants.LIGHT_UI_EMPHASIS
 import ogz.tripeaks.screens.Constants.LIGHT_UI_TEXT
 import ogz.tripeaks.screens.Constants.MIN_WORLD_WIDTH
 import ogz.tripeaks.screens.Constants.WORLD_HEIGHT
+import ogz.tripeaks.services.Message.Companion as Msg
 import ogz.tripeaks.services.MessageBox
-import ogz.tripeaks.services.Messages
 import ogz.tripeaks.services.PersistenceService
 import ogz.tripeaks.services.Receiver
 import ogz.tripeaks.ui.LabelButton
 
-class GameScreen(private val context: Context) : KtxScreen, Receiver<Messages.TouchDown> {
+class GameScreen(private val context: Context) : KtxScreen, Receiver<Msg.TouchDown> {
 
     private val logger = Logger(GameScreen::class.java.simpleName)
 
@@ -92,8 +92,8 @@ class GameScreen(private val context: Context) : KtxScreen, Receiver<Messages.To
     override fun show() {
         super.show()
 
-        play = PersistenceService().loadGameState() ?: GameState.startNew(IntArray(52) { it }, null)
-        messageBox.send(Messages.FirstMove)
+        play = PersistenceService().loadGameState() ?: context.inject()
+        messageBox.send(Msg.FirstMove)
 
         engine.addSystem(AnimationSystem(animationSet))
         engine.addSystem(SpriteRenderingSystem(batch, spriteSet))
@@ -104,7 +104,7 @@ class GameScreen(private val context: Context) : KtxScreen, Receiver<Messages.To
     }
 
     override fun resume() {
-        play = play ?: PersistenceService().loadGameState() ?: GameState.startNew(IntArray(52) { it }, null)
+        play = play ?: PersistenceService().loadGameState() ?: context.inject()
         super.resume()
     }
 
@@ -133,13 +133,14 @@ class GameScreen(private val context: Context) : KtxScreen, Receiver<Messages.To
         }
     }
 
-    override fun receive(message: Messages.TouchDown) {
+    override fun receive(message: Msg.TouchDown) {
         val pos = Vector2(message.screenX.toFloat(), message.screenY.toFloat())
         viewport.unproject(pos)
         logger.info("Touch event {x: ${pos.x}, y: ${pos.y}, pointer:${message.pointer}, button: ${message.button}}")
     }
 
     private fun switchSkin() {
+        // TODO: SpriteSet should come from the settings object by injection. Send a change message, re-inject the spriteSet.
         spriteSet = SpriteSet(!spriteSet.isDark, 0, assets)
         engine.getSystem<SpriteRenderingSystem>().spriteSet = spriteSet
         renderHelper.clearColor = if (spriteSet.isDark) DARK_UI_BG else LIGHT_UI_BG
@@ -165,6 +166,7 @@ class GameScreen(private val context: Context) : KtxScreen, Receiver<Messages.To
     }
 
     private fun switchAnimation() {
+        // TODO: AnimationSet should come from the settings object by injection. Send a change message, re-inject the animationSet.
         animationSet =
             if (animationSet === Animations.DISSOLVE) Animations.BLINK
             else Animations.DISSOLVE
@@ -184,6 +186,9 @@ class GameScreen(private val context: Context) : KtxScreen, Receiver<Messages.To
         val dialogButton = LabelButton(Scene2DSkin.defaultSkin, "Open dialog")
         dialogButton.onClick(this::openDialog)
 
+        val statisticsButton = LabelButton(Scene2DSkin.defaultSkin, "Print Statistics")
+        statisticsButton.onClick(this::printStatistics)
+
         val table = Table(Scene2DSkin.defaultSkin).apply {
             pad(2f)
             align(Align.bottomLeft)
@@ -191,10 +196,19 @@ class GameScreen(private val context: Context) : KtxScreen, Receiver<Messages.To
             row()
             add(animationButton).align(Align.bottomLeft).padBottom(2f)
             row()
-            add(dialogButton).align(Align.bottomLeft)
+            add(dialogButton).align(Align.bottomLeft).padBottom(2f)
+            row()
+            add(statisticsButton).align(Align.bottomLeft)
         }
 
         uiStage.actors.add(table)
+    }
+
+    private fun printStatistics() {
+        val response = messageBox.ask<Msg.PlayerStatisticsQuery>(Msg.PlayerStatisticsQuery)
+        if (response is Msg.PlayerStatistics) {
+            logger.info("Played: ${response.played}, Won: ${response.won}")
+        }
     }
 
     private fun openDialog() {

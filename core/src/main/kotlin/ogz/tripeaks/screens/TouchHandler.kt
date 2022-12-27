@@ -2,7 +2,7 @@ package ogz.tripeaks.screens
 
 import com.badlogic.gdx.InputAdapter
 import ogz.tripeaks.services.MessageBox
-import ogz.tripeaks.services.Messages
+import ogz.tripeaks.services.Message.Companion as Msg
 
 class TouchHandler(private val messageBox: MessageBox) : InputAdapter() {
 
@@ -12,7 +12,7 @@ class TouchHandler(private val messageBox: MessageBox) : InputAdapter() {
         if (slient) {
             return false
         }
-        messageBox.send(Messages.TouchDown(screenX, screenY, pointer, button))
+        messageBox.send(Msg.TouchDown(screenX, screenY, pointer, button))
         return true
     }
 }
