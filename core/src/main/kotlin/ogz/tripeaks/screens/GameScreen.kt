@@ -101,7 +101,7 @@ class GameScreen(private val context: Context) : KtxScreen {
     override fun show() {
         super.show()
 
-        play = PersistenceService().loadGameState() ?: context.inject()
+        play = PersistenceService().loadGameState() ?: settings.getNewGame()
         playerStatistics.updatePlayed()
 
         engine.addSystem(AnimationSystem(animationSet))
