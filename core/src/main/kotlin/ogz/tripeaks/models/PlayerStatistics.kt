@@ -1,85 +1,28 @@
 package ogz.tripeaks.models
 
-import com.badlogic.gdx.utils.Json
-import com.badlogic.gdx.utils.JsonValue
 import ktx.collections.GdxArray
 import ktx.collections.gdxArrayOf
-import ogz.tripeaks.services.MessageBox
-import ogz.tripeaks.services.Message.Companion as Msg
-import ogz.tripeaks.services.Receiver
 
 class PlayerStatistics(
     var played: Int,
     var won: Int,
     var layoutStatistics: GdxArray<LayoutStatistics>,
-) : Json.Serializable {
+) {
     constructor() : this(played = 0, won = 0, layoutStatistics = gdxArrayOf())
 
-    private val winReceiver: Receiver<Msg.Win> = Receiver { addWin(it.gameStatistics) }
-    private val firstMoveReceiver: Receiver<Msg.FirstMove> = Receiver { updatePlayed() }
-    private val playerStatisticsResponder: Receiver<Msg.PlayerStatisticsQuery> = Receiver { selfMessage() }
-    private var messageBox: MessageBox? = null
-
-    fun register(messageBox: MessageBox) {
-        this.messageBox = messageBox
-        messageBox.register(winReceiver)
-        messageBox.register(firstMoveReceiver)
-        messageBox.register(playerStatisticsResponder)
-    }
-
-    fun unregister() {
-        messageBox?.unregister(winReceiver)
-        messageBox?.unregister(firstMoveReceiver)
-        messageBox?.unregister(playerStatisticsResponder)
-    }
-
-    private fun updatePlayed() {
-        played += 1
-    }
-
-    private fun selfMessage(): Msg.PlayerStatistics = Msg.PlayerStatistics(
-        played,
-        won,
-        layoutStatistics.iterator().map { it.clone }.toList()
-    )
-
-    private fun addWin(gameStatistics: GameStatistics) {
-        won += 1
-        var stats = layoutStatistics.find { it.tag == gameStatistics.layoutTag }
-        if (stats == null) {
-            stats = LayoutStatistics(gameStatistics.layoutTag, 0, 0, 0)
-            layoutStatistics.add(stats)
-        }
-        stats.played += 1
-        stats.won += 1
-        stats.longestChain = gameStatistics.longestChain
-
-        layoutStatistics.sort { a, b -> b.won.compareTo(a.won) }
-    }
-
-    override fun write(json: Json) {
-        val serializable = SerializablePlayerStatistics(played, won, layoutStatistics)
-        json.writeValue(PlayerStatistics::class.java.simpleName, serializable)
-    }
-
-    override fun read(json: Json, jsonData: JsonValue) {
-        val serializable = json.readValue(
-            PlayerStatistics::class.java.simpleName,
-            SerializablePlayerStatistics::class.java, jsonData
-        )
-        this.won = serializable.won
-        this.played = serializable.played
-        this.layoutStatistics = serializable.layoutStatistics
-    }
+    fun clone(
+        played: Int = this.played,
+        won: Int = this.won,
+        layoutStatistics: GdxArray<LayoutStatistics> = this.layoutStatistics.clone()
+    ): PlayerStatistics = PlayerStatistics(played, won, layoutStatistics)
 
     companion object {
-
-        private class SerializablePlayerStatistics(
-            var played: Int,
-            var won: Int,
-            var layoutStatistics: GdxArray<LayoutStatistics>
-        ) {
-            constructor() : this(played = 0, won = 0, layoutStatistics = GdxArray.of(LayoutStatistics::class.java))
+        private fun (GdxArray<LayoutStatistics>).clone(): GdxArray<LayoutStatistics> {
+            val result = GdxArray<LayoutStatistics>(this.size)
+            for (elem in this) {
+                result.add(elem.clone)
+            }
+            return result
         }
     }
 }

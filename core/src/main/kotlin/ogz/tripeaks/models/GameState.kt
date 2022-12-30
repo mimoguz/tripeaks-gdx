@@ -131,7 +131,7 @@ class GameState private constructor(
         isOpen(socketIndex) && (discard.isEmpty || sockets[socketIndex].card.areNeighbors(discard.peek()))
 
     companion object {
-        fun startNew(cards: IntArray, preferences: Any?): GameState {
+        fun startNew(cards: IntArray, preferences: Settings): GameState {
             // A deck of 52 distinct cards.
             require(cards.size == 52 && cards.distinct().size == cards.size && cards.all { it in 0..51 })
 

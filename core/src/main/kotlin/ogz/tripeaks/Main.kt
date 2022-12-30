@@ -17,14 +17,16 @@ import ogz.tripeaks.screens.Constants.WORLD_HEIGHT
 import ogz.tripeaks.services.MessageBox
 import ogz.tripeaks.services.Message.Companion as Msg
 import ogz.tripeaks.services.PersistenceService
+import ogz.tripeaks.services.PlayerStatisticsService
+import ogz.tripeaks.services.SettingsService
 
 class Main : KtxGame<KtxScreen>() {
     private val context = Context()
-    private var playerStatistics: PlayerStatistics? = null
+    private var playerStatistics = PlayerStatisticsService()
+    private val settings = SettingsService()
     private val persistence = PersistenceService()
     private val messageBox = MessageBox()
     private val assets = AssetManager()
-    private var settings: Settings? = null
     private lateinit var batch: SpriteBatch
     private lateinit var viewport: CustomViewport
     private lateinit var uiStage: Stage
@@ -42,38 +44,23 @@ class Main : KtxGame<KtxScreen>() {
             bindSingleton(persistence)
             bindSingleton(uiStage)
             bindSingleton(viewport)
-            bind(this@Main::newGame)
+            bindSingleton(playerStatistics)
+            bindSingleton(settings)
         }
-
-        settings = persistence.loadSettings() ?: Settings()
-        settings?.let { messageBox.register(it) }
-
-        playerStatistics = persistence.loadPlayerStatistics() ?: PlayerStatistics()
-        playerStatistics?.register(messageBox)
 
         addScreen(LoadingScreen(this, context))
         setScreen<LoadingScreen>()
     }
 
     override fun pause() {
-        playerStatistics?.let {
-            persistence.savePlayerStatistics(it)
-            it.unregister()
-        }
-        settings?.let {
-            persistence.saveSettings(it)
-            messageBox.unregister(it)
-        }
+        settings.paused()
+        playerStatistics.paused()
         super.pause()
     }
 
     override fun resume() {
-        playerStatistics = playerStatistics ?: persistence.loadPlayerStatistics() ?: PlayerStatistics()
-        playerStatistics?.register(messageBox)
-
-        settings = settings ?: persistence.loadSettings() ?: Settings()
-        settings?.let { messageBox.register(it) }
-
+        settings.resumed()
+        playerStatistics.resumed()
         super.resume()
     }
 
@@ -81,7 +68,5 @@ class Main : KtxGame<KtxScreen>() {
         context.dispose()
         super.dispose()
     }
-
-    private fun newGame() : GameState = settings!!.newGame()
 }
 

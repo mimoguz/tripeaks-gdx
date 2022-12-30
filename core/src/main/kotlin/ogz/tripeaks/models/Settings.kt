@@ -1,15 +1,41 @@
 package ogz.tripeaks.models
 
-import ogz.tripeaks.services.Message
-import ogz.tripeaks.services.Receiver
-import ogz.tripeaks.services.Message.Companion as Msg
+import com.badlogic.gdx.utils.Disposable
+import ogz.tripeaks.graphics.Animations
+import ogz.tripeaks.models.layout.BasicLayout
 
-class Settings(var v: Int) : Receiver<Msg.SettingsQuery> {
-    constructor() : this(0)
+class Settings(
+    var darkTheme: Boolean,
+    var backDesign: Int,
+    var layout: LayoutType,
+    var animation: AnimationType,
+    var showAll: Boolean,
+    var emptyDiscard: Boolean,
+) {
+    constructor() : this(false, 0, LayoutType.BasicLo, AnimationType.BlinkAnim, false, false)
 
-    fun newGame() : GameState = GameState.startNew(IntArray(52) { it }, this)
+    fun clone(
+        darkTheme: Boolean = this.darkTheme,
+        backDesign: Int = this.backDesign,
+        layout: LayoutType = this.layout,
+        animation: AnimationType = this.animation,
+        showAll: Boolean = this.showAll,
+        emptyDiscard: Boolean = this.emptyDiscard,
+    ) = Settings(
+        darkTheme,
+        backDesign,
+        layout,
+        animation,
+        showAll,
+        emptyDiscard,
+    )
+}
 
-    override fun receive(message: Message.Companion.SettingsQuery): Any? = Msg.Settings(v)
+enum class LayoutType(val tag: String) {
+    BasicLo(BasicLayout.TAG)
+}
 
-    // TODO: Handle a message to update settings. Receiving method should re-bind the animation and sprite sets, change the default skin.
+enum class AnimationType(val tag: String) {
+    BlinkAnim(Animations.BLINK.name),
+    DissolveAnim(Animations.DISSOLVE.name)
 }

@@ -22,16 +22,13 @@ import ktx.ashley.with
 import ktx.assets.disposeSafely
 import ktx.inject.Context
 import ktx.scene2d.Scene2DSkin
-import ogz.tripeaks.assets.FontAssets
-import ogz.tripeaks.assets.TextureAtlasAssets
 import ogz.tripeaks.assets.UiSkin
-import ogz.tripeaks.assets.get
 import ogz.tripeaks.ecs.AnimationComponent
 import ogz.tripeaks.ecs.AnimationSystem
 import ogz.tripeaks.ecs.RenderComponent
 import ogz.tripeaks.ecs.SpriteRenderingSystem
 import ogz.tripeaks.ecs.TransformComponent
-import ogz.tripeaks.graphics.Animations
+import ogz.tripeaks.graphics.AnimationSet
 import ogz.tripeaks.graphics.CardRemovedAnimation
 import ogz.tripeaks.graphics.CardSprite
 import ogz.tripeaks.graphics.CustomViewport
@@ -40,45 +37,57 @@ import ogz.tripeaks.graphics.FaceSprite
 import ogz.tripeaks.graphics.HomeSprite
 import ogz.tripeaks.graphics.ScreenTransitionAnimation
 import ogz.tripeaks.graphics.SpriteSet
+import ogz.tripeaks.models.AnimationType
 import ogz.tripeaks.models.GameState
 import ogz.tripeaks.screens.Constants.DARK_UI_BG
-import ogz.tripeaks.screens.Constants.DARK_UI_EMPHASIS
-import ogz.tripeaks.screens.Constants.DARK_UI_TEXT
 import ogz.tripeaks.screens.Constants.LIGHT_UI_BG
-import ogz.tripeaks.screens.Constants.LIGHT_UI_EMPHASIS
-import ogz.tripeaks.screens.Constants.LIGHT_UI_TEXT
 import ogz.tripeaks.screens.Constants.MIN_WORLD_WIDTH
 import ogz.tripeaks.screens.Constants.WORLD_HEIGHT
-import ogz.tripeaks.services.Message.Companion as Msg
 import ogz.tripeaks.services.MessageBox
 import ogz.tripeaks.services.PersistenceService
+import ogz.tripeaks.services.PlayerStatisticsService
 import ogz.tripeaks.services.Receiver
+import ogz.tripeaks.services.SettingsService
 import ogz.tripeaks.ui.LabelButton
+import ogz.tripeaks.services.Message.Companion as Msg
 
-class GameScreen(private val context: Context) : KtxScreen, Receiver<Msg.TouchDown> {
+class GameScreen(private val context: Context) : KtxScreen {
 
     private val logger = Logger(GameScreen::class.java.simpleName)
 
-    private val assets = context.inject<AssetManager>()
     private val messageBox = context.inject<MessageBox>()
     private val batch = context.inject<SpriteBatch>()
     private val viewport = context.inject<CustomViewport>()
     private val uiStage = context.inject<Stage>()
-
+    private val settings = context.inject<SettingsService>()
+    private val playerStatistics = context.inject<PlayerStatisticsService>()
     private val engine = PooledEngine()
     private val renderHelper = RenderHelper(batch, viewport, engine)
     private val touchHandler = TouchHandler(messageBox)
-    private var spriteSet = SpriteSet(false, 0, assets)
-    private var animationSet = Animations.DISSOLVE
+    private var spriteSet: SpriteSet
+    private var animationSet: AnimationSet
     private var frameBuffer = FrameBuffer(Pixmap.Format.RGB888, MIN_WORLD_WIDTH, WORLD_HEIGHT, false)
+
+    private val animationSetChangedReceiver = Receiver<Msg.AnimationSetChanged> { onAnimationSetChanged(it) }
+    private val showAllChangedReceiver = Receiver<Msg.ShowAllChanged> { onShowAllChanged(it) }
+    private val skinChangedReceiver = Receiver<Msg.SkinChanged> { onSkinChanged(it) }
+    private val spriteSetChangedReceiver = Receiver<Msg.SpriteSetChanged> { onSpriteSetChanged(it) }
+    private val touchReceiver = Receiver<Msg.TouchDown> { onTouch(it) }
 
     private var play: GameState? = null
 
     init {
         logger.level = Logger.INFO
+        animationSet = settings.animationSet
+        spriteSet = settings.spriteSet
         renderHelper.fbShader = animationSet.shaderProgram
-        renderHelper.clearColor = LIGHT_UI_BG
-        messageBox.register(this)
+        renderHelper.clearColor = settings.spriteSet.background
+
+        messageBox.register(animationSetChangedReceiver)
+        messageBox.register(showAllChangedReceiver)
+        messageBox.register(skinChangedReceiver)
+        messageBox.register(spriteSetChangedReceiver)
+        messageBox.register(touchReceiver)
     }
 
     override fun render(delta: Float) {
@@ -93,13 +102,12 @@ class GameScreen(private val context: Context) : KtxScreen, Receiver<Msg.TouchDo
         super.show()
 
         play = PersistenceService().loadGameState() ?: context.inject()
-        messageBox.send(Msg.FirstMove)
+        playerStatistics.updatePlayed()
 
         engine.addSystem(AnimationSystem(animationSet))
         engine.addSystem(SpriteRenderingSystem(batch, spriteSet))
-        messageBox.register(this)
         Gdx.input.inputProcessor = InputMultiplexer(uiStage, touchHandler)
-        setupStage()
+        setupStage(settings.skin)
         setupECS()
     }
 
@@ -114,7 +122,12 @@ class GameScreen(private val context: Context) : KtxScreen, Receiver<Msg.TouchDo
     }
 
     override fun dispose() {
-        messageBox.unregister(this)
+        messageBox.unregister(animationSetChangedReceiver)
+        messageBox.unregister(showAllChangedReceiver)
+        messageBox.unregister(skinChangedReceiver)
+        messageBox.unregister(spriteSetChangedReceiver)
+        messageBox.unregister(touchReceiver)
+
         renderHelper.disposeSafely()
         frameBuffer.disposeSafely()
     }
@@ -133,63 +146,57 @@ class GameScreen(private val context: Context) : KtxScreen, Receiver<Msg.TouchDo
         }
     }
 
-    override fun receive(message: Msg.TouchDown) {
+    private fun onTouch(message: Msg.TouchDown) {
         val pos = Vector2(message.screenX.toFloat(), message.screenY.toFloat())
         viewport.unproject(pos)
         logger.info("Touch event {x: ${pos.x}, y: ${pos.y}, pointer:${message.pointer}, button: ${message.button}}")
     }
 
-    private fun switchSkin() {
-        // TODO: SpriteSet should come from the settings object by injection. Send a change message, re-inject the spriteSet.
-        spriteSet = SpriteSet(!spriteSet.isDark, 0, assets)
-        engine.getSystem<SpriteRenderingSystem>().spriteSet = spriteSet
-        renderHelper.clearColor = if (spriteSet.isDark) DARK_UI_BG else LIGHT_UI_BG
-        Animations.setTheme(spriteSet.isDark)
-        Scene2DSkin.defaultSkin =
-            if (spriteSet.isDark)
-                UiSkin(
-                    assets[TextureAtlasAssets.Ui],
-                    assets[FontAssets.GamePixels],
-                    DARK_UI_TEXT,
-                    DARK_UI_EMPHASIS,
-                    "dark"
-                )
-            else
-                UiSkin(
-                    assets[TextureAtlasAssets.Ui],
-                    assets[FontAssets.GamePixels],
-                    LIGHT_UI_TEXT,
-                    LIGHT_UI_EMPHASIS,
-                    "light"
-                )
-        setupStage()
+    private fun onSkinChanged(msg: Msg.SkinChanged) {
+        setupStage(msg.skin)
     }
 
-    private fun switchAnimation() {
-        // TODO: AnimationSet should come from the settings object by injection. Send a change message, re-inject the animationSet.
-        animationSet =
-            if (animationSet === Animations.DISSOLVE) Animations.BLINK
-            else Animations.DISSOLVE
+    private fun onSpriteSetChanged(msg: Msg.SpriteSetChanged) {
+        engine.getSystem<SpriteRenderingSystem>().spriteSet = msg.spriteSet
+        renderHelper.clearColor = msg.spriteSet.background
+    }
+
+    private fun onAnimationSetChanged(msg: Msg.AnimationSetChanged) {
+        animationSet = msg.animationSet
         renderHelper.fbShader = animationSet.shaderProgram
         engine.getSystem<AnimationSystem>().animationSet = animationSet
     }
 
-    private fun setupStage() {
+    private fun onShowAllChanged(msg: Msg.ShowAllChanged) {
+        println("Show all: ${msg.showAll}")
+    }
+
+    private fun setupStage(skin: UiSkin) {
         uiStage.clear()
 
-        val themeButton = LabelButton(Scene2DSkin.defaultSkin, "Switch Theme")
-        themeButton.onClick(this::switchSkin)
+        val themeButton = LabelButton(skin, "Switch Theme")
+        themeButton.onClick {
+            val currentSettings = settings.get()
+            currentSettings.darkTheme = !currentSettings.darkTheme
+            settings.update(currentSettings)
+        }
 
-        val animationButton = LabelButton(Scene2DSkin.defaultSkin, "Switch Animation")
-        animationButton.onClick(this::switchAnimation)
+        val animationButton = LabelButton(skin, "Switch Animation")
+        animationButton.onClick {
+            val currentSettings = settings.get()
+            currentSettings.animation =
+                if (currentSettings.animation == AnimationType.BlinkAnim) AnimationType.DissolveAnim
+                else AnimationType.BlinkAnim
+            settings.update(currentSettings)
+        }
 
-        val dialogButton = LabelButton(Scene2DSkin.defaultSkin, "Open dialog")
+        val dialogButton = LabelButton(skin, "Open dialog")
         dialogButton.onClick(this::openDialog)
 
-        val statisticsButton = LabelButton(Scene2DSkin.defaultSkin, "Print Statistics")
+        val statisticsButton = LabelButton(skin, "Print Statistics")
         statisticsButton.onClick(this::printStatistics)
 
-        val table = Table(Scene2DSkin.defaultSkin).apply {
+        val table = Table(skin).apply {
             pad(2f)
             align(Align.bottomLeft)
             add(themeButton).align(Align.bottomLeft).padBottom(2f)
@@ -205,20 +212,19 @@ class GameScreen(private val context: Context) : KtxScreen, Receiver<Msg.TouchDo
     }
 
     private fun printStatistics() {
-        val response = messageBox.ask<Msg.PlayerStatisticsQuery>(Msg.PlayerStatisticsQuery)
-        if (response is Msg.PlayerStatistics) {
-            logger.info("Played: ${response.played}, Won: ${response.won}")
-        }
+        val stats = playerStatistics.get()
+        logger.info("Played: ${stats.played}, Won: ${stats.won}")
     }
 
     private fun openDialog() {
-        val dialog = Dialog("", Scene2DSkin.defaultSkin).also { dialog ->
+        val skin = settings.skin
+        val dialog = Dialog("", skin).also { dialog ->
             dialog.contentTable.apply {
-                add(Label("UI test", Scene2DSkin.defaultSkin))
+                add(Label("UI test", skin))
                 pad(4f, 8f, 4f, 8f)
             }
             dialog.buttonTable.apply {
-                add(LabelButton(Scene2DSkin.defaultSkin, "Close").apply {
+                add(LabelButton(skin, "Close").apply {
                     onClick {
                         dialog.hide()
                         this@GameScreen.touchHandler.slient = false
