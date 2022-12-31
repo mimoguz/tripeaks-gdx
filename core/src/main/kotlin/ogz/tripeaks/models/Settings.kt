@@ -1,8 +1,10 @@
 package ogz.tripeaks.models
 
 import com.badlogic.gdx.utils.Disposable
+import ogz.tripeaks.graphics.AnimationSet
 import ogz.tripeaks.graphics.Animations
 import ogz.tripeaks.models.layout.BasicLayout
+import ogz.tripeaks.models.layout.Layout
 
 class Settings(
     var darkTheme: Boolean,
@@ -35,7 +37,20 @@ enum class LayoutType(val tag: String) {
     BasicLo(BasicLayout.TAG)
 }
 
+fun LayoutType.create(): Layout {
+    return when (this) {
+         LayoutType.BasicLo -> BasicLayout()
+    }
+}
+
 enum class AnimationType(val tag: String) {
     BlinkAnim(Animations.BLINK.name),
     DissolveAnim(Animations.DISSOLVE.name)
+}
+
+fun AnimationType.get(): AnimationSet {
+    return when (this) {
+        AnimationType.BlinkAnim -> Animations.BLINK
+        AnimationType.DissolveAnim -> Animations.DISSOLVE
+    }
 }

@@ -2,6 +2,8 @@ package ogz.tripeaks.models
 
 import ktx.collections.GdxArray
 import ktx.collections.GdxIntArray
+import ktx.collections.gdxArrayOf
+import ktx.collections.gdxIntArrayOf
 import ogz.tripeaks.models.layout.BasicLayout
 import ogz.tripeaks.models.layout.Layout
 
@@ -30,11 +32,11 @@ class GameState private constructor(
     constructor() : this(
         statistics = GameStatistics(BasicLayout.TAG),
         layout = BasicLayout(),
-        sockets = GdxArray(),
-        stack = GdxIntArray(),
-        discard = GdxIntArray(),
-        canEmptyDiscard = true,
-        stalledBefore = true,
+        sockets = gdxArrayOf(),
+        stack = gdxIntArrayOf(),
+        discard = gdxIntArrayOf(),
+        canEmptyDiscard = false,
+        stalledBefore = false,
     )
 
     /** Are there any moves we can take back? */
@@ -93,10 +95,6 @@ class GameState private constructor(
         return false
     }
 
-    fun unstall() {
-        stalledBefore = false
-    }
-
     // TODO: Do I really need a return value here?
     /**
      * Undo the last move, and return the cards socket number (-1 if the card came form the stack).
@@ -131,25 +129,21 @@ class GameState private constructor(
         isOpen(socketIndex) && (discard.isEmpty || sockets[socketIndex].card.areNeighbors(discard.peek()))
 
     companion object {
-        fun startNew(cards: IntArray, preferences: Settings): GameState {
-            // A deck of 52 distinct cards.
-            require(cards.size == 52 && cards.distinct().size == cards.size && cards.all { it in 0..51 })
-
-            val layout = BasicLayout()
+        fun startNew(layout: Layout, emptyDiscard: Boolean): GameState {
             val statistics = GameStatistics(layout.tag)
-            val emptyDiscard = false
-            val sockets = GdxArray<SocketState>(layout.numberOfSockets)
-            val stack = GdxIntArray.with()
-            val discard = GdxIntArray.with()
+            val cards = (0 until 52).shuffled()
 
+            val sockets = GdxArray<SocketState>(layout.numberOfSockets)
             for (i in 0 until layout.numberOfSockets) {
                 sockets.add(SocketState(cards[i], false))
             }
 
+            val discard = gdxIntArrayOf()
             if (!emptyDiscard) {
                 discard.add(cards[layout.numberOfSockets])
             }
 
+            val stack = gdxIntArrayOf()
             // Iterate from the end, so that the first card remained after the tableau and the discard pile
             // have been set up will end up at the top of the stack.
             for (i in 51 downTo (layout.numberOfSockets + if (emptyDiscard) 0 else 1)) {

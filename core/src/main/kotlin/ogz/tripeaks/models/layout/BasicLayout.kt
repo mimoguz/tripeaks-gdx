@@ -42,7 +42,6 @@ class BasicLayout : LayoutBase(
         Socket(27, GdxIntArray.with(17), GdxIntArray.with(), 3, 18, 3),
     )
 ) {
-
     override val numberOfColumns: Int get() = COLUMNS
 
     override val numberOfRows: Int get() = ROWS

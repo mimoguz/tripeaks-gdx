@@ -11,7 +11,10 @@ import ogz.tripeaks.graphics.Animations
 import ogz.tripeaks.graphics.SpriteSet
 import ogz.tripeaks.models.GameState
 import ogz.tripeaks.models.Settings
+import ogz.tripeaks.models.create
+import ogz.tripeaks.models.get
 import ogz.tripeaks.screens.Constants
+import ogz.tripeaks.screens.GameScreen
 import ogz.tripeaks.services.Message.Companion as Msg
 
 class SettingsService {
@@ -79,7 +82,7 @@ class SettingsService {
         }
 
         if (animationSetChanged) {
-            _animationSet = Animations.ALL.find { it.name == newSettings.animation.tag } ?: Animations.BLINK
+            _animationSet = newSettings.animation.get()
             messageBox.send(Msg.AnimationSetChanged(_animationSet))
         }
 
@@ -88,7 +91,9 @@ class SettingsService {
         }
     }
 
-    fun getNewGame(): GameState = GameState.startNew(IntArray(52) { it }, settings!!)
+    fun getNewGame(): GameState = settings!!.let { settings ->
+        GameState.startNew(settings.layout.create(), settings.emptyDiscard)
+    }
 
     private fun createSkin(darkTheme: Boolean) =
         if (darkTheme)
