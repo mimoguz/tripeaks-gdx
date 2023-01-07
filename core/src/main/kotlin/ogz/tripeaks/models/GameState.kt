@@ -6,6 +6,7 @@ import ktx.collections.gdxArrayOf
 import ktx.collections.gdxIntArrayOf
 import ogz.tripeaks.models.layout.BasicLayout
 import ogz.tripeaks.models.layout.Layout
+import ogz.tripeaks.models.layout.Socket
 
 /**
  * GameScreen should use this directly.
@@ -69,6 +70,13 @@ class GameState private constructor(
     val stalled: Boolean
         get() = !(discard.isEmpty || canTakeAny || canDeal)
 
+    val gameLayout: Layout
+        get() = layout
+
+    fun socketState(index: Int): SocketState = sockets[index]
+
+    fun socket(index: Int): Socket = layout[index]
+
     /** Removes the card at the socket it can. */
     fun take(socketIndex: Int): Boolean {
         require(socketIndex in 0 until layout.numberOfSockets)
@@ -121,7 +129,7 @@ class GameState private constructor(
     }
 
     /** Is the card at the socket index not blocked by any other cards? */
-    private fun isOpen(socketIndex: Int): Boolean =
+    fun isOpen(socketIndex: Int): Boolean =
         (!sockets[socketIndex].isEmpty) && layout[socketIndex].blockedBy.items.all { sockets[it].isEmpty }
 
     /** Can we remove the card at the socket index from the tableau? */

@@ -1,5 +1,6 @@
 package ogz.tripeaks.screens
 
+import com.badlogic.ashley.core.Entity
 import com.badlogic.ashley.core.PooledEngine
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.InputMultiplexer
@@ -15,10 +16,15 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.Logger
 import ktx.app.KtxScreen
+import ktx.ashley.configureEntity
 import ktx.ashley.entity
+import ktx.ashley.get
 import ktx.ashley.getSystem
+import ktx.ashley.remove
 import ktx.ashley.with
 import ktx.assets.disposeSafely
+import ktx.collections.GdxArray
+import ktx.collections.gdxArrayOf
 import ktx.inject.Context
 import ogz.tripeaks.assets.UiSkin
 import ogz.tripeaks.ecs.AnimationComponent
@@ -28,6 +34,7 @@ import ogz.tripeaks.ecs.MultiSpriteRenderingSystem
 import ogz.tripeaks.ecs.SpriteLayerPool
 import ogz.tripeaks.ecs.TransformComponent
 import ogz.tripeaks.graphics.AnimationSet
+import ogz.tripeaks.graphics.BackSprite
 import ogz.tripeaks.graphics.CardRemovedAnimation
 import ogz.tripeaks.graphics.CardSprite
 import ogz.tripeaks.graphics.CustomViewport
@@ -37,6 +44,8 @@ import ogz.tripeaks.graphics.ScreenTransitionAnimation
 import ogz.tripeaks.graphics.SpriteSet
 import ogz.tripeaks.models.AnimationType
 import ogz.tripeaks.models.GameState
+import ogz.tripeaks.models.layout.Layout
+import ogz.tripeaks.models.layout.Socket
 import ogz.tripeaks.screens.Constants.MIN_WORLD_WIDTH
 import ogz.tripeaks.screens.Constants.WORLD_HEIGHT
 import ogz.tripeaks.services.MessageBox
@@ -68,6 +77,7 @@ class GameScreen(private val context: Context) : KtxScreen {
     private val skinChangedReceiver = Receiver<Msg.SkinChanged> { onSkinChanged(it) }
     private val spriteSetChangedReceiver = Receiver<Msg.SpriteSetChanged> { onSpriteSetChanged(it) }
     private val touchReceiver = Receiver<Msg.TouchDown> { onTouch(it) }
+    private val entities: GdxArray<Entity> = gdxArrayOf(true, 52)
 
     private var play: GameState? = null
 
@@ -83,6 +93,10 @@ class GameScreen(private val context: Context) : KtxScreen {
         messageBox.register(skinChangedReceiver)
         messageBox.register(spriteSetChangedReceiver)
         messageBox.register(touchReceiver)
+
+        for (entity in 0 until 52) {
+            entities.add(engine.entity())
+        }
     }
 
     override fun render(delta: Float) {
@@ -99,11 +113,11 @@ class GameScreen(private val context: Context) : KtxScreen {
         play = PersistenceService().loadGameState() ?: settings.getNewGame()
         playerStatistics.updatePlayed()
 
+        setupECS()
         engine.addSystem(AnimationSystem(animationSet, layerPool))
         engine.addSystem(MultiSpriteRenderingSystem(batch, spriteSet))
         Gdx.input.inputProcessor = InputMultiplexer(uiStage, touchHandler)
         setupStage(settings.skin)
-        setupECS()
     }
 
     override fun resume() {
@@ -148,6 +162,7 @@ class GameScreen(private val context: Context) : KtxScreen {
     }
 
     private fun onSkinChanged(msg: Msg.SkinChanged) {
+        // TODO: Move shader theme selection to a uniform
         setupStage(msg.skin)
     }
 
@@ -234,7 +249,15 @@ class GameScreen(private val context: Context) : KtxScreen {
     }
 
     private fun setupECS() {
-        engine.removeAllEntities()
+        entities.forEach { entity ->
+            engine.configureEntity(entity) {
+                val sprites = this.entity.remove<MultiSpriteComponent>()
+                if (sprites is MultiSpriteComponent) {
+                    sprites.layers.forEach { layerPool.free(it) }
+                }
+                this.entity.removeAll()
+            }
+        }
 
         engine.entity {
             val bg = HomeSprite
@@ -258,42 +281,97 @@ class GameScreen(private val context: Context) : KtxScreen {
             }
         }
 
+        setupTableau()
+
         val x = 50f
 
         // Card
-        engine.entity {
-            val card = CardSprite
-            val cardSprite = card.get(spriteSet)
-            val face = FaceSprite(1)
-            val faceSprite = face.get(spriteSet)
+//        engine.entity {
+//            val card = CardSprite
+//            val cardSprite = card.get(spriteSet)
+//            val face = FaceSprite(1)
+//            val faceSprite = face.get(spriteSet)
+//
+//            with<TransformComponent> {
+//                origin = Vector2(
+//                    MathUtils.floor(cardSprite.regionWidth * 0.5f).toFloat(),
+//                    MathUtils.floor(cardSprite.regionHeight * 0.5f).toFloat()
+//                )
+//                position = origin.cpy().scl(-1f, -1f).add(x, 0f)
+//            }
+//
+//            with<MultiSpriteComponent> {
+//                this.color.set(0.02f, 1f, 1f, 1f)
+//                z = 0
+//                layers.add(layerPool.obtain().apply {
+//                    spriteType = card
+//                })
+//                layers.add(layerPool.obtain().apply {
+//                    spriteType = face
+//                    localPosition.set(
+//                        (cardSprite.regionWidth - faceSprite.regionWidth) * 0.5f,
+//                        (cardSprite.regionHeight - faceSprite.regionHeight) * 0.5f
+//                    )
+//                })
+//            }
+//
+//            with<AnimationComponent> {
+//                timeRemaining = 10000f
+//                animationType = CardRemovedAnimation
+//            }
+//        }
+    }
 
-            with<TransformComponent> {
-                origin = Vector2(
-                    MathUtils.floor(cardSprite.regionWidth * 0.5f).toFloat(),
-                    MathUtils.floor(cardSprite.regionHeight * 0.5f).toFloat()
-                )
-                position = origin.cpy().scl(-1f, -1f).add(x, 0f)
-            }
-
-            with<MultiSpriteComponent> {
-                this.color.set(0.02f, 1f, 1f, 1f)
-                z = 0
-                layers.add(layerPool.obtain().apply {
-                    spriteType = card
-                })
-                layers.add(layerPool.obtain().apply {
-                    spriteType = face
-                    localPosition.set(
-                        (cardSprite.regionWidth - faceSprite.regionWidth) * 0.5f,
-                        (cardSprite.regionHeight - faceSprite.regionHeight) * 0.5f
-                    )
-                })
-            }
-
-            with<AnimationComponent> {
-                timeRemaining = 10000f
-                animationType = CardRemovedAnimation
+    private fun setupTableau() {
+        play?.let { gameState ->
+            for (s in 0 until gameState.gameLayout.numberOfSockets) {
+                val socket = gameState.socket(s)
+                val socketState = gameState.socketState(s)
+                val entity = entities[socketState.card]
+                engine.configureEntity(entity) {
+                    with<TransformComponent> {
+                        position.set(socketPosition(socket, gameState.gameLayout))
+                        origin.set((CARD_WIDTH / 2).toFloat(), (CARD_HEIGHT / 2).toFloat())
+                    }
+                    with<MultiSpriteComponent> {
+                        z = socket.z
+                        color.set(0.02f, 1f, 1f, 1f)
+                        layers.add(layerPool.obtain().apply {
+                            spriteType = CardSprite
+                        })
+                        if (gameState.isOpen(s)) {
+                            layers.add(layerPool.obtain().apply {
+                                spriteType = FaceSprite(socketState.card)
+                                localPosition.set(
+                                    ((CARD_WIDTH - FACE_WIDTH) / 2).toFloat(),
+                                    ((CARD_HEIGHT - FACE_HEIGHT) / 2).toFloat()
+                                )
+                            })
+                        } else {
+                            layers.add(layerPool.obtain().apply {
+                                spriteType = BackSprite
+                            })
+                        }
+                    }
+                    logger.info("$s")
+                    logger.info("${entity.get<TransformComponent>()?.position}")
+                    logger.info("${entity.get<MultiSpriteComponent>()?.layers?.size}")
+                    logger.info("----")
+                }
             }
         }
+    }
+
+    private fun socketPosition(socket: Socket, layout: Layout): Vector2 = Vector2(
+        (-(layout.numberOfColumns / 2) * (CARD_WIDTH / 2) + (socket.column * (CARD_WIDTH / 2))).toFloat(),
+        ((layout.numberOfRows / 2) * (CARD_HEIGHT / 2) - (socket.row * (CARD_HEIGHT / 2)) + PADDING_TOP).toFloat()
+    )
+
+    companion object {
+        private const val CARD_HEIGHT = 37
+        private const val CARD_WIDTH = 25
+        private const val FACE_HEIGHT = 30
+        private const val FACE_WIDTH = 15
+        private const val PADDING_TOP = 4
     }
 }
