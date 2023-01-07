@@ -3,7 +3,6 @@ package ogz.tripeaks.screens
 import com.badlogic.ashley.core.PooledEngine
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.InputMultiplexer
-import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.graphics.Pixmap
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.FrameBuffer
@@ -21,26 +20,23 @@ import ktx.ashley.getSystem
 import ktx.ashley.with
 import ktx.assets.disposeSafely
 import ktx.inject.Context
-import ktx.scene2d.Scene2DSkin
 import ogz.tripeaks.assets.UiSkin
 import ogz.tripeaks.ecs.AnimationComponent
 import ogz.tripeaks.ecs.AnimationSystem
-import ogz.tripeaks.ecs.RenderComponent
-import ogz.tripeaks.ecs.SpriteRenderingSystem
+import ogz.tripeaks.ecs.MultiSpriteComponent
+import ogz.tripeaks.ecs.MultiSpriteRenderingSystem
+import ogz.tripeaks.ecs.SpriteLayerPool
 import ogz.tripeaks.ecs.TransformComponent
 import ogz.tripeaks.graphics.AnimationSet
 import ogz.tripeaks.graphics.CardRemovedAnimation
 import ogz.tripeaks.graphics.CardSprite
 import ogz.tripeaks.graphics.CustomViewport
-import ogz.tripeaks.graphics.FaceRemovedAnimation
 import ogz.tripeaks.graphics.FaceSprite
 import ogz.tripeaks.graphics.HomeSprite
 import ogz.tripeaks.graphics.ScreenTransitionAnimation
 import ogz.tripeaks.graphics.SpriteSet
 import ogz.tripeaks.models.AnimationType
 import ogz.tripeaks.models.GameState
-import ogz.tripeaks.screens.Constants.DARK_UI_BG
-import ogz.tripeaks.screens.Constants.LIGHT_UI_BG
 import ogz.tripeaks.screens.Constants.MIN_WORLD_WIDTH
 import ogz.tripeaks.screens.Constants.WORLD_HEIGHT
 import ogz.tripeaks.services.MessageBox
@@ -52,15 +48,14 @@ import ogz.tripeaks.ui.LabelButton
 import ogz.tripeaks.services.Message.Companion as Msg
 
 class GameScreen(private val context: Context) : KtxScreen {
-
     private val logger = Logger(GameScreen::class.java.simpleName)
-
     private val messageBox = context.inject<MessageBox>()
     private val batch = context.inject<SpriteBatch>()
     private val viewport = context.inject<CustomViewport>()
     private val uiStage = context.inject<Stage>()
     private val settings = context.inject<SettingsService>()
     private val playerStatistics = context.inject<PlayerStatisticsService>()
+    private val layerPool = context.inject<SpriteLayerPool>()
     private val engine = PooledEngine()
     private val renderHelper = RenderHelper(batch, viewport, engine)
     private val touchHandler = TouchHandler(messageBox)
@@ -104,8 +99,8 @@ class GameScreen(private val context: Context) : KtxScreen {
         play = PersistenceService().loadGameState() ?: settings.getNewGame()
         playerStatistics.updatePlayed()
 
-        engine.addSystem(AnimationSystem(animationSet))
-        engine.addSystem(SpriteRenderingSystem(batch, spriteSet))
+        engine.addSystem(AnimationSystem(animationSet, layerPool))
+        engine.addSystem(MultiSpriteRenderingSystem(batch, spriteSet))
         Gdx.input.inputProcessor = InputMultiplexer(uiStage, touchHandler)
         setupStage(settings.skin)
         setupECS()
@@ -157,7 +152,7 @@ class GameScreen(private val context: Context) : KtxScreen {
     }
 
     private fun onSpriteSetChanged(msg: Msg.SpriteSetChanged) {
-        engine.getSystem<SpriteRenderingSystem>().spriteSet = msg.spriteSet
+        engine.getSystem<MultiSpriteRenderingSystem>().spriteSet = msg.spriteSet
         renderHelper.clearColor = msg.spriteSet.background
     }
 
@@ -242,17 +237,19 @@ class GameScreen(private val context: Context) : KtxScreen {
         engine.removeAllEntities()
 
         engine.entity {
-            val spriteType = HomeSprite
-            val sprite = spriteType.get(spriteSet)
+            val bg = HomeSprite
+            val bgSprite = bg.get(spriteSet)
 
             with<TransformComponent> {
-                position = Vector2(sprite.regionWidth * -0.5f, sprite.regionHeight * -0.5f)
+                position = Vector2(bgSprite.regionWidth * -0.5f, bgSprite.regionHeight * -0.5f)
             }
 
-            with<RenderComponent> {
-                this.spriteType = spriteType
+            with<MultiSpriteComponent> {
                 color.set(0.1f, 1f, 1f, 1f)
                 z = 10
+                layers.add(layerPool.obtain().apply {
+                    spriteType = bg
+                })
             }
 
             with<AnimationComponent> {
@@ -265,48 +262,37 @@ class GameScreen(private val context: Context) : KtxScreen {
 
         // Card
         engine.entity {
-            val spriteType = CardSprite
-            val sprite = spriteType.get(spriteSet)
+            val card = CardSprite
+            val cardSprite = card.get(spriteSet)
+            val face = FaceSprite(1)
+            val faceSprite = face.get(spriteSet)
 
             with<TransformComponent> {
                 origin = Vector2(
-                    MathUtils.floor(sprite.regionWidth * 0.5f).toFloat(),
-                    MathUtils.floor(sprite.regionHeight * 0.5f).toFloat()
+                    MathUtils.floor(cardSprite.regionWidth * 0.5f).toFloat(),
+                    MathUtils.floor(cardSprite.regionHeight * 0.5f).toFloat()
                 )
                 position = origin.cpy().scl(-1f, -1f).add(x, 0f)
             }
 
-            with<RenderComponent> {
-                this.spriteType = spriteType
+            with<MultiSpriteComponent> {
                 this.color.set(0.02f, 1f, 1f, 1f)
                 z = 0
+                layers.add(layerPool.obtain().apply {
+                    spriteType = card
+                })
+                layers.add(layerPool.obtain().apply {
+                    spriteType = face
+                    localPosition.set(
+                        (cardSprite.regionWidth - faceSprite.regionWidth) * 0.5f,
+                        (cardSprite.regionHeight - faceSprite.regionHeight) * 0.5f
+                    )
+                })
             }
 
             with<AnimationComponent> {
                 timeRemaining = 10000f
                 animationType = CardRemovedAnimation
-            }
-        }
-
-        // Card face
-        engine.entity {
-            val spriteType = FaceSprite(1)
-            val sprite = spriteType.get(spriteSet)
-            with<TransformComponent> {
-                origin = Vector2(
-                    MathUtils.floor(sprite.regionWidth * 0.5f).toFloat(),
-                    MathUtils.floor(sprite.regionHeight * 0.5f).toFloat()
-                )
-                position = origin.cpy().scl(-1f, -1f).add(x, 0f)
-            }
-            with<RenderComponent> {
-                this.spriteType = spriteType
-                this.color.set(0.01f, 1f, 1f, 1f)
-                z = 1
-            }
-            with<AnimationComponent> {
-                timeRemaining = 10000f
-                animationType = FaceRemovedAnimation
             }
         }
     }

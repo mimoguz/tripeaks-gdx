@@ -7,16 +7,18 @@ import ktx.ashley.allOf
 import ktx.ashley.get
 import ogz.tripeaks.graphics.AnimationSet
 
-class AnimationSystem(var animationSet: AnimationSet) : IteratingSystem(
-    allOf(RenderComponent::class, TransformComponent::class, AnimationComponent::class).get()
+class AnimationSystem(var animationSet: AnimationSet, val layerPool: SpriteLayerPool) : IteratingSystem(
+    allOf(MultiSpriteComponent::class, TransformComponent::class, AnimationComponent::class).get()
 ) {
-
     override fun processEntity(entity: Entity, deltaTime: Float) {
-        entity[RenderComponent.mapper]?.let { render ->
+        entity[MultiSpriteComponent.mapper]?.let { sprites ->
             entity[TransformComponent.mapper]?.let { transform ->
                 entity[AnimationComponent.mapper]?.let { animation ->
                     val step = animation.animationType.get(animationSet)
-                    if (!step(render, transform, animation, deltaTime)) {
+                    if (!step(sprites, transform, animation, deltaTime)) {
+                        sprites.layers.forEach {
+                            layerPool.free(it)
+                        }
                         engine.removeEntity(entity)
                     } else {
                         animation.timeRemaining -= deltaTime

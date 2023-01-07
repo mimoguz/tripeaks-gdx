@@ -11,7 +11,6 @@ class CustomViewport(
     private val constantWorldHeight: Int,
     camera: Camera
 ) : Viewport() {
-
     init {
         setWorldSize(minimumWorldWidth.toFloat(), constantWorldHeight.toFloat())
         setCamera(camera)

@@ -7,15 +7,12 @@ import com.badlogic.gdx.scenes.scene2d.Stage
 import ktx.app.KtxGame
 import ktx.app.KtxScreen
 import ktx.inject.Context
+import ogz.tripeaks.ecs.SpriteLayerPool
 import ogz.tripeaks.graphics.CustomViewport
-import ogz.tripeaks.models.GameState
-import ogz.tripeaks.models.PlayerStatistics
-import ogz.tripeaks.models.Settings
 import ogz.tripeaks.screens.Constants.MAX_WORLD_WIDTH
 import ogz.tripeaks.screens.Constants.MIN_WORLD_WIDTH
 import ogz.tripeaks.screens.Constants.WORLD_HEIGHT
 import ogz.tripeaks.services.MessageBox
-import ogz.tripeaks.services.Message.Companion as Msg
 import ogz.tripeaks.services.PersistenceService
 import ogz.tripeaks.services.PlayerStatisticsService
 import ogz.tripeaks.services.SettingsService
@@ -33,7 +30,6 @@ class Main : KtxGame<KtxScreen>() {
 
     override fun create() {
         // Gdx.graphics.isContinuousRendering = false
-
         batch = SpriteBatch()
         viewport = CustomViewport(MIN_WORLD_WIDTH, MAX_WORLD_WIDTH, WORLD_HEIGHT, OrthographicCamera())
         uiStage = Stage(CustomViewport(MIN_WORLD_WIDTH, MAX_WORLD_WIDTH, WORLD_HEIGHT, OrthographicCamera()))
@@ -46,6 +42,7 @@ class Main : KtxGame<KtxScreen>() {
             bindSingleton(viewport)
             bindSingleton(playerStatistics)
             bindSingleton(settings)
+            bindSingleton(SpriteLayerPool())
         }
 
         addScreen(LoadingScreen(this, context))

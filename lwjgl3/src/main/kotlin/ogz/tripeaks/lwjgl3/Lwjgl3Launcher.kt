@@ -16,6 +16,8 @@ fun main() {
         setTitle("TriPeaks")
         setWindowedMode(640, 480)
         setWindowIcon(*(arrayOf(128, 64, 32, 16).map { "libgdx$it.png" }.toTypedArray()))
+        // LibGDX dumps preferences files directly under user home.
+        // Let's try to get the proper config directory for OS.
         getConfigDirectory()?.let {
             setPreferencesConfig(it.toAbsolutePath().toString(), Files.FileType.Absolute)
         }
@@ -35,8 +37,8 @@ fun getConfigDirectory(): Path? {
         }
     }
 
-    parent?.let { base ->
-        val path = Paths.get(base.toAbsolutePath().toString(), "TriPeaks-GDX")
+    if (parent != null) {
+        val path = Paths.get(parent.toAbsolutePath().toString(), "TriPeaks-GDX")
         val dir = path.toFile()
         if (!dir.exists()) {
             try {

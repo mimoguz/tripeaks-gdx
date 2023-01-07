@@ -13,9 +13,7 @@ import ktx.assets.disposeSafely
 import ktx.graphics.use
 
 class RenderHelper(private val batch: SpriteBatch, private val viewport: Viewport, private val engine: PooledEngine) : Disposable {
-
     private var renderMethod = this::renderScreen
-
     private val blurShader = ShaderProgram(
         javaClass.classLoader.getResource("shaders/basic.vert")!!.readText(),
         javaClass.classLoader.getResource("shaders/pixelate.frag")!!.readText()
