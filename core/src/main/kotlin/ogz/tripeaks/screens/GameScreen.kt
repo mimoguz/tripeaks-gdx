@@ -7,7 +7,6 @@ import com.badlogic.gdx.InputMultiplexer
 import com.badlogic.gdx.graphics.Pixmap
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.FrameBuffer
-import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog
@@ -35,7 +34,6 @@ import ogz.tripeaks.ecs.SpriteLayerPool
 import ogz.tripeaks.ecs.TransformComponent
 import ogz.tripeaks.graphics.AnimationSet
 import ogz.tripeaks.graphics.BackSprite
-import ogz.tripeaks.graphics.CardRemovedAnimation
 import ogz.tripeaks.graphics.CardSprite
 import ogz.tripeaks.graphics.CustomViewport
 import ogz.tripeaks.graphics.FaceSprite
@@ -113,7 +111,7 @@ class GameScreen(private val context: Context) : KtxScreen {
         play = PersistenceService().loadGameState() ?: settings.getNewGame()
         playerStatistics.updatePlayed()
 
-        setupECS()
+        initEcs()
         engine.addSystem(AnimationSystem(animationSet, layerPool))
         engine.addSystem(MultiSpriteRenderingSystem(batch, spriteSet))
         Gdx.input.inputProcessor = InputMultiplexer(uiStage, touchHandler)
@@ -156,9 +154,42 @@ class GameScreen(private val context: Context) : KtxScreen {
     }
 
     private fun onTouch(message: Msg.TouchDown) {
-        val pos = Vector2(message.screenX.toFloat(), message.screenY.toFloat())
-        viewport.unproject(pos)
-        logger.info("Touch event {x: ${pos.x}, y: ${pos.y}, pointer:${message.pointer}, button: ${message.button}}")
+        play?.let { game ->
+            val pos = Vector2(message.screenX.toFloat(), message.screenY.toFloat())
+            viewport.unproject(pos)
+
+            val layout = game.gameLayout
+
+            val x = pos.x.toInt() + (layout.numberOfColumns / 2) * CELL_WIDTH
+            val y = viewport.worldHeight.toInt() / 2 - PADDING_TOP - pos.y.toInt()
+            val column = x / CELL_WIDTH
+            val row = y / CELL_HEIGHT
+
+            logger.info("Row: $row, Column: $column")
+
+            // Touch was outside of the tableau
+            if (column < 0 || column >= layout.numberOfColumns || row < 0 || row >= layout.numberOfRows) {
+                return
+            }
+
+            // Search the top-most open socket that occupies the cell.
+            for (rowOffset in 0 downTo -1) {
+                for (columnOffset in 0 downTo -1) {
+                    val socket = layout.lookup(column + columnOffset, row + rowOffset)
+                    if (socket != null && game.take(socket.index)) {
+                        logger.info("Take ${socket.index}")
+                        val card = game.socketState(socket.index).card
+                        val sprites = entities[card][MultiSpriteComponent.mapper]
+                        if (sprites is MultiSpriteComponent) {
+                            sprites.layers.forEach { layerPool.free(it) }
+                        }
+                        entities[card].remove<MultiSpriteComponent>()
+                        // TODO: Removed animation
+                        return
+                    }
+                }
+            }
+        }
     }
 
     private fun onSkinChanged(msg: Msg.SkinChanged) {
@@ -248,16 +279,9 @@ class GameScreen(private val context: Context) : KtxScreen {
         dialog.show(uiStage)
     }
 
-    private fun setupECS() {
-        entities.forEach { entity ->
-            engine.configureEntity(entity) {
-                val sprites = this.entity.remove<MultiSpriteComponent>()
-                if (sprites is MultiSpriteComponent) {
-                    sprites.layers.forEach { layerPool.free(it) }
-                }
-                this.entity.removeAll()
-            }
-        }
+    private fun initEcs() {
+        removeComponents()
+        setupTableau()
 
         engine.entity {
             val bg = HomeSprite
@@ -281,11 +305,9 @@ class GameScreen(private val context: Context) : KtxScreen {
             }
         }
 
-        setupTableau()
+//        val x = 50f
 
-        val x = 50f
-
-        // Card
+//        // Card
 //        engine.entity {
 //            val card = CardSprite
 //            val cardSprite = card.get(spriteSet)
@@ -322,6 +344,16 @@ class GameScreen(private val context: Context) : KtxScreen {
 //        }
     }
 
+    private fun removeComponents() {
+        entities.forEach { entity ->
+            val sprites = entity.remove<MultiSpriteComponent>()
+            if (sprites is MultiSpriteComponent) {
+                sprites.layers.forEach { layerPool.free(it) }
+            }
+            entity.removeAll()
+        }
+    }
+
     private fun setupTableau() {
         play?.let { gameState ->
             for (s in 0 until gameState.gameLayout.numberOfSockets) {
@@ -333,39 +365,41 @@ class GameScreen(private val context: Context) : KtxScreen {
                         position.set(socketPosition(socket, gameState.gameLayout))
                         origin.set((CARD_WIDTH / 2).toFloat(), (CARD_HEIGHT / 2).toFloat())
                     }
-                    with<MultiSpriteComponent> {
-                        z = socket.z
-                        color.set(0.02f, 1f, 1f, 1f)
-                        layers.add(layerPool.obtain().apply {
-                            spriteType = CardSprite
-                        })
-                        if (gameState.isOpen(s)) {
+                    if (!socketState.isEmpty) {
+                        with<MultiSpriteComponent> {
+                            z = socket.z
+                            color.set(1f, 1f, 1f, 1f)
                             layers.add(layerPool.obtain().apply {
-                                spriteType = FaceSprite(socketState.card)
-                                localPosition.set(
-                                    ((CARD_WIDTH - FACE_WIDTH) / 2).toFloat(),
-                                    ((CARD_HEIGHT - FACE_HEIGHT) / 2).toFloat()
-                                )
+                                spriteType = CardSprite
                             })
-                        } else {
-                            layers.add(layerPool.obtain().apply {
-                                spriteType = BackSprite
-                            })
+                            if (gameState.isOpen(s)) {
+                                layers.add(layerPool.obtain().apply {
+                                    spriteType = FaceSprite(socketState.card)
+                                    localPosition.set(
+                                        ((CARD_WIDTH - FACE_WIDTH) / 2).toFloat(),
+                                        ((CARD_HEIGHT - FACE_HEIGHT) / 2).toFloat()
+                                    )
+                                })
+                            } else {
+                                layers.add(layerPool.obtain().apply {
+                                    spriteType = BackSprite
+                                })
+                            }
                         }
                     }
-                    logger.info("$s")
-                    logger.info("${entity.get<TransformComponent>()?.position}")
-                    logger.info("${entity.get<MultiSpriteComponent>()?.layers?.size}")
-                    logger.info("----")
                 }
             }
         }
     }
 
-    private fun socketPosition(socket: Socket, layout: Layout): Vector2 = Vector2(
-        (-(layout.numberOfColumns / 2) * (CARD_WIDTH / 2) + (socket.column * (CARD_WIDTH / 2))).toFloat(),
-        ((layout.numberOfRows / 2) * (CARD_HEIGHT / 2) - (socket.row * (CARD_HEIGHT / 2)) + PADDING_TOP).toFloat()
-    )
+    private fun socketPosition(socket: Socket, layout: Layout): Vector2 {
+        val maxY = viewport.worldHeight.toInt() / 2 - PADDING_TOP - CARD_HEIGHT
+        val minX = -(layout.numberOfColumns / 2) * CELL_WIDTH
+        return Vector2(
+            (minX + socket.column * CELL_WIDTH + CELL_PADDING_LEFT).toFloat(),
+            (maxY - socket.row * CELL_HEIGHT - CELL_PADDING_TOP).toFloat()
+        )
+    }
 
     companion object {
         private const val CARD_HEIGHT = 37
@@ -373,5 +407,9 @@ class GameScreen(private val context: Context) : KtxScreen {
         private const val FACE_HEIGHT = 30
         private const val FACE_WIDTH = 15
         private const val PADDING_TOP = 4
+        private const val CELL_HEIGHT = 19
+        private const val CELL_WIDTH = 14
+        private const val CELL_PADDING_LEFT = 1
+        private const val CELL_PADDING_TOP = 1
     }
 }
