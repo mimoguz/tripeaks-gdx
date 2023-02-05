@@ -4,6 +4,8 @@ import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.scenes.scene2d.ui.Skin
+import com.ray3k.stripe.PopTable.PopTableStyle
+import ktx.style.addStyle
 import ktx.style.button
 import ktx.style.checkBox
 import ktx.style.color
@@ -102,6 +104,11 @@ class UiSkin(
             scrollStyle = skinScrollPaneStyle
             listStyle = skinListStyle
         }
+
+        addStyle("default", PopTableStyle().apply {
+            background = skin["window_$resourcePostfix"]
+            stageBackground = skin["overlay_$resourcePostfix"]
+        })
     }
 
     companion object {

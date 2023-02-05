@@ -5,32 +5,35 @@ precision mediump float;
 #define LOWP
 #endif
 
-#define DX 0.003
-#define DY 0.005
-#define CENTER_CONT 0.25
-// 0.75 / 4 = 0.1875
-#define NEIGHBOR_CONT 0.1875
-#define DARKENING *.6
+#define CENTER_CONT 0.2
+// 0.8 / 8 = 0.1
+#define NEIGHBOR_CONT 0.1
+#define DARKENING 1.0
 
-// I use vertex colors to pass various parameters.
+// I use vertex colors to pass various per-entity parameters.
 // For this shader it's unused.
 varying LOWP vec4 v_color;
 
 varying vec2 v_texCoords;
 
 uniform sampler2D u_texture;
+uniform vec2 u_worldSize;
 
 void main() {
     vec4 outColor = texture2D(u_texture, v_texCoords);
+    float dx = 1.0 / u_worldSize.x;
+    float dy = 1.0 / u_worldSize.y;
     vec4 blurSample =
-        texture2D(u_texture, v_texCoords + vec2(0.0, DY))     // North
-        + texture2D(u_texture, v_texCoords + vec2(DX, 0.0))   // Eeast
-        + texture2D(u_texture, v_texCoords + vec2(0.0, -DY))  // South
-        + texture2D(u_texture, v_texCoords + vec2(-DX, 0.0)); // West
+        texture2D(u_texture, v_texCoords + vec2(0.0, dy))     // North
+        + texture2D(u_texture, v_texCoords + vec2(dx, 0.0))   // Eeast
+        + texture2D(u_texture, v_texCoords + vec2(0.0, -dy))  // South
+        + texture2D(u_texture, v_texCoords + vec2(-dx, 0.0)); // West
+        + texture2D(u_texture, v_texCoords + vec2(dx, dy))    // North-east
+        + texture2D(u_texture, v_texCoords + vec2(dx, -dy))   // North-west
+        + texture2D(u_texture, v_texCoords + vec2(-dx, dy))   // South-east
+        + texture2D(u_texture, v_texCoords + vec2(-dx, -dy)); // South-west
     gl_FragColor = vec4(
-        (outColor.r * CENTER_CONT + blurSample.r * NEIGHBOR_CONT) * DARKENING,
-        (outColor.g * CENTER_CONT + blurSample.g * NEIGHBOR_CONT) * DARKENING,
-        (outColor.b * CENTER_CONT + blurSample.b * NEIGHBOR_CONT) * DARKENING,
+        outColor.rgb * (CENTER_CONT * DARKENING) + blurSample.rgb * (NEIGHBOR_CONT * DARKENING),
         outColor.a * CENTER_CONT + blurSample.a * NEIGHBOR_CONT
     );
 }

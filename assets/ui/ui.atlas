@@ -15,7 +15,7 @@ buttonDisabled_dark
   index: -1
 buttonDisabled_light
   rotate: false
-  xy: 92, 110
+  xy: 110, 110
   size: 16, 16
   split: 3, 3, 3, 4
   pad: 3, 3, 3, 4
@@ -24,7 +24,7 @@ buttonDisabled_light
   index: -1
 buttonDown_dark
   rotate: false
-  xy: 74, 110
+  xy: 92, 110
   size: 16, 16
   split: 3, 3, 4, 3
   pad: 3, 3, 4, 3
@@ -33,7 +33,7 @@ buttonDown_dark
   index: -1
 buttonDown_light
   rotate: false
-  xy: 110, 110
+  xy: 29, 80
   size: 16, 16
   split: 3, 3, 4, 3
   pad: 3, 3, 4, 3
@@ -42,7 +42,7 @@ buttonDown_light
   index: -1
 buttonUp_dark
   rotate: false
-  xy: 22, 63
+  xy: 22, 62
   size: 16, 16
   split: 3, 3, 3, 4
   pad: 3, 3, 3, 4
@@ -51,7 +51,7 @@ buttonUp_dark
   index: -1
 buttonUp_light
   rotate: false
-  xy: 22, 45
+  xy: 22, 44
   size: 16, 16
   split: 3, 3, 3, 4
   pad: 3, 3, 3, 4
@@ -88,21 +88,21 @@ checkboxOn_light
   index: -1
 deal_dark
   rotate: false
-  xy: 47, 81
+  xy: 40, 45
   size: 11, 15
   orig: 11, 15
   offset: 0, 0
   index: -1
 deal_light
   rotate: false
-  xy: 40, 46
+  xy: 53, 45
   size: 11, 15
   orig: 11, 15
   offset: 0, 0
   index: -1
 line_dark
   rotate: false
-  xy: 34, 28
+  xy: 20, 4
   size: 3, 1
   split: 1, 1, 0, 1
   pad: 1, 1, 0, 0
@@ -111,14 +111,14 @@ line_dark
   index: -1
 line_light
   rotate: false
-  xy: 20, 5
+  xy: 36, 30
   size: 3, 1
   split: 1, 1, 0, 1
   pad: 1, 1, 0, 0
   orig: 3, 1
   offset: 0, 0
   index: -1
-menuItemDown_light
+menuItemDown_dark
   rotate: false
   xy: 22, 82
   size: 5, 5
@@ -127,9 +127,9 @@ menuItemDown_light
   orig: 5, 5
   offset: 0, 0
   index: -1
-menuItemDown_dark
+menuItemDown_light
   rotate: false
-  xy: 49, 108
+  xy: 54, 80
   size: 5, 5
   split: 1, 1, 1, 1
   pad: 1, 1, 1, 1
@@ -138,7 +138,7 @@ menuItemDown_dark
   index: -1
 menuItemOver_dark
   rotate: false
-  xy: 36, 31
+  xy: 121, 96
   size: 5, 5
   split: 1, 1, 1, 1
   pad: 1, 1, 1, 1
@@ -147,7 +147,7 @@ menuItemOver_dark
   index: -1
 menuItemOver_light
   rotate: false
-  xy: 36, 38
+  xy: 121, 103
   size: 5, 5
   split: 1, 1, 1, 1
   pad: 1, 1, 1, 1
@@ -156,7 +156,7 @@ menuItemOver_light
   index: -1
 menuItemUp_dark
   rotate: false
-  xy: 53, 45
+  xy: 49, 108
   size: 5, 5
   split: 1, 1, 1, 1
   pad: 1, 1, 1, 1
@@ -165,7 +165,7 @@ menuItemUp_dark
   index: -1
 menuItemUp_light
   rotate: false
-  xy: 64, 54
+  xy: 47, 80
   size: 5, 5
   split: 1, 1, 1, 1
   pad: 1, 1, 1, 1
@@ -174,39 +174,48 @@ menuItemUp_light
   index: -1
 menu_dark
   rotate: false
-  xy: 59, 100
+  xy: 49, 97
   size: 7, 9
   orig: 7, 9
   offset: 0, 0
   index: -1
 menu_light
   rotate: false
-  xy: 60, 89
+  xy: 36, 33
   size: 7, 9
   orig: 7, 9
   offset: 0, 0
   index: -1
 options_dark
   rotate: false
-  xy: 20, 8
+  xy: 20, 7
   size: 9, 7
   orig: 9, 7
   offset: 0, 0
   index: -1
 options_light
   rotate: false
-  xy: 53, 52
+  xy: 80, 102
   size: 9, 7
   orig: 9, 7
   offset: 0, 0
   index: -1
-scrollKnob_light
+overlay_dark
   rotate: false
-  xy: 29, 81
-  size: 16, 15
-  split: 3, 3, 4, 4
-  pad: 3, 3, 4, 4
-  orig: 16, 15
+  xy: 91, 100
+  size: 8, 8
+  split: 1, 1, 1, 1
+  pad: 1, 1, 1, 1
+  orig: 8, 8
+  offset: 0, 0
+  index: -1
+overlay_light
+  rotate: false
+  xy: 47, 87
+  size: 8, 8
+  split: 1, 1, 1, 1
+  pad: 1, 1, 1, 1
+  orig: 8, 8
   offset: 0, 0
   index: -1
 scrollKnob_dark
@@ -218,9 +227,18 @@ scrollKnob_dark
   orig: 16, 15
   offset: 0, 0
   index: -1
+scrollKnob_light
+  rotate: false
+  xy: 74, 111
+  size: 16, 15
+  split: 3, 3, 4, 4
+  pad: 3, 3, 4, 4
+  orig: 16, 15
+  offset: 0, 0
+  index: -1
 scroll_dark
   rotate: false
-  xy: 58, 70
+  xy: 111, 100
   size: 8, 8
   split: 3, 3, 3, 3
   pad: 3, 3, 3, 3
@@ -229,7 +247,7 @@ scroll_dark
   index: -1
 scroll_light
   rotate: false
-  xy: 49, 98
+  xy: 101, 100
   size: 8, 8
   split: 3, 3, 3, 3
   pad: 3, 3, 3, 3
@@ -274,35 +292,35 @@ selectBoxUp_light
   index: -1
 stats_dark
   rotate: false
-  xy: 60, 80
+  xy: 58, 102
   size: 9, 7
   orig: 9, 7
   offset: 0, 0
   index: -1
 stats_light
   rotate: false
-  xy: 58, 61
+  xy: 69, 102
   size: 9, 7
   orig: 9, 7
   offset: 0, 0
   index: -1
 undo_dark
   rotate: false
-  xy: 20, 17
+  xy: 20, 16
   size: 12, 12
   orig: 12, 12
   offset: 0, 0
   index: -1
 undo_light
   rotate: false
-  xy: 22, 31
+  xy: 22, 30
   size: 12, 12
   orig: 12, 12
   offset: 0, 0
   index: -1
 window_dark
   rotate: false
-  xy: 40, 63
+  xy: 40, 62
   size: 16, 16
   split: 2, 2, 2, 4
   pad: 4, 4, 4, 6

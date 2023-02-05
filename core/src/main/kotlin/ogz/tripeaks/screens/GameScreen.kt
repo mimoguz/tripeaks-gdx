@@ -9,11 +9,12 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.FrameBuffer
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.scenes.scene2d.Stage
-import com.badlogic.gdx.scenes.scene2d.ui.Dialog
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.Logger
+import com.ray3k.stripe.PopTable
+import com.ray3k.stripe.PopTable.PopTableStyle
 import ktx.app.KtxScreen
 import ktx.ashley.configureEntity
 import ktx.ashley.entity
@@ -259,21 +260,37 @@ class GameScreen(private val context: Context) : KtxScreen {
 
     private fun openDialog() {
         val skin = settings.skin
-        val dialog = Dialog("", skin).also { dialog ->
-            dialog.contentTable.apply {
-                add(Label("UI test", skin))
-                pad(4f, 8f, 4f, 8f)
-            }
-            dialog.buttonTable.apply {
-                add(LabelButton(skin, "Close").apply {
-                    onClick {
-                        dialog.hide()
-                        this@GameScreen.touchHandler.slient = false
-                        this@GameScreen.renderHelper.blurred = false
-                    }
-                })
+        val dialog = PopTable(skin[PopTableStyle::class.java]).apply {
+            add(Label("Dialog test", skin))
+            pad(12f, 12f, 12f, 12f)
+            isHideOnUnfocus = true
+            isModal = true
+            addListener {
+                if (isHidden) {
+                    touchHandler.slient = false
+                    renderHelper.blurred = false
+                    true
+                } else {
+                    false
+                }
             }
         }
+
+//        Dialog("", skin).also { dialog ->
+//            dialog.contentTable.apply {
+//                add(Label("UI test", skin))
+//                pad(4f, 8f, 4f, 8f)
+//            }
+//            dialog.buttonTable.apply {
+//                add(LabelButton(skin, "Close").apply {
+//                    onClick {
+//                        dialog.hide()
+//                        this@GameScreen.touchHandler.slient = false
+//                        this@GameScreen.renderHelper.blurred = false
+//                    }
+//                })
+//            }
+//        }
         touchHandler.slient = true
         renderHelper.blurred = true
         dialog.show(uiStage)

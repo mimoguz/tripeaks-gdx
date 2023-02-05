@@ -14,7 +14,7 @@ import java.util.*
 fun main() {
     Lwjgl3Application(Main(), Lwjgl3ApplicationConfiguration().apply {
         setTitle("TriPeaks")
-        setWindowedMode(640, 480)
+        setWindowedMode(1024, 768)
         setWindowIcon(*(arrayOf(128, 64, 32, 16).map { "libgdx$it.png" }.toTypedArray()))
         // LibGDX dumps preferences files directly under user home.
         // Let's try to get the proper config directory for OS.

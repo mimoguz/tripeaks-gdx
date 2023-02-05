@@ -5,7 +5,6 @@ precision mediump float;
 #define LOWP
 #endif
 
-#define DARKENING 1.0
 #define PIXEL_SIZE 2.0
 
 // I use vertex colors to pass various per-entity parameters.
@@ -21,6 +20,12 @@ void main() {
     vec2 xy = floor(u_worldSize * v_texCoords);
     xy = xy - mod(xy, PIXEL_SIZE);
     vec2 uv = xy / u_worldSize;
-    vec4 outColor = texture2D(u_texture, uv);
-    gl_FragColor = vec4(outColor.rgb * DARKENING, outColor.a);
+    float dx = 1.0 / u_worldSize.x;
+    float dy = 1.0 / u_worldSize.y;
+    vec4 pixelSample =
+        texture2D(u_texture, uv)
+        + texture2D(u_texture, uv + vec2(dx, 0))     // right
+        + texture2D(u_texture, uv + vec2(dx, dy))    // down-right
+        + texture2D(u_texture, uv + vec2(0.0, dy));  // down
+    gl_FragColor = vec4(pixelSample.rgb * 0.25, 1.0);
 }
