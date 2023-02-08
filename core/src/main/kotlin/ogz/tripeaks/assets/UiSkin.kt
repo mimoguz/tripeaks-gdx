@@ -23,9 +23,9 @@ class UiSkin(
     uiFont: BitmapFont,
     textColor: Color,
     emphasisColor: Color,
-    resourcePostfix: String
+    val resourcePostfix: String,
+    val isDark: Boolean
 ) : Skin(atlas) {
-
     init {
         val skin = this
 

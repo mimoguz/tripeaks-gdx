@@ -14,7 +14,6 @@ import ogz.tripeaks.models.Settings
 import ogz.tripeaks.models.create
 import ogz.tripeaks.models.get
 import ogz.tripeaks.screens.Constants
-import ogz.tripeaks.screens.GameScreen
 import ogz.tripeaks.services.Message.Companion as Msg
 
 class SettingsService {
@@ -102,7 +101,8 @@ class SettingsService {
                 assets[FontAssets.GamePixels],
                 Constants.DARK_UI_TEXT,
                 Constants.DARK_UI_EMPHASIS,
-                "dark"
+                "dark",
+                true
             )
         else
             UiSkin(
@@ -110,6 +110,7 @@ class SettingsService {
                 assets[FontAssets.GamePixels],
                 Constants.LIGHT_UI_TEXT,
                 Constants.LIGHT_UI_EMPHASIS,
-                "light"
+                "light",
+                false
             )
 }

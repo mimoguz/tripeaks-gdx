@@ -4,6 +4,7 @@ import com.badlogic.ashley.core.Entity
 import com.badlogic.ashley.core.PooledEngine
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.InputMultiplexer
+import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.graphics.Pixmap
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.FrameBuffer
@@ -58,6 +59,7 @@ import ogz.tripeaks.services.Message.Companion as Msg
 class GameScreen(private val context: Context) : KtxScreen {
     private val logger = Logger(GameScreen::class.java.simpleName)
     private val messageBox = context.inject<MessageBox>()
+    private val assets = context.inject<AssetManager>()
     private val batch = context.inject<SpriteBatch>()
     private val viewport = context.inject<CustomViewport>()
     private val uiStage = context.inject<Stage>()
@@ -161,10 +163,10 @@ class GameScreen(private val context: Context) : KtxScreen {
 
             val layout = game.gameLayout
 
-            val x = pos.x.toInt() + (layout.numberOfColumns / 2) * CELL_WIDTH
-            val y = viewport.worldHeight.toInt() / 2 - PADDING_TOP - pos.y.toInt()
-            val column = x / CELL_WIDTH
-            val row = y / CELL_HEIGHT
+            val x = pos.x.toInt() + (layout.numberOfColumns / 2) * Constants.CELL_WIDTH
+            val y = viewport.worldHeight.toInt() / 2 - Constants.PADDING_TOP - pos.y.toInt()
+            val column = x / Constants.CELL_WIDTH
+            val row = y / Constants.CELL_HEIGHT
 
             logger.info("Row: $row, Column: $column")
 
@@ -238,8 +240,29 @@ class GameScreen(private val context: Context) : KtxScreen {
         val statisticsButton = LabelButton(skin, "Print Statistics")
         statisticsButton.onClick(this::printStatistics)
 
+        val menu =  PopTable(skin[PopTableStyle::class.java]).apply {
+            add(Label("Dialog test", skin))
+            pad(12f, 12f, 12f, 12f)
+            isHideOnUnfocus = true
+            isModal = true
+            addListener {
+                if (isHidden) {
+                    touchHandler.slient = false
+                    renderHelper.blurred = false
+                    true
+                } else {
+                    false
+                }
+            }
+        }
+
+        val menuButton = GameScreenUtils.menuButton(uiStage, skin, assets, menu)
+
         val table = Table(skin).apply {
             pad(2f)
+            align(Align.topRight)
+            add(menuButton).align(Align.topRight).padTop(Constants.PADDING_TOP.toFloat())
+            row()
             align(Align.bottomLeft)
             add(themeButton).align(Align.bottomLeft).padBottom(2f)
             row()
@@ -380,7 +403,7 @@ class GameScreen(private val context: Context) : KtxScreen {
                 engine.configureEntity(entity) {
                     with<TransformComponent> {
                         position.set(socketPosition(socket, gameState.gameLayout))
-                        origin.set((CARD_WIDTH / 2).toFloat(), (CARD_HEIGHT / 2).toFloat())
+                        origin.set((Constants.CARD_WIDTH / 2).toFloat(), (Constants.CARD_HEIGHT / 2).toFloat())
                     }
                     if (!socketState.isEmpty) {
                         with<MultiSpriteComponent> {
@@ -393,8 +416,8 @@ class GameScreen(private val context: Context) : KtxScreen {
                                 layers.add(layerPool.obtain().apply {
                                     spriteType = FaceSprite(socketState.card)
                                     localPosition.set(
-                                        ((CARD_WIDTH - FACE_WIDTH) / 2).toFloat(),
-                                        ((CARD_HEIGHT - FACE_HEIGHT) / 2).toFloat()
+                                        ((Constants.CARD_WIDTH - Constants.FACE_WIDTH) / 2).toFloat(),
+                                        ((Constants.CARD_HEIGHT - Constants.FACE_HEIGHT) / 2).toFloat()
                                     )
                                 })
                             } else {
@@ -410,23 +433,11 @@ class GameScreen(private val context: Context) : KtxScreen {
     }
 
     private fun socketPosition(socket: Socket, layout: Layout): Vector2 {
-        val maxY = viewport.worldHeight.toInt() / 2 - PADDING_TOP - CARD_HEIGHT
-        val minX = -(layout.numberOfColumns / 2) * CELL_WIDTH
+        val maxY = viewport.worldHeight.toInt() / 2 - Constants.PADDING_TOP - Constants.CARD_HEIGHT
+        val minX = -(layout.numberOfColumns / 2) * Constants.CELL_WIDTH
         return Vector2(
-            (minX + socket.column * CELL_WIDTH + CELL_PADDING_LEFT).toFloat(),
-            (maxY - socket.row * CELL_HEIGHT - CELL_PADDING_TOP).toFloat()
+            (minX + socket.column * Constants.CELL_WIDTH + Constants.CELL_PADDING_LEFT).toFloat(),
+            (maxY - socket.row * Constants.CELL_HEIGHT - Constants.CELL_PADDING_TOP).toFloat()
         )
-    }
-
-    companion object {
-        private const val CARD_HEIGHT = 37
-        private const val CARD_WIDTH = 25
-        private const val FACE_HEIGHT = 30
-        private const val FACE_WIDTH = 15
-        private const val PADDING_TOP = 4
-        private const val CELL_HEIGHT = 19
-        private const val CELL_WIDTH = 14
-        private const val CELL_PADDING_LEFT = 1
-        private const val CELL_PADDING_TOP = 1
     }
 }
