@@ -16,7 +16,7 @@ class RenderHelper(private val batch: SpriteBatch, private val viewport: Viewpor
     private var renderMethod = this::renderScreen
     private val blurShader = ShaderProgram(
         javaClass.classLoader.getResource("shaders/basic.vert")!!.readText(),
-        javaClass.classLoader.getResource("shaders/pixelate_avg.frag")!!.readText()
+        javaClass.classLoader.getResource("shaders/pixelate.frag")!!.readText()
     )
 
     var fbShader: ShaderProgram? = null

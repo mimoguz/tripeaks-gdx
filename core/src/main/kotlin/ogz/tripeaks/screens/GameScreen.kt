@@ -12,7 +12,6 @@ import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.Table
-import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.Logger
 import com.ray3k.stripe.PopTable
 import com.ray3k.stripe.PopTable.PopTableStyle
@@ -164,7 +163,7 @@ class GameScreen(private val context: Context) : KtxScreen {
             val layout = game.gameLayout
 
             val x = pos.x.toInt() + (layout.numberOfColumns / 2) * Constants.CELL_WIDTH
-            val y = viewport.worldHeight.toInt() / 2 - Constants.PADDING_TOP - pos.y.toInt()
+            val y = viewport.worldHeight.toInt() / 2 - Constants.PADDING - pos.y.toInt()
             val column = x / Constants.CELL_WIDTH
             val row = y / Constants.CELL_HEIGHT
 
@@ -240,15 +239,14 @@ class GameScreen(private val context: Context) : KtxScreen {
         val statisticsButton = LabelButton(skin, "Print Statistics")
         statisticsButton.onClick(this::printStatistics)
 
-        val menu =  PopTable(skin[PopTableStyle::class.java]).apply {
-            add(Label("Dialog test", skin))
+        val menu = PopTable(skin["menu", PopTableStyle::class.java]).apply {
+            add(Label("Menu test", skin))
             pad(12f, 12f, 12f, 12f)
             isHideOnUnfocus = true
             isModal = true
             addListener {
                 if (isHidden) {
-                    touchHandler.slient = false
-                    renderHelper.blurred = false
+                    onMenuHidden()
                     true
                 } else {
                     false
@@ -256,24 +254,45 @@ class GameScreen(private val context: Context) : KtxScreen {
             }
         }
 
-        val menuButton = GameScreenUtils.menuButton(uiStage, skin, assets, menu)
+        val menuButton = GameScreenUtils.menuButton(uiStage, skin, assets, menu, this::onMenuShown)
+        val dealButton = GameScreenUtils.dealButton(skin, assets) {}
+        val undoButton = GameScreenUtils.undoButton(skin, assets) {}
 
         val table = Table(skin).apply {
-            pad(2f)
-            align(Align.topRight)
-            add(menuButton).align(Align.topRight).padTop(Constants.PADDING_TOP.toFloat())
+            debugTable()
+
+            add(menuButton)
+                .width(Constants.CARD_WIDTH.toFloat())
+                .height(Constants.CARD_WIDTH.toFloat())
+                .pad(Constants.PADDING.toFloat())
+                .expand()
+                .top()
+                .right()
+                .colspan(2)
             row()
-            align(Align.bottomLeft)
-            add(themeButton).align(Align.bottomLeft).padBottom(2f)
+            add(themeButton).pad(Constants.PADDING.toFloat()).left()
+            add(animationButton).pad(Constants.PADDING.toFloat()).right()
             row()
-            add(animationButton).align(Align.bottomLeft).padBottom(2f)
+            add(dialogButton).pad(Constants.PADDING.toFloat()).left()
+            add(statisticsButton).pad(Constants.PADDING.toFloat()).right()
             row()
-            add(dialogButton).align(Align.bottomLeft).padBottom(2f)
-            row()
-            add(statisticsButton).align(Align.bottomLeft)
+            add(undoButton)
+                .width(Constants.CARD_WIDTH.toFloat())
+                .height(Constants.CARD_HEIGHT.toFloat())
+                .pad(Constants.PADDING.toFloat())
+                .bottom()
+                .left()
+            add(dealButton)
+                .width(Constants.CARD_WIDTH.toFloat())
+                .height(Constants.CARD_HEIGHT.toFloat())
+                .pad(Constants.PADDING.toFloat())
+                .expand()
+                .bottom()
+                .right()
         }
 
-        uiStage.actors.add(table)
+        table.setFillParent(true)
+        uiStage.addActor(table)
     }
 
     private fun printStatistics() {
@@ -317,6 +336,24 @@ class GameScreen(private val context: Context) : KtxScreen {
         touchHandler.slient = true
         renderHelper.blurred = true
         dialog.show(uiStage)
+    }
+
+    private fun onMenuShown() {
+        touchHandler.slient = true
+    }
+
+    private fun onMenuHidden() {
+        touchHandler.slient = false
+    }
+
+    private fun onDialogShown() {
+        touchHandler.slient = true
+        renderHelper.blurred = true
+    }
+
+    private fun onDialogHidden() {
+        touchHandler.slient = false
+        renderHelper.blurred = false
     }
 
     private fun initEcs() {
@@ -433,7 +470,7 @@ class GameScreen(private val context: Context) : KtxScreen {
     }
 
     private fun socketPosition(socket: Socket, layout: Layout): Vector2 {
-        val maxY = viewport.worldHeight.toInt() / 2 - Constants.PADDING_TOP - Constants.CARD_HEIGHT
+        val maxY = viewport.worldHeight.toInt() / 2 - Constants.PADDING - Constants.CARD_HEIGHT
         val minX = -(layout.numberOfColumns / 2) * Constants.CELL_WIDTH
         return Vector2(
             (minX + socket.column * Constants.CELL_WIDTH + Constants.CELL_PADDING_LEFT).toFloat(),

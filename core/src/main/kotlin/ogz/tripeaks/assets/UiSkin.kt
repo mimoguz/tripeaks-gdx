@@ -109,6 +109,10 @@ class UiSkin(
             background = skin["window_$resourcePostfix"]
             stageBackground = skin["overlay_$resourcePostfix"]
         })
+
+        addStyle("menu", PopTableStyle().apply {
+            background = skin["window_$resourcePostfix"]
+        })
     }
 
     companion object {

@@ -13,7 +13,7 @@ object Constants {
     const val FACE_WIDTH = 15
     const val MAX_WORLD_WIDTH = 360
     const val MIN_WORLD_WIDTH = 300
-    const val PADDING_TOP = 4
+    const val PADDING = 4
     const val WORLD_HEIGHT = 168
 
     val DARK_UI_TEXT = rgb(242, 204, 143)

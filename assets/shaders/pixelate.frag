@@ -19,7 +19,7 @@ uniform vec2 u_worldSize;
 
 void main() {
     vec2 xy = floor(u_worldSize * v_texCoords);
-    xy = xy - mod(xy, PIXEL_SIZE);
+    xy = xy + vec2(1.0, 1.0) - mod(xy, PIXEL_SIZE);
     vec2 uv = xy / u_worldSize;
     vec4 outColor = texture2D(u_texture, uv);
     gl_FragColor = vec4(outColor.rgb * DARKENING, outColor.a);
