@@ -163,7 +163,7 @@ class GameScreen(private val context: Context) : KtxScreen {
             val layout = game.gameLayout
 
             val x = pos.x.toInt() + (layout.numberOfColumns / 2) * Constants.CELL_WIDTH
-            val y = viewport.worldHeight.toInt() / 2 - Constants.PADDING - pos.y.toInt()
+            val y = viewport.worldHeight.toInt() / 2 - Constants.VERTICAL_PADDING - pos.y.toInt()
             val column = x / Constants.CELL_WIDTH
             val row = y / Constants.CELL_HEIGHT
 
@@ -217,13 +217,6 @@ class GameScreen(private val context: Context) : KtxScreen {
     private fun setupStage(skin: UiSkin) {
         uiStage.clear()
 
-        val themeButton = LabelButton(skin, "Switch Theme")
-        themeButton.onClick {
-            val currentSettings = settings.get()
-            currentSettings.darkTheme = !currentSettings.darkTheme
-            settings.update(currentSettings)
-        }
-
         val animationButton = LabelButton(skin, "Switch Animation")
         animationButton.onClick {
             val currentSettings = settings.get()
@@ -232,12 +225,6 @@ class GameScreen(private val context: Context) : KtxScreen {
                 else AnimationType.BlinkAnim
             settings.update(currentSettings)
         }
-
-        val dialogButton = LabelButton(skin, "Open dialog")
-        dialogButton.onClick(this::openDialog)
-
-        val statisticsButton = LabelButton(skin, "Print Statistics")
-        statisticsButton.onClick(this::printStatistics)
 
         val menu = PopTable(skin["menu", PopTableStyle::class.java]).apply {
             add(Label("Menu test", skin))
@@ -255,37 +242,36 @@ class GameScreen(private val context: Context) : KtxScreen {
         }
 
         val menuButton = GameScreenUtils.menuButton(uiStage, skin, assets, menu, this::onMenuShown)
-        val dealButton = GameScreenUtils.dealButton(skin, assets) {}
-        val undoButton = GameScreenUtils.undoButton(skin, assets) {}
+        val dealButton = GameScreenUtils.dealButton(skin, assets, this::openDialog)
+        val undoButton = GameScreenUtils.undoButton(skin, assets) {
+            val currentSettings = settings.get()
+            currentSettings.darkTheme = !currentSettings.darkTheme
+            settings.update(currentSettings)
+        }
 
         val table = Table(skin).apply {
-            debugTable()
-
+            pad(
+                Constants.VERTICAL_PADDING.toFloat(),
+                Constants.HORIZONTAL_PADDING.toFloat(),
+                Constants.VERTICAL_PADDING.toFloat(),
+                Constants.HORIZONTAL_PADDING.toFloat()
+            )
             add(menuButton)
                 .width(Constants.CARD_WIDTH.toFloat())
                 .height(Constants.CARD_WIDTH.toFloat())
-                .pad(Constants.PADDING.toFloat())
                 .expand()
                 .top()
                 .right()
                 .colspan(2)
             row()
-            add(themeButton).pad(Constants.PADDING.toFloat()).left()
-            add(animationButton).pad(Constants.PADDING.toFloat()).right()
-            row()
-            add(dialogButton).pad(Constants.PADDING.toFloat()).left()
-            add(statisticsButton).pad(Constants.PADDING.toFloat()).right()
-            row()
             add(undoButton)
                 .width(Constants.CARD_WIDTH.toFloat())
                 .height(Constants.CARD_HEIGHT.toFloat())
-                .pad(Constants.PADDING.toFloat())
                 .bottom()
                 .left()
             add(dealButton)
                 .width(Constants.CARD_WIDTH.toFloat())
                 .height(Constants.CARD_HEIGHT.toFloat())
-                .pad(Constants.PADDING.toFloat())
                 .expand()
                 .bottom()
                 .right()
@@ -470,7 +456,7 @@ class GameScreen(private val context: Context) : KtxScreen {
     }
 
     private fun socketPosition(socket: Socket, layout: Layout): Vector2 {
-        val maxY = viewport.worldHeight.toInt() / 2 - Constants.PADDING - Constants.CARD_HEIGHT
+        val maxY = viewport.worldHeight.toInt() / 2 - Constants.VERTICAL_PADDING - Constants.CARD_HEIGHT + 1
         val minX = -(layout.numberOfColumns / 2) * Constants.CELL_WIDTH
         return Vector2(
             (minX + socket.column * Constants.CELL_WIDTH + Constants.CELL_PADDING_LEFT).toFloat(),

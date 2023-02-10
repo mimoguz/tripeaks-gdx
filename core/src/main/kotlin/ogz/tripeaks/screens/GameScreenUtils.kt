@@ -13,7 +13,7 @@ object GameScreenUtils {
     fun menuButton(stage: Stage, skin: UiSkin, assets: AssetManager, menu: PopTable, onShow: () -> Unit): IconButton =
         IconButton(skin, assets[TextureAtlasAssets.Ui].findRegion("menu_${skin.resourcePostfix}")).apply {
             setSize(Constants.CARD_WIDTH.toFloat(), Constants.CARD_WIDTH.toFloat())
-            menu.attachToActor(this, Align.bottomRight, Align.bottomLeft, 0f, -Constants.PADDING.toFloat())
+            menu.attachToActor(this, Align.bottomRight, Align.bottomLeft, 0f, -Constants.VERTICAL_PADDING.toFloat())
             onClick {
                 onShow.invoke()
                 menu.show(stage)
