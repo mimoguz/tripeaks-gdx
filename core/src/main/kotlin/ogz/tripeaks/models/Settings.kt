@@ -1,9 +1,10 @@
 package ogz.tripeaks.models
 
-import com.badlogic.gdx.utils.Disposable
 import ogz.tripeaks.graphics.AnimationSet
 import ogz.tripeaks.graphics.Animations
 import ogz.tripeaks.models.layout.BasicLayout
+import ogz.tripeaks.models.layout.DiamondsLayout
+import ogz.tripeaks.models.layout.Inverted2ndLayout
 import ogz.tripeaks.models.layout.Layout
 
 class Settings(
@@ -14,7 +15,7 @@ class Settings(
     var showAll: Boolean,
     var emptyDiscard: Boolean,
 ) {
-    constructor() : this(false, 0, LayoutType.BasicLo, AnimationType.BlinkAnim, false, false)
+    constructor() : this(false, 0, LayoutType.Diamonds, AnimationType.BlinkAnim, false, false)
 
     fun clone(
         darkTheme: Boolean = this.darkTheme,
@@ -34,12 +35,16 @@ class Settings(
 }
 
 enum class LayoutType(val tag: String) {
-    BasicLo(BasicLayout.TAG)
+    Basic(BasicLayout.TAG),
+    Diamonds(DiamondsLayout.TAG),
+    Inverted2nd(Inverted2ndLayout.TAG)
 }
 
 fun LayoutType.create(): Layout {
     return when (this) {
-         LayoutType.BasicLo -> BasicLayout()
+         LayoutType.Basic -> BasicLayout()
+         LayoutType.Diamonds -> DiamondsLayout()
+         LayoutType.Inverted2nd -> Inverted2ndLayout()
     }
 }
 

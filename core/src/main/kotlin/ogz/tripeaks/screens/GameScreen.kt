@@ -253,7 +253,7 @@ class GameScreen(private val context: Context) : KtxScreen {
             pad(
                 Constants.VERTICAL_PADDING.toFloat(),
                 Constants.HORIZONTAL_PADDING.toFloat(),
-                Constants.VERTICAL_PADDING.toFloat(),
+                Constants.VERTICAL_PADDING.toFloat() - 1.0f,
                 Constants.HORIZONTAL_PADDING.toFloat()
             )
             add(menuButton)
