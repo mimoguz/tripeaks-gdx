@@ -15,6 +15,7 @@ class SpriteSet(
 ) {
     val card: TextureRegion
     val back: TextureRegion
+    val empty: TextureRegion
     val face: IndexedSprite
     val smallFace: IndexedSprite
     val home: TextureRegion
@@ -22,14 +23,13 @@ class SpriteSet(
 
     init {
         val prefix = if (isDark) "dark" else "light"
-        face = IndexedSprite("${prefix}_card", assets)
-        smallFace = IndexedSprite("small_${prefix}_card", assets)
-        card = assets[TextureAtlasAssets.Cards].findRegion("${prefix}_card")
         back = assets[TextureAtlasAssets.Cards].findRegion("card_back_$backIndex")
+        background = if (isDark) Color.valueOf("232433ff") else Color.valueOf("63a347ff")
+        card = assets[TextureAtlasAssets.Cards].findRegion("${prefix}_card")
+        empty = assets[TextureAtlasAssets.Cards].findRegion("${prefix}_empty")
+        face = IndexedSprite("${prefix}_card", assets)
         home = Sprite(if (isDark) assets[TextureAssets.DarkTitle] else assets[TextureAssets.LightTitle])
-        background =
-            if (isDark) Color.valueOf("232433ff")
-            else Color.valueOf("63a347ff")
+        smallFace = IndexedSprite("small_${prefix}_card", assets)
     }
 }
 
@@ -55,6 +55,10 @@ object CardSprite : SpriteType {
 
 object BackSprite : SpriteType {
     override fun get(spriteSet: SpriteSet): TextureRegion = spriteSet.back
+}
+
+object EmptySprite : SpriteType {
+    override fun get(spriteSet: SpriteSet): TextureRegion = spriteSet.empty
 }
 
 object HomeSprite : SpriteType {

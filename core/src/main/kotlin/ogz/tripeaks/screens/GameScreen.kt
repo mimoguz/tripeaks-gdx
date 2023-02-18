@@ -77,6 +77,7 @@ class GameScreen(private val context: Context) : KtxScreen {
     private val touchReceiver = Receiver<Msg.TouchDown> { onTouch(it) }
     private val entities: GdxArray<Entity> = gdxArrayOf(true, 52)
     private val stackEntity: Entity = engine.entity()
+    private val discardEntity: Entity = engine.entity()
     private val entityUtils = SceneEntityUtils(layerPool, assets)
 
     private var play: GameState? = null
@@ -157,10 +158,18 @@ class GameScreen(private val context: Context) : KtxScreen {
             entityUtils.removeAndPoolComponents(stackEntity)
             engine.configureEntity(stackEntity) {
                 if (settings.get().showAll) {
-                    entityUtils.setupStackShowing(this, gameState.stack, viewport.worldWidth)
+                    entityUtils.initStackShowing(this, gameState.stack, viewport.worldWidth)
                 } else {
-                    entityUtils.setupStack(this, gameState.stack, viewport.worldWidth)
+                    entityUtils.initStack(this, gameState.stack, viewport.worldWidth)
                 }
+            }
+            entityUtils.removeAndPoolComponents(discardEntity)
+            engine.configureEntity(discardEntity) {
+                entityUtils.initDiscard(
+                    this,
+                    gameState.discard,
+                    viewport.worldWidth
+                )
             }
         }
     }
@@ -431,10 +440,17 @@ class GameScreen(private val context: Context) : KtxScreen {
             }
             engine.configureEntity(stackEntity) {
                 if (settings.get().showAll) {
-                    entityUtils.setupStackShowing(this, gameState.stack, viewport.worldWidth)
+                    entityUtils.initStackShowing(this, gameState.stack, viewport.worldWidth)
                 } else {
-                    entityUtils.setupStack(this, gameState.stack, viewport.worldWidth)
+                    entityUtils.initStack(this, gameState.stack, viewport.worldWidth)
                 }
+            }
+            engine.configureEntity(discardEntity) {
+                entityUtils.initDiscard(
+                    this,
+                    gameState.discard,
+                    viewport.worldWidth
+                )
             }
         }
     }
@@ -450,9 +466,9 @@ class GameScreen(private val context: Context) : KtxScreen {
             }
             if (!socketState.isEmpty) {
                 when {
-                    gameState.isOpen(socketIndex) -> entityUtils.setupCardOpen(this, socketState.card, socket.z)
-                    settings.get().showAll -> entityUtils.setupCardClosedShowing(this, socketState.card, socket.z)
-                    else -> entityUtils.setupCardClosed(this, socket.z)
+                    gameState.isOpen(socketIndex) -> entityUtils.initCardOpen(this, socketState.card, socket.z)
+                    settings.get().showAll -> entityUtils.initCardClosedShowing(this, socketState.card, socket.z)
+                    else -> entityUtils.initCardClosed(this, socket.z)
                 }
             }
         }

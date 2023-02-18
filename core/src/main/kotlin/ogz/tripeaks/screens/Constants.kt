@@ -21,6 +21,7 @@ object Constants {
     const val SMALL_FACE_H_PADDING = 2f
     const val VERTICAL_PADDING = 4
     const val WORLD_HEIGHT = 168
+    const val DISCARD_LEFT =  HORIZONTAL_PADDING + CELL_WIDTH * 2 + CELL_PADDING_LEFT
     const val STACK_RIGHT = HORIZONTAL_PADDING + CELL_WIDTH * 4 - CELL_PADDING_LEFT * 2
 
     val DARK_UI_TEXT = rgb(242, 204, 143)

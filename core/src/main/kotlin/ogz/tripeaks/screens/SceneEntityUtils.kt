@@ -6,6 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.utils.Align
 import com.ray3k.stripe.PopTable
 import ktx.ashley.EngineEntity
+import ktx.ashley.get
 import ktx.ashley.remove
 import ktx.ashley.with
 import ktx.collections.GdxIntArray
@@ -18,12 +19,14 @@ import ogz.tripeaks.ecs.SpriteLayerPool
 import ogz.tripeaks.ecs.TransformComponent
 import ogz.tripeaks.graphics.BackSprite
 import ogz.tripeaks.graphics.CardSprite
+import ogz.tripeaks.graphics.EmptySprite
 import ogz.tripeaks.graphics.FaceSprite
 import ogz.tripeaks.graphics.SmallFaceSprite
 import ogz.tripeaks.models.Card
 import ogz.tripeaks.screens.Constants.CARD_HEIGHT
 import ogz.tripeaks.screens.Constants.CARD_WIDTH
 import ogz.tripeaks.screens.Constants.CELL_PADDING_TOP
+import ogz.tripeaks.screens.Constants.DISCARD_LEFT
 import ogz.tripeaks.screens.Constants.FACE_HEIGHT
 import ogz.tripeaks.screens.Constants.FACE_WIDTH
 import ogz.tripeaks.screens.Constants.SMALL_10_HEIGHT
@@ -35,6 +38,7 @@ import ogz.tripeaks.screens.Constants.STACK_RIGHT
 import ogz.tripeaks.screens.Constants.VERTICAL_PADDING
 import ogz.tripeaks.screens.Constants.WORLD_HEIGHT
 import ogz.tripeaks.ui.IconButton
+import kotlin.math.ceil
 import kotlin.math.floor
 
 /** Helper functions for GameScreen for creating actors and entities. */
@@ -65,73 +69,111 @@ class SceneEntityUtils(private val layerPool: SpriteLayerPool, private val asset
             }
         }
 
-    fun setupStack(entity: EngineEntity, stack: GdxIntArray, width: Float) {
-        val count = stack.size
-        val step = 6
+    fun initDiscard(entity: EngineEntity, discard: GdxIntArray, worldWidth: Float) {
         entity.with<TransformComponent> {
             position.set(
-                floor(width / 2f) - STACK_RIGHT.toFloat(), (-WORLD_HEIGHT / 2 + VERTICAL_PADDING - 1).toFloat()
-            )
-        }
-        entity.with<MultiSpriteComponent> {
-            color.set(1f, 1f, 1f, 1f)
-            for (i in 0 until count) {
-                val dx = (-i * step).toFloat()
-                layers.add(baseLayer(this, 0, dx, 0f))
-                layers.add(backLayer(dx, 0f))
-            }
-        }
-    }
-
-    fun setupStackShowing(entity: EngineEntity, stack: GdxIntArray, width: Float) {
-        val count = stack.size - 1
-        val step = 6
-        entity.with<TransformComponent> {
-            position.set(
-                floor(width / 2f) - STACK_RIGHT.toFloat(),
+                ceil(worldWidth / -2f) + DISCARD_LEFT.toFloat(),
                 (-WORLD_HEIGHT / 2 + VERTICAL_PADDING - 1).toFloat()
             )
         }
-        entity.with<MultiSpriteComponent> {
-            color.set(1f, 1f, 1f, 1f)
-            for (i in 0 until count) {
-                val card = stack[i]
-                val dx = (-i * step).toFloat()
-                val faceHeight = if ((card % 13) == 9) SMALL_10_HEIGHT else SMALL_FACE_HEIGHT
-                val dy = CARD_HEIGHT - faceHeight - SMALL_FACE_V_PADDING - SMALL_FACE_HEIGHT - CELL_PADDING_TOP + 1
-                layers.add(baseLayer(this, 0, dx, 0f))
-                layers.add(smallFaceLayer(card, dx, dy))
-            }
-            if (count >= 0) {
-                val dx = (-count * step).toFloat()
-                val card = stack[count]
-                layers.add(baseLayer(this, 0, dx, 0f))
-                layers.add(faceLayer(card, dx, 0f))
+        entity.with<MultiSpriteComponent>()
+        updateDiscard(entity, discard)
+    }
+
+    fun updateDiscard(entity: EngineEntity, discard: GdxIntArray) {
+        entity.entity[MultiSpriteComponent.mapper]?.apply {
+            layers.forEach(layerPool::free)
+            layers.clear()
+            if (discard.isEmpty) {
+                layers.add(layerPool.obtain().apply {
+                    spriteType = EmptySprite
+                })
+            } else {
+                layers.add(baseLayer(this, 0f, 0f))
+                layers.add(faceLayer(discard[discard.size - 1], 0f, 0f))
             }
         }
     }
 
-    fun setupCardOpen(entity: EngineEntity, card: Card, level: Int, dx: Float = 0f, dy: Float = 0f) {
+    fun initStack(entity: EngineEntity, stack: GdxIntArray, worldWidth: Float) {
+        addStackTransform(entity, worldWidth)
+        entity.with<MultiSpriteComponent>()
+        updateStack(entity, stack, worldWidth)
+    }
+
+    fun updateStack(entity: EngineEntity, stack: GdxIntArray, worldWidth: Float) {
+        addStackTransform(entity, worldWidth)
+        entity.entity[MultiSpriteComponent.mapper]?.apply {
+            if (stack.isEmpty) {
+                layers.add(layerPool.obtain().apply {
+                    spriteType = EmptySprite
+                })
+            } else {
+                val count = stack.size
+                val step = 6
+                for (i in 0 until count) {
+                    val dx = (-i * step).toFloat()
+                    layers.add(baseLayer(this, dx, 0f))
+                    layers.add(backLayer(dx, 0f))
+                }
+            }
+        }
+    }
+
+    fun initStackShowing(entity: EngineEntity, stack: GdxIntArray, worldWidth: Float) {
+        addStackTransform(entity, worldWidth)
+        entity.with<MultiSpriteComponent>()
+        updateStackShowing(entity, stack, worldWidth)
+    }
+
+    fun updateStackShowing(entity: EngineEntity, stack: GdxIntArray, worldWidth: Float) {
+        entity.entity[MultiSpriteComponent.mapper]?.apply {
+            if (stack.isEmpty) {
+                layers.add(layerPool.obtain().apply {
+                    spriteType = EmptySprite
+                })
+            } else {
+                val count = stack.size - 1
+                val step = 6
+                for (i in 0 until count) {
+                    val card = stack[i]
+                    val dx = (-i * step).toFloat()
+                    val faceHeight = if ((card % 13) == 9) SMALL_10_HEIGHT else SMALL_FACE_HEIGHT
+                    val dy = CARD_HEIGHT - faceHeight - SMALL_FACE_V_PADDING - SMALL_FACE_HEIGHT - CELL_PADDING_TOP + 1
+                    layers.add(baseLayer(this, dx, 0f))
+                    layers.add(smallFaceLayer(card, dx, dy))
+                }
+                if (count >= 0) {
+                    val dx = (-count * step).toFloat()
+                    val card = stack[count]
+                    layers.add(baseLayer(this, dx, 0f))
+                    layers.add(faceLayer(card, dx, 0f))
+                }
+            }
+        }
+    }
+
+    fun initCardOpen(entity: EngineEntity, card: Card, level: Int, dx: Float = 0f, dy: Float = 0f) {
         entity.with<MultiSpriteComponent> {
             z = level
-            layers.add(baseLayer(this, level, dx, dy))
-            baseLayer(this, level, dx, dy)
+            layers.add(baseLayer(this, dx, dy))
+            baseLayer(this, dx, dy)
             layers.add(faceLayer(card, dx, dy))
         }
     }
 
-    fun setupCardClosed(entity: EngineEntity, level: Int, dx: Float = 0f, dy: Float = 0f) {
+    fun initCardClosed(entity: EngineEntity, level: Int, dx: Float = 0f, dy: Float = 0f) {
         entity.with<MultiSpriteComponent> {
             z = level
-            layers.add(baseLayer(this, level, dx, dy))
+            layers.add(baseLayer(this, dx, dy))
             layers.add(backLayer(dx, dy))
         }
     }
 
-    fun setupCardClosedShowing(entity: EngineEntity, card: Card, level: Int, dx: Float = 0f, dy: Float = 0f) {
+    fun initCardClosedShowing(entity: EngineEntity, card: Card, level: Int, dx: Float = 0f, dy: Float = 0f) {
         entity.with<MultiSpriteComponent> {
             z = level
-            layers.add(baseLayer(this, level, dx, dy))
+            layers.add(baseLayer(this, dx, dy))
             layers.add(faceLayer(card, dx, dy))
             layers.add(smallFaceLayer(card, dx, SMALL_FACE_V_PADDING))
         }
@@ -145,7 +187,7 @@ class SceneEntityUtils(private val layerPool: SpriteLayerPool, private val asset
         entity.removeAll()
     }
 
-    private fun baseLayer(component: MultiSpriteComponent, level: Int, dx: Float, dy: Float): SpriteLayer =
+    private fun baseLayer(component: MultiSpriteComponent, dx: Float, dy: Float): SpriteLayer =
         layerPool.obtain().apply {
             spriteType = CardSprite
             localPosition.set(dx, dy)
@@ -170,5 +212,14 @@ class SceneEntityUtils(private val layerPool: SpriteLayerPool, private val asset
     private fun backLayer(dx: Float, dy: Float): SpriteLayer = layerPool.obtain().apply {
         spriteType = BackSprite
         localPosition.set(dx, dy)
+    }
+
+    private fun addStackTransform(entity: EngineEntity, width: Float) {
+        entity.with<TransformComponent> {
+            position.set(
+                floor(width / 2f) - STACK_RIGHT.toFloat(),
+                (-WORLD_HEIGHT / 2 + VERTICAL_PADDING - 1).toFloat()
+            )
+        }
     }
 }
