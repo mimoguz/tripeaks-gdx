@@ -34,10 +34,7 @@ import ogz.tripeaks.ecs.MultiSpriteRenderingSystem
 import ogz.tripeaks.ecs.SpriteLayerPool
 import ogz.tripeaks.ecs.TransformComponent
 import ogz.tripeaks.graphics.AnimationSet
-import ogz.tripeaks.graphics.BackSprite
-import ogz.tripeaks.graphics.CardSprite
 import ogz.tripeaks.graphics.CustomViewport
-import ogz.tripeaks.graphics.FaceSprite
 import ogz.tripeaks.graphics.HomeSprite
 import ogz.tripeaks.graphics.ScreenTransitionAnimation
 import ogz.tripeaks.graphics.SpriteSet
@@ -45,8 +42,6 @@ import ogz.tripeaks.models.AnimationType
 import ogz.tripeaks.models.GameState
 import ogz.tripeaks.models.layout.Layout
 import ogz.tripeaks.models.layout.Socket
-import ogz.tripeaks.screens.Constants.MIN_WORLD_WIDTH
-import ogz.tripeaks.screens.Constants.WORLD_HEIGHT
 import ogz.tripeaks.services.MessageBox
 import ogz.tripeaks.services.PersistenceService
 import ogz.tripeaks.services.PlayerStatisticsService
@@ -57,20 +52,23 @@ import ogz.tripeaks.services.Message.Companion as Msg
 
 class GameScreen(private val context: Context) : KtxScreen {
     private val logger = Logger(GameScreen::class.java.simpleName)
-    private val messageBox = context.inject<MessageBox>()
+
     private val assets = context.inject<AssetManager>()
     private val batch = context.inject<SpriteBatch>()
-    private val viewport = context.inject<CustomViewport>()
-    private val uiStage = context.inject<Stage>()
-    private val settings = context.inject<SettingsService>()
-    private val playerStatistics = context.inject<PlayerStatisticsService>()
     private val layerPool = context.inject<SpriteLayerPool>()
+    private val messageBox = context.inject<MessageBox>()
+    private val playerStatistics = context.inject<PlayerStatisticsService>()
+    private val settings = context.inject<SettingsService>()
+    private val uiStage = context.inject<Stage>()
+    private val viewport = context.inject<CustomViewport>()
+
     private val engine = PooledEngine()
     private val renderHelper = RenderHelper(batch, viewport, engine)
     private val touchHandler = TouchHandler(messageBox)
     private var spriteSet: SpriteSet
     private var animationSet: AnimationSet
-    private var frameBuffer = FrameBuffer(Pixmap.Format.RGB888, MIN_WORLD_WIDTH, WORLD_HEIGHT, false)
+    private var frameBuffer =
+        FrameBuffer(Pixmap.Format.RGB888, Constants.MIN_WORLD_WIDTH, Constants.WORLD_HEIGHT, false)
 
     private val animationSetChangedReceiver = Receiver<Msg.AnimationSetChanged> { onAnimationSetChanged(it) }
     private val showAllChangedReceiver = Receiver<Msg.ShowAllChanged> { onShowAllChanged(it) }
@@ -78,6 +76,7 @@ class GameScreen(private val context: Context) : KtxScreen {
     private val spriteSetChangedReceiver = Receiver<Msg.SpriteSetChanged> { onSpriteSetChanged(it) }
     private val touchReceiver = Receiver<Msg.TouchDown> { onTouch(it) }
     private val entities: GdxArray<Entity> = gdxArrayOf(true, 52)
+    private val entityUtils = SceneEntityUtils(layerPool, assets)
 
     private var play: GameState? = null
 
@@ -241,9 +240,9 @@ class GameScreen(private val context: Context) : KtxScreen {
             }
         }
 
-        val menuButton = GameScreenUtils.menuButton(uiStage, skin, assets, menu, this::onMenuShown)
-        val dealButton = GameScreenUtils.dealButton(skin, assets, this::openDialog)
-        val undoButton = GameScreenUtils.undoButton(skin, assets) {
+        val menuButton = entityUtils.menuButton(uiStage, skin, assets, menu) { onMenuShown(menu) }
+        val dealButton = entityUtils.dealButton(skin, this::openDialog)
+        val undoButton = entityUtils.undoButton(skin) {
             val currentSettings = settings.get()
             currentSettings.darkTheme = !currentSettings.darkTheme
             settings.update(currentSettings)
@@ -295,8 +294,7 @@ class GameScreen(private val context: Context) : KtxScreen {
             isModal = true
             addListener {
                 if (isHidden) {
-                    touchHandler.slient = false
-                    renderHelper.blurred = false
+                    onDialogHidden()
                     true
                 } else {
                     false
@@ -319,26 +317,29 @@ class GameScreen(private val context: Context) : KtxScreen {
 //                })
 //            }
 //        }
-        touchHandler.slient = true
-        renderHelper.blurred = true
+        onDialogShown(dialog)
         dialog.show(uiStage)
     }
 
-    private fun onMenuShown() {
-        touchHandler.slient = true
-    }
-
     private fun onMenuHidden() {
-        touchHandler.slient = false
+        touchHandler.silent = false
+        touchHandler.dialog = null
     }
 
-    private fun onDialogShown() {
-        touchHandler.slient = true
+    private fun onDialogShown(dialog: PopTable) {
+        touchHandler.silent = true
+        touchHandler.dialog = dialog
         renderHelper.blurred = true
     }
 
+    private fun onMenuShown(menu: PopTable) {
+        touchHandler.silent = true
+        touchHandler.dialog = menu
+    }
+
     private fun onDialogHidden() {
-        touchHandler.slient = false
+        touchHandler.silent = false
+        touchHandler.dialog = null
         renderHelper.blurred = false
     }
 
@@ -420,36 +421,25 @@ class GameScreen(private val context: Context) : KtxScreen {
     private fun setupTableau() {
         play?.let { gameState ->
             for (s in 0 until gameState.gameLayout.numberOfSockets) {
-                val socket = gameState.socket(s)
-                val socketState = gameState.socketState(s)
-                val entity = entities[socketState.card]
-                engine.configureEntity(entity) {
-                    with<TransformComponent> {
-                        position.set(socketPosition(socket, gameState.gameLayout))
-                        origin.set((Constants.CARD_WIDTH / 2).toFloat(), (Constants.CARD_HEIGHT / 2).toFloat())
-                    }
-                    if (!socketState.isEmpty) {
-                        with<MultiSpriteComponent> {
-                            z = socket.z
-                            color.set(1f, 1f, 1f, 1f)
-                            layers.add(layerPool.obtain().apply {
-                                spriteType = CardSprite
-                            })
-                            if (gameState.isOpen(s)) {
-                                layers.add(layerPool.obtain().apply {
-                                    spriteType = FaceSprite(socketState.card)
-                                    localPosition.set(
-                                        ((Constants.CARD_WIDTH - Constants.FACE_WIDTH) / 2).toFloat(),
-                                        ((Constants.CARD_HEIGHT - Constants.FACE_HEIGHT) / 2).toFloat()
-                                    )
-                                })
-                            } else {
-                                layers.add(layerPool.obtain().apply {
-                                    spriteType = BackSprite
-                                })
-                            }
-                        }
-                    }
+                setupSocket(s, gameState)
+            }
+        }
+    }
+
+    private fun setupSocket(socketIndex: Int, gameState: GameState) {
+        val socket = gameState.socket(socketIndex)
+        val socketState = gameState.socketState(socketIndex)
+        val entity = entities[socketState.card]
+        engine.configureEntity(entity) {
+            with<TransformComponent> {
+                position.set(socketPosition(socket, gameState.gameLayout))
+                origin.set((Constants.CARD_WIDTH / 2).toFloat(), (Constants.CARD_HEIGHT / 2).toFloat())
+            }
+            if (!socketState.isEmpty) {
+                when {
+                    gameState.isOpen(socketIndex) -> entityUtils.setupCardOpen(this, socketState.card, socket.z)
+                    settings.get().showAll -> entityUtils.setupCardClosedShowing(this, socketState.card, socket.z)
+                    else -> entityUtils.setupCardClosed(this, socket.z)
                 }
             }
         }

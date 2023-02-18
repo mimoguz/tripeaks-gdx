@@ -15,7 +15,7 @@ class Settings(
     var showAll: Boolean,
     var emptyDiscard: Boolean,
 ) {
-    constructor() : this(false, 0, LayoutType.Diamonds, AnimationType.BlinkAnim, false, false)
+    constructor() : this(false, 0, LayoutType.Diamonds, AnimationType.BlinkAnim, true, false)
 
     fun clone(
         darkTheme: Boolean = this.darkTheme,
