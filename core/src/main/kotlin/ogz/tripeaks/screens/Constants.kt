@@ -14,12 +14,14 @@ object Constants {
     const val HORIZONTAL_PADDING = 12
     const val MAX_WORLD_WIDTH = 360
     const val MIN_WORLD_WIDTH = 300
-    const val SMALL_FACE_HEIGHT = 6
+    const val SMALL_FACE_HEIGHT = 5
+    const val SMALL_10_HEIGHT = 11
     const val SMALL_FACE_WIDTH = 3
-    const val SMALL_FACE_V_PADDING = 3f
+    const val SMALL_FACE_V_PADDING = 2f
     const val SMALL_FACE_H_PADDING = 2f
     const val VERTICAL_PADDING = 4
     const val WORLD_HEIGHT = 168
+    const val STACK_RIGHT = HORIZONTAL_PADDING + CELL_WIDTH * 4 - CELL_PADDING_LEFT * 2
 
     val DARK_UI_TEXT = rgb(242, 204, 143)
     val DARK_UI_EMPHASIS = rgb(184, 55, 68)

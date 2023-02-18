@@ -16,8 +16,8 @@ class GameState private constructor(
     var statistics: GameStatistics,
     private var layout: Layout,
     private var sockets: GdxArray<SocketState>,
-    private var stack: GdxIntArray,
-    private var discard: GdxIntArray,
+    var stack: GdxIntArray,
+    var discard: GdxIntArray,
     /** This property tells that if the game was started with an empty discard pile or not. */
     private var canEmptyDiscard: Boolean,
     /**

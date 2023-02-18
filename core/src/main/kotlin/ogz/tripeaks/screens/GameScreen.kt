@@ -76,6 +76,7 @@ class GameScreen(private val context: Context) : KtxScreen {
     private val spriteSetChangedReceiver = Receiver<Msg.SpriteSetChanged> { onSpriteSetChanged(it) }
     private val touchReceiver = Receiver<Msg.TouchDown> { onTouch(it) }
     private val entities: GdxArray<Entity> = gdxArrayOf(true, 52)
+    private val stackEntity: Entity = engine.entity()
     private val entityUtils = SceneEntityUtils(layerPool, assets)
 
     private var play: GameState? = null
@@ -151,6 +152,16 @@ class GameScreen(private val context: Context) : KtxScreen {
                 viewport.worldHeight.toInt(),
                 false
             )
+        }
+        play?.let { gameState ->
+            entityUtils.removeAndPoolComponents(stackEntity)
+            engine.configureEntity(stackEntity) {
+                if (settings.get().showAll) {
+                    entityUtils.setupStackShowing(this, gameState.stack, viewport.worldWidth)
+                } else {
+                    entityUtils.setupStack(this, gameState.stack, viewport.worldWidth)
+                }
+            }
         }
     }
 
@@ -409,19 +420,21 @@ class GameScreen(private val context: Context) : KtxScreen {
     }
 
     private fun removeComponents() {
-        entities.forEach { entity ->
-            val sprites = entity.remove<MultiSpriteComponent>()
-            if (sprites is MultiSpriteComponent) {
-                sprites.layers.forEach { layerPool.free(it) }
-            }
-            entity.removeAll()
-        }
+        entities.forEach(entityUtils::removeAndPoolComponents)
+        entityUtils.removeAndPoolComponents(stackEntity)
     }
 
     private fun setupTableau() {
         play?.let { gameState ->
             for (s in 0 until gameState.gameLayout.numberOfSockets) {
                 setupSocket(s, gameState)
+            }
+            engine.configureEntity(stackEntity) {
+                if (settings.get().showAll) {
+                    entityUtils.setupStackShowing(this, gameState.stack, viewport.worldWidth)
+                } else {
+                    entityUtils.setupStack(this, gameState.stack, viewport.worldWidth)
+                }
             }
         }
     }
