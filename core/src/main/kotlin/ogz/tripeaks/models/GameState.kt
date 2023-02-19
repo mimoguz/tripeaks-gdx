@@ -130,7 +130,7 @@ class GameState private constructor(
 
     /** Is the card at the socket index not blocked by any other cards? */
     fun isOpen(socketIndex: Int): Boolean =
-        (!sockets[socketIndex].isEmpty) && layout[socketIndex].blockedBy.items.all { sockets[it].isEmpty }
+        !sockets[socketIndex].isEmpty && layout[socketIndex].blockedBy.all { sockets[it].isEmpty }
 
     /** Can we remove the card at the socket index from the tableau? */
     private fun canTake(socketIndex: Int): Boolean =

@@ -6,40 +6,40 @@ import ktx.collections.GdxIntArray
 class BasicLayout : LayoutBase(
     listOf(
         // Row 0
-        Socket(0, GdxIntArray.with(), GdxIntArray.with(3, 4), 0, 3, 0),
-        Socket(1, GdxIntArray.with(), GdxIntArray.with(5, 6), 0, 9, 0),
-        Socket(2, GdxIntArray.with(), GdxIntArray.with(7, 8), 0, 15, 0),
+        Socket(0, listOf(), listOf(3, 4), 0, 3, 0),
+        Socket(1, listOf(), listOf(5, 6), 0, 9, 0),
+        Socket(2, listOf(), listOf(7, 8), 0, 15, 0),
 
         // Row 1
-        Socket(3, GdxIntArray.with(0), GdxIntArray.with(9, 10), 1, 2, 1),
-        Socket(4, GdxIntArray.with(0), GdxIntArray.with(10, 11), 1, 4, 1),
-        Socket(5, GdxIntArray.with(1), GdxIntArray.with(12, 13), 1, 8, 1),
-        Socket(6, GdxIntArray.with(1), GdxIntArray.with(13, 14), 1, 10, 1),
-        Socket(7, GdxIntArray.with(2), GdxIntArray.with(15, 16), 1, 14, 1),
-        Socket(8, GdxIntArray.with(2), GdxIntArray.with(16, 17), 1, 16, 1),
+        Socket(3, listOf(0), listOf(9, 10), 1, 2, 1),
+        Socket(4, listOf(0), listOf(10, 11), 1, 4, 1),
+        Socket(5, listOf(1), listOf(12, 13), 1, 8, 1),
+        Socket(6, listOf(1), listOf(13, 14), 1, 10, 1),
+        Socket(7, listOf(2), listOf(15, 16), 1, 14, 1),
+        Socket(8, listOf(2), listOf(16, 17), 1, 16, 1),
 
         // Row 2
-        Socket(9, GdxIntArray.with(3), GdxIntArray.with(18, 19), 2, 1, 2),
-        Socket(10, GdxIntArray.with(3, 4), GdxIntArray.with(19, 20), 2, 3, 2),
-        Socket(11, GdxIntArray.with(4), GdxIntArray.with(20, 21), 2, 5, 2),
-        Socket(12, GdxIntArray.with(5), GdxIntArray.with(21, 22), 2, 7, 2),
-        Socket(13, GdxIntArray.with(5, 6), GdxIntArray.with(22, 23), 2, 9, 2),
-        Socket(14, GdxIntArray.with(6), GdxIntArray.with(23, 24), 2, 11, 2),
-        Socket(15, GdxIntArray.with(7), GdxIntArray.with(24, 25), 2, 13, 2),
-        Socket(16, GdxIntArray.with(7, 8), GdxIntArray.with(25, 26), 2, 15, 2),
-        Socket(17, GdxIntArray.with(8), GdxIntArray.with(26, 27), 2, 17, 2),
+        Socket(9, listOf(3), listOf(18, 19), 2, 1, 2),
+        Socket(10, listOf(3, 4), listOf(19, 20), 2, 3, 2),
+        Socket(11, listOf(4), listOf(20, 21), 2, 5, 2),
+        Socket(12, listOf(5), listOf(21, 22), 2, 7, 2),
+        Socket(13, listOf(5, 6), listOf(22, 23), 2, 9, 2),
+        Socket(14, listOf(6), listOf(23, 24), 2, 11, 2),
+        Socket(15, listOf(7), listOf(24, 25), 2, 13, 2),
+        Socket(16, listOf(7, 8), listOf(25, 26), 2, 15, 2),
+        Socket(17, listOf(8), listOf(26, 27), 2, 17, 2),
 
         // Row 3
-        Socket(18, GdxIntArray.with(9), GdxIntArray.with(), 3, 0, 3),
-        Socket(19, GdxIntArray.with(9, 10), GdxIntArray.with(), 3, 2, 3),
-        Socket(20, GdxIntArray.with(10, 11), GdxIntArray.with(), 3, 4, 3),
-        Socket(21, GdxIntArray.with(11, 12), GdxIntArray.with(), 3, 6, 3),
-        Socket(22, GdxIntArray.with(12, 13), GdxIntArray.with(), 3, 8, 3),
-        Socket(23, GdxIntArray.with(13, 14), GdxIntArray.with(), 3, 10, 3),
-        Socket(24, GdxIntArray.with(14, 15), GdxIntArray.with(), 3, 12, 3),
-        Socket(25, GdxIntArray.with(15, 16), GdxIntArray.with(), 3, 14, 3),
-        Socket(26, GdxIntArray.with(16, 17), GdxIntArray.with(), 3, 16, 3),
-        Socket(27, GdxIntArray.with(17), GdxIntArray.with(), 3, 18, 3),
+        Socket(18, listOf(9), listOf(), 3, 0, 3),
+        Socket(19, listOf(9, 10), listOf(), 3, 2, 3),
+        Socket(20, listOf(10, 11), listOf(), 3, 4, 3),
+        Socket(21, listOf(11, 12), listOf(), 3, 6, 3),
+        Socket(22, listOf(12, 13), listOf(), 3, 8, 3),
+        Socket(23, listOf(13, 14), listOf(), 3, 10, 3),
+        Socket(24, listOf(14, 15), listOf(), 3, 12, 3),
+        Socket(25, listOf(15, 16), listOf(), 3, 14, 3),
+        Socket(26, listOf(16, 17), listOf(), 3, 16, 3),
+        Socket(27, listOf(17), listOf(), 3, 18, 3),
     )
 ) {
     override val numberOfColumns: Int get() = COLUMNS

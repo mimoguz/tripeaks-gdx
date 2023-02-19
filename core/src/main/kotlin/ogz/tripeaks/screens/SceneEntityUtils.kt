@@ -1,11 +1,13 @@
 package ogz.tripeaks.screens
 
 import com.badlogic.ashley.core.Entity
+import com.badlogic.ashley.core.PooledEngine
 import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.utils.Align
 import com.ray3k.stripe.PopTable
 import ktx.ashley.EngineEntity
+import ktx.ashley.configureEntity
 import ktx.ashley.get
 import ktx.ashley.remove
 import ktx.ashley.with
@@ -42,7 +44,12 @@ import kotlin.math.ceil
 import kotlin.math.floor
 
 /** Helper functions for GameScreen for creating actors and entities. */
-class SceneEntityUtils(private val layerPool: SpriteLayerPool, private val assets: AssetManager) {
+@Suppress("NOTHING_TO_INLINE", "SameParameterValue")
+class SceneEntityUtils(
+    private val layerPool: SpriteLayerPool,
+    private val assets: AssetManager,
+    private val engine: PooledEngine
+) {
     fun menuButton(stage: Stage, skin: UiSkin, assets: AssetManager, menu: PopTable, onShow: () -> Unit): IconButton =
         IconButton(skin, assets[TextureAtlasAssets.Ui].findRegion("menu_${skin.resourcePostfix}")).apply {
             setSize(CARD_WIDTH.toFloat(), CARD_WIDTH.toFloat())
@@ -69,21 +76,138 @@ class SceneEntityUtils(private val layerPool: SpriteLayerPool, private val asset
             }
         }
 
-    fun initDiscard(entity: EngineEntity, discard: GdxIntArray, worldWidth: Float) {
+    fun initDiscard(entity: Entity, discard: GdxIntArray, worldWidth: Float) {
+        removeAndPoolComponents(entity)
+        engine.configureEntity(entity) {
+            with<TransformComponent> {
+                position.set(
+                    ceil(worldWidth / -2f) + DISCARD_LEFT.toFloat(),
+                    (-WORLD_HEIGHT / 2 + VERTICAL_PADDING - 1).toFloat()
+                )
+            }
+            with<MultiSpriteComponent>()
+            updateDiscard(this, discard)
+        }
+    }
+
+    fun updateDiscard(entity: Entity, discard: GdxIntArray) {
+        engine.configureEntity(entity) { updateDiscard(this, discard) }
+    }
+
+    fun initStack(entity: Entity, stack: GdxIntArray, worldWidth: Float) {
+        engine.configureEntity(entity) {
+            addStackTransform(this, worldWidth)
+            with<MultiSpriteComponent>()
+            updateStack(this, stack, worldWidth)
+        }
+    }
+
+    fun initStackShowing(entity: Entity, stack: GdxIntArray, worldWidth: Float) {
+        removeAndPoolComponents(entity)
+        engine.configureEntity(entity) {
+            addStackTransform(this, worldWidth)
+            with<MultiSpriteComponent>()
+            updateStackShowing(this, stack, worldWidth)
+        }
+    }
+
+    fun updateStack(entity: Entity, stack: GdxIntArray, worldWidth: Float) {
+        engine.configureEntity(entity) { updateStack(this, stack, worldWidth) }
+    }
+
+    fun updateStackShowing(entity: Entity, stack: GdxIntArray, worldWidth: Float) {
+        engine.configureEntity(entity) { updateStackShowing(this, stack, worldWidth) }
+    }
+
+    fun updateCardOpen(entity: Entity, card: Card, level: Int, dx: Float = 0f, dy: Float = 0f) {
+        engine.configureEntity(entity) {
+            with<MultiSpriteComponent> {
+                z = level
+                removeLayers(this)
+                layers.add(baseLayer(this, dx, dy))
+                layers.add(faceLayer(card, dx, dy))
+            }
+        }
+    }
+
+    fun updateCardClosed(entity: Entity, level: Int, dx: Float = 0f, dy: Float = 0f) {
+        engine.configureEntity(entity) {
+            with<MultiSpriteComponent> {
+                z = level
+                removeLayers(this)
+                layers.add(baseLayer(this, dx, dy))
+                layers.add(backLayer(dx, dy))
+            }
+        }
+    }
+
+    fun updateCardClosedShowing(entity: Entity, card: Card, level: Int, dx: Float = 0f, dy: Float = 0f) {
+        engine.configureEntity(entity) {
+            with<MultiSpriteComponent> {
+                z = level
+                removeLayers(this)
+                layers.add(baseLayer(this, dx, dy))
+                layers.add(faceLayer(card, dx, dy))
+                layers.add(smallFaceLayer(card, dx, SMALL_FACE_V_PADDING))
+            }
+        }
+    }
+
+    fun removeAndPoolComponents(entity: Entity) {
+        removeAndPoolSpriteComponent(entity)
+        entity.removeAll()
+    }
+
+    fun removeAndPoolSpriteComponent(entity: Entity) {
+        val sprites = entity.remove<MultiSpriteComponent>()
+        if (sprites is MultiSpriteComponent) {
+            sprites.layers.forEach { layerPool.free(it) }
+        }
+    }
+
+    private inline fun baseLayer(component: MultiSpriteComponent, dx: Float, dy: Float): SpriteLayer =
+        layerPool.obtain().apply {
+            spriteType = CardSprite
+            localPosition.set(dx, dy)
+        }
+
+    private inline fun faceLayer(card: Card, dx: Float, dy: Float): SpriteLayer = layerPool.obtain().apply {
+        spriteType = FaceSprite(card)
+        localPosition.set(
+            ((CARD_WIDTH - FACE_WIDTH) / 2).toFloat() + dx,
+            ((CARD_HEIGHT - FACE_HEIGHT) / 2).toFloat() + dy
+        )
+    }
+
+    private inline fun smallFaceLayer(card: Card, dx: Float, dy: Float): SpriteLayer = layerPool.obtain().apply {
+        spriteType = SmallFaceSprite(card)
+        localPosition.set(
+            (CARD_WIDTH - SMALL_FACE_WIDTH).toFloat() - SMALL_FACE_H_PADDING + dx,
+            SMALL_FACE_V_PADDING + dy
+        )
+    }
+
+    private inline fun backLayer(dx: Float, dy: Float): SpriteLayer = layerPool.obtain().apply {
+        spriteType = BackSprite
+        localPosition.set(dx, dy)
+    }
+
+    private inline fun emptyLayer(): SpriteLayer = layerPool.obtain().apply {
+        spriteType = EmptySprite
+    }
+
+    private fun addStackTransform(entity: EngineEntity, width: Float) {
         entity.with<TransformComponent> {
             position.set(
-                ceil(worldWidth / -2f) + DISCARD_LEFT.toFloat(),
+                floor(width / 2f) - STACK_RIGHT.toFloat(),
                 (-WORLD_HEIGHT / 2 + VERTICAL_PADDING - 1).toFloat()
             )
         }
-        entity.with<MultiSpriteComponent>()
-        updateDiscard(entity, discard)
     }
 
-    fun updateDiscard(entity: EngineEntity, discard: GdxIntArray) {
+    private fun updateDiscard(entity: EngineEntity, discard: GdxIntArray) {
         entity.entity[MultiSpriteComponent.mapper]?.apply {
-            layers.forEach(layerPool::free)
-            layers.clear()
+            removeLayers(this)
             if (discard.isEmpty) {
                 layers.add(layerPool.obtain().apply {
                     spriteType = EmptySprite
@@ -95,19 +219,11 @@ class SceneEntityUtils(private val layerPool: SpriteLayerPool, private val asset
         }
     }
 
-    fun initStack(entity: EngineEntity, stack: GdxIntArray, worldWidth: Float) {
-        addStackTransform(entity, worldWidth)
-        entity.with<MultiSpriteComponent>()
-        updateStack(entity, stack, worldWidth)
-    }
-
-    fun updateStack(entity: EngineEntity, stack: GdxIntArray, worldWidth: Float) {
-        addStackTransform(entity, worldWidth)
+    private fun updateStack(entity: EngineEntity, stack: GdxIntArray, worldWidth: Float) {
         entity.entity[MultiSpriteComponent.mapper]?.apply {
+            removeLayers(this)
             if (stack.isEmpty) {
-                layers.add(layerPool.obtain().apply {
-                    spriteType = EmptySprite
-                })
+                layers.add(emptyLayer())
             } else {
                 val count = stack.size
                 val step = 6
@@ -120,18 +236,11 @@ class SceneEntityUtils(private val layerPool: SpriteLayerPool, private val asset
         }
     }
 
-    fun initStackShowing(entity: EngineEntity, stack: GdxIntArray, worldWidth: Float) {
-        addStackTransform(entity, worldWidth)
-        entity.with<MultiSpriteComponent>()
-        updateStackShowing(entity, stack, worldWidth)
-    }
-
-    fun updateStackShowing(entity: EngineEntity, stack: GdxIntArray, worldWidth: Float) {
+    private fun updateStackShowing(entity: EngineEntity, stack: GdxIntArray, worldWidth: Float) {
         entity.entity[MultiSpriteComponent.mapper]?.apply {
+            removeLayers(this)
             if (stack.isEmpty) {
-                layers.add(layerPool.obtain().apply {
-                    spriteType = EmptySprite
-                })
+                layers.add(emptyLayer())
             } else {
                 val count = stack.size - 1
                 val step = 6
@@ -153,73 +262,15 @@ class SceneEntityUtils(private val layerPool: SpriteLayerPool, private val asset
         }
     }
 
-    fun initCardOpen(entity: EngineEntity, card: Card, level: Int, dx: Float = 0f, dy: Float = 0f) {
-        entity.with<MultiSpriteComponent> {
-            z = level
-            layers.add(baseLayer(this, dx, dy))
-            baseLayer(this, dx, dy)
-            layers.add(faceLayer(card, dx, dy))
+    private inline fun removeLayers(entity: Entity) {
+        entity[MultiSpriteComponent.mapper]?.apply {
+            layers.forEach { layerPool.free(it) }
+            layers.clear()
         }
     }
 
-    fun initCardClosed(entity: EngineEntity, level: Int, dx: Float = 0f, dy: Float = 0f) {
-        entity.with<MultiSpriteComponent> {
-            z = level
-            layers.add(baseLayer(this, dx, dy))
-            layers.add(backLayer(dx, dy))
-        }
-    }
-
-    fun initCardClosedShowing(entity: EngineEntity, card: Card, level: Int, dx: Float = 0f, dy: Float = 0f) {
-        entity.with<MultiSpriteComponent> {
-            z = level
-            layers.add(baseLayer(this, dx, dy))
-            layers.add(faceLayer(card, dx, dy))
-            layers.add(smallFaceLayer(card, dx, SMALL_FACE_V_PADDING))
-        }
-    }
-
-    fun removeAndPoolComponents(entity: Entity): Unit {
-        val sprites = entity.remove<MultiSpriteComponent>()
-        if (sprites is MultiSpriteComponent) {
-            sprites.layers.forEach { layerPool.free(it) }
-        }
-        entity.removeAll()
-    }
-
-    private fun baseLayer(component: MultiSpriteComponent, dx: Float, dy: Float): SpriteLayer =
-        layerPool.obtain().apply {
-            spriteType = CardSprite
-            localPosition.set(dx, dy)
-        }
-
-    private fun faceLayer(card: Card, dx: Float, dy: Float): SpriteLayer = layerPool.obtain().apply {
-        spriteType = FaceSprite(card)
-        localPosition.set(
-            ((CARD_WIDTH - FACE_WIDTH) / 2).toFloat() + dx,
-            ((CARD_HEIGHT - FACE_HEIGHT) / 2).toFloat() + dy
-        )
-    }
-
-    private fun smallFaceLayer(card: Card, dx: Float, dy: Float): SpriteLayer = layerPool.obtain().apply {
-        spriteType = SmallFaceSprite(card)
-        localPosition.set(
-            (CARD_WIDTH - SMALL_FACE_WIDTH).toFloat() - SMALL_FACE_H_PADDING + dx,
-            SMALL_FACE_V_PADDING + dy
-        )
-    }
-
-    private fun backLayer(dx: Float, dy: Float): SpriteLayer = layerPool.obtain().apply {
-        spriteType = BackSprite
-        localPosition.set(dx, dy)
-    }
-
-    private fun addStackTransform(entity: EngineEntity, width: Float) {
-        entity.with<TransformComponent> {
-            position.set(
-                floor(width / 2f) - STACK_RIGHT.toFloat(),
-                (-WORLD_HEIGHT / 2 + VERTICAL_PADDING - 1).toFloat()
-            )
-        }
+    private inline fun removeLayers(component: MultiSpriteComponent) {
+        component.layers.forEach { layerPool.free(it) }
+        component.layers.clear()
     }
 }

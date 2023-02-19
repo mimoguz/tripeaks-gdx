@@ -40,6 +40,7 @@ import ogz.tripeaks.graphics.ScreenTransitionAnimation
 import ogz.tripeaks.graphics.SpriteSet
 import ogz.tripeaks.models.AnimationType
 import ogz.tripeaks.models.GameState
+import ogz.tripeaks.models.SocketState
 import ogz.tripeaks.models.layout.Layout
 import ogz.tripeaks.models.layout.Socket
 import ogz.tripeaks.services.MessageBox
@@ -78,7 +79,7 @@ class GameScreen(private val context: Context) : KtxScreen {
     private val entities: GdxArray<Entity> = gdxArrayOf(true, 52)
     private val stackEntity: Entity = engine.entity()
     private val discardEntity: Entity = engine.entity()
-    private val entityUtils = SceneEntityUtils(layerPool, assets)
+    private val entityUtils = SceneEntityUtils(layerPool, assets, engine)
 
     private var play: GameState? = null
 
@@ -154,23 +155,17 @@ class GameScreen(private val context: Context) : KtxScreen {
                 false
             )
         }
+        initStackAndDiscard()
+    }
+
+    private fun initStackAndDiscard() {
         play?.let { gameState ->
-            entityUtils.removeAndPoolComponents(stackEntity)
-            engine.configureEntity(stackEntity) {
-                if (settings.get().showAll) {
-                    entityUtils.initStackShowing(this, gameState.stack, viewport.worldWidth)
-                } else {
-                    entityUtils.initStack(this, gameState.stack, viewport.worldWidth)
-                }
+            if (settings.get().showAll) {
+                entityUtils.initStackShowing(stackEntity, gameState.stack, viewport.worldWidth)
+            } else {
+                entityUtils.initStack(stackEntity, gameState.stack, viewport.worldWidth)
             }
-            entityUtils.removeAndPoolComponents(discardEntity)
-            engine.configureEntity(discardEntity) {
-                entityUtils.initDiscard(
-                    this,
-                    gameState.discard,
-                    viewport.worldWidth
-                )
-            }
+            entityUtils.initDiscard(discardEntity, gameState.discard, viewport.worldWidth)
         }
     }
 
@@ -199,12 +194,12 @@ class GameScreen(private val context: Context) : KtxScreen {
                     val socket = layout.lookup(column + columnOffset, row + rowOffset)
                     if (socket != null && game.take(socket.index)) {
                         logger.info("Take ${socket.index}")
-                        val card = game.socketState(socket.index).card
-                        val sprites = entities[card][MultiSpriteComponent.mapper]
-                        if (sprites is MultiSpriteComponent) {
-                            sprites.layers.forEach { layerPool.free(it) }
+                        updateSocket(socket.index, game)
+                        val blocked = layout[socket.index].blocks
+                        for (s in blocked) {
+                            updateSocket(s, game)
                         }
-                        entities[card].remove<MultiSpriteComponent>()
+                        entityUtils.updateDiscard(discardEntity, game.discard)
                         // TODO: Removed animation
                         return
                     }
@@ -436,26 +431,13 @@ class GameScreen(private val context: Context) : KtxScreen {
     private fun setupTableau() {
         play?.let { gameState ->
             for (s in 0 until gameState.gameLayout.numberOfSockets) {
-                setupSocket(s, gameState)
+                initSocket(s, gameState)
             }
-            engine.configureEntity(stackEntity) {
-                if (settings.get().showAll) {
-                    entityUtils.initStackShowing(this, gameState.stack, viewport.worldWidth)
-                } else {
-                    entityUtils.initStack(this, gameState.stack, viewport.worldWidth)
-                }
-            }
-            engine.configureEntity(discardEntity) {
-                entityUtils.initDiscard(
-                    this,
-                    gameState.discard,
-                    viewport.worldWidth
-                )
-            }
+            initStackAndDiscard()
         }
     }
 
-    private fun setupSocket(socketIndex: Int, gameState: GameState) {
+    private fun initSocket(socketIndex: Int, gameState: GameState) {
         val socket = gameState.socket(socketIndex)
         val socketState = gameState.socketState(socketIndex)
         val entity = entities[socketState.card]
@@ -464,13 +446,24 @@ class GameScreen(private val context: Context) : KtxScreen {
                 position.set(socketPosition(socket, gameState.gameLayout))
                 origin.set((Constants.CARD_WIDTH / 2).toFloat(), (Constants.CARD_HEIGHT / 2).toFloat())
             }
-            if (!socketState.isEmpty) {
-                when {
-                    gameState.isOpen(socketIndex) -> entityUtils.initCardOpen(this, socketState.card, socket.z)
-                    settings.get().showAll -> entityUtils.initCardClosedShowing(this, socketState.card, socket.z)
-                    else -> entityUtils.initCardClosed(this, socket.z)
-                }
-            }
+        }
+        updateSocket(entity, socket, socketState,gameState.isOpen(socketIndex))
+    }
+
+    private fun updateSocket(socketIndex: Int, gameState: GameState) {
+        val socket = gameState.socket(socketIndex)
+        val socketState = gameState.socketState(socketIndex)
+        val entity = entities[socketState.card]
+        updateSocket(entity, socket, socketState,gameState.isOpen(socketIndex))
+    }
+
+    private fun updateSocket(entity: Entity, socket: Socket, socketState: SocketState, isOpen: Boolean) {
+        println("${socket.index} -> $isOpen")
+        when {
+            socketState.isEmpty -> entityUtils.removeAndPoolSpriteComponent(entity)
+            isOpen -> entityUtils.updateCardOpen(entity, socketState.card, socket.z)
+            settings.get().showAll -> entityUtils.updateCardClosedShowing(entity, socketState.card, socket.z)
+            else -> entityUtils.updateCardClosed(entity, socket.z)
         }
     }
 
