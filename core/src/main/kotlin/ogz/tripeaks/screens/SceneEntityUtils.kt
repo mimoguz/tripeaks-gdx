@@ -3,11 +3,13 @@ package ogz.tripeaks.screens
 import com.badlogic.ashley.core.Entity
 import com.badlogic.ashley.core.PooledEngine
 import com.badlogic.gdx.assets.AssetManager
+import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.utils.Align
 import com.ray3k.stripe.PopTable
 import ktx.ashley.EngineEntity
 import ktx.ashley.configureEntity
+import ktx.ashley.entity
 import ktx.ashley.get
 import ktx.ashley.remove
 import ktx.ashley.with
@@ -15,11 +17,13 @@ import ktx.collections.GdxIntArray
 import ogz.tripeaks.assets.TextureAtlasAssets
 import ogz.tripeaks.assets.UiSkin
 import ogz.tripeaks.assets.get
+import ogz.tripeaks.ecs.AnimationComponent
 import ogz.tripeaks.ecs.MultiSpriteComponent
 import ogz.tripeaks.ecs.SpriteLayer
 import ogz.tripeaks.ecs.SpriteLayerPool
 import ogz.tripeaks.ecs.TransformComponent
 import ogz.tripeaks.graphics.BackSprite
+import ogz.tripeaks.graphics.CardRemovedAnimation
 import ogz.tripeaks.graphics.CardSprite
 import ogz.tripeaks.graphics.EmptySprite
 import ogz.tripeaks.graphics.FaceSprite
@@ -29,6 +33,7 @@ import ogz.tripeaks.screens.Constants.CARD_HEIGHT
 import ogz.tripeaks.screens.Constants.CARD_WIDTH
 import ogz.tripeaks.screens.Constants.CELL_PADDING_TOP
 import ogz.tripeaks.screens.Constants.DISCARD_LEFT
+import ogz.tripeaks.screens.Constants.DISSOLVE_TIME
 import ogz.tripeaks.screens.Constants.FACE_HEIGHT
 import ogz.tripeaks.screens.Constants.FACE_WIDTH
 import ogz.tripeaks.screens.Constants.SMALL_10_HEIGHT
@@ -151,6 +156,19 @@ class SceneEntityUtils(
                 layers.add(smallFaceLayer(card, dx, SMALL_FACE_V_PADDING))
             }
         }
+    }
+
+    fun initRemovalAnimation(card: Card, level: Int, worldPosition: Vector2) {
+        val entity = engine.entity {
+            with<TransformComponent> {
+                position.set(worldPosition.x, worldPosition.y)
+            }
+            with<AnimationComponent> {
+                timeRemaining = DISSOLVE_TIME
+                animationType = CardRemovedAnimation
+            }
+        }
+        updateCardOpen(entity, card, level, 0f)
     }
 
     fun removeAndPoolComponents(entity: Entity) {

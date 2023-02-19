@@ -170,11 +170,11 @@ class GameScreen(private val context: Context) : KtxScreen {
     }
 
     private fun onTouch(message: Msg.TouchDown) {
-        play?.let { game ->
+        play?.let { gameState ->
             val pos = Vector2(message.screenX.toFloat(), message.screenY.toFloat())
             viewport.unproject(pos)
 
-            val layout = game.gameLayout
+            val layout = gameState.gameLayout
 
             val x = pos.x.toInt() + (layout.numberOfColumns / 2) * Constants.CELL_WIDTH
             val y = viewport.worldHeight.toInt() / 2 - Constants.VERTICAL_PADDING - pos.y.toInt()
@@ -192,15 +192,19 @@ class GameScreen(private val context: Context) : KtxScreen {
             for (rowOffset in 0 downTo -1) {
                 for (columnOffset in 0 downTo -1) {
                     val socket = layout.lookup(column + columnOffset, row + rowOffset)
-                    if (socket != null && game.take(socket.index)) {
+                    if (socket != null && gameState.take(socket.index)) {
                         logger.info("Take ${socket.index}")
-                        updateSocket(socket.index, game)
+                        updateSocket(socket.index, gameState)
                         val blocked = layout[socket.index].blocks
                         for (s in blocked) {
-                            updateSocket(s, game)
+                            updateSocket(s, gameState)
                         }
-                        entityUtils.updateDiscard(discardEntity, game.discard)
-                        // TODO: Removed animation
+                        entityUtils.updateDiscard(discardEntity, gameState.discard)
+                        entityUtils.initRemovalAnimation(
+                            gameState.socketState(socket.index).card,
+                            socket.z,
+                            socketPosition(socket, gameState.gameLayout)
+                        )
                         return
                     }
                 }
@@ -447,14 +451,14 @@ class GameScreen(private val context: Context) : KtxScreen {
                 origin.set((Constants.CARD_WIDTH / 2).toFloat(), (Constants.CARD_HEIGHT / 2).toFloat())
             }
         }
-        updateSocket(entity, socket, socketState,gameState.isOpen(socketIndex))
+        updateSocket(entity, socket, socketState, gameState.isOpen(socketIndex))
     }
 
     private fun updateSocket(socketIndex: Int, gameState: GameState) {
         val socket = gameState.socket(socketIndex)
         val socketState = gameState.socketState(socketIndex)
         val entity = entities[socketState.card]
-        updateSocket(entity, socket, socketState,gameState.isOpen(socketIndex))
+        updateSocket(entity, socket, socketState, gameState.isOpen(socketIndex))
     }
 
     private fun updateSocket(entity: Entity, socket: Socket, socketState: SocketState, isOpen: Boolean) {

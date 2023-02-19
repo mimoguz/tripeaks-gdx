@@ -23,6 +23,7 @@ object Constants {
     const val WORLD_HEIGHT = 168
     const val DISCARD_LEFT =  HORIZONTAL_PADDING + CELL_WIDTH * 2 + CELL_PADDING_LEFT
     const val STACK_RIGHT = HORIZONTAL_PADDING + CELL_WIDTH * 4 - CELL_PADDING_LEFT * 2
+    const val DISSOLVE_TIME = 0.5f
 
     val DARK_UI_TEXT = rgb(242, 204, 143)
     val DARK_UI_EMPHASIS = rgb(184, 55, 68)
