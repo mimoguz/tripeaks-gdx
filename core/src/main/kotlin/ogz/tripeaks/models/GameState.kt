@@ -112,11 +112,12 @@ class GameState private constructor(
     fun undo(): Int {
         // Discard is empty, there are no moves to undo.
         if (!canUndo) {
-            Int.MIN_VALUE
+            return Int.MIN_VALUE
         }
 
         val card = discard.pop()
         val socketIndex = sockets.indexOfFirst { it.card == card }
+        println("Undoing socket $socketIndex")
         if (socketIndex == -1) {
             // Card wasn't from the tableau.
             stack.add(card)

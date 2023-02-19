@@ -18,9 +18,7 @@ import com.ray3k.stripe.PopTable.PopTableStyle
 import ktx.app.KtxScreen
 import ktx.ashley.configureEntity
 import ktx.ashley.entity
-import ktx.ashley.get
 import ktx.ashley.getSystem
-import ktx.ashley.remove
 import ktx.ashley.with
 import ktx.assets.disposeSafely
 import ktx.collections.GdxArray
@@ -38,7 +36,6 @@ import ogz.tripeaks.graphics.CustomViewport
 import ogz.tripeaks.graphics.HomeSprite
 import ogz.tripeaks.graphics.ScreenTransitionAnimation
 import ogz.tripeaks.graphics.SpriteSet
-import ogz.tripeaks.models.AnimationType
 import ogz.tripeaks.models.GameState
 import ogz.tripeaks.models.SocketState
 import ogz.tripeaks.models.layout.Layout
@@ -48,7 +45,6 @@ import ogz.tripeaks.services.PersistenceService
 import ogz.tripeaks.services.PlayerStatisticsService
 import ogz.tripeaks.services.Receiver
 import ogz.tripeaks.services.SettingsService
-import ogz.tripeaks.ui.LabelButton
 import ogz.tripeaks.services.Message.Companion as Msg
 
 class GameScreen(private val context: Context) : KtxScreen {
@@ -80,6 +76,12 @@ class GameScreen(private val context: Context) : KtxScreen {
     private val stackEntity: Entity = engine.entity()
     private val discardEntity: Entity = engine.entity()
     private val entityUtils = SceneEntityUtils(layerPool, assets, engine)
+
+    private var updateClosedCard =
+        if (settings.get().showAll) entityUtils::updateCardClosedShowing else entityUtils::updateCardClosed
+    private var updateStack = if (settings.get().showAll) entityUtils::updateStackShowing else entityUtils::updateStack
+    private var undoButton = entityUtils.undoButton(settings.skin, this::undo)
+    private var dealButton = entityUtils.dealButton(settings.skin, this::deal)
 
     private var play: GameState? = null
 
@@ -202,7 +204,7 @@ class GameScreen(private val context: Context) : KtxScreen {
                         entityUtils.updateDiscard(discardEntity, gameState.discard)
                         entityUtils.initRemovalAnimation(
                             gameState.socketState(socket.index).card,
-                            socket.z,
+                            socket.z + 100,
                             socketPosition(socket, gameState.gameLayout)
                         )
                         return
@@ -229,20 +231,13 @@ class GameScreen(private val context: Context) : KtxScreen {
     }
 
     private fun onShowAllChanged(msg: Msg.ShowAllChanged) {
-        println("Show all: ${msg.showAll}")
+        updateClosedCard = if (msg.showAll) entityUtils::updateCardClosedShowing else entityUtils::updateCardClosed
+        updateStack = if (msg.showAll) entityUtils::updateStackShowing else entityUtils::updateStack
+        setupTableau()
     }
 
     private fun setupStage(skin: UiSkin) {
         uiStage.clear()
-
-        val animationButton = LabelButton(skin, "Switch Animation")
-        animationButton.onClick {
-            val currentSettings = settings.get()
-            currentSettings.animation =
-                if (currentSettings.animation == AnimationType.BlinkAnim) AnimationType.DissolveAnim
-                else AnimationType.BlinkAnim
-            settings.update(currentSettings)
-        }
 
         val menu = PopTable(skin["menu", PopTableStyle::class.java]).apply {
             add(Label("Menu test", skin))
@@ -260,12 +255,8 @@ class GameScreen(private val context: Context) : KtxScreen {
         }
 
         val menuButton = entityUtils.menuButton(uiStage, skin, assets, menu) { onMenuShown(menu) }
-        val dealButton = entityUtils.dealButton(skin, this::openDialog)
-        val undoButton = entityUtils.undoButton(skin) {
-            val currentSettings = settings.get()
-            currentSettings.darkTheme = !currentSettings.darkTheme
-            settings.update(currentSettings)
-        }
+        dealButton = entityUtils.dealButton(skin, this::deal)
+        undoButton = entityUtils.undoButton(skin, this::undo)
 
         val table = Table(skin).apply {
             pad(
@@ -302,6 +293,44 @@ class GameScreen(private val context: Context) : KtxScreen {
     private fun printStatistics() {
         val stats = playerStatistics.get()
         logger.info("Played: ${stats.played}, Won: ${stats.won}")
+    }
+
+    private fun deal() {
+        play?.let { gameState ->
+            if (gameState.deal()) {
+                entityUtils.updateDiscard(discardEntity, gameState.discard)
+                updateStack(stackEntity, gameState.stack, viewport.worldWidth)
+            }
+            dealButton.isDisabled = !gameState.canDeal
+            undoButton.isDisabled = !gameState.canUndo
+        }
+    }
+
+    private fun undo() {
+        play?.let { gameState ->
+            val target = gameState.undo()
+            entityUtils.updateDiscard(discardEntity, gameState.discard)
+            dealButton.isDisabled = !gameState.canDeal
+            undoButton.isDisabled = !gameState.canUndo
+
+            when (target) {
+                Int.MIN_VALUE -> {}
+                -1 -> updateStack(stackEntity, gameState.stack, viewport.worldWidth)
+                else -> {
+                    val socket = gameState.gameLayout[target]
+                    val card = gameState.socketState(socket.index).card
+                    entityUtils.updateCardOpen(
+                        entities[card],
+                        card,
+                        socket.z
+                    )
+                    for (blocked in socket.blocks) {
+                        val blockedCard = gameState.socketState(blocked).card
+                        updateClosedCard(entities[blockedCard], blockedCard, gameState.gameLayout[blocked].z, 0f, 0f)
+                    }
+                }
+            }
+        }
     }
 
     private fun openDialog() {
@@ -466,8 +495,7 @@ class GameScreen(private val context: Context) : KtxScreen {
         when {
             socketState.isEmpty -> entityUtils.removeAndPoolSpriteComponent(entity)
             isOpen -> entityUtils.updateCardOpen(entity, socketState.card, socket.z)
-            settings.get().showAll -> entityUtils.updateCardClosedShowing(entity, socketState.card, socket.z)
-            else -> entityUtils.updateCardClosed(entity, socket.z)
+            else -> updateClosedCard(entity, socketState.card, socket.z, 0f, 0f)
         }
     }
 

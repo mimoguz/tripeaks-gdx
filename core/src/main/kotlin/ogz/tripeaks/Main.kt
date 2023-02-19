@@ -1,5 +1,6 @@
 package ogz.tripeaks
 
+import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
@@ -29,7 +30,6 @@ class Main : KtxGame<KtxScreen>() {
     private lateinit var uiStage: Stage
 
     override fun create() {
-        // Gdx.graphics.isContinuousRendering = false
         batch = SpriteBatch()
         viewport = CustomViewport(MIN_WORLD_WIDTH, MAX_WORLD_WIDTH, WORLD_HEIGHT, OrthographicCamera())
         uiStage = Stage(CustomViewport(MIN_WORLD_WIDTH, MAX_WORLD_WIDTH, WORLD_HEIGHT, OrthographicCamera()))

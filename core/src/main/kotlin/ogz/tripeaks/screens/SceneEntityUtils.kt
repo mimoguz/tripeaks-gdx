@@ -4,6 +4,7 @@ import com.badlogic.ashley.core.Entity
 import com.badlogic.ashley.core.PooledEngine
 import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.math.Vector2
+import com.badlogic.gdx.scenes.scene2d.Action
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.utils.Align
 import com.ray3k.stripe.PopTable
@@ -68,17 +69,13 @@ class SceneEntityUtils(
     fun dealButton(skin: UiSkin, action: () -> Unit): IconButton =
         IconButton(skin, assets[TextureAtlasAssets.Ui].findRegion("deal_${skin.resourcePostfix}")).apply {
             setSize(CARD_WIDTH.toFloat(), CARD_HEIGHT.toFloat())
-            onClick {
-                action.invoke()
-            }
+            onClick { action.invoke() }
         }
 
     fun undoButton(skin: UiSkin, action: () -> Unit): IconButton =
         IconButton(skin, assets[TextureAtlasAssets.Ui].findRegion("undo_${skin.resourcePostfix}")).apply {
             setSize(CARD_WIDTH.toFloat(), CARD_HEIGHT.toFloat())
-            onClick {
-                action.invoke()
-            }
+            onClick { action.invoke() }
         }
 
     fun initDiscard(entity: Entity, discard: GdxIntArray, worldWidth: Float) {
@@ -135,7 +132,7 @@ class SceneEntityUtils(
         }
     }
 
-    fun updateCardClosed(entity: Entity, level: Int, dx: Float = 0f, dy: Float = 0f) {
+    fun updateCardClosed(entity: Entity, @Suppress("UNUSED_PARAMETER") card: Card, level: Int, dx: Float = 0f, dy: Float = 0f) {
         engine.configureEntity(entity) {
             with<MultiSpriteComponent> {
                 z = level
@@ -243,12 +240,18 @@ class SceneEntityUtils(
             if (stack.isEmpty) {
                 layers.add(emptyLayer())
             } else {
-                val count = stack.size
+                val count = stack.size - 1
                 val step = 6
                 for (i in 0 until count) {
                     val dx = (-i * step).toFloat()
                     layers.add(baseLayer(this, dx, 0f))
                     layers.add(backLayer(dx, 0f))
+                }
+                if (count >= 0) {
+                    val dx = (-count * step).toFloat()
+                    val card = stack[count]
+                    layers.add(baseLayer(this, dx, 0f))
+                    layers.add(faceLayer(card, dx, 0f))
                 }
             }
         }
