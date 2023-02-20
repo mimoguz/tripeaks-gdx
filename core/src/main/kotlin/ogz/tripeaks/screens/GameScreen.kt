@@ -2,6 +2,7 @@ package ogz.tripeaks.screens
 
 import com.badlogic.ashley.core.Entity
 import com.badlogic.ashley.core.PooledEngine
+import com.badlogic.ashley.utils.ImmutableArray
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.InputMultiplexer
 import com.badlogic.gdx.assets.AssetManager
@@ -16,12 +17,10 @@ import com.badlogic.gdx.utils.Logger
 import com.ray3k.stripe.PopTable
 import com.ray3k.stripe.PopTable.PopTableStyle
 import ktx.app.KtxScreen
-import ktx.ashley.configureEntity
 import ktx.ashley.entity
 import ktx.ashley.getSystem
 import ktx.ashley.with
 import ktx.assets.disposeSafely
-import ktx.collections.GdxArray
 import ktx.collections.gdxArrayOf
 import ktx.inject.Context
 import ogz.tripeaks.assets.UiSkin
@@ -37,9 +36,6 @@ import ogz.tripeaks.graphics.HomeSprite
 import ogz.tripeaks.graphics.ScreenTransitionAnimation
 import ogz.tripeaks.graphics.SpriteSet
 import ogz.tripeaks.models.GameState
-import ogz.tripeaks.models.SocketState
-import ogz.tripeaks.models.layout.Layout
-import ogz.tripeaks.models.layout.Socket
 import ogz.tripeaks.services.MessageBox
 import ogz.tripeaks.services.PersistenceService
 import ogz.tripeaks.services.PlayerStatisticsService
@@ -65,25 +61,23 @@ class GameScreen(private val context: Context) : KtxScreen {
     private var spriteSet: SpriteSet
     private var animationSet: AnimationSet
     private var frameBuffer =
-        FrameBuffer(Pixmap.Format.RGB888, Constants.MIN_WORLD_WIDTH, Constants.WORLD_HEIGHT, false)
+        FrameBuffer(Pixmap.Format.RGB888, Constants.MIN_WORLD_WIDTH.toInt(), Constants.WORLD_HEIGHT.toInt(), false)
 
     private val animationSetChangedReceiver = Receiver<Msg.AnimationSetChanged> { onAnimationSetChanged(it) }
     private val showAllChangedReceiver = Receiver<Msg.ShowAllChanged> { onShowAllChanged(it) }
     private val skinChangedReceiver = Receiver<Msg.SkinChanged> { onSkinChanged(it) }
     private val spriteSetChangedReceiver = Receiver<Msg.SpriteSetChanged> { onSpriteSetChanged(it) }
     private val touchReceiver = Receiver<Msg.TouchDown> { onTouch(it) }
-    private val entities: GdxArray<Entity> = gdxArrayOf(true, 52)
+    private val entities: ImmutableArray<Entity>
     private val stackEntity: Entity = engine.entity()
     private val discardEntity: Entity = engine.entity()
-    private val entityUtils = SceneEntityUtils(layerPool, assets, engine)
+    private val stageUtils = StageUtils(assets, uiStage)
 
-    private var updateClosedCard =
-        if (settings.get().showAll) entityUtils::updateCardClosedShowing else entityUtils::updateCardClosed
-    private var updateStack = if (settings.get().showAll) entityUtils::updateStackShowing else entityUtils::updateStack
-    private var undoButton = entityUtils.undoButton(settings.skin, this::undo)
-    private var dealButton = entityUtils.dealButton(settings.skin, this::deal)
+    private var undoButton = stageUtils.undoButton(settings.skin, this::undo)
+    private var dealButton = stageUtils.dealButton(settings.skin, this::deal)
 
     private var play: GameState? = null
+    private var entityUtils: EntityUtils? = null
 
     init {
         logger.level = Logger.INFO
@@ -98,9 +92,11 @@ class GameScreen(private val context: Context) : KtxScreen {
         messageBox.register(spriteSetChangedReceiver)
         messageBox.register(touchReceiver)
 
-        for (entity in 0 until 52) {
-            entities.add(engine.entity())
+        val es = gdxArrayOf<Entity>(false, 52)
+        for (card in 0 until 52) {
+            es.add(engine.entity())
         }
+        entities = ImmutableArray(es)
     }
 
     override fun render(delta: Float) {
@@ -114,7 +110,15 @@ class GameScreen(private val context: Context) : KtxScreen {
     override fun show() {
         super.show()
 
-        play = PersistenceService().loadGameState() ?: settings.getNewGame()
+        val game = PersistenceService().loadGameState() ?: settings.getNewGame()
+        entityUtils = if (settings.get().showAll) {
+            ShowingEntityUtils(game, engine, layerPool, assets, entities, stackEntity, discardEntity)
+        }
+        else {
+            ShowingEntityUtils(game, engine, layerPool, assets, entities, stackEntity, discardEntity)
+        }
+        play = game
+
         playerStatistics.updatePlayed()
 
         initEcs()
@@ -125,7 +129,14 @@ class GameScreen(private val context: Context) : KtxScreen {
     }
 
     override fun resume() {
-        play = play ?: PersistenceService().loadGameState() ?: context.inject()
+        val game = play ?: PersistenceService().loadGameState() ?: context.inject()
+        play = game
+        entityUtils = if (settings.get().showAll) {
+            ShowingEntityUtils(game, engine, layerPool, assets, entities, stackEntity, discardEntity)
+        }
+        else {
+            ShowingEntityUtils(game, engine, layerPool, assets, entities, stackEntity, discardEntity)
+        }
         super.resume()
     }
 
@@ -161,14 +172,8 @@ class GameScreen(private val context: Context) : KtxScreen {
     }
 
     private fun initStackAndDiscard() {
-        play?.let { gameState ->
-            if (settings.get().showAll) {
-                entityUtils.initStackShowing(stackEntity, gameState.stack, viewport.worldWidth)
-            } else {
-                entityUtils.initStack(stackEntity, gameState.stack, viewport.worldWidth)
-            }
-            entityUtils.initDiscard(discardEntity, gameState.discard, viewport.worldWidth)
-        }
+        entityUtils?.initStack(viewport.worldWidth)
+        entityUtils?.initDiscard(viewport.worldWidth)
     }
 
     private fun onTouch(message: Msg.TouchDown) {
@@ -178,10 +183,10 @@ class GameScreen(private val context: Context) : KtxScreen {
 
             val layout = gameState.gameLayout
 
-            val x = pos.x.toInt() + (layout.numberOfColumns / 2) * Constants.CELL_WIDTH
-            val y = viewport.worldHeight.toInt() / 2 - Constants.VERTICAL_PADDING - pos.y.toInt()
-            val column = x / Constants.CELL_WIDTH
-            val row = y / Constants.CELL_HEIGHT
+            val x = pos.x.toInt() + (layout.numberOfColumns / 2) * Constants.CELL_WIDTH.toInt()
+            val y = viewport.worldHeight.toInt() / 2 - Constants.VERTICAL_PADDING.toInt() - pos.y.toInt()
+            val column = x / Constants.CELL_WIDTH.toInt()
+            val row = y / Constants.CELL_HEIGHT.toInt()
 
             logger.info("Row: $row, Column: $column")
 
@@ -195,18 +200,13 @@ class GameScreen(private val context: Context) : KtxScreen {
                 for (columnOffset in 0 downTo -1) {
                     val socket = layout.lookup(column + columnOffset, row + rowOffset)
                     if (socket != null && gameState.take(socket.index)) {
-                        logger.info("Take ${socket.index}")
-                        updateSocket(socket.index, gameState)
+                        entityUtils?.updateSocket(socket.index)
                         val blocked = layout[socket.index].blocks
                         for (s in blocked) {
-                            updateSocket(s, gameState)
+                            entityUtils?.updateSocket(s)
                         }
-                        entityUtils.updateDiscard(discardEntity, gameState.discard)
-                        entityUtils.initRemovalAnimation(
-                            gameState.socketState(socket.index).card,
-                            socket.z + 100,
-                            socketPosition(socket, gameState.gameLayout)
-                        )
+                        entityUtils?.updateDiscard(viewport.worldWidth)
+                        entityUtils?.addRemovalAnimation(socket.index)
                         return
                     }
                 }
@@ -231,9 +231,15 @@ class GameScreen(private val context: Context) : KtxScreen {
     }
 
     private fun onShowAllChanged(msg: Msg.ShowAllChanged) {
-        updateClosedCard = if (msg.showAll) entityUtils::updateCardClosedShowing else entityUtils::updateCardClosed
-        updateStack = if (msg.showAll) entityUtils::updateStackShowing else entityUtils::updateStack
-        setupTableau()
+        play?.let { game ->
+            entityUtils = if (msg.showAll) {
+                ShowingEntityUtils(game, engine, layerPool, assets, entities, stackEntity, discardEntity)
+            }
+            else {
+                ShowingEntityUtils(game, engine, layerPool, assets, entities, stackEntity, discardEntity)
+            }
+            setupTableau()
+        }
     }
 
     private fun setupStage(skin: UiSkin) {
@@ -254,33 +260,33 @@ class GameScreen(private val context: Context) : KtxScreen {
             }
         }
 
-        val menuButton = entityUtils.menuButton(uiStage, skin, assets, menu) { onMenuShown(menu) }
-        dealButton = entityUtils.dealButton(skin, this::deal)
-        undoButton = entityUtils.undoButton(skin, this::undo)
+        val menuButton = stageUtils.menuButton(skin, menu) { onMenuShown(menu) }
+        dealButton = stageUtils.dealButton(skin, this::deal)
+        undoButton = stageUtils.undoButton(skin, this::undo)
 
         val table = Table(skin).apply {
             pad(
-                Constants.VERTICAL_PADDING.toFloat(),
-                Constants.HORIZONTAL_PADDING.toFloat(),
-                Constants.VERTICAL_PADDING.toFloat() - 1.0f,
-                Constants.HORIZONTAL_PADDING.toFloat()
+                Constants.VERTICAL_PADDING,
+                Constants.HORIZONTAL_PADDING,
+                Constants.VERTICAL_PADDING - 1.0f,
+                Constants.HORIZONTAL_PADDING
             )
             add(menuButton)
-                .width(Constants.CARD_WIDTH.toFloat())
-                .height(Constants.CARD_WIDTH.toFloat())
+                .width(Constants.CARD_WIDTH)
+                .height(Constants.CARD_WIDTH)
                 .expand()
                 .top()
                 .right()
                 .colspan(2)
             row()
             add(undoButton)
-                .width(Constants.CARD_WIDTH.toFloat())
-                .height(Constants.CARD_HEIGHT.toFloat())
+                .width(Constants.CARD_WIDTH)
+                .height(Constants.CARD_HEIGHT)
                 .bottom()
                 .left()
             add(dealButton)
-                .width(Constants.CARD_WIDTH.toFloat())
-                .height(Constants.CARD_HEIGHT.toFloat())
+                .width(Constants.CARD_WIDTH)
+                .height(Constants.CARD_HEIGHT)
                 .expand()
                 .bottom()
                 .right()
@@ -298,8 +304,8 @@ class GameScreen(private val context: Context) : KtxScreen {
     private fun deal() {
         play?.let { gameState ->
             if (gameState.deal()) {
-                entityUtils.updateDiscard(discardEntity, gameState.discard)
-                updateStack(stackEntity, gameState.stack, viewport.worldWidth)
+                entityUtils?.updateDiscard(viewport.worldWidth)
+                entityUtils?.updateStack(viewport.worldWidth)
             }
             dealButton.isDisabled = !gameState.canDeal
             undoButton.isDisabled = !gameState.canUndo
@@ -309,24 +315,18 @@ class GameScreen(private val context: Context) : KtxScreen {
     private fun undo() {
         play?.let { gameState ->
             val target = gameState.undo()
-            entityUtils.updateDiscard(discardEntity, gameState.discard)
+            entityUtils?.updateDiscard(viewport.worldWidth)
             dealButton.isDisabled = !gameState.canDeal
             undoButton.isDisabled = !gameState.canUndo
 
             when (target) {
                 Int.MIN_VALUE -> {}
-                -1 -> updateStack(stackEntity, gameState.stack, viewport.worldWidth)
+                -1 -> entityUtils?.updateStack(viewport.worldWidth)
                 else -> {
                     val socket = gameState.gameLayout[target]
-                    val card = gameState.socketState(socket.index).card
-                    entityUtils.updateCardOpen(
-                        entities[card],
-                        card,
-                        socket.z
-                    )
+                    entityUtils?.updateSocket(socket.index)
                     for (blocked in socket.blocks) {
-                        val blockedCard = gameState.socketState(blocked).card
-                        updateClosedCard(entities[blockedCard], blockedCard, gameState.gameLayout[blocked].z, 0f, 0f)
+                        entityUtils?.updateSocket(blocked)
                     }
                 }
             }
@@ -392,17 +392,14 @@ class GameScreen(private val context: Context) : KtxScreen {
     }
 
     private fun initEcs() {
-        removeComponents()
         setupTableau()
 
         engine.entity {
             val bg = HomeSprite
             val bgSprite = bg.get(spriteSet)
-
             with<TransformComponent> {
                 position = Vector2(bgSprite.regionWidth * -0.5f, bgSprite.regionHeight * -0.5f)
             }
-
             with<MultiSpriteComponent> {
                 color.set(0.1f, 1f, 1f, 1f)
                 z = 10
@@ -410,7 +407,6 @@ class GameScreen(private val context: Context) : KtxScreen {
                     spriteType = bg
                 })
             }
-
             with<AnimationComponent> {
                 timeRemaining = 2f
                 animationType = ScreenTransitionAnimation
@@ -456,55 +452,12 @@ class GameScreen(private val context: Context) : KtxScreen {
 //        }
     }
 
-    private fun removeComponents() {
-        entities.forEach(entityUtils::removeAndPoolComponents)
-        entityUtils.removeAndPoolComponents(stackEntity)
-    }
-
     private fun setupTableau() {
         play?.let { gameState ->
             for (s in 0 until gameState.gameLayout.numberOfSockets) {
-                initSocket(s, gameState)
+                entityUtils?.initSocket(s)
             }
             initStackAndDiscard()
         }
-    }
-
-    private fun initSocket(socketIndex: Int, gameState: GameState) {
-        val socket = gameState.socket(socketIndex)
-        val socketState = gameState.socketState(socketIndex)
-        val entity = entities[socketState.card]
-        engine.configureEntity(entity) {
-            with<TransformComponent> {
-                position.set(socketPosition(socket, gameState.gameLayout))
-                origin.set((Constants.CARD_WIDTH / 2).toFloat(), (Constants.CARD_HEIGHT / 2).toFloat())
-            }
-        }
-        updateSocket(entity, socket, socketState, gameState.isOpen(socketIndex))
-    }
-
-    private fun updateSocket(socketIndex: Int, gameState: GameState) {
-        val socket = gameState.socket(socketIndex)
-        val socketState = gameState.socketState(socketIndex)
-        val entity = entities[socketState.card]
-        updateSocket(entity, socket, socketState, gameState.isOpen(socketIndex))
-    }
-
-    private fun updateSocket(entity: Entity, socket: Socket, socketState: SocketState, isOpen: Boolean) {
-        println("${socket.index} -> $isOpen")
-        when {
-            socketState.isEmpty -> entityUtils.removeAndPoolSpriteComponent(entity)
-            isOpen -> entityUtils.updateCardOpen(entity, socketState.card, socket.z)
-            else -> updateClosedCard(entity, socketState.card, socket.z, 0f, 0f)
-        }
-    }
-
-    private fun socketPosition(socket: Socket, layout: Layout): Vector2 {
-        val maxY = viewport.worldHeight.toInt() / 2 - Constants.VERTICAL_PADDING - Constants.CARD_HEIGHT + 1
-        val minX = -(layout.numberOfColumns / 2) * Constants.CELL_WIDTH
-        return Vector2(
-            (minX + socket.column * Constants.CELL_WIDTH + Constants.CELL_PADDING_LEFT).toFloat(),
-            (maxY - socket.row * Constants.CELL_HEIGHT - Constants.CELL_PADDING_TOP).toFloat()
-        )
     }
 }

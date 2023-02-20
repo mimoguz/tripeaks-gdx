@@ -31,8 +31,8 @@ class Main : KtxGame<KtxScreen>() {
 
     override fun create() {
         batch = SpriteBatch()
-        viewport = CustomViewport(MIN_WORLD_WIDTH, MAX_WORLD_WIDTH, WORLD_HEIGHT, OrthographicCamera())
-        uiStage = Stage(CustomViewport(MIN_WORLD_WIDTH, MAX_WORLD_WIDTH, WORLD_HEIGHT, OrthographicCamera()))
+        viewport = CustomViewport(MIN_WORLD_WIDTH.toInt(), MAX_WORLD_WIDTH.toInt(), WORLD_HEIGHT.toInt(), OrthographicCamera())
+        uiStage = Stage(CustomViewport(MIN_WORLD_WIDTH.toInt(), MAX_WORLD_WIDTH.toInt(), WORLD_HEIGHT.toInt(), OrthographicCamera()))
         context.apply {
             bindSingleton(assets)
             bindSingleton(batch)
