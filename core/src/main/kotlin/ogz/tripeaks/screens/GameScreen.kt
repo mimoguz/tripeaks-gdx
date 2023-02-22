@@ -23,7 +23,9 @@ import ktx.ashley.with
 import ktx.assets.disposeSafely
 import ktx.collections.gdxArrayOf
 import ktx.inject.Context
+import ogz.tripeaks.assets.TextureAtlasAssets
 import ogz.tripeaks.assets.UiSkin
+import ogz.tripeaks.assets.get
 import ogz.tripeaks.ecs.AnimationComponent
 import ogz.tripeaks.ecs.AnimationSystem
 import ogz.tripeaks.ecs.MultiSpriteComponent
@@ -36,11 +38,18 @@ import ogz.tripeaks.graphics.HomeSprite
 import ogz.tripeaks.graphics.ScreenTransitionAnimation
 import ogz.tripeaks.graphics.SpriteSet
 import ogz.tripeaks.models.GameState
+import ogz.tripeaks.screens.Constants.CARD_HEIGHT
+import ogz.tripeaks.screens.Constants.CARD_WIDTH
+import ogz.tripeaks.screens.Constants.HORIZONTAL_PADDING
+import ogz.tripeaks.screens.Constants.VERTICAL_PADDING
 import ogz.tripeaks.services.MessageBox
 import ogz.tripeaks.services.PersistenceService
 import ogz.tripeaks.services.PlayerStatisticsService
 import ogz.tripeaks.services.Receiver
 import ogz.tripeaks.services.SettingsService
+import ogz.tripeaks.ui.GameButton
+import ogz.tripeaks.ui.GameUi
+import ogz.tripeaks.ui.TopLeft
 import ogz.tripeaks.services.Message.Companion as Msg
 
 class GameScreen(private val context: Context) : KtxScreen {
@@ -54,9 +63,10 @@ class GameScreen(private val context: Context) : KtxScreen {
     private val settings = context.inject<SettingsService>()
     private val uiStage = context.inject<Stage>()
     private val viewport = context.inject<CustomViewport>()
+    private val ui = GameUi()
 
     private val engine = PooledEngine()
-    private val renderHelper = RenderHelper(batch, viewport, engine)
+    private val renderHelper = RenderHelper(batch, viewport, engine, ui)
     private val touchHandler = TouchHandler(messageBox)
     private var spriteSet: SpriteSet
     private var animationSet: AnimationSet
@@ -113,8 +123,7 @@ class GameScreen(private val context: Context) : KtxScreen {
         val game = PersistenceService().loadGameState() ?: settings.getNewGame()
         entityUtils = if (settings.get().showAll) {
             ShowingEntityUtils(game, engine, layerPool, assets, entities, stackEntity, discardEntity)
-        }
-        else {
+        } else {
             ShowingEntityUtils(game, engine, layerPool, assets, entities, stackEntity, discardEntity)
         }
         play = game
@@ -133,10 +142,10 @@ class GameScreen(private val context: Context) : KtxScreen {
         play = game
         entityUtils = if (settings.get().showAll) {
             ShowingEntityUtils(game, engine, layerPool, assets, entities, stackEntity, discardEntity)
-        }
-        else {
+        } else {
             ShowingEntityUtils(game, engine, layerPool, assets, entities, stackEntity, discardEntity)
         }
+        setupTableau()
         super.resume()
     }
 
@@ -168,18 +177,19 @@ class GameScreen(private val context: Context) : KtxScreen {
                 false
             )
         }
-        initStackAndDiscard()
-    }
-
-    private fun initStackAndDiscard() {
-        entityUtils?.initStack(viewport.worldWidth)
-        entityUtils?.initDiscard(viewport.worldWidth)
+        entityUtils?.moveDiscard(viewport.worldWidth)
+        entityUtils?.moveStack(viewport.worldWidth)
+        ui.update(viewport.worldWidth, viewport.worldHeight)
     }
 
     private fun onTouch(message: Msg.TouchDown) {
         play?.let { gameState ->
             val pos = Vector2(message.screenX.toFloat(), message.screenY.toFloat())
             viewport.unproject(pos)
+
+            if (ui.handlePressed(pos.x, pos.y)) {
+                return
+            }
 
             val layout = gameState.gameLayout
 
@@ -234,8 +244,7 @@ class GameScreen(private val context: Context) : KtxScreen {
         play?.let { game ->
             entityUtils = if (msg.showAll) {
                 ShowingEntityUtils(game, engine, layerPool, assets, entities, stackEntity, discardEntity)
-            }
-            else {
+            } else {
                 ShowingEntityUtils(game, engine, layerPool, assets, entities, stackEntity, discardEntity)
             }
             setupTableau()
@@ -266,27 +275,27 @@ class GameScreen(private val context: Context) : KtxScreen {
 
         val table = Table(skin).apply {
             pad(
-                Constants.VERTICAL_PADDING,
-                Constants.HORIZONTAL_PADDING,
-                Constants.VERTICAL_PADDING - 1.0f,
-                Constants.HORIZONTAL_PADDING
+                VERTICAL_PADDING,
+                HORIZONTAL_PADDING,
+                VERTICAL_PADDING - 1.0f,
+                HORIZONTAL_PADDING
             )
             add(menuButton)
-                .width(Constants.CARD_WIDTH)
-                .height(Constants.CARD_WIDTH)
+                .width(CARD_WIDTH)
+                .height(CARD_WIDTH)
                 .expand()
                 .top()
                 .right()
                 .colspan(2)
             row()
             add(undoButton)
-                .width(Constants.CARD_WIDTH)
-                .height(Constants.CARD_HEIGHT)
+                .width(CARD_WIDTH)
+                .height(CARD_HEIGHT)
                 .bottom()
                 .left()
             add(dealButton)
-                .width(Constants.CARD_WIDTH)
-                .height(Constants.CARD_HEIGHT)
+                .width(CARD_WIDTH)
+                .height(CARD_HEIGHT)
                 .expand()
                 .bottom()
                 .right()
@@ -294,6 +303,15 @@ class GameScreen(private val context: Context) : KtxScreen {
 
         table.setFillParent(true)
         uiStage.addActor(table)
+
+        ui.clear()
+        ui.add(GameButton(
+            skin,
+            assets[TextureAtlasAssets.Ui].findRegion("menu_${skin.resourcePostfix}"),
+            TopLeft(Vector2(4f, 4f)),
+        ) {}.apply {
+            setSize(CARD_WIDTH, CARD_WIDTH)
+        })
     }
 
     private fun printStatistics() {
@@ -372,6 +390,7 @@ class GameScreen(private val context: Context) : KtxScreen {
     private fun onMenuHidden() {
         touchHandler.silent = false
         touchHandler.dialog = null
+        renderHelper.blurred = false
     }
 
     private fun onDialogShown(dialog: PopTable) {
@@ -383,6 +402,7 @@ class GameScreen(private val context: Context) : KtxScreen {
     private fun onMenuShown(menu: PopTable) {
         touchHandler.silent = true
         touchHandler.dialog = menu
+        renderHelper.blurred = true
     }
 
     private fun onDialogHidden() {
@@ -457,7 +477,8 @@ class GameScreen(private val context: Context) : KtxScreen {
             for (s in 0 until gameState.gameLayout.numberOfSockets) {
                 entityUtils?.initSocket(s)
             }
-            initStackAndDiscard()
+            entityUtils?.initStack(viewport.worldWidth)
+            entityUtils?.initDiscard(viewport.worldWidth)
         }
     }
 }

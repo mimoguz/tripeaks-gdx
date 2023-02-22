@@ -11,8 +11,9 @@ import com.badlogic.gdx.utils.viewport.Viewport
 import ktx.app.clearScreen
 import ktx.assets.disposeSafely
 import ktx.graphics.use
+import ogz.tripeaks.ui.GameUi
 
-class RenderHelper(private val batch: SpriteBatch, private val viewport: Viewport, private val engine: PooledEngine) : Disposable {
+class RenderHelper(private val batch: SpriteBatch, private val viewport: Viewport, private val engine: PooledEngine, val ui: GameUi? = null) : Disposable {
     private var renderMethod = this::renderScreen
     private val blurShader = ShaderProgram(
         javaClass.classLoader.getResource("shaders/basic.vert")!!.readText(),
@@ -37,6 +38,7 @@ class RenderHelper(private val batch: SpriteBatch, private val viewport: Viewpor
         batch.use {
             engine.update(delta)
             batch.setColor(1f, 1f ,1f, 1f)
+            ui?.render(it)
         }
         frameBuffer.end(viewport.screenX, viewport.screenY, viewport.screenWidth, viewport.screenHeight)
 

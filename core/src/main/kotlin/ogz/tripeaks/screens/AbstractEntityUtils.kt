@@ -51,6 +51,7 @@ abstract class AbstractEntityUtils(
     override val discardEntity: Entity
 ) : EntityUtils {
     protected abstract fun addBack(component: MultiSpriteComponent, card: Card, dx: Float, dy: Float)
+    protected abstract fun addStackBack(component: MultiSpriteComponent, card: Card, dx: Float, dy: Float)
 
     override fun addRemovalAnimation(socketIndex: Int) {
         engine.add {
@@ -61,6 +62,7 @@ abstract class AbstractEntityUtils(
                     setSocketPosition(socket, position)
                 }
                 with<MultiSpriteComponent> {
+                    z = socket.z + 100
                     addBaseLayer(this, 0f, 0f)
                     addFaceLayer(this, card, 0f, 0f)
                 }
@@ -73,8 +75,8 @@ abstract class AbstractEntityUtils(
     }
 
     override fun initDiscard(worldWidth: Float) {
-        moveDiscard(worldWidth)
         updateDiscard(worldWidth)
+        moveDiscard(worldWidth)
     }
 
     override fun updateDiscard(worldWidth: Float) {
@@ -92,9 +94,20 @@ abstract class AbstractEntityUtils(
         }
     }
 
+    override fun moveDiscard(worldWidth: Float) {
+        engine.configureEntity(discardEntity) {
+            with<TransformComponent> {
+                position.set(
+                    truncate(worldWidth / -2f) + DISCARD_LEFT,
+                    truncate(-WORLD_HEIGHT / 2) + VERTICAL_PADDING - 1f
+                )
+            }
+        }
+    }
+
     override fun initStack(worldWidth: Float) {
-        moveStack(worldWidth)
         updateStack(worldWidth)
+        moveStack(worldWidth)
     }
 
     override fun updateStack(worldWidth: Float) {
@@ -110,26 +123,13 @@ abstract class AbstractEntityUtils(
                 for (i in 0..last) {
                     val dx = (-i * step).toFloat()
                     val card = game.stack[i]
-                    val sh = if (card == 9) SMALL_10_HEIGHT else SMALL_FACE_HEIGHT
-                    val dyBack = CARD_HEIGHT - sh - SMALL_FACE_V_PADDING - SMALL_FACE_HEIGHT - CELL_PADDING_TOP + 1
                     addBaseLayer(this, dx, 0f)
                     if (i < last) {
-                        addBack(this, card, dx, dyBack)
+                        addStackBack(this, card, dx, 0f)
                     } else {
                         addFaceLayer(this, card, dx, 0f)
                     }
                 }
-            }
-        }
-    }
-
-    override fun moveDiscard(worldWidth: Float) {
-        engine.configureEntity(discardEntity) {
-            with<TransformComponent> {
-                position.set(
-                    truncate(worldWidth / -2f) + DISCARD_LEFT,
-                    truncate(-WORLD_HEIGHT / 2) + VERTICAL_PADDING - 1f
-                )
             }
         }
     }
@@ -174,12 +174,6 @@ abstract class AbstractEntityUtils(
         }
     }
 
-    protected inline fun returnLayers(entity: Entity) {
-        entity[MultiSpriteComponent.mapper]?.apply {
-            layers.forEach { layerPool.free(it) }
-        }
-    }
-
     private inline fun returnLayers(component: MultiSpriteComponent) {
         component.layers.forEach { layerPool.free(it) }
     }
@@ -200,9 +194,7 @@ abstract class AbstractEntityUtils(
                 returnLayers(this)
                 layers.clear()
                 addBaseLayer(this, 0f, 0f)
-                addBack(this, card, CARD_WIDTH - SMALL_FACE_WIDTH - SMALL_FACE_H_PADDING,
-                    SMALL_FACE_V_PADDING
-                )
+                addBack(this, card, 0f, 0f)
             }
         }
     }
@@ -219,14 +211,14 @@ abstract class AbstractEntityUtils(
         }
     }
 
-    private inline fun addBaseLayer(component: MultiSpriteComponent, dx: Float, dy: Float) {
+    protected inline fun addBaseLayer(component: MultiSpriteComponent, dx: Float, dy: Float) {
         component.layers.add(layerPool.obtain().apply {
             spriteType = CardSprite
             localPosition.set(dx, dy)
         })
     }
 
-    private inline fun addFaceLayer(component: MultiSpriteComponent, card: Card, dx: Float, dy: Float) {
+    protected inline fun addFaceLayer(component: MultiSpriteComponent, card: Card, dx: Float, dy: Float) {
         component.layers.add(layerPool.obtain().apply {
             spriteType = FaceSprite(card)
             localPosition.set(

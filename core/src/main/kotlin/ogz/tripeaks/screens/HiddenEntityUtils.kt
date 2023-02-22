@@ -9,6 +9,10 @@ import ogz.tripeaks.ecs.SpriteLayerPool
 import ogz.tripeaks.graphics.BackSprite
 import ogz.tripeaks.models.Card
 import ogz.tripeaks.models.GameState
+import ogz.tripeaks.screens.Constants.SMALL_10_HEIGHT
+import ogz.tripeaks.screens.Constants.SMALL_FACE_HEIGHT
+import ogz.tripeaks.screens.Constants.SMALL_FACE_H_PADDING
+import ogz.tripeaks.screens.Constants.SMALL_FACE_V_PADDING
 
 class HiddenEntityUtils(
     game: GameState,
@@ -19,18 +23,25 @@ class HiddenEntityUtils(
     stackEntity: Entity,
     discardEntity: Entity
 ) : AbstractEntityUtils(
-    game,
-    engine,
-    layerPool,
-    assets,
-    cardEntities,
-    stackEntity,
-    discardEntity
+    game = game,
+    engine = engine,
+    layerPool = layerPool,
+    assets = assets,
+    cardEntities = cardEntities,
+    stackEntity = stackEntity,
+    discardEntity = discardEntity
 ) {
     override fun addBack(component: MultiSpriteComponent, card: Card, dx: Float, dy: Float) {
         component.layers.add(layerPool.obtain().apply {
             spriteType = BackSprite
-            localPosition.set(dx, 0f)
+            localPosition.set(dx, dy)
+        })
+    }
+
+    override fun addStackBack(component: MultiSpriteComponent, card: Card, dx: Float, dy: Float) {
+        component.layers.add(layerPool.obtain().apply {
+            spriteType = BackSprite
+            localPosition.set(dx, dy)
         })
     }
 }
