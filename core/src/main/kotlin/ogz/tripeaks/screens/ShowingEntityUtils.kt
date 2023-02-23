@@ -38,20 +38,17 @@ class ShowingEntityUtils(
     stackEntity = stackEntity,
     discardEntity = discardEntity
 ) {
-    private val dxBack = CARD_WIDTH + CELL_PADDING_LEFT - SMALL_FACE_WIDTH - SMALL_FACE_H_PADDING
+    private val dxBack = CARD_WIDTH - SMALL_FACE_WIDTH - SMALL_FACE_H_PADDING
 
     override fun addBack(component: MultiSpriteComponent, card: Card, dx: Float, dy: Float) {
         addFaceLayer(component, card, dx, dy)
-        addSmallFaceLayer(component, card, dx + dxBack, dy + SMALL_FACE_V_PADDING)
+        addSmallFaceLayer(component, card, dx + dxBack, dy + SMALL_FACE_V_PADDING + 1)
     }
 
     override fun addStackBack(component: MultiSpriteComponent, card: Card, dx: Float, dy: Float) {
-        component.layers.add(layerPool.obtain().apply {
-            spriteType = SmallFaceSprite(card)
-            val sh = if (card % 13 == 9) SMALL_10_HEIGHT else SMALL_FACE_HEIGHT
-            val dyBack = CARD_HEIGHT - sh - SMALL_FACE_V_PADDING - SMALL_FACE_HEIGHT - CELL_PADDING_TOP + 1
-            addSmallFaceLayer(component, card, dx + dxBack, dy + dyBack)
-        })
+        val sh = if (card % 13 == 9) SMALL_10_HEIGHT else SMALL_FACE_HEIGHT
+        val dyBack = CARD_HEIGHT - sh - SMALL_FACE_V_PADDING - SMALL_FACE_HEIGHT + 2
+        addSmallFaceLayer(component, card, dx + dxBack, dy + dyBack)
     }
 
     @Suppress("NOTHING_TO_INLINE")

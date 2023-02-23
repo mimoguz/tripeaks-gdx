@@ -18,4 +18,10 @@ class TouchHandler(private val messageBox: MessageBox) : InputAdapter() {
         messageBox.send(Msg.TouchDown(screenX, screenY, pointer, button))
         return true
     }
+
+    override fun touchUp(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
+        if (silent) return false;
+        messageBox.send(Msg.TouchUp(screenX, screenY, pointer, button))
+        return true
+    }
 }

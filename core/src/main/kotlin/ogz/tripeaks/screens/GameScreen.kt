@@ -13,6 +13,7 @@ import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.Table
+import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.Logger
 import com.ray3k.stripe.PopTable
 import com.ray3k.stripe.PopTable.PopTableStyle
@@ -77,7 +78,8 @@ class GameScreen(private val context: Context) : KtxScreen {
     private val showAllChangedReceiver = Receiver<Msg.ShowAllChanged> { onShowAllChanged(it) }
     private val skinChangedReceiver = Receiver<Msg.SkinChanged> { onSkinChanged(it) }
     private val spriteSetChangedReceiver = Receiver<Msg.SpriteSetChanged> { onSpriteSetChanged(it) }
-    private val touchReceiver = Receiver<Msg.TouchDown> { onTouch(it) }
+    private val touchDownReceiver = Receiver<Msg.TouchDown> { onTouchDown(it) }
+    private val touchUpReceiver = Receiver<Msg.TouchUp> { onTouchUp(it) }
     private val entities: ImmutableArray<Entity>
     private val stackEntity: Entity = engine.entity()
     private val discardEntity: Entity = engine.entity()
@@ -100,7 +102,8 @@ class GameScreen(private val context: Context) : KtxScreen {
         messageBox.register(showAllChangedReceiver)
         messageBox.register(skinChangedReceiver)
         messageBox.register(spriteSetChangedReceiver)
-        messageBox.register(touchReceiver)
+        messageBox.register(touchDownReceiver)
+        messageBox.register(touchUpReceiver)
 
         val es = gdxArrayOf<Entity>(false, 52)
         for (card in 0 until 52) {
@@ -159,7 +162,8 @@ class GameScreen(private val context: Context) : KtxScreen {
         messageBox.unregister(showAllChangedReceiver)
         messageBox.unregister(skinChangedReceiver)
         messageBox.unregister(spriteSetChangedReceiver)
-        messageBox.unregister(touchReceiver)
+        messageBox.unregister(touchDownReceiver)
+        messageBox.unregister(touchUpReceiver)
 
         renderHelper.disposeSafely()
         frameBuffer.disposeSafely()
@@ -182,7 +186,7 @@ class GameScreen(private val context: Context) : KtxScreen {
         ui.update(viewport.worldWidth, viewport.worldHeight)
     }
 
-    private fun onTouch(message: Msg.TouchDown) {
+    private fun onTouchDown(message: Msg.TouchDown) {
         play?.let { gameState ->
             val pos = Vector2(message.screenX.toFloat(), message.screenY.toFloat())
             viewport.unproject(pos)
@@ -194,7 +198,7 @@ class GameScreen(private val context: Context) : KtxScreen {
             val layout = gameState.gameLayout
 
             val x = pos.x.toInt() + (layout.numberOfColumns / 2) * Constants.CELL_WIDTH.toInt()
-            val y = viewport.worldHeight.toInt() / 2 - Constants.VERTICAL_PADDING.toInt() - pos.y.toInt()
+            val y = viewport.worldHeight.toInt() / 2 - VERTICAL_PADDING.toInt() - pos.y.toInt()
             val column = x / Constants.CELL_WIDTH.toInt()
             val row = y / Constants.CELL_HEIGHT.toInt()
 
@@ -221,6 +225,14 @@ class GameScreen(private val context: Context) : KtxScreen {
                     }
                 }
             }
+        }
+    }
+
+    private fun onTouchUp(message: Msg.TouchUp) {
+        play?.let {
+            val pos = Vector2(message.screenX.toFloat(), message.screenY.toFloat())
+            viewport.unproject(pos)
+            ui.handleReleased(pos.x, pos.y)
         }
     }
 
@@ -254,11 +266,17 @@ class GameScreen(private val context: Context) : KtxScreen {
     private fun setupStage(skin: UiSkin) {
         uiStage.clear()
 
+        val table = Table(skin)
+        table.setFillParent(true)
+        uiStage.addActor(table)
+
         val menu = PopTable(skin["menu", PopTableStyle::class.java]).apply {
             add(Label("Menu test", skin))
             pad(12f, 12f, 12f, 12f)
             isHideOnUnfocus = true
             isModal = true
+            attachOffsetX = -HORIZONTAL_PADDING
+            attachToActor(table, Align.topRight, Align.topRight)
             addListener {
                 if (isHidden) {
                     onMenuHidden()
@@ -273,45 +291,12 @@ class GameScreen(private val context: Context) : KtxScreen {
         dealButton = stageUtils.dealButton(skin, this::deal)
         undoButton = stageUtils.undoButton(skin, this::undo)
 
-        val table = Table(skin).apply {
-            pad(
-                VERTICAL_PADDING,
-                HORIZONTAL_PADDING,
-                VERTICAL_PADDING - 1.0f,
-                HORIZONTAL_PADDING
-            )
-            add(menuButton)
-                .width(CARD_WIDTH)
-                .height(CARD_WIDTH)
-                .expand()
-                .top()
-                .right()
-                .colspan(2)
-            row()
-            add(undoButton)
-                .width(CARD_WIDTH)
-                .height(CARD_HEIGHT)
-                .bottom()
-                .left()
-            add(dealButton)
-                .width(CARD_WIDTH)
-                .height(CARD_HEIGHT)
-                .expand()
-                .bottom()
-                .right()
-        }
 
-        table.setFillParent(true)
-        uiStage.addActor(table)
 
         ui.clear()
-        ui.add(GameButton(
-            skin,
-            assets[TextureAtlasAssets.Ui].findRegion("menu_${skin.resourcePostfix}"),
-            TopLeft(Vector2(4f, 4f)),
-        ) {}.apply {
-            setSize(CARD_WIDTH, CARD_WIDTH)
-        })
+        ui.add(menuButton)
+        ui.add(dealButton)
+        ui.add(undoButton)
     }
 
     private fun printStatistics() {
@@ -325,8 +310,8 @@ class GameScreen(private val context: Context) : KtxScreen {
                 entityUtils?.updateDiscard(viewport.worldWidth)
                 entityUtils?.updateStack(viewport.worldWidth)
             }
-            dealButton.isDisabled = !gameState.canDeal
-            undoButton.isDisabled = !gameState.canUndo
+            dealButton.disabled = !gameState.canDeal
+            undoButton.disabled = !gameState.canUndo
         }
     }
 
@@ -334,8 +319,8 @@ class GameScreen(private val context: Context) : KtxScreen {
         play?.let { gameState ->
             val target = gameState.undo()
             entityUtils?.updateDiscard(viewport.worldWidth)
-            dealButton.isDisabled = !gameState.canDeal
-            undoButton.isDisabled = !gameState.canUndo
+            dealButton.disabled = !gameState.canDeal
+            undoButton.disabled = !gameState.canUndo
 
             when (target) {
                 Int.MIN_VALUE -> {}

@@ -111,7 +111,7 @@ abstract class AbstractEntityUtils(
     }
 
     override fun updateStack(worldWidth: Float) {
-        engine.configureEntity(discardEntity) {
+        engine.configureEntity(stackEntity) {
             with<MultiSpriteComponent> {
                 returnLayers(this)
                 if (game.stack.isEmpty) {
@@ -168,7 +168,12 @@ abstract class AbstractEntityUtils(
         val isOpen = game.isOpen(index)
         val entity = cardEntities[state.card]
         when {
-            state.isEmpty -> {}
+            state.isEmpty -> {
+                entity[MultiSpriteComponent.mapper]?.let {
+                    returnLayers(it)
+                }
+                entity.remove(MultiSpriteComponent::class.java)
+            }
             isOpen -> setSocketOpen(entity, state.card, socket.z)
             else -> setSocketClosed(entity, state.card, socket.z)
         }
@@ -176,6 +181,7 @@ abstract class AbstractEntityUtils(
 
     private inline fun returnLayers(component: MultiSpriteComponent) {
         component.layers.forEach { layerPool.free(it) }
+        component.layers.clear()
     }
 
     private fun setSocketPosition(socket: Socket, position: Vector2) {
@@ -192,7 +198,6 @@ abstract class AbstractEntityUtils(
             with<MultiSpriteComponent> {
                 z = level
                 returnLayers(this)
-                layers.clear()
                 addBaseLayer(this, 0f, 0f)
                 addBack(this, card, 0f, 0f)
             }
@@ -204,7 +209,6 @@ abstract class AbstractEntityUtils(
             with<MultiSpriteComponent> {
                 z = level
                 returnLayers(this)
-                layers.clear()
                 addBaseLayer(this, 0f, 0f)
                 addFaceLayer(this, card, 0f, 0f)
             }
