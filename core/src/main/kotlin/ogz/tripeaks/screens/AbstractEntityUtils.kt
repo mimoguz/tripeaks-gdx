@@ -85,11 +85,11 @@ abstract class AbstractEntityUtils(
                 returnLayers(this)
                 if (game.discard.isEmpty) {
                     addEmptyListLayer(this, 0f, 0f)
-                    return
+                } else {
+                    val card = game.discard[game.discard.size - 1]
+                    addBaseLayer(this, 0f, 0f)
+                    addFaceLayer(this, card, 0f, 0f)
                 }
-                val card = game.discard[game.discard.size - 1]
-                addBaseLayer(this, 0f, 0f)
-                addFaceLayer(this, card, 0f, 0f)
             }
         }
     }
@@ -116,18 +116,18 @@ abstract class AbstractEntityUtils(
                 returnLayers(this)
                 if (game.stack.isEmpty) {
                     addEmptyListLayer(this, 0f, 0f)
-                    return
-                }
-                val last = game.stack.size - 1
-                val step = 6
-                for (i in 0..last) {
-                    val dx = (-i * step).toFloat()
-                    val card = game.stack[i]
-                    addBaseLayer(this, dx, 0f)
-                    if (i < last) {
-                        addStackBack(this, card, dx, 0f)
-                    } else {
-                        addFaceLayer(this, card, dx, 0f)
+                } else {
+                    val last = game.stack.size - 1
+                    val step = 6
+                    for (i in 0..last) {
+                        val dx = (-i * step).toFloat()
+                        val card = game.stack[i]
+                        addBaseLayer(this, dx, 0f)
+                        if (i < last) {
+                            addStackBack(this, card, dx, 0f)
+                        } else {
+                            addFaceLayer(this, card, dx, 0f)
+                        }
                     }
                 }
             }

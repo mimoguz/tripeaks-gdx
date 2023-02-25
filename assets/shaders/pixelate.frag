@@ -5,7 +5,7 @@ precision mediump float;
 #define LOWP
 #endif
 
-#define PIXEL_SIZE 9.0
+#define PIXEL_SIZE 4.0
 
 // I use vertex colors to pass various per-entity parameters.
 // For this shader it's unused;

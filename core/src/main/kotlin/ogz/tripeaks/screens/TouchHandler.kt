@@ -13,15 +13,17 @@ class TouchHandler(private val messageBox: MessageBox) : InputAdapter() {
     override fun touchDown(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
         if (silent) {
             dialog?.hide()
-            return false
+            dialog = null
+        } else {
+            messageBox.send(Msg.TouchDown(screenX, screenY, pointer, button))
         }
-        messageBox.send(Msg.TouchDown(screenX, screenY, pointer, button))
         return true
     }
 
     override fun touchUp(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
-        if (silent) return false;
-        messageBox.send(Msg.TouchUp(screenX, screenY, pointer, button))
+        if (!silent) {
+            messageBox.send(Msg.TouchUp(screenX, screenY, pointer, button))
+        }
         return true
     }
 }

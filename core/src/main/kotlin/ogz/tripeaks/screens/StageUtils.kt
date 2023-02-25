@@ -25,8 +25,10 @@ class StageUtils(private val assets: AssetManager, private val stage: Stage) {
             assets[TextureAtlasAssets.Ui].findRegion("menu_${skin.resourcePostfix}"),
             TopRight(Vector2(HORIZONTAL_PADDING, VERTICAL_PADDING))
         ) {
-            onShow.invoke()
-            menu.show(stage)
+            if (menu.isHidden) {
+                onShow.invoke()
+                menu.show(stage)
+            }
         }.apply {
             setSize(CARD_WIDTH, CARD_WIDTH)
         }

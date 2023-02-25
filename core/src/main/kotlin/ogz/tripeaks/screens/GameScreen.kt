@@ -196,13 +196,10 @@ class GameScreen(private val context: Context) : KtxScreen {
             }
 
             val layout = gameState.gameLayout
-
             val x = pos.x.toInt() + (layout.numberOfColumns / 2) * Constants.CELL_WIDTH.toInt()
             val y = viewport.worldHeight.toInt() / 2 - VERTICAL_PADDING.toInt() - pos.y.toInt()
             val column = x / Constants.CELL_WIDTH.toInt()
             val row = y / Constants.CELL_HEIGHT.toInt()
-
-            logger.info("Row: $row, Column: $column")
 
             // Touch was outside of the tableau
             if (column < 0 || column >= layout.numberOfColumns || row < 0 || row >= layout.numberOfRows) {
@@ -266,17 +263,27 @@ class GameScreen(private val context: Context) : KtxScreen {
     private fun setupStage(skin: UiSkin) {
         uiStage.clear()
 
-        val table = Table(skin)
+        val table = Table(skin).apply {
+            pad(VERTICAL_PADDING, HORIZONTAL_PADDING, VERTICAL_PADDING, HORIZONTAL_PADDING)
+        }
+        table.debug = true
         table.setFillParent(true)
         uiStage.addActor(table)
 
+        val empty = Label("", skin).apply {
+            this.setSize(CARD_WIDTH, CARD_WIDTH)
+        }
+
+        table.add(empty).expandX().expandY().align(Align.topRight)
+
         val menu = PopTable(skin["menu", PopTableStyle::class.java]).apply {
+            add(Label("Menu test", skin))
+            row()
             add(Label("Menu test", skin))
             pad(12f, 12f, 12f, 12f)
             isHideOnUnfocus = true
             isModal = true
-            attachOffsetX = -HORIZONTAL_PADDING
-            attachToActor(table, Align.topRight, Align.topRight)
+            attachToActor(empty, Align.topRight, Align.bottomRight, -HORIZONTAL_PADDING, -CARD_WIDTH - VERTICAL_PADDING)
             addListener {
                 if (isHidden) {
                     onMenuHidden()
@@ -290,8 +297,6 @@ class GameScreen(private val context: Context) : KtxScreen {
         val menuButton = stageUtils.menuButton(skin, menu) { onMenuShown(menu) }
         dealButton = stageUtils.dealButton(skin, this::deal)
         undoButton = stageUtils.undoButton(skin, this::undo)
-
-
 
         ui.clear()
         ui.add(menuButton)
