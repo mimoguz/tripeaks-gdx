@@ -12,8 +12,8 @@ sealed interface AnimationStrategy {
     fun screenTransition(time: Float, vertexColor: Color): Boolean
     fun setTheme(dark: Boolean)
 
-    companion object AnimationStrategy {
-        class Dissolve : ogz.tripeaks.game.AnimationStrategy {
+    companion object Strategies  {
+        class Dissolve : AnimationStrategy {
             override var param = 0f
             override val shaderProgram = ShaderProgram(
                 javaClass.classLoader.getResource("shaders/basic.vert")?.readText(),
@@ -52,7 +52,7 @@ sealed interface AnimationStrategy {
             }
         }
 
-        class Blink : ogz.tripeaks.game.AnimationStrategy {
+        class Blink : AnimationStrategy {
             override var param = 0f
 
             override val shaderProgram = ShaderProgram(

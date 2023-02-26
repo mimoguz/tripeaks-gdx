@@ -2,18 +2,17 @@ package ogz.tripeaks.services
 
 import com.badlogic.gdx.assets.AssetManager
 import ktx.inject.Context
-import ogz.tripeaks.assets.FontAssets
-import ogz.tripeaks.assets.TextureAtlasAssets
 import ogz.tripeaks.assets.UiSkin
-import ogz.tripeaks.assets.get
-import ogz.tripeaks.graphics.AnimationSet
-import ogz.tripeaks.graphics.Animations
+import ogz.tripeaks.game.AnimationStrategy
+import ogz.tripeaks.game.CardDrawingStrategy
+import ogz.tripeaks.game.StackDrawingStrategy
 import ogz.tripeaks.graphics.SpriteSet
 import ogz.tripeaks.models.GameState
 import ogz.tripeaks.models.Settings
-import ogz.tripeaks.models.create
-import ogz.tripeaks.models.get
-import ogz.tripeaks.screens.Constants
+import ogz.tripeaks.models.layout.BasicLayout
+import ogz.tripeaks.models.layout.DiamondsLayout
+import ogz.tripeaks.models.layout.Inverted2ndLayout
+import ogz.tripeaks.models.layout.Layout
 import ogz.tripeaks.services.Message.Companion as Msg
 
 class SettingsService {
@@ -22,31 +21,13 @@ class SettingsService {
     private lateinit var assets: AssetManager
     private lateinit var context: Context
     private lateinit var messageBox: MessageBox
-    private lateinit var _animationSet: AnimationSet
-    private lateinit var _spriteSet: SpriteSet
-    private lateinit var _skin: UiSkin
-
-     val animationSet: AnimationSet
-        get() = _animationSet
-
-    val spriteSet: SpriteSet
-        get() = _spriteSet
-
-    val skin: UiSkin
-        get() = _skin
 
     fun initialize(context: Context) {
         this.context = context
         persistence = context.inject()
         assets = context.inject()
         messageBox = context.inject()
-        settings = persistence.loadSettings() ?: Settings()
-        settings!!.apply {
-            _skin = createSkin(darkTheme)
-            _spriteSet = SpriteSet(darkTheme, backDesign, assets)
-            _animationSet = Animations.ALL.find { it.name == animation.tag } ?: Animations.BLINK
-            Animations.setTheme(darkTheme)
-        }
+        settings = persistence.loadSettings()?.create(assets) ?: SavedSettings().create(assets)
     }
 
     fun paused() {
@@ -54,63 +35,149 @@ class SettingsService {
     }
 
     fun resumed() {
-        settings = settings ?: persistence.loadSettings() ?: Settings()
+        settings =
+            settings ?: persistence.loadSettings()?.create(assets) ?: SavedSettings().create(assets)
     }
 
-    fun get(): Settings = settings!!.clone()
+    fun get(): Settings = settings!!
 
-    fun update(settings: Settings) {
-        val newSettings = settings.clone()
+    fun getSaved(): SavedSettings = SavedSettings(settings!!)
+
+    fun update(savedSettings: SavedSettings) {
         val current = this.settings!!
-        val themeChanged = newSettings.darkTheme != current.darkTheme
-        val backDesignChanged = newSettings.backDesign !=  current.backDesign
-        val spritesChanged = themeChanged || backDesignChanged
-        val animationSetChanged = newSettings.animation != current.animation
-        val showAllChanged =  current.showAll != newSettings.showAll
-        this.settings = newSettings
+        val themeChanged = savedSettings.darkTheme != current.darkTheme
+        val backDesignChanged = savedSettings.backDesign != current.backDesign
+        val animationsChanged =
+            savedSettings.animation != animationToVariant(current.animationStrategy)
+        val drawingStrategyChanged =
+            savedSettings.drawingStrategy != drawingToVariant(current.cardDrawingStrategy)
 
-        if (themeChanged) {
-            _skin = createSkin(newSettings.darkTheme)
-            Animations.setTheme(newSettings.darkTheme)
-            messageBox.send(Msg.SkinChanged(_skin))
-        }
-
-        if (spritesChanged) {
-            _spriteSet = SpriteSet(newSettings.darkTheme , newSettings.backDesign, assets)
-            messageBox.send(Msg.SpriteSetChanged(_spriteSet))
-        }
-
-        if (animationSetChanged) {
-            _animationSet = newSettings.animation.get()
-            messageBox.send(Msg.AnimationSetChanged(_animationSet))
-        }
-
-        if (showAllChanged) {
-            messageBox.send(Msg.ShowAllChanged(newSettings.showAll))
+        // TODO: I don't need message params anymore.
+        if (themeChanged || backDesignChanged || animationsChanged || drawingStrategyChanged) {
+            val newSettings = savedSettings.create(assets)
+            settings = newSettings
+            if (themeChanged) {
+                messageBox.send(Msg.SkinChanged(newSettings.skin))
+            }
+            if (themeChanged || backDesignChanged) {
+                messageBox.send(Msg.SpriteSetChanged(newSettings.spriteSet))
+            }
+            if (animationsChanged) {
+                messageBox.send(Msg.AnimationSetChanged(newSettings.animationStrategy))
+            }
+            if (drawingStrategyChanged) {
+                messageBox.send(Msg.ShowAllChanged(newSettings.showAll))
+            }
         }
     }
 
     fun getNewGame(): GameState = settings!!.let { settings ->
-        GameState.startNew(settings.layout.create(), settings.emptyDiscard)
+        GameState.startNew(settings.layout, settings.emptyDiscard)
+    }
+}
+
+class SavedSettings(
+    var darkTheme: Boolean,
+    var backDesign: Int,
+    var layout: Layouts,
+    var animation: AnimationStrategies,
+    var drawingStrategy: DrawingStrategies,
+    var emptyDiscard: Boolean,
+) {
+    constructor() : this(
+        darkTheme = false,
+        backDesign = 0,
+        layout = Layouts.Basic,
+        animation = AnimationStrategies.Blink,
+        drawingStrategy = DrawingStrategies.BackHidden,
+        emptyDiscard = false
+    )
+
+    constructor(settings: Settings) : this(
+        settings.darkTheme,
+        settings.backDesign,
+        tagToLayoutVariant(settings.layout.tag),
+        animationToVariant(settings.animationStrategy),
+        drawingToVariant(settings.cardDrawingStrategy),
+        settings.emptyDiscard
+    )
+
+    fun create(assets: AssetManager): Settings {
+        val cjk = false // TODO
+        return Settings(
+            backDesign,
+            layout.create(),
+            animation.create(),
+            drawingStrategy.createCardDrawingStrategy(),
+            drawingStrategy.createStackDrawingStrategy(),
+            SpriteSet(darkTheme, backDesign, assets),
+            UiSkin(assets, false, darkTheme),
+            emptyDiscard
+        )
+    }
+}
+
+enum class Layouts {
+    Basic,
+    Diamonds,
+    Inverted2nd
+}
+
+fun tagToLayoutVariant(tag: String): Layouts = when (tag) {
+    BasicLayout.TAG -> Layouts.Basic
+    DiamondsLayout.TAG -> Layouts.Diamonds
+    else -> Layouts.Inverted2nd
+}
+
+fun Layouts.create(): Layout {
+    return when (this) {
+        Layouts.Basic -> BasicLayout()
+        Layouts.Diamonds -> DiamondsLayout()
+        Layouts.Inverted2nd -> Inverted2ndLayout()
+    }
+}
+
+enum class AnimationStrategies {
+    Blink,
+    Dissolve
+}
+
+fun animationToVariant(s: AnimationStrategy): AnimationStrategies =
+    if (s is AnimationStrategy.Strategies.Blink) {
+        AnimationStrategies.Blink
+    } else {
+        AnimationStrategies.Dissolve
     }
 
-    private fun createSkin(darkTheme: Boolean) =
-        if (darkTheme)
-            UiSkin(
-                assets[TextureAtlasAssets.Ui],
-                assets[FontAssets.GamePixels],
-                Constants.DARK_UI_TEXT,
-                Constants.DARK_UI_EMPHASIS,
-                "dark",
-                true
-            )
-        else
-            UiSkin(
-                assets[TextureAtlasAssets.Ui],
-                assets[FontAssets.GamePixels],
-                Constants.LIGHT_UI_TEXT,
-                Constants.LIGHT_UI_EMPHASIS,
-                "light",
-                false
-            )
+fun AnimationStrategies.create(): AnimationStrategy {
+    return when (this) {
+        AnimationStrategies.Blink -> AnimationStrategy.Strategies.Blink()
+        AnimationStrategies.Dissolve -> AnimationStrategy.Strategies.Dissolve()
+    }
+}
+
+enum class DrawingStrategies {
+    BackVisible,
+    BackHidden
+}
+
+fun drawingToVariant(s: CardDrawingStrategy): DrawingStrategies =
+    if (s is CardDrawingStrategy.Strategies.BackVisible) {
+        DrawingStrategies.BackVisible
+    } else {
+        DrawingStrategies.BackHidden
+    }
+
+fun DrawingStrategies.createCardDrawingStrategy(): CardDrawingStrategy {
+    return when (this) {
+        DrawingStrategies.BackHidden -> CardDrawingStrategy.Strategies.BackHidden()
+        DrawingStrategies.BackVisible -> CardDrawingStrategy.Strategies.BackVisible()
+    }
+}
+
+fun DrawingStrategies.createStackDrawingStrategy(): StackDrawingStrategy {
+    return when (this) {
+        DrawingStrategies.BackHidden -> StackDrawingStrategy.Strategies.BackHidden()
+        DrawingStrategies.BackVisible -> StackDrawingStrategy.Strategies.BackVisible()
+    }
 }

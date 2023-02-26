@@ -15,7 +15,7 @@ sealed interface CardDrawingStrategy {
     fun drawBack(batch: SpriteBatch, card: Card, sprites: SpriteSet, position: Vector2)
     fun drawFront(batch: SpriteBatch, card: Card, sprites: SpriteSet, position: Vector2)
 
-    companion object CardDrawingStrategy {
+    companion object Strategies {
         class BackVisible : ogz.tripeaks.game.CardDrawingStrategy {
             override fun drawBack(
                 batch: SpriteBatch,

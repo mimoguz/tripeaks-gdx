@@ -17,7 +17,7 @@ import ogz.tripeaks.screens.Constants.SMALL_FACE_WIDTH
 sealed interface StackDrawingStrategy {
     fun drawBack(batch: SpriteBatch, card: Card, sprites: SpriteSet, position: Vector2)
 
-    companion object StackDrawingStrategy {
+    companion object Strategies {
         class BackVisible : ogz.tripeaks.game.StackDrawingStrategy {
             override fun drawBack(
                 batch: SpriteBatch,

@@ -1,5 +1,6 @@
 package ogz.tripeaks.assets
 
+import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
@@ -17,6 +18,7 @@ import ktx.style.scrollPane
 import ktx.style.selectBox
 import ktx.style.textButton
 import ktx.style.window
+import ogz.tripeaks.screens.Constants
 
 class UiSkin(
     atlas: TextureAtlas,
@@ -26,6 +28,15 @@ class UiSkin(
     val resourcePostfix: String,
     val isDark: Boolean
 ) : Skin(atlas) {
+    constructor(assets: AssetManager, cjk: Boolean, dark: Boolean) : this(
+        assets[TextureAtlasAssets.Ui],
+        if (cjk) assets[FontAssets.GamePixels] else assets[FontAssets.GamePixels], // TODO
+        if (dark) Constants.DARK_UI_TEXT else Constants.LIGHT_UI_TEXT,
+        if (dark) Constants.DARK_UI_EMPHASIS else Constants.LIGHT_UI_EMPHASIS,
+        if (dark) "dark" else "light",
+        dark
+    )
+
     init {
         val skin = this
 

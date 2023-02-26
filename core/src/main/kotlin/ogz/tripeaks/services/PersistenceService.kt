@@ -36,8 +36,8 @@ class PersistenceService {
         save(current, SETTINGS_FILE, SETTINGS_KEY)
     }
 
-    fun loadSettings(): Settings? {
-        return load(Settings::class.java, SETTINGS_FILE, SETTINGS_KEY)
+    fun loadSettings(): SavedSettings? {
+        return load(SavedSettings::class.java, SETTINGS_FILE, SETTINGS_KEY)
     }
 
     private fun <T> save(current: T, file: String, key: String) {
