@@ -6,7 +6,6 @@ import ktx.collections.GdxIntArray
 import ktx.collections.gdxIntArrayOf
 import ogz.tripeaks.graphics.SpriteSet
 import ogz.tripeaks.models.Card
-import ogz.tripeaks.screens.Constants
 import ogz.tripeaks.screens.Constants.SMALL_FACE_H_PADDING
 import ogz.tripeaks.screens.Constants.SMALL_FACE_WIDTH
 import kotlin.math.truncate
@@ -29,7 +28,7 @@ class StackView {
         )
     }
 
-    fun draw(batch: SpriteBatch, sprites: SpriteSet, strategy: StackDrawingStrategy) {
+    fun draw(batch: SpriteBatch, sprites: SpriteSet, strategy: CardDrawingStrategy) {
         if (stack.isEmpty) {
             batch.draw(sprites.empty, position.x, position.y)
         } else {
@@ -39,7 +38,7 @@ class StackView {
                 if (i == last) {
                     drawTop(batch, stack[i], sprites, cardPosition)
                 } else {
-                    strategy.drawBack(batch, stack[i], sprites, cardPosition)
+                    strategy.drawStacked(batch, stack[i], sprites, cardPosition)
                 }
             }
             val card = stack[stack.size - 1]

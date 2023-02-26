@@ -5,7 +5,6 @@ import ktx.inject.Context
 import ogz.tripeaks.assets.UiSkin
 import ogz.tripeaks.game.AnimationStrategy
 import ogz.tripeaks.game.CardDrawingStrategy
-import ogz.tripeaks.game.StackDrawingStrategy
 import ogz.tripeaks.graphics.SpriteSet
 import ogz.tripeaks.models.GameState
 import ogz.tripeaks.models.Settings
@@ -52,22 +51,13 @@ class SettingsService {
         val drawingStrategyChanged =
             savedSettings.drawingStrategy != drawingToVariant(current.cardDrawingStrategy)
 
-        // TODO: I don't need message params anymore.
         if (themeChanged || backDesignChanged || animationsChanged || drawingStrategyChanged) {
             val newSettings = savedSettings.create(assets)
             settings = newSettings
-            if (themeChanged) {
-                messageBox.send(Msg.SkinChanged(newSettings.skin))
-            }
-            if (themeChanged || backDesignChanged) {
-                messageBox.send(Msg.SpriteSetChanged(newSettings.spriteSet))
-            }
-            if (animationsChanged) {
-                messageBox.send(Msg.AnimationSetChanged(newSettings.animationStrategy))
-            }
-            if (drawingStrategyChanged) {
-                messageBox.send(Msg.ShowAllChanged(newSettings.showAll))
-            }
+            if (themeChanged) messageBox.send(Msg.SkinChanged)
+            if (themeChanged || backDesignChanged) messageBox.send(Msg.SpriteSetChanged)
+            if (animationsChanged) messageBox.send(Msg.AnimationSetChanged)
+            if (drawingStrategyChanged) messageBox.send(Msg.ShowAllChanged)
         }
     }
 
@@ -108,8 +98,7 @@ class SavedSettings(
             backDesign,
             layout.create(),
             animation.create(),
-            drawingStrategy.createCardDrawingStrategy(),
-            drawingStrategy.createStackDrawingStrategy(),
+            drawingStrategy.create(),
             SpriteSet(darkTheme, backDesign, assets),
             UiSkin(assets, false, darkTheme),
             emptyDiscard
@@ -168,16 +157,9 @@ fun drawingToVariant(s: CardDrawingStrategy): DrawingStrategies =
         DrawingStrategies.BackHidden
     }
 
-fun DrawingStrategies.createCardDrawingStrategy(): CardDrawingStrategy {
+fun DrawingStrategies.create(): CardDrawingStrategy {
     return when (this) {
-        DrawingStrategies.BackHidden -> CardDrawingStrategy.Strategies.BackHidden()
-        DrawingStrategies.BackVisible -> CardDrawingStrategy.Strategies.BackVisible()
-    }
-}
-
-fun DrawingStrategies.createStackDrawingStrategy(): StackDrawingStrategy {
-    return when (this) {
-        DrawingStrategies.BackHidden -> StackDrawingStrategy.Strategies.BackHidden()
-        DrawingStrategies.BackVisible -> StackDrawingStrategy.Strategies.BackVisible()
+        DrawingStrategies.BackHidden -> CardDrawingStrategy.Strategies.BackHidden
+        DrawingStrategies.BackVisible -> CardDrawingStrategy.Strategies.BackVisible
     }
 }
