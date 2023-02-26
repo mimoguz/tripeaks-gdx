@@ -11,6 +11,8 @@ object Constants {
     const val CELL_WIDTH = 14f
     const val FACE_HEIGHT = 30f
     const val FACE_WIDTH = 15f
+    const val FACE_X = (CARD_WIDTH - FACE_WIDTH) / 2
+    const val FACE_Y = (CARD_HEIGHT - FACE_HEIGHT) / 2
     const val HORIZONTAL_PADDING = 12f
     const val MAX_WORLD_WIDTH = 360f
     const val MIN_WORLD_WIDTH = 300f
@@ -29,8 +31,6 @@ object Constants {
     val DARK_UI_EMPHASIS = rgb(184, 55, 68)
     val LIGHT_UI_TEXT = rgb(76, 56, 77)
     val LIGHT_UI_EMPHASIS = rgb(224, 122, 95)
-    val DARK_UI_BG: Color = Color.valueOf("232433ff")
-    val LIGHT_UI_BG: Color = Color.valueOf("63a347ff")
 
     private fun rgb(r: Int, g: Int, b: Int): Color = Color(r / 255f, g / 255f, b / 255f, 1f)
 }

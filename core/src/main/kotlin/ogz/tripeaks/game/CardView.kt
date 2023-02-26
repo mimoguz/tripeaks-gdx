@@ -1,0 +1,71 @@
+package ogz.tripeaks.game
+
+import com.badlogic.gdx.graphics.g2d.SpriteBatch
+import com.badlogic.gdx.math.Vector2
+import kotlin.math.truncate
+import ogz.tripeaks.graphics.SpriteSet
+import ogz.tripeaks.models.Card
+import ogz.tripeaks.models.GameState
+import ogz.tripeaks.models.layout.Layout
+import ogz.tripeaks.models.layout.Socket
+import ogz.tripeaks.screens.Constants.CARD_HEIGHT
+import ogz.tripeaks.screens.Constants.CELL_HEIGHT
+import ogz.tripeaks.screens.Constants.CELL_PADDING_LEFT
+import ogz.tripeaks.screens.Constants.CELL_PADDING_TOP
+import ogz.tripeaks.screens.Constants.CELL_WIDTH
+import ogz.tripeaks.screens.Constants.VERTICAL_PADDING
+import ogz.tripeaks.screens.Constants.WORLD_HEIGHT
+
+class CardView(val card: Card) {
+    private val position: Vector2 = Vector2(0f, 0f)
+    private var hidden: Boolean = true
+    private var open: Boolean = false
+    private var socket: Socket? = null
+
+    fun put(socket: Socket, layout: Layout) {
+        this.socket = socket
+        this.open = layout[socket.index].blockedBy.isEmpty()
+        this.hidden = false
+        updatePosition(layout)
+    }
+
+    fun reset() {
+        hidden = true
+        open = false
+        socket = null
+    }
+
+    fun update(game: GameState) {
+        socket?.let { socket ->
+            hidden = game.isEmpty(socket.index)
+            open = game.isOpen(socket.index)
+        }
+    }
+
+    fun draw(
+        batch: SpriteBatch,
+        sprites: SpriteSet,
+        strategy: CardDrawingStrategy
+    ) {
+        when {
+            socket == null -> {}
+            hidden -> {}
+            open -> strategy.drawFront(batch, card, sprites, position)
+            else -> strategy.drawBack(batch, card, sprites, position)
+        }
+    }
+
+    private fun updatePosition(layout: Layout) {
+        socket?.let { socket ->
+            val minX = truncate(layout.numberOfColumns / -2f) * CELL_WIDTH
+            position.set(
+                minX + socket.column * CELL_WIDTH + CELL_PADDING_LEFT,
+                MAX_Y - socket.row * CELL_HEIGHT - CELL_PADDING_TOP
+            )
+        }
+    }
+
+    companion object {
+        val MAX_Y: Float = truncate(WORLD_HEIGHT / 2f) - VERTICAL_PADDING - CARD_HEIGHT + 1f
+    }
+}

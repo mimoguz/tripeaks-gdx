@@ -133,6 +133,8 @@ class GameState private constructor(
     fun isOpen(socketIndex: Int): Boolean =
         !sockets[socketIndex].isEmpty && layout[socketIndex].blockedBy.all { sockets[it].isEmpty }
 
+    fun isEmpty(socketIndex: Int): Boolean = sockets[socketIndex].isEmpty
+
     /** Can we remove the card at the socket index from the tableau? */
     private fun canTake(socketIndex: Int): Boolean =
         isOpen(socketIndex) && (discard.isEmpty || sockets[socketIndex].card.areNeighbors(discard.peek()))
