@@ -2,6 +2,7 @@ package ogz.tripeaks.game
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.math.Vector2
+import com.badlogic.gdx.utils.Pool.Poolable
 import kotlin.math.truncate
 import ogz.tripeaks.graphics.SpriteSet
 import ogz.tripeaks.models.Card
@@ -16,23 +17,19 @@ import ogz.tripeaks.screens.Constants.CELL_WIDTH
 import ogz.tripeaks.screens.Constants.VERTICAL_PADDING
 import ogz.tripeaks.screens.Constants.WORLD_HEIGHT
 
-class CardView(val card: Card) {
+class CardView : Poolable {
     private val position: Vector2 = Vector2(0f, 0f)
+    private var card: Card = -1
     private var hidden: Boolean = true
     private var open: Boolean = false
     private var socket: Socket? = null
 
-    fun put(socket: Socket, layout: Layout) {
+    fun put(card: Card, socket: Socket, layout: Layout) {
+        this.card = card
         this.socket = socket
         this.open = layout[socket.index].blockedBy.isEmpty()
         this.hidden = false
         updatePosition(layout)
-    }
-
-    fun reset() {
-        hidden = true
-        open = false
-        socket = null
     }
 
     fun update(game: GameState) {
@@ -63,6 +60,13 @@ class CardView(val card: Card) {
                 MAX_Y - socket.row * CELL_HEIGHT - CELL_PADDING_TOP
             )
         }
+    }
+
+    override fun reset() {
+        card = -1
+        hidden = true
+        open = false
+        socket = null
     }
 
     companion object {
