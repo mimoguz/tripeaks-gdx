@@ -1,7 +1,7 @@
 cards.png
 size:512,256
 repeat:none
-card_back
+card_back_0
 bounds:2,139,25,37
 dark_buttonDisabled
 bounds:175,142,16,16

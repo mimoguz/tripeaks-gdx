@@ -19,13 +19,16 @@ import ogz.tripeaks.screens.Constants.WORLD_HEIGHT
 
 class CardView : Poolable {
     private val position: Vector2 = Vector2(0f, 0f)
-    private var card: Card = -1
+    private var _card: Card = -1
     private var hidden: Boolean = true
     private var open: Boolean = false
     private var socket: Socket? = null
 
+    val card
+        get() = _card
+
     fun put(card: Card, socket: Socket, layout: Layout) {
-        this.card = card
+        this._card = card
         this.socket = socket
         this.open = layout[socket.index].blockedBy.isEmpty()
         this.hidden = false
@@ -47,8 +50,8 @@ class CardView : Poolable {
         when {
             socket == null -> {}
             hidden -> {}
-            open -> strategy.drawFront(batch, card, sprites, position)
-            else -> strategy.drawBack(batch, card, sprites, position)
+            open -> strategy.drawFront(batch, _card, sprites, position)
+            else -> strategy.drawBack(batch, _card, sprites, position)
         }
     }
 
@@ -63,7 +66,7 @@ class CardView : Poolable {
     }
 
     override fun reset() {
-        card = -1
+        _card = -1
         hidden = true
         open = false
         socket = null
@@ -73,3 +76,4 @@ class CardView : Poolable {
         val MAX_Y: Float = truncate(WORLD_HEIGHT / 2f) - VERTICAL_PADDING - CARD_HEIGHT + 1f
     }
 }
+

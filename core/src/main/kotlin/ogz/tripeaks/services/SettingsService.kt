@@ -49,7 +49,7 @@ class SettingsService {
         val animationsChanged =
             savedSettings.animation != animationToVariant(current.animationStrategy)
         val drawingStrategyChanged =
-            savedSettings.drawingStrategy != drawingToVariant(current.cardDrawingStrategy)
+            savedSettings.drawingStrategy != drawingToVariant(current.drawingStrategy)
 
         if (themeChanged || backDesignChanged || animationsChanged || drawingStrategyChanged) {
             val newSettings = savedSettings.create(assets)
@@ -88,7 +88,7 @@ class SavedSettings(
         settings.backDesign,
         tagToLayoutVariant(settings.layout.tag),
         animationToVariant(settings.animationStrategy),
-        drawingToVariant(settings.cardDrawingStrategy),
+        drawingToVariant(settings.drawingStrategy),
         settings.emptyDiscard
     )
 

@@ -7,6 +7,7 @@ import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.scenes.scene2d.ui.Button.ButtonStyle
 import com.badlogic.gdx.scenes.scene2d.ui.Skin
 import kotlin.math.truncate
+import ogz.tripeaks.graphics.SpriteSet
 
 class GameUi {
     private val buttons: ArrayList<GameButton> = arrayListOf()
@@ -31,9 +32,9 @@ class GameUi {
         }
     }
 
-    fun render(batch: SpriteBatch) {
+    fun render(batch: SpriteBatch, sprites: SpriteSet) {
         for (button in buttons) {
-            button.render(batch)
+            button.render(batch, sprites)
         }
     }
 
@@ -63,16 +64,12 @@ class GameUi {
 }
 
 class GameButton(
-    private val skin: Skin,
     private val icon: TextureRegion,
     private val anchor: Anchor,
     val action: () -> Unit
 ) {
     private val bounds = Rectangle(0f, 0f, 0f, 0f)
     private val iconPosition = Vector2(0f, 0f)
-    private val upDrawable = skin[ButtonStyle::class.java].up
-    private val downDrawable = skin[ButtonStyle::class.java].down
-    private val disabledDrawable = skin[ButtonStyle::class.java].disabled
 
     var ui: GameUi? = null
         set(value) {
@@ -115,18 +112,18 @@ class GameButton(
         }
     }
 
-    fun render(batch: SpriteBatch) {
+    fun render(batch: SpriteBatch, sprites: SpriteSet) {
         when {
             disabled -> {
-                disabledDrawable.draw(batch, bounds.x, bounds.y, bounds.width, bounds.height)
+                batch.draw(sprites.buttonDisabled, bounds.x, bounds.y, bounds.width, bounds.height)
                 batch.draw(icon, bounds.x + iconPosition.x, bounds.y + iconPosition.y)
             }
             pressed -> {
-                downDrawable.draw(batch, bounds.x, bounds.y, bounds.width, bounds.height)
+                batch.draw(sprites.buttonDown, bounds.x, bounds.y, bounds.width, bounds.height)
                 batch.draw(icon, bounds.x + iconPosition.x, bounds.y + iconPosition.y - 1f)
             }
             else -> {
-                upDrawable.draw(batch, bounds.x, bounds.y, bounds.width, bounds.height)
+                batch.draw(sprites.buttonUp, bounds.x, bounds.y, bounds.width, bounds.height)
                 batch.draw(icon, bounds.x + iconPosition.x, bounds.y + iconPosition.y)
             }
         }

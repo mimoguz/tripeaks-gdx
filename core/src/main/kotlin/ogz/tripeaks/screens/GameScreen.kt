@@ -6,9 +6,7 @@ import com.badlogic.ashley.utils.ImmutableArray
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.InputMultiplexer
 import com.badlogic.gdx.assets.AssetManager
-import com.badlogic.gdx.graphics.Pixmap
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
-import com.badlogic.gdx.graphics.glutils.FrameBuffer
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.Label
@@ -19,27 +17,19 @@ import com.ray3k.stripe.PopTable
 import com.ray3k.stripe.PopTable.PopTableStyle
 import ktx.app.KtxScreen
 import ktx.ashley.entity
-import ktx.ashley.getSystem
-import ktx.ashley.with
 import ktx.assets.disposeSafely
+import ktx.collections.GdxArray
 import ktx.collections.gdxArrayOf
 import ktx.inject.Context
-import ogz.tripeaks.assets.TextureAtlasAssets
 import ogz.tripeaks.assets.UiSkin
-import ogz.tripeaks.assets.get
-import ogz.tripeaks.ecs.AnimationComponent
-import ogz.tripeaks.ecs.AnimationSystem
-import ogz.tripeaks.ecs.MultiSpriteComponent
-import ogz.tripeaks.ecs.MultiSpriteRenderingSystem
-import ogz.tripeaks.ecs.SpriteLayerPool
-import ogz.tripeaks.ecs.TransformComponent
-import ogz.tripeaks.graphics.AnimationSet
+import ogz.tripeaks.game.AnimationView
+import ogz.tripeaks.game.AnimationViewPool
+import ogz.tripeaks.game.CardView
+import ogz.tripeaks.game.CardViewPool
+import ogz.tripeaks.game.DiscardView
+import ogz.tripeaks.game.StackView
 import ogz.tripeaks.graphics.CustomViewport
-import ogz.tripeaks.graphics.HomeSprite
-import ogz.tripeaks.graphics.ScreenTransitionAnimation
-import ogz.tripeaks.graphics.SpriteSet
 import ogz.tripeaks.models.GameState
-import ogz.tripeaks.screens.Constants.CARD_HEIGHT
 import ogz.tripeaks.screens.Constants.CARD_WIDTH
 import ogz.tripeaks.screens.Constants.HORIZONTAL_PADDING
 import ogz.tripeaks.screens.Constants.VERTICAL_PADDING
@@ -48,9 +38,7 @@ import ogz.tripeaks.services.PersistenceService
 import ogz.tripeaks.services.PlayerStatisticsService
 import ogz.tripeaks.services.Receiver
 import ogz.tripeaks.services.SettingsService
-import ogz.tripeaks.ui.GameButton
 import ogz.tripeaks.ui.GameUi
-import ogz.tripeaks.ui.TopLeft
 import ogz.tripeaks.services.Message.Companion as Msg
 
 class GameScreen(private val context: Context) : KtxScreen {
@@ -58,23 +46,26 @@ class GameScreen(private val context: Context) : KtxScreen {
 
     private val assets = context.inject<AssetManager>()
     private val batch = context.inject<SpriteBatch>()
-    private val layerPool = context.inject<SpriteLayerPool>()
+    private val cardViewPool = context.inject<CardViewPool>()
+    private val animationViewPool = context.inject<AnimationViewPool>()
     private val messageBox = context.inject<MessageBox>()
     private val playerStatistics = context.inject<PlayerStatisticsService>()
     private val settings = context.inject<SettingsService>()
     private val uiStage = context.inject<Stage>()
     private val viewport = context.inject<CustomViewport>()
+
     private val ui = GameUi()
+    private val cards = GdxArray<CardView>(false, 32)
+    private val stack = StackView()
+    private val discard = DiscardView()
+    private val animations = GdxArray<AnimationView>(false, 16)
 
     private val engine = PooledEngine()
-    private val renderHelper = RenderHelper(batch, viewport, engine, ui)
+    private val renderHelper =
+        RenderHelper(batch, viewport, settings, cards, animations, discard, stack)
     private val touchHandler = TouchHandler(messageBox)
-    private var spriteSet: SpriteSet
-    private var animationSet: AnimationSet
-    private var frameBuffer =
-        FrameBuffer(Pixmap.Format.RGB888, Constants.MIN_WORLD_WIDTH.toInt(), Constants.WORLD_HEIGHT.toInt(), false)
-
-    private val animationSetChangedReceiver = Receiver<Msg.AnimationSetChanged> { onAnimationSetChanged(it) }
+    private val animationSetChangedReceiver =
+        Receiver<Msg.AnimationSetChanged> { onAnimationSetChanged(it) }
     private val showAllChangedReceiver = Receiver<Msg.ShowAllChanged> { onShowAllChanged(it) }
     private val skinChangedReceiver = Receiver<Msg.SkinChanged> { onSkinChanged(it) }
     private val spriteSetChangedReceiver = Receiver<Msg.SpriteSetChanged> { onSpriteSetChanged(it) }
@@ -85,18 +76,13 @@ class GameScreen(private val context: Context) : KtxScreen {
     private val discardEntity: Entity = engine.entity()
     private val stageUtils = StageUtils(assets, uiStage)
 
-    private var undoButton = stageUtils.undoButton(settings.skin, this::undo)
-    private var dealButton = stageUtils.dealButton(settings.skin, this::deal)
+    private var undoButton = stageUtils.undoButton(settings.get().skin, this::undo)
+    private var dealButton = stageUtils.dealButton(settings.get().skin, this::deal)
 
     private var play: GameState? = null
-    private var entityUtils: EntityUtils? = null
 
     init {
         logger.level = Logger.INFO
-        animationSet = settings.animationSet
-        spriteSet = settings.spriteSet
-        renderHelper.fbShader = animationSet.shaderProgram
-        renderHelper.clearColor = settings.spriteSet.background
 
         messageBox.register(animationSetChangedReceiver)
         messageBox.register(showAllChangedReceiver)
@@ -113,42 +99,32 @@ class GameScreen(private val context: Context) : KtxScreen {
     }
 
     override fun render(delta: Float) {
+        val currentSettings = settings.get()
         viewport.apply()
         uiStage.viewport.apply()
         uiStage.act(delta)
-        renderHelper.render(frameBuffer, delta)
+        play?.let { game ->
+            cards.forEach { it.update(game) }
+            animations.forEach { it.update(delta, currentSettings.animationStrategy) }
+        }
+        renderHelper.render(delta)
         uiStage.draw()
     }
 
     override fun show() {
         super.show()
-
         val game = PersistenceService().loadGameState() ?: settings.getNewGame()
-        entityUtils = if (settings.get().showAll) {
-            ShowingEntityUtils(game, engine, layerPool, assets, entities, stackEntity, discardEntity)
-        } else {
-            ShowingEntityUtils(game, engine, layerPool, assets, entities, stackEntity, discardEntity)
-        }
         play = game
-
+        setupGame(game)
         playerStatistics.updatePlayed()
-
-        initEcs()
-        engine.addSystem(AnimationSystem(animationSet, layerPool))
-        engine.addSystem(MultiSpriteRenderingSystem(batch, spriteSet))
+        setupStage(settings.get().skin)
         Gdx.input.inputProcessor = InputMultiplexer(uiStage, touchHandler)
-        setupStage(settings.skin)
     }
 
     override fun resume() {
         val game = play ?: PersistenceService().loadGameState() ?: context.inject()
         play = game
-        entityUtils = if (settings.get().showAll) {
-            ShowingEntityUtils(game, engine, layerPool, assets, entities, stackEntity, discardEntity)
-        } else {
-            ShowingEntityUtils(game, engine, layerPool, assets, entities, stackEntity, discardEntity)
-        }
-        setupTableau()
+        setupGame(game)
         super.resume()
     }
 
@@ -164,26 +140,17 @@ class GameScreen(private val context: Context) : KtxScreen {
         messageBox.unregister(spriteSetChangedReceiver)
         messageBox.unregister(touchDownReceiver)
         messageBox.unregister(touchUpReceiver)
-
         renderHelper.disposeSafely()
-        frameBuffer.disposeSafely()
     }
 
     override fun resize(width: Int, height: Int) {
         super.resize(width, height)
         viewport.update(width, height)
         uiStage.viewport.update(width, height, true)
-        if (viewport.worldHeight > 0 && viewport.worldWidth > 0) {
-            frameBuffer = FrameBuffer(
-                Pixmap.Format.RGB888,
-                viewport.worldWidth.toInt(),
-                viewport.worldHeight.toInt(),
-                false
-            )
-        }
-        entityUtils?.moveDiscard(viewport.worldWidth)
-        entityUtils?.moveStack(viewport.worldWidth)
+        stack.move(viewport.worldWidth)
+        discard.move(viewport.worldWidth)
         ui.update(viewport.worldWidth, viewport.worldHeight)
+        renderHelper.update()
     }
 
     private fun onTouchDown(message: Msg.TouchDown) {
@@ -211,18 +178,36 @@ class GameScreen(private val context: Context) : KtxScreen {
                 for (columnOffset in 0 downTo -1) {
                     val socket = layout.lookup(column + columnOffset, row + rowOffset)
                     if (socket != null && gameState.take(socket.index)) {
-                        entityUtils?.updateSocket(socket.index)
+                        val card = gameState.socketState(socket.index).card
+                        cards.find { it.card == card }?.update(gameState)
                         val blocked = layout[socket.index].blocks
                         for (s in blocked) {
-                            entityUtils?.updateSocket(s)
+                            val blockedCard = gameState.socketState(s).card
+                            cards.find { it.card == blockedCard }?.update(gameState)
                         }
-                        entityUtils?.updateDiscard(viewport.worldWidth)
-                        entityUtils?.addRemovalAnimation(socket.index)
                         return
                     }
                 }
             }
         }
+    }
+
+    private fun setupGame(game: GameState) {
+        cards.forEach(cardViewPool::free)
+        cards.clear()
+
+        animations.forEach(animationViewPool::free)
+        animations.clear()
+
+        for (i in 0 until game.gameLayout.numberOfSockets) {
+            val socket = game.socket(i)
+            val state = game.socketState(i)
+            cards.add(cardViewPool.obtain().apply {
+                put(state.card, socket, game.gameLayout)
+            })
+        }
+        stack.stack = game.stack
+        discard.discard = game.discard
     }
 
     private fun onTouchUp(message: Msg.TouchUp) {
@@ -235,29 +220,16 @@ class GameScreen(private val context: Context) : KtxScreen {
 
     private fun onSkinChanged(msg: Msg.SkinChanged) {
         // TODO: Move shader theme selection to a uniform
-        setupStage(msg.skin)
+        setupStage(settings.get().skin)
     }
 
     private fun onSpriteSetChanged(msg: Msg.SpriteSetChanged) {
-        engine.getSystem<MultiSpriteRenderingSystem>().spriteSet = msg.spriteSet
-        renderHelper.clearColor = msg.spriteSet.background
     }
 
     private fun onAnimationSetChanged(msg: Msg.AnimationSetChanged) {
-        animationSet = msg.animationSet
-        renderHelper.fbShader = animationSet.shaderProgram
-        engine.getSystem<AnimationSystem>().animationSet = animationSet
     }
 
     private fun onShowAllChanged(msg: Msg.ShowAllChanged) {
-        play?.let { game ->
-            entityUtils = if (msg.showAll) {
-                ShowingEntityUtils(game, engine, layerPool, assets, entities, stackEntity, discardEntity)
-            } else {
-                ShowingEntityUtils(game, engine, layerPool, assets, entities, stackEntity, discardEntity)
-            }
-            setupTableau()
-        }
     }
 
     private fun setupStage(skin: UiSkin) {
@@ -283,7 +255,13 @@ class GameScreen(private val context: Context) : KtxScreen {
             pad(12f, 12f, 12f, 12f)
             isHideOnUnfocus = true
             isModal = true
-            attachToActor(empty, Align.topRight, Align.bottomRight, -HORIZONTAL_PADDING, -CARD_WIDTH - VERTICAL_PADDING)
+            attachToActor(
+                empty,
+                Align.topRight,
+                Align.bottomRight,
+                -HORIZONTAL_PADDING,
+                -CARD_WIDTH - VERTICAL_PADDING
+            )
             addListener {
                 if (isHidden) {
                     onMenuHidden()
@@ -311,10 +289,6 @@ class GameScreen(private val context: Context) : KtxScreen {
 
     private fun deal() {
         play?.let { gameState ->
-            if (gameState.deal()) {
-                entityUtils?.updateDiscard(viewport.worldWidth)
-                entityUtils?.updateStack(viewport.worldWidth)
-            }
             dealButton.disabled = !gameState.canDeal
             undoButton.disabled = !gameState.canUndo
         }
@@ -323,18 +297,21 @@ class GameScreen(private val context: Context) : KtxScreen {
     private fun undo() {
         play?.let { gameState ->
             val target = gameState.undo()
-            entityUtils?.updateDiscard(viewport.worldWidth)
             dealButton.disabled = !gameState.canDeal
             undoButton.disabled = !gameState.canUndo
 
             when (target) {
                 Int.MIN_VALUE -> {}
-                -1 -> entityUtils?.updateStack(viewport.worldWidth)
+                -1 -> {}
                 else -> {
+                    // TODO: This repeats on onTouch method too
                     val socket = gameState.gameLayout[target]
-                    entityUtils?.updateSocket(socket.index)
-                    for (blocked in socket.blocks) {
-                        entityUtils?.updateSocket(blocked)
+                    val card = gameState.socketState(socket.index).card
+                    cards.find { it.card == card }?.update(gameState)
+                    val blocked = gameState.gameLayout[socket.index].blocks
+                    for (s in blocked) {
+                        val blockedCard = gameState.socketState(s).card
+                        cards.find { it.card == blockedCard }?.update(gameState)
                     }
                 }
             }
@@ -342,7 +319,7 @@ class GameScreen(private val context: Context) : KtxScreen {
     }
 
     private fun openDialog() {
-        val skin = settings.skin
+        val skin = settings.get().skin
         val dialog = PopTable(skin[PopTableStyle::class.java]).apply {
             add(Label("Dialog test", skin))
             pad(12f, 12f, 12f, 12f)
@@ -399,76 +376,5 @@ class GameScreen(private val context: Context) : KtxScreen {
         touchHandler.silent = false
         touchHandler.dialog = null
         renderHelper.blurred = false
-    }
-
-    private fun initEcs() {
-        setupTableau()
-
-        engine.entity {
-            val bg = HomeSprite
-            val bgSprite = bg.get(spriteSet)
-            with<TransformComponent> {
-                position = Vector2(bgSprite.regionWidth * -0.5f, bgSprite.regionHeight * -0.5f)
-            }
-            with<MultiSpriteComponent> {
-                color.set(0.1f, 1f, 1f, 1f)
-                z = 10
-                layers.add(layerPool.obtain().apply {
-                    spriteType = bg
-                })
-            }
-            with<AnimationComponent> {
-                timeRemaining = 2f
-                animationType = ScreenTransitionAnimation
-            }
-        }
-
-//        val x = 50f
-
-//        // Card
-//        engine.entity {
-//            val card = CardSprite
-//            val cardSprite = card.get(spriteSet)
-//            val face = FaceSprite(1)
-//            val faceSprite = face.get(spriteSet)
-//
-//            with<TransformComponent> {
-//                origin = Vector2(
-//                    MathUtils.floor(cardSprite.regionWidth * 0.5f).toFloat(),
-//                    MathUtils.floor(cardSprite.regionHeight * 0.5f).toFloat()
-//                )
-//                position = origin.cpy().scl(-1f, -1f).add(x, 0f)
-//            }
-//
-//            with<MultiSpriteComponent> {
-//                this.color.set(0.02f, 1f, 1f, 1f)
-//                z = 0
-//                layers.add(layerPool.obtain().apply {
-//                    spriteType = card
-//                })
-//                layers.add(layerPool.obtain().apply {
-//                    spriteType = face
-//                    localPosition.set(
-//                        (cardSprite.regionWidth - faceSprite.regionWidth) * 0.5f,
-//                        (cardSprite.regionHeight - faceSprite.regionHeight) * 0.5f
-//                    )
-//                })
-//            }
-//
-//            with<AnimationComponent> {
-//                timeRemaining = 10000f
-//                animationType = CardRemovedAnimation
-//            }
-//        }
-    }
-
-    private fun setupTableau() {
-        play?.let { gameState ->
-            for (s in 0 until gameState.gameLayout.numberOfSockets) {
-                entityUtils?.initSocket(s)
-            }
-            entityUtils?.initStack(viewport.worldWidth)
-            entityUtils?.initDiscard(viewport.worldWidth)
-        }
     }
 }

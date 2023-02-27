@@ -21,7 +21,6 @@ import ogz.tripeaks.ui.TopRight
 class StageUtils(private val assets: AssetManager, private val stage: Stage) {
     fun menuButton(skin: UiSkin, menu: PopTable, onShow: () -> Unit): GameButton =
         GameButton(
-            skin,
             assets[TextureAtlasAssets.Ui].findRegion("menu_${skin.resourcePostfix}"),
             TopRight(Vector2(HORIZONTAL_PADDING, VERTICAL_PADDING))
         ) {
@@ -35,7 +34,6 @@ class StageUtils(private val assets: AssetManager, private val stage: Stage) {
 
     fun dealButton(skin: UiSkin, action: () -> Unit): GameButton =
         GameButton(
-            skin,
             assets[TextureAtlasAssets.Ui].findRegion("deal_${skin.resourcePostfix}"),
             BottomRight(Vector2(HORIZONTAL_PADDING, VERTICAL_PADDING - 1)),
             action
@@ -45,7 +43,6 @@ class StageUtils(private val assets: AssetManager, private val stage: Stage) {
 
     fun undoButton(skin: UiSkin, action: () -> Unit): GameButton =
         GameButton(
-            skin,
             assets[TextureAtlasAssets.Ui].findRegion("undo_${skin.resourcePostfix}"),
             BottomLeft(Vector2(HORIZONTAL_PADDING, VERTICAL_PADDING - 1)),
             action

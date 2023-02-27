@@ -10,13 +10,13 @@ class Settings(
     val backDesign: Int,
     val layout: Layout,
     val animationStrategy: AnimationStrategy,
-    val cardDrawingStrategy: CardDrawingStrategy,
+    val drawingStrategy: CardDrawingStrategy,
     val spriteSet: SpriteSet,
     val skin: UiSkin,
     val emptyDiscard: Boolean,
 ) {
     val showAll: Boolean
-        get() = cardDrawingStrategy is CardDrawingStrategy.Strategies.BackVisible
+        get() = drawingStrategy is CardDrawingStrategy.Strategies.BackVisible
 
     val darkTheme: Boolean
         get() = skin.isDark
