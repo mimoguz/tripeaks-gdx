@@ -2,6 +2,7 @@ package ogz.tripeaks.graphics
 
 import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.graphics.Color
+import com.badlogic.gdx.graphics.g2d.NinePatch
 import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import ogz.tripeaks.assets.TextureAssets
@@ -13,9 +14,9 @@ class SpriteSet(val isDark: Boolean, backIndex: Int, assets: AssetManager) {
     val card: TextureRegion
     val back: TextureRegion
     val empty: TextureRegion
-    val buttonUp: TextureRegion
-    val buttonDown: TextureRegion
-    val buttonDisabled: TextureRegion
+    val buttonUp: NinePatch
+    val buttonDown: NinePatch
+    val buttonDisabled: NinePatch
     val face: IndexedSprite
     val smallFace: IndexedSprite
     val home: TextureRegion
@@ -24,12 +25,12 @@ class SpriteSet(val isDark: Boolean, backIndex: Int, assets: AssetManager) {
     init {
         val prefix = if (isDark) "dark" else "light"
         val cards = assets[TextureAtlasAssets.Cards]
-        back = cards.findRegion("card_back_$backIndex")
+        back = cards.findRegion("card_back", backIndex)
         card = cards.findRegion("${prefix}_card")
         empty = cards.findRegion("${prefix}_empty")
-        buttonUp = cards.findRegion("${prefix}_buttonUp")
-        buttonDown = cards.findRegion("${prefix}_buttonDown")
-        buttonDisabled = cards.findRegion("${prefix}_buttonDisabled")
+        buttonUp =  cards.createPatch("${prefix}_buttonUp")
+        buttonDown = cards.createPatch("${prefix}_buttonDown")
+        buttonDisabled = cards.createPatch("${prefix}_buttonDisabled")
         face = IndexedSprite("${prefix}_face", assets)
         smallFace = IndexedSprite("${prefix}_small_face", assets)
         home = Sprite(assets[if (isDark) TextureAssets.DarkTitle else TextureAssets.LightTitle])
@@ -39,7 +40,7 @@ class SpriteSet(val isDark: Boolean, backIndex: Int, assets: AssetManager) {
 
 class IndexedSprite(name: String, assets: AssetManager) {
     private val sprites = (0 until 52).map { index ->
-        assets[TextureAtlasAssets.Cards].findRegion("${name}_$index")
+        assets[TextureAtlasAssets.Cards].findRegion(name, index)
     }
 
     operator fun get(index: Int): TextureRegion = sprites[index]

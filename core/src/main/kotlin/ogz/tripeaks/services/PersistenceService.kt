@@ -32,7 +32,7 @@ class PersistenceService {
         return load(PlayerStatistics::class.java, STATISTICS_FILE, STATISTICS_KEY)
     }
 
-    fun saveSettings(current: Settings) {
+    fun saveSettings(current: SavedSettings) {
         save(current, SETTINGS_FILE, SETTINGS_KEY)
     }
 

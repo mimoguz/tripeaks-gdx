@@ -115,15 +115,15 @@ class GameButton(
     fun render(batch: SpriteBatch, sprites: SpriteSet) {
         when {
             disabled -> {
-                batch.draw(sprites.buttonDisabled, bounds.x, bounds.y, bounds.width, bounds.height)
+                sprites.buttonDisabled.draw(batch, bounds.x, bounds.y, bounds.width, bounds.height)
                 batch.draw(icon, bounds.x + iconPosition.x, bounds.y + iconPosition.y)
             }
             pressed -> {
-                batch.draw(sprites.buttonDown, bounds.x, bounds.y, bounds.width, bounds.height)
+                sprites.buttonDown.draw(batch, bounds.x, bounds.y, bounds.width, bounds.height)
                 batch.draw(icon, bounds.x + iconPosition.x, bounds.y + iconPosition.y - 1f)
             }
             else -> {
-                batch.draw(sprites.buttonUp, bounds.x, bounds.y, bounds.width, bounds.height)
+                sprites.buttonUp.draw(batch, bounds.x, bounds.y, bounds.width, bounds.height)
                 batch.draw(icon, bounds.x + iconPosition.x, bounds.y + iconPosition.y)
             }
         }

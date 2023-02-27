@@ -27,7 +27,7 @@ class RenderHelper(
     private val animations: GdxArray<AnimationView>,
     private val discard: DiscardView,
     private val stack: StackView,
-    val ui: GameUi? = null
+    var ui: GameUi? = null
 ) : Disposable {
     private var renderMethod = this::renderScreen
 

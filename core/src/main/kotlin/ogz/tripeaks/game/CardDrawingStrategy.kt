@@ -5,9 +5,14 @@ import com.badlogic.gdx.math.Vector2
 import ogz.tripeaks.graphics.SpriteSet
 import ogz.tripeaks.models.Card
 import ogz.tripeaks.screens.Constants
+import ogz.tripeaks.screens.Constants.CARD_HEIGHT
 import ogz.tripeaks.screens.Constants.CARD_WIDTH
+import ogz.tripeaks.screens.Constants.FACE_HEIGHT
+import ogz.tripeaks.screens.Constants.FACE_WIDTH
 import ogz.tripeaks.screens.Constants.FACE_X
 import ogz.tripeaks.screens.Constants.FACE_Y
+import ogz.tripeaks.screens.Constants.SMALL_10_HEIGHT
+import ogz.tripeaks.screens.Constants.SMALL_FACE_HEIGHT
 import ogz.tripeaks.screens.Constants.SMALL_FACE_H_PADDING
 import ogz.tripeaks.screens.Constants.SMALL_FACE_V_PADDING
 import ogz.tripeaks.screens.Constants.SMALL_FACE_WIDTH
@@ -25,7 +30,7 @@ sealed interface CardDrawingStrategy {
                 sprites: SpriteSet,
                 position: Vector2
             ) {
-                batch.draw(sprites.card, position.x, position.y)
+                drawFront(batch, card, sprites, position)
                 batch.draw(
                     sprites.smallFace[card],
                     position.x + CARD_WIDTH - SMALL_FACE_WIDTH - SMALL_FACE_H_PADDING,
@@ -50,10 +55,11 @@ sealed interface CardDrawingStrategy {
                 position: Vector2
             ) {
                 batch.draw(sprites.card, position.x, position.y)
+                val h = if (card % 13 == 9) SMALL_10_HEIGHT else SMALL_FACE_HEIGHT
                 batch.draw(
                     sprites.smallFace[card],
                     position.x + CARD_WIDTH - SMALL_FACE_WIDTH - SMALL_FACE_H_PADDING,
-                    position.y + SMALL_FACE_V_PADDING
+                    position.y + CARD_HEIGHT - SMALL_FACE_V_PADDING - h - 1
                 )
             }
         }
@@ -66,12 +72,7 @@ sealed interface CardDrawingStrategy {
                 position: Vector2
             ) {
                 batch.draw(sprites.card, position.x, position.y)
-                batch.draw(sprites.face[card], position.x + FACE_X, position.y + FACE_Y)
-                batch.draw(
-                    sprites.smallFace[card],
-                    position.x + CARD_WIDTH - SMALL_FACE_WIDTH - SMALL_FACE_H_PADDING,
-                    position.y + SMALL_FACE_V_PADDING
-                )
+                batch.draw(sprites.back, position.x, position.y)
             }
 
             override fun drawFront(
@@ -91,15 +92,7 @@ sealed interface CardDrawingStrategy {
                 position: Vector2
             ) {
                 batch.draw(sprites.card, position.x, position.y)
-                batch.draw(sprites.face[card], position.x + FACE_X, position.y + FACE_Y)
-
-                val spriteHeight =
-                    if (card % 13 == 9) Constants.SMALL_10_HEIGHT else Constants.SMALL_FACE_HEIGHT
-                batch.draw(
-                    sprites.smallFace[card],
-                    position.x + CARD_WIDTH - SMALL_FACE_WIDTH - SMALL_FACE_H_PADDING,
-                    position.y + Constants.CARD_HEIGHT - spriteHeight - SMALL_FACE_V_PADDING
-                )
+                batch.draw(sprites.back, position.x, position.y)
             }
         }
     }

@@ -11,6 +11,7 @@ import ogz.tripeaks.screens.Constants.HORIZONTAL_PADDING
 import ogz.tripeaks.screens.Constants.VERTICAL_PADDING
 import ogz.tripeaks.screens.Constants.WORLD_HEIGHT
 import kotlin.math.truncate
+import ogz.tripeaks.screens.Constants.DISCARD_LEFT
 
 class DiscardView() {
     private val position = Vector2(0f, 0f)
@@ -19,7 +20,7 @@ class DiscardView() {
 
     fun move(worldWidth: Float) {
         position.set(
-            truncate(worldWidth / -2f + HORIZONTAL_PADDING),
+            truncate(worldWidth / -2f + DISCARD_LEFT),
             truncate(WORLD_HEIGHT / -2f + VERTICAL_PADDING - 1f)
         )
     }

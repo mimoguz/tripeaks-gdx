@@ -22,21 +22,24 @@ class CardView : Poolable {
     private var _card: Card = -1
     private var hidden: Boolean = true
     private var open: Boolean = false
-    private var socket: Socket? = null
+    private var _socket: Socket? = null
 
-    val card
+    val card: Card
         get() = _card
+
+    val socket: Socket?
+        get() = _socket
 
     fun put(card: Card, socket: Socket, layout: Layout) {
         this._card = card
-        this.socket = socket
+        this._socket = socket
         this.open = layout[socket.index].blockedBy.isEmpty()
         this.hidden = false
         updatePosition(layout)
     }
 
     fun update(game: GameState) {
-        socket?.let { socket ->
+        _socket?.let { socket ->
             hidden = game.isEmpty(socket.index)
             open = game.isOpen(socket.index)
         }
@@ -48,7 +51,7 @@ class CardView : Poolable {
         strategy: CardDrawingStrategy
     ) {
         when {
-            socket == null -> {}
+            _socket == null -> {}
             hidden -> {}
             open -> strategy.drawFront(batch, _card, sprites, position)
             else -> strategy.drawBack(batch, _card, sprites, position)
@@ -56,8 +59,8 @@ class CardView : Poolable {
     }
 
     private fun updatePosition(layout: Layout) {
-        socket?.let { socket ->
-            val minX = truncate(layout.numberOfColumns / -2f) * CELL_WIDTH
+        _socket?.let { socket ->
+            val minX = truncate(layout.numberOfColumns * CELL_WIDTH / -2f)
             position.set(
                 minX + socket.column * CELL_WIDTH + CELL_PADDING_LEFT,
                 MAX_Y - socket.row * CELL_HEIGHT - CELL_PADDING_TOP
@@ -69,7 +72,7 @@ class CardView : Poolable {
         _card = -1
         hidden = true
         open = false
-        socket = null
+        _socket = null
     }
 
     companion object {

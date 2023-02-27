@@ -30,7 +30,7 @@ class SettingsService {
     }
 
     fun paused() {
-        settings?.let { persistence.saveSettings(it) }
+        settings?.let { persistence.saveSettings(SavedSettings(it)) }
     }
 
     fun resumed() {
@@ -77,9 +77,9 @@ class SavedSettings(
     constructor() : this(
         darkTheme = false,
         backDesign = 0,
-        layout = Layouts.Basic,
+        layout = Layouts.Diamonds,
         animation = AnimationStrategies.Blink,
-        drawingStrategy = DrawingStrategies.BackHidden,
+        drawingStrategy = DrawingStrategies.BackVisible,
         emptyDiscard = false
     )
 

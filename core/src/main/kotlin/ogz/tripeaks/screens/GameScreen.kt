@@ -20,6 +20,7 @@ import ktx.ashley.entity
 import ktx.assets.disposeSafely
 import ktx.collections.GdxArray
 import ktx.collections.gdxArrayOf
+import ktx.collections.sortBy
 import ktx.inject.Context
 import ogz.tripeaks.assets.UiSkin
 import ogz.tripeaks.game.AnimationView
@@ -60,7 +61,6 @@ class GameScreen(private val context: Context) : KtxScreen {
     private val discard = DiscardView()
     private val animations = GdxArray<AnimationView>(false, 16)
 
-    private val engine = PooledEngine()
     private val renderHelper =
         RenderHelper(batch, viewport, settings, cards, animations, discard, stack)
     private val touchHandler = TouchHandler(messageBox)
@@ -71,9 +71,6 @@ class GameScreen(private val context: Context) : KtxScreen {
     private val spriteSetChangedReceiver = Receiver<Msg.SpriteSetChanged> { onSpriteSetChanged(it) }
     private val touchDownReceiver = Receiver<Msg.TouchDown> { onTouchDown(it) }
     private val touchUpReceiver = Receiver<Msg.TouchUp> { onTouchUp(it) }
-    private val entities: ImmutableArray<Entity>
-    private val stackEntity: Entity = engine.entity()
-    private val discardEntity: Entity = engine.entity()
     private val stageUtils = StageUtils(assets, uiStage)
 
     private var undoButton = stageUtils.undoButton(settings.get().skin, this::undo)
@@ -91,11 +88,7 @@ class GameScreen(private val context: Context) : KtxScreen {
         messageBox.register(touchDownReceiver)
         messageBox.register(touchUpReceiver)
 
-        val es = gdxArrayOf<Entity>(false, 52)
-        for (card in 0 until 52) {
-            es.add(engine.entity())
-        }
-        entities = ImmutableArray(es)
+        renderHelper.ui = ui
     }
 
     override fun render(delta: Float) {
@@ -206,6 +199,7 @@ class GameScreen(private val context: Context) : KtxScreen {
                 put(state.card, socket, game.gameLayout)
             })
         }
+        cards.sortBy { it.socket?.z ?: Int.MIN_VALUE }
         stack.stack = game.stack
         discard.discard = game.discard
     }

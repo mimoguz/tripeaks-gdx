@@ -9,9 +9,12 @@ import ogz.tripeaks.models.Card
 import ogz.tripeaks.screens.Constants.SMALL_FACE_H_PADDING
 import ogz.tripeaks.screens.Constants.SMALL_FACE_WIDTH
 import kotlin.math.truncate
+import ogz.tripeaks.screens.Constants.FACE_HEIGHT
+import ogz.tripeaks.screens.Constants.FACE_WIDTH
 import ogz.tripeaks.screens.Constants.FACE_X
 import ogz.tripeaks.screens.Constants.FACE_Y
 import ogz.tripeaks.screens.Constants.HORIZONTAL_PADDING
+import ogz.tripeaks.screens.Constants.STACK_RIGHT
 import ogz.tripeaks.screens.Constants.VERTICAL_PADDING
 import ogz.tripeaks.screens.Constants.WORLD_HEIGHT
 
@@ -23,7 +26,7 @@ class StackView {
 
     fun move(worldWidth: Float) {
         position.set(
-            truncate(worldWidth / 2f - HORIZONTAL_PADDING),
+            truncate(worldWidth / 2f - STACK_RIGHT),
             truncate(WORLD_HEIGHT / -2f + VERTICAL_PADDING - 1f)
         )
     }
@@ -36,14 +39,11 @@ class StackView {
             for (i in 0 until stack.size) {
                 cardPosition.set(position.x - X_SHIFT * i, position.y)
                 if (i == last) {
-                    drawTop(batch, stack[i], sprites, cardPosition)
+                    strategy.drawFront(batch, stack[i], sprites, cardPosition)
                 } else {
                     strategy.drawStacked(batch, stack[i], sprites, cardPosition)
                 }
             }
-            val card = stack[stack.size - 1]
-            batch.draw(sprites.card, position.x, position.y)
-            batch.draw(sprites.face[card], position.x + FACE_X, position.y + FACE_Y)
         }
     }
 
@@ -53,6 +53,6 @@ class StackView {
     }
 
     companion object {
-        const val X_SHIFT = SMALL_FACE_WIDTH + 2f * SMALL_FACE_H_PADDING
+        const val X_SHIFT = SMALL_FACE_WIDTH + 2f * SMALL_FACE_H_PADDING - 1f
     }
 }
