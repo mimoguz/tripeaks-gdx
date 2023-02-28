@@ -62,6 +62,9 @@ class RenderHelper(
             for (card in cards) {
                 card.draw(batch, currentSettings.spriteSet, currentSettings.drawingStrategy)
             }
+            for (anim in animations) {
+                anim.draw(batch, currentSettings.spriteSet)
+            }
             batch.setColor(1f, 1f, 1f, 1f)
             ui?.render(batch, currentSettings.spriteSet)
         }

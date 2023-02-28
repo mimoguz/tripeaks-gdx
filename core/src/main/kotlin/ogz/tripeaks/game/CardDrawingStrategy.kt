@@ -30,11 +30,18 @@ sealed interface CardDrawingStrategy {
                 sprites: SpriteSet,
                 position: Vector2
             ) {
-                drawFront(batch, card, sprites, position)
+                batch.draw(sprites.card, position.x, position.y)
+                batch.draw(sprites.back, position.x, position.y)
                 batch.draw(
                     sprites.smallFace[card],
-                    position.x + CARD_WIDTH - SMALL_FACE_WIDTH - SMALL_FACE_H_PADDING,
-                    position.y + SMALL_FACE_V_PADDING
+                    position.x + 1f,
+                    position.y + 2f
+                )
+                val h = if (card % 13 == 9) SMALL_10_HEIGHT else SMALL_FACE_HEIGHT
+                batch.draw(
+                    sprites.smallFace[card],
+                    position.x + CARD_WIDTH - SMALL_FACE_WIDTH - 1f,
+                    position.y + CARD_HEIGHT - h - 1f
                 )
             }
 
@@ -55,11 +62,12 @@ sealed interface CardDrawingStrategy {
                 position: Vector2
             ) {
                 batch.draw(sprites.card, position.x, position.y)
+                batch.draw(sprites.back, position.x, position.y)
                 val h = if (card % 13 == 9) SMALL_10_HEIGHT else SMALL_FACE_HEIGHT
                 batch.draw(
                     sprites.smallFace[card],
-                    position.x + CARD_WIDTH - SMALL_FACE_WIDTH - SMALL_FACE_H_PADDING,
-                    position.y + CARD_HEIGHT - SMALL_FACE_V_PADDING - h - 1
+                    position.x + CARD_WIDTH - SMALL_FACE_WIDTH - 1f,
+                    position.y + CARD_HEIGHT - h - 1f
                 )
             }
         }

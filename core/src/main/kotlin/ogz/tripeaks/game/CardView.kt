@@ -27,6 +27,12 @@ class CardView : Poolable {
     val card: Card
         get() = _card
 
+    val x: Float
+        get() = position.x
+
+    val y: Float
+        get() = position.y
+
     val socket: Socket?
         get() = _socket
 

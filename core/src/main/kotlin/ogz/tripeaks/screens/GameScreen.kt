@@ -19,6 +19,7 @@ import ktx.app.KtxScreen
 import ktx.ashley.entity
 import ktx.assets.disposeSafely
 import ktx.collections.GdxArray
+import ktx.collections.GdxSet
 import ktx.collections.gdxArrayOf
 import ktx.collections.sortBy
 import ktx.inject.Context
@@ -60,6 +61,7 @@ class GameScreen(private val context: Context) : KtxScreen {
     private val stack = StackView()
     private val discard = DiscardView()
     private val animations = GdxArray<AnimationView>(false, 16)
+    private val finishedAnimations = GdxArray<AnimationView>(false,16)
 
     private val renderHelper =
         RenderHelper(batch, viewport, settings, cards, animations, discard, stack)
@@ -98,7 +100,14 @@ class GameScreen(private val context: Context) : KtxScreen {
         uiStage.act(delta)
         play?.let { game ->
             cards.forEach { it.update(game) }
-            animations.forEach { it.update(delta, currentSettings.animationStrategy) }
+            animations.forEach { anim ->
+                  if (anim.update(delta, currentSettings.animationStrategy)) {
+                      finishedAnimations.add(anim)
+                      animationViewPool.free(anim)
+                  }
+            }
+            animations.removeAll(finishedAnimations, true)
+            finishedAnimations.clear()
         }
         renderHelper.render(delta)
         uiStage.draw()
@@ -151,9 +160,7 @@ class GameScreen(private val context: Context) : KtxScreen {
             val pos = Vector2(message.screenX.toFloat(), message.screenY.toFloat())
             viewport.unproject(pos)
 
-            if (ui.handlePressed(pos.x, pos.y)) {
-                return
-            }
+            if (ui.handlePressed(pos.x, pos.y)) return
 
             val layout = gameState.gameLayout
             val x = pos.x.toInt() + (layout.numberOfColumns / 2) * Constants.CELL_WIDTH.toInt()
@@ -172,7 +179,13 @@ class GameScreen(private val context: Context) : KtxScreen {
                     val socket = layout.lookup(column + columnOffset, row + rowOffset)
                     if (socket != null && gameState.take(socket.index)) {
                         val card = gameState.socketState(socket.index).card
-                        cards.find { it.card == card }?.update(gameState)
+                        val view = cards.find { it.card == card }
+                        view?.apply {
+                            update(gameState)
+                            animations.add(animationViewPool.obtain().apply {
+                                this.set(card, view.x, view.y)
+                            })
+                        }
                         val blocked = layout[socket.index].blocks
                         for (s in blocked) {
                             val blockedCard = gameState.socketState(s).card

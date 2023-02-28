@@ -33,7 +33,7 @@ class AnimationView : Poolable {
         return strategy.cardRemoved(time, vertexColor, position, scale)
     }
 
-    fun render(batch: SpriteBatch, sprites: SpriteSet) {
+    fun draw(batch: SpriteBatch, sprites: SpriteSet) {
         batch.color.set(vertexColor.r, vertexColor.g, vertexColor.b, vertexColor.a)
         batch.draw(
             sprites.card,

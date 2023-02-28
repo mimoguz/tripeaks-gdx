@@ -53,6 +53,6 @@ class StackView {
     }
 
     companion object {
-        const val X_SHIFT = SMALL_FACE_WIDTH + 2f * SMALL_FACE_H_PADDING - 1f
+        const val X_SHIFT = SMALL_FACE_WIDTH + 1f
     }
 }

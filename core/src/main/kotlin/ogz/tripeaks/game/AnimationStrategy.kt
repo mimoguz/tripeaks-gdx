@@ -26,9 +26,7 @@ sealed interface AnimationStrategy {
                 position: Vector2,
                 scale: Vector2
             ): Boolean {
-                if (time > DISSOLVE_TIME) {
-                    return true
-                }
+                if (time > DISSOLVE_TIME) return true
                 val normalizedTime = time / DISSOLVE_TIME
                 position.y = normalizedTime * 400f
                 scale.set(
@@ -40,9 +38,7 @@ sealed interface AnimationStrategy {
             }
 
             override fun screenTransition(time: Float, vertexColor: Color): Boolean {
-                if (time > DISSOLVE_TIME) {
-                    return true
-                }
+                if (time > DISSOLVE_TIME) return true
                 vertexColor.set(0.2f, 1f - time / DISSOLVE_TIME, param, 1f)
                 return false
             }
@@ -75,9 +71,7 @@ sealed interface AnimationStrategy {
             }
 
             private fun step(time: Float, vertexColor: Color): Boolean {
-                if (time > DISSOLVE_TIME) {
-                    return true
-                }
+                if (time > DISSOLVE_TIME) return true
                 val normalizedTime = time / DISSOLVE_TIME
                 vertexColor.set(1f, 1f - normalizedTime, param, 1f)
                 return false
