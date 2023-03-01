@@ -39,17 +39,12 @@ class StackView {
             for (i in 0 until stack.size) {
                 cardPosition.set(position.x - X_SHIFT * i, position.y)
                 if (i == last) {
-                    strategy.drawFront(batch, stack[i], sprites, cardPosition)
+                    strategy.drawBack(batch, stack[i], sprites, cardPosition)
                 } else {
                     strategy.drawStacked(batch, stack[i], sprites, cardPosition)
                 }
             }
         }
-    }
-
-    private fun drawTop(batch: SpriteBatch, card: Card, sprites: SpriteSet, pos: Vector2) {
-        batch.draw(sprites.card, pos.x, pos.y)
-        batch.draw(sprites.face[card], pos.x, pos.y)
     }
 
     companion object {

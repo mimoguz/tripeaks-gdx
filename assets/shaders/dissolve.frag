@@ -49,12 +49,13 @@ float fnoise(vec2 v) {
 
 void main() {
     vec4 outColor = texture2D(u_texture, v_texCoords);
-    float n = fnoise(vec2(v_texCoords.x * 512.0 * v_color.r, v_texCoords.y  * 256.0 * v_color.r));
-    float alpha =  smoothstep(0.6, 0.9, min(n * n + v_color.g, 1.0));
-
+    float remainingTime = v_color.g;
+    float scale = v_color.r;
+    float n = fnoise(vec2(v_texCoords.x * 512.0 * scale, v_texCoords.y  * 256.0 * scale));
+    float alpha =  smoothstep(0.6, 0.9, min(n * n + remainingTime, 1.0));
     // Burnt edges:
     vec3 tint = mix(vec3(0.8, 0.4,  0.2), vec3(0.5, 0.2,  0.3), v_color.b);
     outColor.rgb = mix(tint, outColor.rgb, smoothstep(0.6, 0.9, alpha));
 
-    gl_FragColor = vec4(outColor.rgb, outColor.a * alpha);
+    gl_FragColor = vec4(outColor.rgb, outColor.a * alpha * remainingTime);
 }

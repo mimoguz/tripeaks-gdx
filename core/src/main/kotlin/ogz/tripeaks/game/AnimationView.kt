@@ -4,6 +4,8 @@ import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.utils.Pool.Poolable
+import kotlin.math.absoluteValue
+import kotlin.math.truncate
 import ogz.tripeaks.graphics.SpriteSet
 import ogz.tripeaks.models.Card
 import ogz.tripeaks.screens.Constants.CARD_HEIGHT
@@ -11,12 +13,13 @@ import ogz.tripeaks.screens.Constants.CARD_WIDTH
 import ogz.tripeaks.screens.Constants.FACE_HEIGHT
 import ogz.tripeaks.screens.Constants.FACE_WIDTH
 import ogz.tripeaks.screens.Constants.FACE_X
+import ogz.tripeaks.screens.Constants.FACE_Y
 
 class AnimationView : Poolable {
     private var card: Card = -1
     private var time = 0f
     private var position = Vector2(0f, 0f)
-    private var scale = Vector2(0f, 0f)
+    private var scale = Vector2(1f, 1f)
     private var vertexColor = Color(1f, 1f, 1f, 1f)
 
     fun set(card: Card, startX: Float, startY: Float) {
@@ -30,26 +33,27 @@ class AnimationView : Poolable {
      */
     fun update(dt: Float, strategy: AnimationStrategy): Boolean {
         time += dt
-        return strategy.cardRemoved(time, vertexColor, position, scale)
+        return strategy.cardRemoved(dt, time, vertexColor, position, scale)
     }
 
     fun draw(batch: SpriteBatch, sprites: SpriteSet) {
-        batch.color.set(vertexColor.r, vertexColor.g, vertexColor.b, vertexColor.a)
+        batch.color = vertexColor
+        val x = truncate(position.x)
+        val y = truncate(position.y)
         batch.draw(
             sprites.card,
-            position.x,
-            position.y,
-            scale.x * CARD_WIDTH,
-            scale.y * CARD_HEIGHT
+            x,
+            y,
+            truncate(scale.x * CARD_WIDTH),
+            truncate(scale.y * CARD_HEIGHT)
         )
         batch.draw(
             sprites.face[card],
-            position.x + FACE_X,
-            position.y + FACE_X,
-            scale.x * FACE_WIDTH,
-            scale.y * FACE_HEIGHT
+            x + FACE_X,
+            y + FACE_Y,
+            truncate(scale.x * FACE_WIDTH),
+            truncate(scale.y * FACE_HEIGHT)
         )
-        batch.color.set(1f, 1f, 1f, 1f)
     }
 
     override fun reset() {

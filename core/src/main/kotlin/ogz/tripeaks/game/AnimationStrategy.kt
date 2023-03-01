@@ -3,16 +3,25 @@ package ogz.tripeaks.game
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.glutils.ShaderProgram
 import com.badlogic.gdx.math.Vector2
+import kotlin.math.truncate
 import ogz.tripeaks.screens.Constants.DISSOLVE_TIME
+import ogz.tripeaks.screens.Constants.WORLD_HEIGHT
 
 sealed interface AnimationStrategy {
     val shaderProgram: ShaderProgram?
     var param: Float
-    fun cardRemoved(time: Float, vertexColor: Color, position: Vector2, scale: Vector2): Boolean
+    fun cardRemoved(
+        deltaTime: Float,
+        time: Float,
+        vertexColor: Color,
+        position: Vector2,
+        scale: Vector2
+    ): Boolean
+
     fun screenTransition(time: Float, vertexColor: Color): Boolean
     fun setTheme(dark: Boolean)
 
-    companion object Strategies  {
+    companion object Strategies {
         class Dissolve : AnimationStrategy {
             override var param = 0f
             override val shaderProgram = ShaderProgram(
@@ -21,26 +30,25 @@ sealed interface AnimationStrategy {
             )
 
             override fun cardRemoved(
+                deltaTime: Float,
                 time: Float,
                 vertexColor: Color,
                 position: Vector2,
                 scale: Vector2
             ): Boolean {
-                if (time > DISSOLVE_TIME) return true
-                val normalizedTime = time / DISSOLVE_TIME
-                position.y = normalizedTime * 400f
+                val normalizedTime = (time / DISSOLVE_TIME).coerceAtMost(1f)
+                position.y = -1.2f * deltaTime * WORLD_HEIGHT
                 scale.set(
-                    1f - normalizedTime * 0.25f,
-                    1f + normalizedTime * 6f
+                    1f - normalizedTime * 0.10f,
+                    1f + normalizedTime * 1.2f
                 )
                 vertexColor.set(0.8f, 1f - normalizedTime, param, 1f)
-                return false
+                return time > DISSOLVE_TIME
             }
 
             override fun screenTransition(time: Float, vertexColor: Color): Boolean {
-                if (time > DISSOLVE_TIME) return true
                 vertexColor.set(0.2f, 1f - time / DISSOLVE_TIME, param, 1f)
-                return false
+                return time > DISSOLVE_TIME
             }
 
             override fun setTheme(dark: Boolean) {
@@ -57,6 +65,7 @@ sealed interface AnimationStrategy {
             )
 
             override fun cardRemoved(
+                deltaTime: Float,
                 time: Float,
                 vertexColor: Color,
                 position: Vector2,
@@ -71,10 +80,9 @@ sealed interface AnimationStrategy {
             }
 
             private fun step(time: Float, vertexColor: Color): Boolean {
-                if (time > DISSOLVE_TIME) return true
-                val normalizedTime = time / DISSOLVE_TIME
+                val normalizedTime = (time / DISSOLVE_TIME).coerceAtMost(1f)
                 vertexColor.set(1f, 1f - normalizedTime, param, 1f)
-                return false
+                return time > DISSOLVE_TIME
             }
         }
     }

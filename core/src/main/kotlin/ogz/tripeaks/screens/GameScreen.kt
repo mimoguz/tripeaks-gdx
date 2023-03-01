@@ -183,7 +183,7 @@ class GameScreen(private val context: Context) : KtxScreen {
                         view?.apply {
                             update(gameState)
                             animations.add(animationViewPool.obtain().apply {
-                                this.set(card, view.x, view.y)
+                                set(card, view.x, view.y)
                             })
                         }
                         val blocked = layout[socket.index].blocks
@@ -191,6 +191,7 @@ class GameScreen(private val context: Context) : KtxScreen {
                             val blockedCard = gameState.socketState(s).card
                             cards.find { it.card == blockedCard }?.update(gameState)
                         }
+                        undoButton.disabled = false
                         return
                     }
                 }
@@ -296,6 +297,7 @@ class GameScreen(private val context: Context) : KtxScreen {
 
     private fun deal() {
         play?.let { gameState ->
+            gameState.deal()
             dealButton.disabled = !gameState.canDeal
             undoButton.disabled = !gameState.canUndo
         }

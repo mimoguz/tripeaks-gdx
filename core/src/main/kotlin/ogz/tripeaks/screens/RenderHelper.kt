@@ -57,6 +57,7 @@ class RenderHelper(
         batch.shader = settings.get().animationStrategy.shaderProgram
         batch.enableBlending()
         batch.use { batch ->
+            batch.color = Color.WHITE
             stack.draw(batch, currentSettings.spriteSet, currentSettings.drawingStrategy)
             discard.draw(batch, currentSettings.spriteSet)
             for (card in cards) {
@@ -65,7 +66,7 @@ class RenderHelper(
             for (anim in animations) {
                 anim.draw(batch, currentSettings.spriteSet)
             }
-            batch.setColor(1f, 1f, 1f, 1f)
+            batch.color = Color.WHITE
             ui?.render(batch, currentSettings.spriteSet)
         }
         frameBuffer.end(
