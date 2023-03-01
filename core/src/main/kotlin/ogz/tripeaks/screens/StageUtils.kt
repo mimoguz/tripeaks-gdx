@@ -2,6 +2,7 @@ package ogz.tripeaks.screens
 
 import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.math.Vector2
+import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.utils.Align
 import com.ray3k.stripe.PopTable
@@ -12,6 +13,7 @@ import ogz.tripeaks.screens.Constants.CARD_HEIGHT
 import ogz.tripeaks.screens.Constants.CARD_WIDTH
 import ogz.tripeaks.screens.Constants.HORIZONTAL_PADDING
 import ogz.tripeaks.screens.Constants.VERTICAL_PADDING
+import ogz.tripeaks.screens.stage.MainMenu
 import ogz.tripeaks.ui.BottomLeft
 import ogz.tripeaks.ui.BottomRight
 import ogz.tripeaks.ui.GameButton
@@ -19,15 +21,36 @@ import ogz.tripeaks.ui.IconButton
 import ogz.tripeaks.ui.TopRight
 
 class StageUtils(private val assets: AssetManager, private val stage: Stage) {
-    fun menuButton(skin: UiSkin, menu: PopTable, onShow: () -> Unit): GameButton =
+    fun menuButton(
+        anchor: Actor,
+        skin: UiSkin,
+        onShow: (MainMenu) -> Unit,
+        onHide: () -> Unit
+    ): GameButton =
         GameButton(
             assets[TextureAtlasAssets.Ui].findRegion("menu_${skin.resourcePostfix}"),
             TopRight(Vector2(HORIZONTAL_PADDING, VERTICAL_PADDING))
         ) {
-            if (menu.isHidden) {
-                onShow.invoke()
-                menu.show(stage)
+            val menu = MainMenu(skin).apply {
+                addListener {
+                    if (isHidden) {
+                        onHide.invoke()
+                        true
+                    } else {
+                        false
+                    }
+                }
+
+                attachToActor(
+                    anchor,
+                    Align.topRight,
+                    Align.bottomRight,
+                    -HORIZONTAL_PADDING,
+                    -CARD_WIDTH - VERTICAL_PADDING
+                )
             }
+            onShow.invoke(menu)
+            menu.show(stage)
         }.apply {
             setSize(CARD_WIDTH, CARD_WIDTH)
         }

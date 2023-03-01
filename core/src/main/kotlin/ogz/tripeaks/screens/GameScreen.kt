@@ -256,31 +256,7 @@ class GameScreen(private val context: Context) : KtxScreen {
 
         table.add(empty).expandX().expandY().align(Align.topRight)
 
-        val menu = PopTable(skin["menu", PopTableStyle::class.java]).apply {
-            add(Label("Menu test", skin))
-            row()
-            add(Label("Menu test", skin))
-            pad(12f, 12f, 12f, 12f)
-            isHideOnUnfocus = true
-            isModal = true
-            attachToActor(
-                empty,
-                Align.topRight,
-                Align.bottomRight,
-                -HORIZONTAL_PADDING,
-                -CARD_WIDTH - VERTICAL_PADDING
-            )
-            addListener {
-                if (isHidden) {
-                    onMenuHidden()
-                    true
-                } else {
-                    false
-                }
-            }
-        }
-
-        val menuButton = stageUtils.menuButton(skin, menu) { onMenuShown(menu) }
+        val menuButton = stageUtils.menuButton(empty, skin, this::onMenuShown, this::onMenuHidden)
         dealButton = stageUtils.dealButton(skin, this::deal)
         undoButton = stageUtils.undoButton(skin, this::undo)
 
