@@ -4,18 +4,28 @@ import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.ui.Skin
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener
+import ogz.tripeaks.screens.Constants.TEXT_BUTTON_HORIZONTAL_PADDING
+import ogz.tripeaks.screens.Constants.TEXT_BUTTON_VERTICAL_PADDING
 
-class LabelButton(skin: Skin, text: String?) : TextButton(text, skin) {
+class LabelButton(skin: Skin, text: String?, private var action: () -> Unit = {}) :
+    TextButton(text, skin) {
 
     init {
-        pad(2f, 8f, 2f, 8f)
-    }
+        pad(
+            TEXT_BUTTON_VERTICAL_PADDING,
+            TEXT_BUTTON_HORIZONTAL_PADDING,
+            TEXT_BUTTON_VERTICAL_PADDING,
+            TEXT_BUTTON_HORIZONTAL_PADDING
+        )
 
-    fun onClick(action: () -> Unit) {
         addListener(object : ChangeListener() {
             override fun changed(event: ChangeEvent?, actor: Actor?) {
                 action.invoke()
             }
         })
+    }
+
+    fun onClick(action: () -> Unit) {
+        this.action = action
     }
 }

@@ -4,17 +4,12 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.math.Vector2
 import ogz.tripeaks.graphics.SpriteSet
 import ogz.tripeaks.models.Card
-import ogz.tripeaks.screens.Constants
 import ogz.tripeaks.screens.Constants.CARD_HEIGHT
 import ogz.tripeaks.screens.Constants.CARD_WIDTH
-import ogz.tripeaks.screens.Constants.FACE_HEIGHT
-import ogz.tripeaks.screens.Constants.FACE_WIDTH
 import ogz.tripeaks.screens.Constants.FACE_X
 import ogz.tripeaks.screens.Constants.FACE_Y
 import ogz.tripeaks.screens.Constants.SMALL_10_HEIGHT
 import ogz.tripeaks.screens.Constants.SMALL_FACE_HEIGHT
-import ogz.tripeaks.screens.Constants.SMALL_FACE_H_PADDING
-import ogz.tripeaks.screens.Constants.SMALL_FACE_V_PADDING
 import ogz.tripeaks.screens.Constants.SMALL_FACE_WIDTH
 
 sealed interface CardDrawingStrategy {

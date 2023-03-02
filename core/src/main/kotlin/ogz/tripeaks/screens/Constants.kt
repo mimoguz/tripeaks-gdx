@@ -19,13 +19,14 @@ object Constants {
     const val SMALL_FACE_HEIGHT = 9f
     const val SMALL_10_HEIGHT = 15f
     const val SMALL_FACE_WIDTH = 5f
-    const val SMALL_FACE_V_PADDING = 3f
-    const val SMALL_FACE_H_PADDING = 2f
     const val VERTICAL_PADDING = 4f
     const val WORLD_HEIGHT = 168f
     const val DISCARD_LEFT =  HORIZONTAL_PADDING + CELL_WIDTH * 2f + CELL_PADDING_LEFT
     const val STACK_RIGHT = HORIZONTAL_PADDING + CELL_WIDTH * 4f - CELL_PADDING_LEFT * 2f
     const val DISSOLVE_TIME = 0.5f
+
+    const val TEXT_BUTTON_VERTICAL_PADDING = 2f
+    const val TEXT_BUTTON_HORIZONTAL_PADDING = 8f
 
     val DARK_UI_TEXT = rgb(242, 204, 143)
     val DARK_UI_EMPHASIS = rgb(184, 55, 68)

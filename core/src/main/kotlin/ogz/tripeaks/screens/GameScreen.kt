@@ -26,9 +26,14 @@ import ogz.tripeaks.game.DiscardView
 import ogz.tripeaks.game.StackView
 import ogz.tripeaks.graphics.CustomViewport
 import ogz.tripeaks.models.GameState
+import ogz.tripeaks.models.layout.Socket
 import ogz.tripeaks.screens.Constants.CARD_WIDTH
 import ogz.tripeaks.screens.Constants.HORIZONTAL_PADDING
 import ogz.tripeaks.screens.Constants.VERTICAL_PADDING
+import ogz.tripeaks.screens.stage.StalledDialog
+import ogz.tripeaks.screens.stage.StalledDialogResult
+import ogz.tripeaks.screens.stage.WinDialog
+import ogz.tripeaks.screens.stage.WinDialogResult
 import ogz.tripeaks.services.MessageBox
 import ogz.tripeaks.services.PersistenceService
 import ogz.tripeaks.services.PlayerStatisticsService
@@ -172,24 +177,85 @@ class GameScreen(private val context: Context) : KtxScreen {
                 for (columnOffset in 0 downTo -1) {
                     val socket = layout.lookup(column + columnOffset, row + rowOffset)
                     if (socket != null && gameState.take(socket.index)) {
-                        val card = gameState.socketState(socket.index).card
-                        val view = cards.find { it.card == card }
-                        view?.apply {
-                            update(gameState)
-                            animations.add(animationViewPool.obtain().apply {
-                                set(card, view.x, view.y)
-                            })
-                        }
-                        val blocked = layout[socket.index].blocks
-                        for (s in blocked) {
-                            val blockedCard = gameState.socketState(s).card
-                            cards.find { it.card == blockedCard }?.update(gameState)
-                        }
-                        undoButton.enabled = gameState.canUndo
+                        openSocket(gameState, socket)
+                        if (!checkIfWon(gameState)) checkIfStalled(gameState)
                         return
                     }
                 }
             }
+        }
+    }
+
+    private fun checkIfWon(gameState: GameState): Boolean {
+        if (gameState.won) {
+            playerStatistics.addWin(gameState.statistics)
+            val dialog = WinDialog(
+                settings.get().skin,
+                gameState.statistics,
+                this::winDialogCallback
+            )
+            onDialogShown(dialog)
+            dialog.show(uiStage)
+            return true
+        }
+        return false
+    }
+
+    private fun checkIfStalled(gameState: GameState): Boolean {
+        if (gameState.stalled) {
+            playerStatistics.addWin(gameState.statistics)
+            val dialog = StalledDialog(
+                settings.get().skin,
+                gameState.statistics,
+                this::stalledDialogCallback
+            )
+            onDialogShown(dialog)
+            dialog.show(uiStage)
+            return true
+        }
+        return false
+    }
+
+    private fun openSocket(gameState: GameState, socket: Socket) {
+        val card = gameState.socketState(socket.index).card
+        val view = cards.find { it.card == card }
+        val layout = gameState.gameLayout
+        view?.apply {
+            update(gameState)
+            animations.add(animationViewPool.obtain().apply {
+                set(card, view.x, view.y)
+            })
+        }
+        val blocked = layout[socket.index].blocks
+        for (s in blocked) {
+            val blockedCard = gameState.socketState(s).card
+            cards.find { it.card == blockedCard }?.update(gameState)
+        }
+        undoButton.enabled = gameState.canUndo
+    }
+
+    private fun winDialogCallback(result: WinDialogResult) {
+        onDialogHidden()
+        when (result) {
+            WinDialogResult.NEW_GAME -> {
+                val game = settings.getNewGame()
+                play = game
+                setupGame(game)
+            }
+            WinDialogResult.EXIT -> Gdx.app.exit()
+        }
+    }
+
+    private fun stalledDialogCallback(result: StalledDialogResult) {
+        onDialogHidden()
+        when (result) {
+            StalledDialogResult.NEW_GAME -> {
+                play?.let { playerStatistics.addLose(it.statistics) }
+                val game = settings.getNewGame()
+                play = game
+                setupGame(game)
+            }
+            StalledDialogResult.RETURN -> {}
         }
     }
 
@@ -252,7 +318,7 @@ class GameScreen(private val context: Context) : KtxScreen {
 
         table.add(empty).expandX().expandY().align(Align.topRight)
 
-        val menuButton = stageUtils.menuButton(
+        val menuButton = stageUtils.mainMenuButton(
             skin,
             empty,
             this::onMenuShown,
@@ -272,7 +338,7 @@ class GameScreen(private val context: Context) : KtxScreen {
         ui.add(dealButton)
         ui.add(undoButton)
 
-        play?.let {game ->
+        play?.let { game ->
             dealButton.enabled = game.canDeal
             undoButton.enabled = game.canUndo
         }
@@ -302,6 +368,7 @@ class GameScreen(private val context: Context) : KtxScreen {
             gameState.deal()
             dealButton.enabled = gameState.canDeal
             undoButton.enabled = gameState.canUndo
+            checkIfStalled(gameState)
         }
     }
 

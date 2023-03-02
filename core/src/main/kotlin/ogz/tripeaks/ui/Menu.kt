@@ -1,4 +1,4 @@
-package ogz.tripeaks.screens.stage
+package ogz.tripeaks.ui
 
 import com.ray3k.stripe.PopTable
 import ogz.tripeaks.assets.UiSkin

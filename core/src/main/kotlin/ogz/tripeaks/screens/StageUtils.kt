@@ -12,14 +12,14 @@ import ogz.tripeaks.screens.Constants.CARD_HEIGHT
 import ogz.tripeaks.screens.Constants.CARD_WIDTH
 import ogz.tripeaks.screens.Constants.HORIZONTAL_PADDING
 import ogz.tripeaks.screens.Constants.VERTICAL_PADDING
-import ogz.tripeaks.screens.stage.Menu
+import ogz.tripeaks.ui.Menu
 import ogz.tripeaks.ui.BottomLeft
 import ogz.tripeaks.ui.BottomRight
 import ogz.tripeaks.ui.GameButton
 import ogz.tripeaks.ui.TopRight
 
 class StageUtils(private val assets: AssetManager, private val stage: Stage) {
-    fun menuButton(
+    fun mainMenuButton(
         skin: UiSkin,
         anchor: Actor,
         onShow: (Menu) -> Unit,
