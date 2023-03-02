@@ -1,8 +1,5 @@
 package ogz.tripeaks.screens
 
-import com.badlogic.ashley.core.Entity
-import com.badlogic.ashley.core.PooledEngine
-import com.badlogic.ashley.utils.ImmutableArray
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.InputMultiplexer
 import com.badlogic.gdx.assets.AssetManager
@@ -16,11 +13,8 @@ import com.badlogic.gdx.utils.Logger
 import com.ray3k.stripe.PopTable
 import com.ray3k.stripe.PopTable.PopTableStyle
 import ktx.app.KtxScreen
-import ktx.ashley.entity
 import ktx.assets.disposeSafely
 import ktx.collections.GdxArray
-import ktx.collections.GdxSet
-import ktx.collections.gdxArrayOf
 import ktx.collections.sortBy
 import ktx.inject.Context
 import ogz.tripeaks.assets.UiSkin
@@ -61,7 +55,7 @@ class GameScreen(private val context: Context) : KtxScreen {
     private val stack = StackView()
     private val discard = DiscardView()
     private val animations = GdxArray<AnimationView>(false, 16)
-    private val finishedAnimations = GdxArray<AnimationView>(false,16)
+    private val finishedAnimations = GdxArray<AnimationView>(false, 16)
 
     private val renderHelper =
         RenderHelper(batch, viewport, settings, cards, animations, discard, stack)
@@ -101,10 +95,10 @@ class GameScreen(private val context: Context) : KtxScreen {
         play?.let { game ->
             cards.forEach { it.update(game) }
             animations.forEach { anim ->
-                  if (anim.update(delta, currentSettings.animationStrategy)) {
-                      finishedAnimations.add(anim)
-                      animationViewPool.free(anim)
-                  }
+                if (anim.update(delta, currentSettings.animationStrategy)) {
+                    finishedAnimations.add(anim)
+                    animationViewPool.free(anim)
+                }
             }
             animations.removeAll(finishedAnimations, true)
             finishedAnimations.clear()
@@ -191,7 +185,7 @@ class GameScreen(private val context: Context) : KtxScreen {
                             val blockedCard = gameState.socketState(s).card
                             cards.find { it.card == blockedCard }?.update(gameState)
                         }
-                        undoButton.disabled = false
+                        undoButton.enabled = gameState.canUndo
                         return
                     }
                 }
@@ -216,6 +210,8 @@ class GameScreen(private val context: Context) : KtxScreen {
         cards.sortBy { it.socket?.z ?: Int.MIN_VALUE }
         stack.stack = game.stack
         discard.discard = game.discard
+        undoButton.enabled = game.canUndo
+        dealButton.enabled = game.canDeal
     }
 
     private fun onTouchUp(message: Msg.TouchUp) {
@@ -256,7 +252,18 @@ class GameScreen(private val context: Context) : KtxScreen {
 
         table.add(empty).expandX().expandY().align(Align.topRight)
 
-        val menuButton = stageUtils.menuButton(empty, skin, this::onMenuShown, this::onMenuHidden)
+        val menuButton = stageUtils.menuButton(
+            skin,
+            empty,
+            this::onMenuShown,
+            this::onMenuHidden,
+            listOf(
+                Pair("New Game", this::newGameAction),
+                Pair("Menu item 2") { println("Menu item 2") },
+                Pair("Menu item 3") { println("Menu item 3") }
+            )
+        )
+
         dealButton = stageUtils.dealButton(skin, this::deal)
         undoButton = stageUtils.undoButton(skin, this::undo)
 
@@ -264,6 +271,11 @@ class GameScreen(private val context: Context) : KtxScreen {
         ui.add(menuButton)
         ui.add(dealButton)
         ui.add(undoButton)
+
+        play?.let {game ->
+            dealButton.enabled = game.canDeal
+            undoButton.enabled = game.canUndo
+        }
     }
 
     private fun printStatistics() {
@@ -271,19 +283,33 @@ class GameScreen(private val context: Context) : KtxScreen {
         logger.info("Played: ${stats.played}, Won: ${stats.won}")
     }
 
+    /** Menu action for new game item. */
+    private fun newGameAction() {
+        play?.let { game ->
+            if (game.won) {
+                playerStatistics.addWin(game.statistics)
+            } else if (game.wasPlayed) {
+                playerStatistics.addLose(game.statistics)
+            }
+        }
+        val game = settings.getNewGame()
+        play = game
+        setupGame(game)
+    }
+
     private fun deal() {
         play?.let { gameState ->
             gameState.deal()
-            dealButton.disabled = !gameState.canDeal
-            undoButton.disabled = !gameState.canUndo
+            dealButton.enabled = gameState.canDeal
+            undoButton.enabled = gameState.canUndo
         }
     }
 
     private fun undo() {
         play?.let { gameState ->
             val target = gameState.undo()
-            dealButton.disabled = !gameState.canDeal
-            undoButton.disabled = !gameState.canUndo
+            dealButton.enabled = gameState.canDeal
+            undoButton.enabled = gameState.canUndo
 
             when (target) {
                 Int.MIN_VALUE -> {}

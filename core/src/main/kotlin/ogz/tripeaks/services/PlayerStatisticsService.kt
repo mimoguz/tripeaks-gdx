@@ -25,21 +25,36 @@ class PlayerStatisticsService {
     fun get(): PlayerStatistics = statistics!!.clone()
 
     fun addWin(gameStatistics: GameStatistics) {
-        statistics?.apply {
-            won += 1
-            var stats = layoutStatistics.find { it.tag == gameStatistics.layoutTag }
-            if (stats == null) {
-                stats = LayoutStatistics(gameStatistics.layoutTag, 0, 0, 0)
-                layoutStatistics.add(stats)
-            }
-            stats.played += 1
-            stats.won += 1
-            stats.longestChain = gameStatistics.longestChain
-            layoutStatistics.sort { a, b -> b.won.compareTo(a.won) }
+        statistics?.let { playerStats ->
+            playerStats.won += 1
+            val layoutStatistics = addGame(playerStats, gameStatistics)
+            layoutStatistics.won += 1
+        }
+    }
+
+    fun addLose(gameStatistics: GameStatistics) {
+        statistics?.let { playerStats ->
+            addGame(playerStats, gameStatistics)
         }
     }
 
     fun updatePlayed() {
-        statistics?.apply {  played += 1 }
+        statistics?.apply { played += 1 }
+    }
+
+    private fun addGame(
+        playerStats: PlayerStatistics,
+        gameStatistics: GameStatistics
+    ): LayoutStatistics {
+        playerStats.played += 1
+        var stats = playerStats.layoutStatistics.find { it.tag == gameStatistics.layoutTag }
+        if (stats == null) {
+            stats = LayoutStatistics(gameStatistics.layoutTag, 0, 0, 0)
+            playerStats.layoutStatistics.add(stats)
+        }
+        stats.played += 1
+        stats.longestChain = gameStatistics.longestChain
+        playerStats.layoutStatistics.sort { a, b -> b.played.compareTo(a.played) }
+        return stats
     }
 }

@@ -4,8 +4,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.math.Rectangle
 import com.badlogic.gdx.math.Vector2
-import com.badlogic.gdx.scenes.scene2d.ui.Button.ButtonStyle
-import com.badlogic.gdx.scenes.scene2d.ui.Skin
 import kotlin.math.truncate
 import ogz.tripeaks.graphics.SpriteSet
 
@@ -41,7 +39,7 @@ class GameUi {
     fun handlePressed(x: Float, y: Float): Boolean {
         for (button in buttons) {
             if (button.contains(x, y)) {
-                if (!button.disabled) {
+                if (button.enabled) {
                     button.pressed = true
                 }
                 return true
@@ -53,7 +51,7 @@ class GameUi {
     fun handleReleased(x: Float, y: Float): Boolean {
         for (button in buttons) {
             if (button.contains(x, y)) {
-                if (!button.disabled && button.pressed) button.action.invoke()
+                if (button.enabled && button.pressed) button.action.invoke()
                 button.pressed = false
                 return true
             }
@@ -87,7 +85,7 @@ class GameButton(
     }
 
     var pressed: Boolean = false
-    var disabled: Boolean = false
+    var enabled: Boolean = true
 
     fun reposition() {
         ui?.let { ui ->
@@ -114,7 +112,7 @@ class GameButton(
 
     fun render(batch: SpriteBatch, sprites: SpriteSet) {
         when {
-            disabled -> {
+            !enabled -> {
                 sprites.buttonDisabled.draw(batch, bounds.x, bounds.y, bounds.width, bounds.height)
                 batch.draw(icon, bounds.x + iconPosition.x, bounds.y + iconPosition.y)
             }

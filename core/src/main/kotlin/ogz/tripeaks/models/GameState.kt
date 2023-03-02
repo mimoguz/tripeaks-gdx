@@ -13,9 +13,10 @@ import ogz.tripeaks.models.layout.Socket
  */
 @Suppress("unused")
 class GameState private constructor(
-    var statistics: GameStatistics,
+    private var stats: GameStatistics,
     private var layout: Layout,
     private var sockets: GdxArray<SocketState>,
+    private var played: Boolean,
     var stack: GdxIntArray,
     var discard: GdxIntArray,
     /** This property tells that if the game was started with an empty discard pile or not. */
@@ -31,9 +32,10 @@ class GameState private constructor(
      * use GameState::startNew method instead.
      */
     constructor() : this(
-        statistics = GameStatistics(BasicLayout.TAG),
+        stats = GameStatistics(BasicLayout.TAG),
         layout = BasicLayout(),
         sockets = gdxArrayOf(),
+        played = false,
         stack = gdxIntArrayOf(),
         discard = gdxIntArrayOf(),
         canEmptyDiscard = false,
@@ -62,6 +64,9 @@ class GameState private constructor(
     val wasStalledBefore: Boolean
         get() = stalledBefore
 
+    val wasPlayed: Boolean
+        get() = played
+
     /** Is the game won? */
     val won: Boolean
         get() = sockets.all { it.isEmpty }
@@ -72,6 +77,9 @@ class GameState private constructor(
 
     val gameLayout: Layout
         get() = layout
+
+    val statistics: GameStatistics
+        get() = stats
 
     fun socketState(index: Int): SocketState = sockets[index]
 
@@ -86,7 +94,8 @@ class GameState private constructor(
             sockets[socketIndex].isEmpty = true
             discard.add(sockets[socketIndex].card)
             stalledBefore = stalledBefore || stalled
-            statistics.onTake()
+            stats.onTake()
+            played = true
             return true
         }
         return false
@@ -97,7 +106,8 @@ class GameState private constructor(
         if (canDeal) {
             discard.add(stack.pop())
             stalledBefore = stalledBefore || stalled
-            statistics.onDeal()
+            stats.onDeal()
+            played = true
             return true
         }
         return false
@@ -125,7 +135,7 @@ class GameState private constructor(
             // Restore the socket.
             sockets[socketIndex].isEmpty = false
         }
-        statistics.onUndo(socketIndex)
+        stats.onUndo(socketIndex)
         return socketIndex
     }
 
@@ -162,9 +172,10 @@ class GameState private constructor(
             }
 
             return GameState(
-                statistics = statistics,
+                stats = statistics,
                 layout = layout,
                 sockets = sockets,
+                played = false,
                 stack = stack,
                 discard = discard,
                 canEmptyDiscard = emptyDiscard,
