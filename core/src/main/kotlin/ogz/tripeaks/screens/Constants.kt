@@ -25,7 +25,7 @@ object Constants {
     const val STACK_RIGHT = HORIZONTAL_PADDING + CELL_WIDTH * 4f - CELL_PADDING_LEFT * 2f
     const val DISSOLVE_TIME = 0.5f
 
-    const val TEXT_BUTTON_VERTICAL_PADDING = 2f
+    const val TEXT_BUTTON_VERTICAL_PADDING = 4f
     const val TEXT_BUTTON_HORIZONTAL_PADDING = 8f
 
     val DARK_UI_TEXT = rgb(242, 204, 143)

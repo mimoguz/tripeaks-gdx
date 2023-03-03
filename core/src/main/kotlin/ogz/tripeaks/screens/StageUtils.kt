@@ -27,7 +27,7 @@ class StageUtils(private val assets: AssetManager, private val stage: Stage) {
         actions: List<Pair<String, () -> Unit>>
     ): GameButton =
         GameButton(
-            assets[TextureAtlasAssets.Ui].findRegion("menu_${skin.resourcePostfix}"),
+            assets[TextureAtlasAssets.Ui].findRegion("${skin.resourcePrefix}_menu"),
             TopRight(Vector2(HORIZONTAL_PADDING, VERTICAL_PADDING))
         ) {
             val menu = Menu(skin, actions).apply {
@@ -56,7 +56,7 @@ class StageUtils(private val assets: AssetManager, private val stage: Stage) {
 
     fun dealButton(skin: UiSkin, action: () -> Unit): GameButton =
         GameButton(
-            assets[TextureAtlasAssets.Ui].findRegion("deal_${skin.resourcePostfix}"),
+            assets[TextureAtlasAssets.Ui].findRegion("${skin.resourcePrefix}_deal"),
             BottomRight(Vector2(HORIZONTAL_PADDING, VERTICAL_PADDING - 1)),
             action
         ).apply {
@@ -65,7 +65,7 @@ class StageUtils(private val assets: AssetManager, private val stage: Stage) {
 
     fun undoButton(skin: UiSkin, action: () -> Unit): GameButton =
         GameButton(
-            assets[TextureAtlasAssets.Ui].findRegion("undo_${skin.resourcePostfix}"),
+            assets[TextureAtlasAssets.Ui].findRegion("${skin.resourcePrefix}_undo"),
             BottomLeft(Vector2(HORIZONTAL_PADDING, VERTICAL_PADDING - 1)),
             action
         ).apply {

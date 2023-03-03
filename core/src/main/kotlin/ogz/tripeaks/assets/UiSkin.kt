@@ -25,7 +25,7 @@ class UiSkin(
     uiFont: BitmapFont,
     textColor: Color,
     emphasisColor: Color,
-    val resourcePostfix: String,
+    val resourcePrefix: String,
     val isDark: Boolean
 ) : Skin(atlas) {
     constructor(assets: AssetManager, cjk: Boolean, dark: Boolean) : this(
@@ -53,26 +53,26 @@ class UiSkin(
         }
 
         button {
-            up = skin["buttonUp_$resourcePostfix"]
-            down = skin["buttonDown_$resourcePostfix"]
-            disabled = skin["buttonDisabled_$resourcePostfix"]
+            up = skin["${resourcePrefix}_buttonUp"]
+            down = skin["${resourcePrefix}_buttonDown"]
+            disabled = skin["${resourcePrefix}_buttonDisabled"]
             pressedOffsetY = -1f
         }
 
         textButton {
-            up = skin["buttonUp_$resourcePostfix"]
-            down = skin["buttonDown_$resourcePostfix"]
-            disabled = skin["buttonDisabled_$resourcePostfix"]
+            up = skin["${resourcePrefix}_buttonUp"]
+            down = skin["${resourcePrefix}_buttonDown"]
+            disabled = skin["${resourcePrefix}_buttonDisabled"]
             font = uiFont
             fontColor = skin[TEXT_COLOR]
             pressedOffsetY = -1f
         }
 
         textButton(MENU_ITEM_BUTTON_STYLE) {
-            up = skin["menuItemUp_$resourcePostfix"]
-            down = skin["menuItemDown_$resourcePostfix"]
-            disabled = skin["menuItemUp_$resourcePostfix"]
-            over = skin["menuItemOver_$resourcePostfix"]
+            up = skin["${resourcePrefix}_menuItemUp"]
+            down = skin["${resourcePrefix}_menuItemDown"]
+            disabled = skin["${resourcePrefix}_menuItemUp"]
+            over = skin["${resourcePrefix}_menuItemOver"]
             font = uiFont
             fontColor = skin[TEXT_COLOR]
         }
@@ -80,12 +80,19 @@ class UiSkin(
         window {
             titleFont = uiFont
             titleFontColor = skin[TEXT_COLOR]
-            background = skin["window_$resourcePostfix"]
+            background = skin["${resourcePrefix}_window"]
         }
 
         checkBox {
-            checkboxOn = skin["checkboxOn_$resourcePostfix"]
-            checkboxOff = skin["checkboxOff_$resourcePostfix"]
+            checkboxOn = skin["${resourcePrefix}_checkboxOn_alt"]
+            checkboxOff = skin["${resourcePrefix}_checkboxOff_alt"]
+            font = uiFont
+            fontColor = skin[TEXT_COLOR]
+        }
+
+        checkBox(RADIO_BUTTON_STYLE) {
+            checkboxOn = skin["${resourcePrefix}_radioButtonOn"]
+            checkboxOff = skin["${resourcePrefix}_radioButtonOff"]
             font = uiFont
             fontColor = skin[TEXT_COLOR]
         }
@@ -94,35 +101,35 @@ class UiSkin(
             font = uiFont
             fontColorSelected = skin[TEXT_COLOR]
             fontColorUnselected = skin[TEXT_COLOR]
-            selection = skin["menuItemDown_$resourcePostfix"]
-            over = skin["menuItemOver_$resourcePostfix"]
-            background = skin["window_$resourcePostfix"]
+            selection = skin["${resourcePrefix}_menuItemDown"]
+            over = skin["${resourcePrefix}_menuItemOver"]
+            background = skin["${resourcePrefix}_window"]
         }
 
         val skinScrollPaneStyle = scrollPane {
-            hScroll = skin["scroll_$resourcePostfix"]
-            hScrollKnob = skin["scrollKnob_$resourcePostfix"]
-            vScroll = skin["scroll_$resourcePostfix"]
-            vScrollKnob = skin["scrollKnob_$resourcePostfix"]
-            corner = skin["menuItemUp_$resourcePostfix"]
+            hScroll = skin["${resourcePrefix}_scroll"]
+            hScrollKnob = skin["${resourcePrefix}_scrollKnob"]
+            vScroll = skin["${resourcePrefix}_scroll"]
+            vScrollKnob = skin["${resourcePrefix}_scrollKnob"]
+            corner = skin["${resourcePrefix}_menuItemUp"]
         }
 
         selectBox {
             font = uiFont
             fontColor = skin[TEXT_COLOR]
-            background = skin["selectBoxUp_$resourcePostfix"]
-            backgroundOpen = skin["selectBoxDown_$resourcePostfix"]
+            background = skin["${resourcePrefix}_selectBoxUp"]
+            backgroundOpen = skin["${resourcePrefix}_selectBoxDown"]
             scrollStyle = skinScrollPaneStyle
             listStyle = skinListStyle
         }
 
         addStyle("default", PopTableStyle().apply {
-            background = skin["window_$resourcePostfix"]
+            background = skin["${resourcePrefix}_window"]
             // stageBackground = skin["overlay_$resourcePostfix"]
         })
 
         addStyle("menu", PopTableStyle().apply {
-            background = skin["window_$resourcePostfix"]
+            background = skin["${resourcePrefix}_window"]
         })
     }
 
@@ -131,5 +138,6 @@ class UiSkin(
         private const val EMPHASIS_COLOR = "emphasisColor"
         const val TITLE_LABEL_STYLE = "title"
         const val MENU_ITEM_BUTTON_STYLE = "menuItem"
+        const val RADIO_BUTTON_STYLE = "radioButton"
     }
 }
