@@ -177,7 +177,7 @@ class GameScreen(private val context: Context) : KtxScreen {
                 for (columnOffset in 0 downTo -1) {
                     val socket = layout.lookup(column + columnOffset, row + rowOffset)
                     if (socket != null && gameState.take(socket.index)) {
-                        openSocket(gameState, socket)
+                        openSocket(socket, gameState)
                         if (!checkIfWon(gameState)) checkIfStalled(gameState)
                         return
                     }
@@ -216,22 +216,25 @@ class GameScreen(private val context: Context) : KtxScreen {
         return false
     }
 
-    private fun openSocket(gameState: GameState, socket: Socket) {
-        val card = gameState.socketState(socket.index).card
-        val view = cards.find { it.card == card }
-        val layout = gameState.gameLayout
-        view?.apply {
-            update(gameState)
-            animations.add(animationViewPool.obtain().apply {
-                set(card, view.x, view.y)
-            })
+    private fun openSocket(socket: Socket, game: GameState) {
+        val card = game.socketState(socket.index).card
+        val view = updateSocket(socket, game)
+        animations.add(animationViewPool.obtain().apply {
+            set(card, view.x, view.y)
+        })
+        undoButton.enabled = game.canUndo
+    }
+
+    private fun updateSocket(socket: Socket, game: GameState): CardView {
+        val card = game.socketState(socket.index).card
+        val view = cards.find { it.card == card }!!
+        view.update(game)
+        val blocked = game.gameLayout[socket.index].blocks
+        for (socketIndex in blocked) {
+            val blockedCard = game.socketState(socketIndex).card
+            cards.find { it.card == blockedCard }?.update(game)
         }
-        val blocked = layout[socket.index].blocks
-        for (s in blocked) {
-            val blockedCard = gameState.socketState(s).card
-            cards.find { it.card == blockedCard }?.update(gameState)
-        }
-        undoButton.enabled = gameState.canUndo
+        return view
     }
 
     private fun winDialogCallback(result: WinDialogResult) {
@@ -322,7 +325,7 @@ class GameScreen(private val context: Context) : KtxScreen {
             skin,
             empty,
             this::onMenuShown,
-            this::onMenuHidden,
+            this::onDialogHidden,
             listOf(
                 Pair("New Game", this::newGameAction),
                 Pair("Menu item 2") { println("Menu item 2") },
@@ -342,11 +345,6 @@ class GameScreen(private val context: Context) : KtxScreen {
             dealButton.enabled = game.canDeal
             undoButton.enabled = game.canUndo
         }
-    }
-
-    private fun printStatistics() {
-        val stats = playerStatistics.get()
-        logger.info("Played: ${stats.played}, Won: ${stats.won}")
     }
 
     /** Menu action for new game item. */
@@ -373,25 +371,14 @@ class GameScreen(private val context: Context) : KtxScreen {
     }
 
     private fun undo() {
-        play?.let { gameState ->
-            val target = gameState.undo()
-            dealButton.enabled = gameState.canDeal
-            undoButton.enabled = gameState.canUndo
-
+        play?.let { game ->
+            val target = game.undo()
+            dealButton.enabled = game.canDeal
+            undoButton.enabled = game.canUndo
             when (target) {
                 Int.MIN_VALUE -> {}
                 -1 -> {}
-                else -> {
-                    // TODO: This repeats on onTouch method too
-                    val socket = gameState.gameLayout[target]
-                    val card = gameState.socketState(socket.index).card
-                    cards.find { it.card == card }?.update(gameState)
-                    val blocked = gameState.gameLayout[socket.index].blocks
-                    for (s in blocked) {
-                        val blockedCard = gameState.socketState(s).card
-                        cards.find { it.card == blockedCard }?.update(gameState)
-                    }
-                }
+                else -> updateSocket(game.gameLayout[target], game)
             }
         }
     }
@@ -432,12 +419,6 @@ class GameScreen(private val context: Context) : KtxScreen {
         dialog.show(uiStage)
     }
 
-    private fun onMenuHidden() {
-        touchHandler.silent = false
-        touchHandler.dialog = null
-        renderHelper.blurred = false
-    }
-
     private fun onDialogShown(dialog: PopTable) {
         touchHandler.silent = true
         touchHandler.dialog = dialog
@@ -447,7 +428,7 @@ class GameScreen(private val context: Context) : KtxScreen {
     private fun onMenuShown(menu: PopTable) {
         touchHandler.silent = true
         touchHandler.dialog = menu
-        renderHelper.blurred = true
+        renderHelper.blurred = false
     }
 
     private fun onDialogHidden() {
