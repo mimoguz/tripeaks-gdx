@@ -4,13 +4,6 @@ size: 128, 128
 format: RGBA8888
 filter: Nearest, Nearest
 repeat: none
-checkboxOff.png
-  rotate: false
-  xy: 2, 89
-  size: 25, 11
-  orig: 25, 11
-  offset: 0, 0
-  index: -1
 dark_buttonDisabled
   rotate: false
   xy: 92, 110
@@ -75,7 +68,7 @@ dark_deal
   index: -1
 dark_line
   rotate: false
-  xy: 53, 60
+  xy: 22, 86
   size: 3, 1
   split: 1, 1, 0, 1
   pad: 1, 1, 0, 0
@@ -91,7 +84,7 @@ dark_menu
   index: -1
 dark_menuItemDown
   rotate: false
-  xy: 89, 61
+  xy: 117, 69
   size: 7, 7
   split: 3, 3, 3, 3
   pad: 3, 3, 3, 3
@@ -100,7 +93,7 @@ dark_menuItemDown
   index: -1
 dark_menuItemOver
   rotate: false
-  xy: 84, 43
+  xy: 35, 26
   size: 7, 7
   split: 3, 3, 3, 3
   pad: 3, 3, 3, 3
@@ -109,7 +102,7 @@ dark_menuItemOver
   index: -1
 dark_menuItemUp
   rotate: false
-  xy: 73, 50
+  xy: 108, 61
   size: 7, 7
   split: 3, 3, 3, 3
   pad: 3, 3, 3, 3
@@ -118,7 +111,7 @@ dark_menuItemUp
   index: -1
 dark_options
   rotate: false
-  xy: 82, 52
+  xy: 97, 67
   size: 9, 7
   orig: 9, 7
   offset: 0, 0
@@ -128,6 +121,13 @@ dark_overlay
   xy: 35, 35
   size: 8, 8
   orig: 8, 8
+  offset: 0, 0
+  index: -1
+dark_radioButtonOff
+  rotate: false
+  xy: 20, 6
+  size: 11, 11
+  orig: 11, 11
   offset: 0, 0
   index: -1
 dark_radioButtonOffDisabled
@@ -144,23 +144,16 @@ dark_radioButtonOn
   orig: 11, 11
   offset: 0, 0
   index: -1
-dark_radioButtonOff
-  rotate: false
-  xy: 22, 32
-  size: 11, 11
-  orig: 11, 11
-  offset: 0, 0
-  index: -1
 dark_radioButtonOnDisabled
   rotate: false
-  xy: 20, 6
+  xy: 53, 50
   size: 11, 11
   orig: 11, 11
   offset: 0, 0
   index: -1
 dark_scroll
   rotate: false
-  xy: 45, 36
+  xy: 97, 86
   size: 8, 8
   split: 3, 3, 3, 3
   pad: 3, 3, 3, 3
@@ -196,7 +189,7 @@ dark_selectBoxUp
   index: -1
 dark_stats
   rotate: false
-  xy: 58, 59
+  xy: 53, 41
   size: 9, 7
   orig: 9, 7
   offset: 0, 0
@@ -244,6 +237,13 @@ light_buttonUp
   orig: 16, 16
   offset: 0, 0
   index: -1
+light_checkboxOff
+  rotate: false
+  xy: 2, 89
+  size: 25, 11
+  orig: 25, 11
+  offset: 0, 0
+  index: -1
 light_checkboxOff_alt
   rotate: false
   xy: 71, 70
@@ -274,7 +274,7 @@ light_deal
   index: -1
 light_line
   rotate: false
-  xy: 22, 86
+  xy: 49, 112
   size: 3, 1
   orig: 3, 1
   offset: 0, 0
@@ -288,7 +288,7 @@ light_menu
   index: -1
 light_menuItemDown
   rotate: false
-  xy: 75, 41
+  xy: 117, 60
   size: 7, 7
   split: 3, 3, 3, 3
   pad: 3, 3, 3, 3
@@ -297,7 +297,7 @@ light_menuItemDown
   index: -1
 light_menuItemOver
   rotate: false
-  xy: 64, 50
+  xy: 118, 78
   size: 7, 7
   split: 3, 3, 3, 3
   pad: 3, 3, 3, 3
@@ -306,7 +306,7 @@ light_menuItemOver
   index: -1
 light_menuItemUp
   rotate: false
-  xy: 69, 59
+  xy: 108, 70
   size: 7, 7
   split: 3, 3, 3, 3
   pad: 3, 3, 3, 3
@@ -315,14 +315,14 @@ light_menuItemUp
   index: -1
 light_options
   rotate: false
-  xy: 78, 61
+  xy: 107, 79
   size: 9, 7
   orig: 9, 7
   offset: 0, 0
   index: -1
 light_overlay
   rotate: false
-  xy: 65, 40
+  xy: 118, 87
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
@@ -357,7 +357,7 @@ light_radioButtonOnDisabled
   index: -1
 light_scroll
   rotate: false
-  xy: 55, 40
+  xy: 97, 76
   size: 8, 8
   split: 3, 3, 3, 3
   pad: 3, 3, 3, 3
@@ -393,7 +393,7 @@ light_selectBoxUp
   index: -1
 light_stats
   rotate: false
-  xy: 53, 50
+  xy: 107, 88
   size: 9, 7
   orig: 9, 7
   offset: 0, 0
