@@ -92,7 +92,9 @@ class UiSkin(
 
         checkBox(RADIO_BUTTON_STYLE) {
             checkboxOn = skin["${resourcePrefix}_radioButtonOn"]
+            checkboxOnDisabled = skin["${resourcePrefix}_radioButtonOnDisabled"]
             checkboxOff = skin["${resourcePrefix}_radioButtonOff"]
+            checkboxOffDisabled = skin["${resourcePrefix}_radioButtonOffDisabled"]
             font = uiFont
             fontColor = skin[TEXT_COLOR]
         }

@@ -25,6 +25,7 @@ class StalledDialog(
         val radio1 = CheckBox("Radio 1", skin, UiSkin.RADIO_BUTTON_STYLE).apply {
             isChecked = true
             labelCell.spaceLeft(4f)
+            isDisabled = true
         }
         val radio2 = CheckBox("Radio 2", skin).apply {
             labelCell.spaceLeft(4f)
