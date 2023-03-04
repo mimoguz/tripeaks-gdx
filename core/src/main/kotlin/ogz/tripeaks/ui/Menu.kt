@@ -9,6 +9,7 @@ import ogz.tripeaks.screens.Constants.VERTICAL_PADDING
 class Menu(skin: UiSkin, actions: List<Pair<String, () -> Unit>>) :
     PopTable(skin["menu", PopTableStyle::class.java]) {
     init {
+        isHideOnUnfocus = true
         pad(
             VERTICAL_PADDING,
             VERTICAL_PADDING,

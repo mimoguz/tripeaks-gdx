@@ -56,7 +56,8 @@ class GameScreen(private val context: Context) : KtxScreen {
     private val viewport = context.inject<CustomViewport>()
 
     private val ui = GameUi()
-    private val cards = GdxArray<CardView>(false, 32)
+    // Cards collection must keep its order.
+    private val cards = GdxArray<CardView>(true, 32)
     private val stack = StackView()
     private val discard = DiscardView()
     private val animations = GdxArray<AnimationView>(false, 16)
@@ -218,14 +219,14 @@ class GameScreen(private val context: Context) : KtxScreen {
 
     private fun openSocket(socket: Socket, game: GameState) {
         val card = game.socketState(socket.index).card
-        val view = updateSocket(socket, game)
+        val view = updateViewsAround(socket, game)
         animations.add(animationViewPool.obtain().apply {
             set(card, view.x, view.y)
         })
         undoButton.enabled = game.canUndo
     }
 
-    private fun updateSocket(socket: Socket, game: GameState): CardView {
+    private fun updateViewsAround(socket: Socket, game: GameState): CardView {
         val card = game.socketState(socket.index).card
         val view = cards.find { it.card == card }!!
         view.update(game)
@@ -378,7 +379,7 @@ class GameScreen(private val context: Context) : KtxScreen {
             when (target) {
                 Int.MIN_VALUE -> {}
                 -1 -> {}
-                else -> updateSocket(game.gameLayout[target], game)
+                else -> updateViewsAround(game.gameLayout[target], game)
             }
         }
     }

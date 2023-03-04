@@ -11,7 +11,7 @@ class TouchHandler(private val messageBox: MessageBox) : InputAdapter() {
     var dialog: PopTable? = null
 
     override fun touchDown(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
-        if (silent) {
+        if (silent && (dialog?.isHideOnUnfocus == true)) {
             dialog?.hide()
             dialog = null
         } else {

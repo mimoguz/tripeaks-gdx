@@ -47,9 +47,9 @@ dark_checkboxOff
   index: -1
 dark_checkboxOff_alt
   rotate: false
-  xy: 70, 34
-  size: 13, 13
-  orig: 13, 13
+  xy: 71, 70
+  size: 11, 11
+  orig: 11, 11
   offset: 0, 0
   index: -1
 dark_checkboxOn
@@ -61,9 +61,9 @@ dark_checkboxOn
   index: -1
 dark_checkboxOn_alt
   rotate: false
-  xy: 22, 30
-  size: 13, 13
-  orig: 13, 13
+  xy: 101, 97
+  size: 11, 11
+  orig: 11, 11
   offset: 0, 0
   index: -1
 dark_deal
@@ -75,7 +75,7 @@ dark_deal
   index: -1
 dark_line
   rotate: false
-  xy: 49, 98
+  xy: 22, 86
   size: 3, 1
   split: 1, 1, 0, 1
   pad: 1, 1, 0, 0
@@ -84,14 +84,14 @@ dark_line
   index: -1
 dark_menu
   rotate: false
-  xy: 55, 48
+  xy: 62, 96
   size: 9, 13
   orig: 9, 13
   offset: 0, 0
   index: -1
 dark_menuItemDown
   rotate: false
-  xy: 60, 93
+  xy: 53, 54
   size: 7, 7
   split: 3, 3, 3, 3
   pad: 3, 3, 3, 3
@@ -100,7 +100,7 @@ dark_menuItemDown
   index: -1
 dark_menuItemOver
   rotate: false
-  xy: 92, 2
+  xy: 97, 87
   size: 7, 7
   split: 3, 3, 3, 3
   pad: 3, 3, 3, 3
@@ -109,7 +109,7 @@ dark_menuItemOver
   index: -1
 dark_menuItemUp
   rotate: false
-  xy: 60, 84
+  xy: 53, 45
   size: 7, 7
   split: 3, 3, 3, 3
   pad: 3, 3, 3, 3
@@ -118,35 +118,35 @@ dark_menuItemUp
   index: -1
 dark_options
   rotate: false
-  xy: 81, 2
+  xy: 42, 37
   size: 9, 7
   orig: 9, 7
   offset: 0, 0
   index: -1
 dark_overlay
   rotate: false
-  xy: 51, 8
+  xy: 20, 26
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
   index: -1
-dark_radioButtonOff
-  rotate: false
-  xy: 50, 18
-  size: 13, 13
-  orig: 13, 13
-  offset: 0, 0
-  index: -1
 dark_radioButtonOn
   rotate: false
-  xy: 35, 15
-  size: 13, 13
-  orig: 13, 13
+  xy: 84, 83
+  size: 11, 11
+  orig: 11, 11
+  offset: 0, 0
+  index: -1
+dark_radioButtonOff
+  rotate: false
+  xy: 84, 83
+  size: 11, 11
+  orig: 11, 11
   offset: 0, 0
   index: -1
 dark_scroll
   rotate: false
-  xy: 61, 8
+  xy: 20, 16
   size: 8, 8
   split: 3, 3, 3, 3
   pad: 3, 3, 3, 3
@@ -182,14 +182,14 @@ dark_selectBoxUp
   index: -1
 dark_stats
   rotate: false
-  xy: 20, 6
+  xy: 84, 74
   size: 9, 7
   orig: 9, 7
   offset: 0, 0
   index: -1
 dark_undo
   rotate: false
-  xy: 79, 20
+  xy: 87, 96
   size: 12, 12
   orig: 12, 12
   offset: 0, 0
@@ -232,9 +232,9 @@ light_buttonUp
   index: -1
 light_checkboxOff_alt
   rotate: false
-  xy: 40, 33
-  size: 13, 13
-  orig: 13, 13
+  xy: 58, 68
+  size: 11, 11
+  orig: 11, 11
   offset: 0, 0
   index: -1
 light_checkboxOn
@@ -246,35 +246,35 @@ light_checkboxOn
   index: -1
 light_checkboxOn_alt
   rotate: false
-  xy: 55, 33
-  size: 13, 13
-  orig: 13, 13
+  xy: 71, 83
+  size: 11, 11
+  orig: 11, 11
   offset: 0, 0
   index: -1
 light_deal
   rotate: false
-  xy: 58, 64
+  xy: 40, 46
   size: 11, 15
   orig: 11, 15
   offset: 0, 0
   index: -1
 light_line
   rotate: false
-  xy: 54, 98
+  xy: 49, 112
   size: 3, 1
   orig: 3, 1
   offset: 0, 0
   index: -1
 light_menu
   rotate: false
-  xy: 66, 49
+  xy: 60, 81
   size: 9, 13
   orig: 9, 13
   offset: 0, 0
   index: -1
 light_menuItemDown
   rotate: false
-  xy: 92, 11
+  xy: 53, 36
   size: 7, 7
   split: 3, 3, 3, 3
   pad: 3, 3, 3, 3
@@ -283,7 +283,7 @@ light_menuItemDown
   index: -1
 light_menuItemOver
   rotate: false
-  xy: 42, 6
+  xy: 33, 36
   size: 7, 7
   split: 3, 3, 3, 3
   pad: 3, 3, 3, 3
@@ -292,7 +292,7 @@ light_menuItemOver
   index: -1
 light_menuItemUp
   rotate: false
-  xy: 59, 102
+  xy: 30, 8
   size: 7, 7
   split: 3, 3, 3, 3
   pad: 3, 3, 3, 3
@@ -301,35 +301,35 @@ light_menuItemUp
   index: -1
 light_options
   rotate: false
-  xy: 81, 11
+  xy: 30, 27
   size: 9, 7
   orig: 9, 7
   offset: 0, 0
   index: -1
 light_overlay
   rotate: false
-  xy: 49, 101
+  xy: 30, 17
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
   index: -1
 light_radioButtonOff
   rotate: false
-  xy: 40, 48
-  size: 13, 13
-  orig: 13, 13
+  xy: 49, 98
+  size: 11, 11
+  orig: 11, 11
   offset: 0, 0
   index: -1
 light_radioButtonOn
   rotate: false
-  xy: 20, 15
-  size: 13, 13
-  orig: 13, 13
+  xy: 114, 97
+  size: 11, 11
+  orig: 11, 11
   offset: 0, 0
   index: -1
 light_scroll
   rotate: false
-  xy: 71, 9
+  xy: 20, 6
   size: 8, 8
   split: 3, 3, 3, 3
   pad: 3, 3, 3, 3
@@ -365,14 +365,14 @@ light_selectBoxUp
   index: -1
 light_stats
   rotate: false
-  xy: 31, 6
+  xy: 22, 36
   size: 9, 7
   orig: 9, 7
   offset: 0, 0
   index: -1
 light_undo
   rotate: false
-  xy: 65, 19
+  xy: 73, 96
   size: 12, 12
   orig: 12, 12
   offset: 0, 0
