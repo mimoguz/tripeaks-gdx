@@ -11,7 +11,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.Logger
 import com.ray3k.stripe.PopTable
-import com.ray3k.stripe.PopTable.PopTableStyle
 import ktx.app.KtxScreen
 import ktx.assets.disposeSafely
 import ktx.collections.GdxArray
@@ -39,7 +38,6 @@ import ogz.tripeaks.services.PersistenceService
 import ogz.tripeaks.services.PlayerStatisticsService
 import ogz.tripeaks.services.Receiver
 import ogz.tripeaks.services.SettingsService
-import ogz.tripeaks.ui.GameUi
 import ogz.tripeaks.services.Message.Companion as Msg
 
 class GameScreen(private val context: Context) : KtxScreen {
@@ -141,7 +139,7 @@ class GameScreen(private val context: Context) : KtxScreen {
         uiStage.viewport.update(width, height, true)
         stack.move(viewport.worldWidth)
         discard.move(viewport.worldWidth)
-        ui.update(viewport.worldWidth, viewport.worldHeight)
+        ui.resize(viewport.worldWidth, viewport.worldHeight)
         renderHelper.update()
     }
 

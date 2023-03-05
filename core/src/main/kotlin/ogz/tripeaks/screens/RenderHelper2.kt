@@ -10,23 +10,16 @@ import com.badlogic.gdx.utils.Disposable
 import com.badlogic.gdx.utils.viewport.Viewport
 import ktx.app.clearScreen
 import ktx.assets.disposeSafely
-import ktx.collections.GdxArray
 import ktx.graphics.use
-import ogz.tripeaks.game.AnimationView
-import ogz.tripeaks.game.CardView
-import ogz.tripeaks.game.DiscardView
-import ogz.tripeaks.game.StackView
+import ogz.tripeaks.game.GameView
 import ogz.tripeaks.services.SettingsService
 
-class RenderHelper(
+class RenderHelper2(
     private val batch: SpriteBatch,
     private val viewport: Viewport,
     private val settings: SettingsService,
-    private val cards: GdxArray<CardView>,
-    private val animations: GdxArray<AnimationView>,
-    private val discard: DiscardView,
-    private val stack: StackView,
-    var ui: GameUi? = null
+    private val ui: GameUi,
+    private val view: GameView
 ) : Disposable {
     private var renderMethod = this::renderScreen
 
@@ -56,17 +49,9 @@ class RenderHelper(
         batch.shader = settings.get().animationStrategy.shaderProgram
         batch.enableBlending()
         batch.use { batch ->
+            view.draw(batch, currentSettings)
             batch.color = Color.WHITE
-            stack.draw(batch, currentSettings.spriteSet, currentSettings.drawingStrategy)
-            discard.draw(batch, currentSettings.spriteSet)
-            for (card in cards) {
-                card.draw(batch, currentSettings.spriteSet, currentSettings.drawingStrategy)
-            }
-            for (anim in animations) {
-                anim.draw(batch, currentSettings.spriteSet)
-            }
-            batch.color = Color.WHITE
-            ui?.draw(batch, currentSettings.spriteSet)
+            ui.draw(batch, currentSettings.spriteSet)
         }
         frameBuffer.end(
             viewport.screenX,

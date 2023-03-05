@@ -2,12 +2,13 @@ package ogz.tripeaks.game
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import ktx.collections.GdxArray
+import ktx.collections.gdxIntArrayOf
 import ktx.collections.sortBy
 import ogz.tripeaks.models.GameState
 import ogz.tripeaks.models.Settings
 import ogz.tripeaks.models.layout.Socket
 
-class GameView(game: GameState, private var worldWidth: Float) {
+class GameView(game: GameState?, private var worldWidth: Float) {
     private val cards = GdxArray<CardView>(true, 32)
     private val animations = GdxArray<AnimationView>(false, 16)
     private val finishedAnimations = GdxArray<AnimationView>(false, 16)
@@ -16,26 +17,32 @@ class GameView(game: GameState, private var worldWidth: Float) {
     private val cardPool = CardViewPool()
     private val animationPool = AnimationViewPool()
 
-    var currentGame: GameState = game
+    var currentGame: GameState? = game
         set(value) {
             field = value
 
-            stack.stack = value.stack
-            stack.move(worldWidth)
+            if (value != null) {
+                stack.stack = value.stack
+                discard.discard = value.discard
 
-            discard.discard = value.discard
-            discard.move(worldWidth)
-
-            cards.clear()
-            val layout = value.gameLayout
-            for (socketIndex in 0 until layout.numberOfSockets) {
-                val view = cardPool.obtain().apply {
-                    this.put(value.socketState(socketIndex).card, layout[socketIndex], layout)
-                    update(value)
+                cards.clear()
+                val layout = value.gameLayout
+                for (socketIndex in 0 until layout.numberOfSockets) {
+                    val view = cardPool.obtain().apply {
+                        this.put(value.socketState(socketIndex).card, layout[socketIndex], layout)
+                        update(value)
+                    }
+                    cards.add(view)
                 }
-                cards.add(view)
+                cards.sortBy { it.socket?.z ?: 0 }
+            } else {
+                cards.clear()
+                stack.stack = gdxIntArrayOf()
+                discard.discard = gdxIntArrayOf()
             }
-            cards.sortBy { it.socket?.z ?: 0 }
+
+            stack.move(worldWidth)
+            discard.move(worldWidth)
         }
 
     fun update(deltaTime: Float, settings: Settings) {
@@ -59,12 +66,12 @@ class GameView(game: GameState, private var worldWidth: Float) {
         finishedAnimations.clear()
     }
 
-    private fun syncSocket(socket: Socket) {
-        val view = updateViewsAround(socket)
-        if (currentGame.socketState(socket.index).isEmpty) {
-            animations.add(animationPool.obtain().apply {
-                set(view.card, view.x, view.y)
-            })
+    fun syncSocket(socket: Socket) {
+        currentGame?.let { game ->
+            val view = updateViewsAround(socket, game)
+            if (game.socketState(socket.index).isEmpty) {
+                animations.add(animationPool.obtain().apply { set(view.card, view.x, view.y) })
+            }
         }
     }
 
@@ -74,14 +81,14 @@ class GameView(game: GameState, private var worldWidth: Float) {
         discard.move(worldWidth)
     }
 
-    private fun updateViewsAround(socket: Socket): CardView {
-        val card = currentGame.socketState(socket.index).card
+    private fun updateViewsAround(socket: Socket, game: GameState): CardView {
+        val card = game.socketState(socket.index).card
         val view = cards.find { it.card == card }!!
-        view.update(currentGame)
-        val blocked = currentGame.gameLayout[socket.index].blocks
+        view.update(game)
+        val blocked = game.gameLayout[socket.index].blocks
         for (socketIndex in blocked) {
-            val blockedCard = currentGame.socketState(socketIndex).card
-            cards.find { it.card == blockedCard }?.update(currentGame)
+            val blockedCard = game.socketState(socketIndex).card
+            cards.find { it.card == blockedCard }?.update(game)
         }
         return view
     }

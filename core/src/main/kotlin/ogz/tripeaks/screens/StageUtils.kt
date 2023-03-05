@@ -15,7 +15,7 @@ import ogz.tripeaks.screens.Constants.VERTICAL_PADDING
 import ogz.tripeaks.ui.Menu
 import ogz.tripeaks.ui.BottomLeft
 import ogz.tripeaks.ui.BottomRight
-import ogz.tripeaks.ui.GameButton
+import ogz.tripeaks.ui.TableButton
 import ogz.tripeaks.ui.TopRight
 
 class StageUtils(private val assets: AssetManager, private val stage: Stage) {
@@ -25,8 +25,8 @@ class StageUtils(private val assets: AssetManager, private val stage: Stage) {
         onShow: (Menu) -> Unit,
         onHide: () -> Unit,
         actions: List<Pair<String, () -> Unit>>
-    ): GameButton =
-        GameButton(
+    ): TableButton =
+        TableButton(
             assets[TextureAtlasAssets.Ui].findRegion("${skin.resourcePrefix}_menu"),
             TopRight(Vector2(HORIZONTAL_PADDING, VERTICAL_PADDING))
         ) {
@@ -54,8 +54,8 @@ class StageUtils(private val assets: AssetManager, private val stage: Stage) {
             setSize(CARD_WIDTH, CARD_WIDTH)
         }
 
-    fun dealButton(skin: UiSkin, action: () -> Unit): GameButton =
-        GameButton(
+    fun dealButton(skin: UiSkin, action: () -> Unit): TableButton =
+        TableButton(
             assets[TextureAtlasAssets.Ui].findRegion("${skin.resourcePrefix}_deal"),
             BottomRight(Vector2(HORIZONTAL_PADDING, VERTICAL_PADDING - 1)),
             action
@@ -63,8 +63,8 @@ class StageUtils(private val assets: AssetManager, private val stage: Stage) {
             setSize(CARD_WIDTH, CARD_HEIGHT)
         }
 
-    fun undoButton(skin: UiSkin, action: () -> Unit): GameButton =
-        GameButton(
+    fun undoButton(skin: UiSkin, action: () -> Unit): TableButton =
+        TableButton(
             assets[TextureAtlasAssets.Ui].findRegion("${skin.resourcePrefix}_undo"),
             BottomLeft(Vector2(HORIZONTAL_PADDING, VERTICAL_PADDING - 1)),
             action
