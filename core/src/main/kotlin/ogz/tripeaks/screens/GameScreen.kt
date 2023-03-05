@@ -66,11 +66,7 @@ class GameScreen(private val context: Context) : KtxScreen {
     private val renderHelper =
         RenderHelper(batch, viewport, settings, cards, animations, discard, stack)
     private val touchHandler = TouchHandler(messageBox)
-    private val animationSetChangedReceiver =
-        Receiver<Msg.AnimationSetChanged> { onAnimationSetChanged(it) }
-    private val showAllChangedReceiver = Receiver<Msg.ShowAllChanged> { onShowAllChanged(it) }
     private val skinChangedReceiver = Receiver<Msg.SkinChanged> { onSkinChanged(it) }
-    private val spriteSetChangedReceiver = Receiver<Msg.SpriteSetChanged> { onSpriteSetChanged(it) }
     private val touchDownReceiver = Receiver<Msg.TouchDown> { onTouchDown(it) }
     private val touchUpReceiver = Receiver<Msg.TouchUp> { onTouchUp(it) }
     private val stageUtils = StageUtils(assets, uiStage)
@@ -83,10 +79,7 @@ class GameScreen(private val context: Context) : KtxScreen {
     init {
         logger.level = Logger.INFO
 
-        messageBox.register(animationSetChangedReceiver)
-        messageBox.register(showAllChangedReceiver)
         messageBox.register(skinChangedReceiver)
-        messageBox.register(spriteSetChangedReceiver)
         messageBox.register(touchDownReceiver)
         messageBox.register(touchUpReceiver)
 
@@ -136,10 +129,7 @@ class GameScreen(private val context: Context) : KtxScreen {
     }
 
     override fun dispose() {
-        messageBox.unregister(animationSetChangedReceiver)
-        messageBox.unregister(showAllChangedReceiver)
         messageBox.unregister(skinChangedReceiver)
-        messageBox.unregister(spriteSetChangedReceiver)
         messageBox.unregister(touchDownReceiver)
         messageBox.unregister(touchUpReceiver)
         renderHelper.disposeSafely()
@@ -297,15 +287,6 @@ class GameScreen(private val context: Context) : KtxScreen {
         setupStage(settings.get().skin)
     }
 
-    private fun onSpriteSetChanged(msg: Msg.SpriteSetChanged) {
-    }
-
-    private fun onAnimationSetChanged(msg: Msg.AnimationSetChanged) {
-    }
-
-    private fun onShowAllChanged(msg: Msg.ShowAllChanged) {
-    }
-
     private fun setupStage(skin: UiSkin) {
         uiStage.clear()
 
@@ -382,42 +363,6 @@ class GameScreen(private val context: Context) : KtxScreen {
                 else -> updateViewsAround(game.gameLayout[target], game)
             }
         }
-    }
-
-    private fun openDialog() {
-        val skin = settings.get().skin
-        val dialog = PopTable(skin[PopTableStyle::class.java]).apply {
-            add(Label("Dialog test", skin))
-            pad(12f, 12f, 12f, 12f)
-            isHideOnUnfocus = true
-            isModal = true
-            addListener {
-                if (isHidden) {
-                    onDialogHidden()
-                    true
-                } else {
-                    false
-                }
-            }
-        }
-
-//        Dialog("", skin).also { dialog ->
-//            dialog.contentTable.apply {
-//                add(Label("UI test", skin))
-//                pad(4f, 8f, 4f, 8f)
-//            }
-//            dialog.buttonTable.apply {
-//                add(LabelButton(skin, "Close").apply {
-//                    onClick {
-//                        dialog.hide()
-//                        this@GameScreen.touchHandler.slient = false
-//                        this@GameScreen.renderHelper.blurred = false
-//                    }
-//                })
-//            }
-//        }
-        onDialogShown(dialog)
-        dialog.show(uiStage)
     }
 
     private fun onDialogShown(dialog: PopTable) {

@@ -19,13 +19,14 @@ import ogz.tripeaks.screens.Constants.WORLD_HEIGHT
 
 class CardView : Poolable {
     private val position: Vector2 = Vector2(0f, 0f)
-    private var _card: Card = -1
     private var hidden: Boolean = true
     private var open: Boolean = false
-    private var _socket: Socket? = null
 
-    val card: Card
-        get() = _card
+    var card: Card = -1
+        private set
+
+    var socket: Socket? = null
+        private set
 
     val x: Float
         get() = position.x
@@ -33,19 +34,16 @@ class CardView : Poolable {
     val y: Float
         get() = position.y
 
-    val socket: Socket?
-        get() = _socket
-
     fun put(card: Card, socket: Socket, layout: Layout) {
-        this._card = card
-        this._socket = socket
+        this.card = card
+        this.socket = socket
         this.open = layout[socket.index].blockedBy.isEmpty()
         this.hidden = false
         updatePosition(layout)
     }
 
     fun update(game: GameState) {
-        _socket?.let { socket ->
+        socket?.let { socket ->
             hidden = game.isEmpty(socket.index)
             open = game.isOpen(socket.index)
         }
@@ -57,15 +55,15 @@ class CardView : Poolable {
         strategy: CardDrawingStrategy
     ) {
         when {
-            _socket == null -> {}
+            socket == null -> {}
             hidden -> {}
-            open -> strategy.drawFront(batch, _card, sprites, position)
-            else -> strategy.drawBack(batch, _card, sprites, position)
+            open -> strategy.drawFront(batch, card, sprites, position)
+            else -> strategy.drawBack(batch, card, sprites, position)
         }
     }
 
     private fun updatePosition(layout: Layout) {
-        _socket?.let { socket ->
+        socket?.let { socket ->
             val minX = truncate(layout.numberOfColumns * CELL_WIDTH / -2f)
             position.set(
                 minX + socket.column * CELL_WIDTH + CELL_PADDING_LEFT,
@@ -75,10 +73,10 @@ class CardView : Poolable {
     }
 
     override fun reset() {
-        _card = -1
+        card = -1
         hidden = true
         open = false
-        _socket = null
+        socket = null
     }
 
     companion object {
