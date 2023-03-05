@@ -59,11 +59,11 @@ class RenderHelper(
             batch.color = Color.WHITE
             stack.draw(batch, currentSettings.spriteSet, currentSettings.drawingStrategy)
             discard.draw(batch, currentSettings.spriteSet)
-            for (card in cards) {
-                card.draw(batch, currentSettings.spriteSet, currentSettings.drawingStrategy)
+            cards.forEach {
+                it.draw(batch, currentSettings.spriteSet, currentSettings.drawingStrategy)
             }
-            for (anim in animations) {
-                anim.draw(batch, currentSettings.spriteSet)
+            animations.forEach {
+                it.draw(batch, currentSettings.spriteSet)
             }
             batch.color = Color.WHITE
             ui?.draw(batch, currentSettings.spriteSet)

@@ -12,7 +12,7 @@ import ogz.tripeaks.screens.GameScreen
 import ogz.tripeaks.services.PlayerStatisticsService
 import ogz.tripeaks.services.SettingsService
 
-class LoadingScreen(private val game: Main, private val context: Context) : KtxScreen {
+class LoadingScreen(private val app: Main, private val context: Context) : KtxScreen {
 
     private val assets = context.inject<AssetManager>()
 
@@ -35,9 +35,9 @@ class LoadingScreen(private val game: Main, private val context: Context) : KtxS
         context.inject<PlayerStatisticsService>().initialize(context)
         context.inject<SettingsService>().initialize(context)
         val gameScreen = GameScreen(context)
-        game.addScreen(gameScreen)
-        game.setScreen<GameScreen>()
-        game.removeScreen<LoadingScreen>()
+        app.addScreen(gameScreen)
+        app.setScreen<GameScreen>()
+        app.removeScreen<LoadingScreen>()
         Gdx.graphics.requestRendering()
         dispose()
     }

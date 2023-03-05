@@ -22,22 +22,15 @@ class Main : KtxGame<KtxScreen>() {
     private val context = Context()
     private var playerStatistics = PlayerStatisticsService()
     private val settings = SettingsService()
-    private val persistence = PersistenceService()
-    private val messageBox = MessageBox()
-    private val assets = AssetManager()
-    private lateinit var batch: SpriteBatch
-    private lateinit var viewport: CustomViewport
-    private lateinit var uiStage: Stage
 
     override fun create() {
-        batch = SpriteBatch()
-        viewport = CustomViewport(
+        val viewport = CustomViewport(
             MIN_WORLD_WIDTH.toInt(),
             MAX_WORLD_WIDTH.toInt(),
             WORLD_HEIGHT.toInt(),
             OrthographicCamera()
         )
-        uiStage = Stage(
+        val uiStage = Stage(
             CustomViewport(
                 MIN_WORLD_WIDTH.toInt(),
                 MAX_WORLD_WIDTH.toInt(),
@@ -46,16 +39,14 @@ class Main : KtxGame<KtxScreen>() {
             )
         )
         context.apply {
-            bindSingleton(assets)
-            bindSingleton(batch)
-            bindSingleton(messageBox)
-            bindSingleton(persistence)
             bindSingleton(uiStage)
             bindSingleton(viewport)
             bindSingleton(playerStatistics)
             bindSingleton(settings)
-            bindSingleton(CardViewPool())
-            bindSingleton(AnimationViewPool())
+            bindSingleton(AssetManager())
+            bindSingleton(MessageBox())
+            bindSingleton(PersistenceService())
+            bindSingleton(SpriteBatch())
         }
 
         addScreen(LoadingScreen(this, context))

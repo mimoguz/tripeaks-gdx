@@ -17,9 +17,15 @@ class GameUi(
     undoAction: () -> Unit,
     menuAction: () -> Unit
 ) {
+    private val size = Vector2(0f, 0f)
+
+    val width get() = size.x
+
+    val height get() = size.y
+
     val dealButton = TableButton(
         Icon.Deal,
-        Anchor.BottomRight(Vector2(HORIZONTAL_PADDING, VERTICAL_PADDING)),
+        Anchor.BottomRight(Vector2(HORIZONTAL_PADDING, VERTICAL_PADDING - 1f)),
         dealAction
     ).apply {
         setSize(CARD_WIDTH, CARD_HEIGHT, sprites)
@@ -36,8 +42,8 @@ class GameUi(
     }
 
     val undoButton = TableButton(
-        Icon.Menu,
-        Anchor.BottomLeft(Vector2(HORIZONTAL_PADDING, VERTICAL_PADDING)),
+        Icon.Undo,
+        Anchor.BottomLeft(Vector2(HORIZONTAL_PADDING, VERTICAL_PADDING - 1f)),
         undoAction
     ).apply {
         setSize(CARD_WIDTH, CARD_HEIGHT, sprites)
@@ -45,10 +51,6 @@ class GameUi(
     }
 
     private val buttons = listOf(dealButton, undoButton, menuButton)
-
-
-    val size = Vector2(0f, 0f)
-
 
     fun resize(worldWidth: Float, worldHeight: Float) {
         size.set(worldWidth, worldHeight)

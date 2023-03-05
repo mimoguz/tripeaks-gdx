@@ -22,6 +22,11 @@ class TableButton(
             reposition()
         }
 
+    val x get() = bounds.x
+    val y get() = bounds.y
+    val height get() = bounds.height
+    val width get() = bounds.width
+
     fun setSize(w: Float, h: Float, sprites: SpriteSet) {
         bounds.setSize(w, h)
         val tex = icon.get(sprites)
@@ -36,23 +41,23 @@ class TableButton(
     var enabled: Boolean = true
 
     fun reposition() {
-        ui?.let { ui ->
+        ui?.let { gui ->
             when (anchor) {
                 is Anchor.TopRight -> bounds.setPosition(
-                    truncate(ui.size.x / 2f - anchor.point.x - bounds.width),
-                    truncate(ui.size.y / 2f - anchor.point.y - bounds.height)
+                    truncate(gui.width / 2f - anchor.point.x - bounds.width),
+                    truncate(gui.height / 2f - anchor.point.y - bounds.height)
                 )
                 is Anchor.TopLeft -> bounds.setPosition(
-                    truncate(ui.size.x / -2f + anchor.point.x),
-                    truncate(ui.size.y / 2f - anchor.point.y - bounds.height)
+                    truncate(gui.width / -2f + anchor.point.x),
+                    truncate(gui.height / 2f - anchor.point.y - bounds.height)
                 )
                 is Anchor.BottomRight -> bounds.setPosition(
-                    truncate(ui.size.x / 2f - anchor.point.x - bounds.width),
-                    truncate(ui.size.y / -2f + anchor.point.y)
+                    truncate(gui.width / 2f - anchor.point.x - bounds.width),
+                    truncate(gui.height / -2f + anchor.point.y)
                 )
                 is Anchor.BottomLeft -> bounds.setPosition(
-                    truncate(ui.size.x / -2f + anchor.point.x),
-                    truncate(ui.size.y / -2f + anchor.point.y)
+                    truncate(gui.width / -2f + anchor.point.x),
+                    truncate(gui.height / -2f + anchor.point.y)
                 )
             }
         }
