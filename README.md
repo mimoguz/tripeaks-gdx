@@ -1,33 +1,35 @@
-# TriPeaks
+# tripeaks
 
-A simple tri peaks solitaire game using [libGDX](https://libgdx.com/).
+A [libGDX](https://libgdx.com/) project generated with [gdx-liftoff](https://github.com/tommyettinger/gdx-liftoff).
 
-## Screenshots
+This project was generated with a template including simple application launchers and an `ApplicationAdapter` extension that draws libGDX logo.
 
-* [Start screen](fastlane/metadata/android/en-US/images/phoneScreenshots/1.png)
-* [UI](fastlane/metadata/android/en-US/images/phoneScreenshots/2.png)
-* [Options dialog](fastlane/metadata/android/en-US/images/phoneScreenshots/3.png)
-* [A different layout, in dark theme](fastlane/metadata/android/en-US/images/phoneScreenshots/4.png)
-* [Another layout, with all cards visible](fastlane/metadata/android/en-US/images/phoneScreenshots/5.png)
+## Platforms
 
+- `core`: Main module with the application logic shared by all platforms.
+- `lwjgl3`: Primary desktop platform using LWJGL3.
+- `android`: Android mobile platform. Needs Android SDK.
 
-[<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png" alt="Get it on F-Droid" height="80">](https://f-droid.org/packages/ogz.tripeaks)
-[<img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" alt="Get it on Google Play" height="80">](https://play.google.com/store/apps/details?id=ogz.tripeaks&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1)
+## Gradle
 
-## Translations*
+This project uses [Gradle](http://gradle.org/) to manage dependencies.
+The Gradle wrapper was included, so you can run Gradle tasks using `gradlew.bat` or `./gradlew` commands.
+Useful Gradle tasks and flags:
 
-### Currently available in
+- `--continue`: when using this flag, errors will not stop the tasks from running.
+- `--daemon`: thanks to this flag, Gradle daemon will be used to run chosen tasks.
+- `--offline`: when using this flag, cached dependency archives will be used.
+- `--refresh-dependencies`: this flag forces validation of all dependencies. Useful for snapshot versions.
+- `android:lint`: performs Android project validation.
+- `build`: builds sources and archives of every project.
+- `cleanEclipse`: removes Eclipse project data.
+- `cleanIdea`: removes IntelliJ project data.
+- `clean`: removes `build` folders, which store compiled classes and built archives.
+- `eclipse`: generates Eclipse project data.
+- `idea`: generates IntelliJ project data.
+- `lwjgl3:jar`: builds application's runnable jar, which can be found at `lwjgl3/build/libs`.
+- `lwjgl3:run`: starts the application.
+- `test`: runs unit tests (if any).
 
-* Brazilian Portuguese
-* Bulgarian
-* English
-* French
-* German
-* Indonesian
-* Italian  
-* Russian
-* Simplified Chinese
-* Spanish
-* Turkish
-
-*I need help for translations. If you like to, please open an issue in the issue tracker.
+Note that most tasks that are not specific to a single project can be run with `name:` prefix, where the `name` should be replaced with the ID of a specific project.
+For example, `core:clean` removes `build` folder only from the `core` project.

@@ -46,10 +46,3 @@
    boolean reportFixture(long);
    float   reportRayFixture(long, float, float, float, float, float);
 }
-
-# Keep `Companion` object fields of serializable classes.
-# This avoids serializer lookup through `getDeclaredClasses` as done for named companion objects.
--if @kotlinx.serialization.Serializable class **
--keepclassmembers class <1> {
-    static <1>$Companion Companion;
-}
