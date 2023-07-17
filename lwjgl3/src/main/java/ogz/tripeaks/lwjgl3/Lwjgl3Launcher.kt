@@ -1,11 +1,7 @@
 package ogz.tripeaks.lwjgl3
 
-import com.badlogic.gdx.Files
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration
-import java.nio.file.Path
-import java.nio.file.Paths
-import java.util.*
 import ogz.tripeaks.Main
 
 /** Launches the desktop (LWJGL3) application.  */
@@ -25,7 +21,7 @@ object Lwjgl3Launcher {
     //// useful for testing performance, but can also be very stressful to some hardware.
     //// You may also need to configure GPU drivers to fully disable Vsync; this can cause screen tearing.
     private val defaultConfiguration: Lwjgl3ApplicationConfiguration
-        private get() {
+         get() {
             val configuration = Lwjgl3ApplicationConfiguration()
             configuration.setTitle("TriPeaks")
             configuration.useVsync(true)
@@ -41,44 +37,7 @@ object Lwjgl3Launcher {
                 "libgdx32.png",
                 "libgdx16.png"
             )
-            getConfigDirectory()?.let { dir ->
-                configuration.setPreferencesConfig(dir.toAbsolutePath().toString(), Files.FileType.Absolute)
-            }
+            configuration.setConfigDirectory()
             return configuration
         }
-}
-
-
-fun getConfigDirectory(): Path? {
-    val os = System.getProperty("os.name").uppercase(Locale.US)
-
-    val parent = when {
-        os.startsWith("WINDOWS") -> Paths.get(System.getenv("AppData"))
-        os.startsWith("MAC") ->  getUserHome()?.let { Paths.get(it, "Library", "Preferences") }
-        else -> {
-            val configHome = System.getenv("XDG_CONFIG_HOME")
-            if (configHome != null && configHome.isNotBlank()) Paths.get(configHome)
-            else getUserHome()?.let { Paths.get(it, ".config") }
-        }
-    }
-
-    if (parent != null) {
-        val path = Paths.get(parent.toAbsolutePath().toString(), "TriPeaks-GDX")
-        val dir = path.toFile()
-        if (!dir.exists()) {
-            try {
-                dir.mkdirs()
-            } catch (e: Exception) {
-                return null
-            }
-        }
-        return if (dir.isDirectory) path else null
-    }
-
-    return null
-}
-
-fun getUserHome(): String? {
-    val home = System.getProperty("user.home")
-    return if (home != null && home.isNotBlank()) home else null
 }
