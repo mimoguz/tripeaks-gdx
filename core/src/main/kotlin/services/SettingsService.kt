@@ -78,7 +78,7 @@ class SavedSettings(
         darkTheme = false,
         backDesign = 0,
         layout = Layouts.Diamonds,
-        animation = AnimationStrategies.Blink,
+        animation = AnimationStrategies.Dissolve,
         drawingStrategy = DrawingStrategies.BackVisible,
         emptyDiscard = false
     )
