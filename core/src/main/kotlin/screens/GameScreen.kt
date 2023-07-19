@@ -257,6 +257,7 @@ class GameScreen(private val context: Context) : KtxScreen {
             playerStatistics.addWin(gameSt.statistics)
             val dialog = WinDialog(
                 settings.get().skin,
+                assets,
                 gameSt.statistics,
                 this::winDialogCallback
             )
