@@ -37,7 +37,7 @@ sealed interface AnimationStrategy {
                 scale: Vector2
             ): Boolean {
                 val normalizedTime = (time / DISSOLVE_TIME).coerceAtMost(1f)
-                position.y = -1.2f * deltaTime * WORLD_HEIGHT
+                position.y = position.y - 1.2f * deltaTime * WORLD_HEIGHT
                 scale.set(
                     1f - normalizedTime * 0.10f,
                     1f + normalizedTime * 1.2f
