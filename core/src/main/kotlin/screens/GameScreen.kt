@@ -10,6 +10,8 @@ import com.ray3k.stripe.PopTable
 import ktx.app.KtxScreen
 import ktx.assets.disposeSafely
 import ktx.inject.Context
+import ogz.tripeaks.assets.BundleAssets
+import ogz.tripeaks.assets.get
 import ogz.tripeaks.game.GameView
 import ogz.tripeaks.graphics.CustomViewport
 import ogz.tripeaks.models.GameState
@@ -17,6 +19,8 @@ import ogz.tripeaks.screens.Constants.CELL_HEIGHT
 import ogz.tripeaks.screens.Constants.CELL_WIDTH
 import ogz.tripeaks.screens.Constants.HORIZONTAL_PADDING
 import ogz.tripeaks.screens.Constants.VERTICAL_PADDING
+import ogz.tripeaks.screens.stage.OptionsDialog
+import ogz.tripeaks.screens.stage.OptionsDialogResult
 import ogz.tripeaks.screens.stage.StalledDialog
 import ogz.tripeaks.screens.stage.StalledDialogResult
 import ogz.tripeaks.screens.stage.WinDialog
@@ -57,7 +61,8 @@ class GameScreen(private val context: Context) : KtxScreen {
     private val renderer = RenderHelper2(batch, viewport, settings, ui, view)
     private val menuActions = listOf(
         Pair("New Game", this::newGameAction),
-        Pair("Exit", this::exitAction)
+        Pair("Exit", this::exitAction),
+        Pair(assets[BundleAssets.Bundle]["options"], this::showOptionsDialogAction)
     )
 
     // ************************************************************************
@@ -171,19 +176,28 @@ class GameScreen(private val context: Context) : KtxScreen {
     // ************************************************************************
     // CALLBACKS
     // ************************************************************************
-    private fun stalledDialogCallback(result: StalledDialogResult) {
+    private fun optionsDialogCallback(result: OptionsDialogResult) {
         onDialogHidden()
+        when (result) {
+            is OptionsDialogResult.Types.Return -> {
+                // Do nothing
+            }
+            is OptionsDialogResult.Types.Apply -> settings.update(result.settingsData)
+        }
+    }
+
+    private fun stalledDialogCallback(result: StalledDialogResult) {
         when (result) {
             StalledDialogResult.NEW_GAME -> {
                 game?.let { playerStatistics.addLose(it.statistics) }
                 startNewGame()
             }
+
             StalledDialogResult.RETURN -> {}
         }
     }
 
     private fun winDialogCallback(result: WinDialogResult) {
-        onDialogHidden()
         when (result) {
             WinDialogResult.NEW_GAME -> startNewGame()
             WinDialogResult.EXIT -> Gdx.app.exit()
@@ -204,6 +218,17 @@ class GameScreen(private val context: Context) : KtxScreen {
 
     private fun exitAction() {
         Gdx.app.exit()
+    }
+
+    private fun showOptionsDialogAction() {
+        val optionsDialog = OptionsDialog(
+            settings.get().skin,
+            assets,
+            settings.getData(),
+            this::optionsDialogCallback
+        )
+        onDialogShown(optionsDialog)
+        optionsDialog.show(stage)
     }
 
     private fun undoAction() {
@@ -233,7 +258,7 @@ class GameScreen(private val context: Context) : KtxScreen {
         menu.apply {
             addListener {
                 if (isHidden) {
-                    onDialogHidden()
+                    onMenuHidden()
                     true
                 } else {
                     false
@@ -246,7 +271,6 @@ class GameScreen(private val context: Context) : KtxScreen {
             stage.width - menu.width - HORIZONTAL_PADDING,
             stage.height - menu.height - ui.menuButton.height - 2f * VERTICAL_PADDING
         )
-        println("-")
     }
 
     // ************************************************************************
@@ -285,6 +309,16 @@ class GameScreen(private val context: Context) : KtxScreen {
     }
 
     private fun onDialogShown(dialog: PopTable) {
+        dialog.apply {
+            addListener {
+                if (isHidden) {
+                    onDialogHidden()
+                    true
+                } else {
+                    false
+                }
+            }
+        }
         touchHandler.silent = true
         touchHandler.dialog = dialog
         renderer.blurred = true
@@ -300,6 +334,11 @@ class GameScreen(private val context: Context) : KtxScreen {
         touchHandler.silent = false
         touchHandler.dialog = null
         renderer.blurred = false
+    }
+
+    private fun onMenuHidden() {
+        touchHandler.silent = false
+        touchHandler.dialog = null
     }
 
     private fun setupGame(gameSt: GameState) {

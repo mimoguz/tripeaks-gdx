@@ -26,33 +26,33 @@ class SettingsService {
         persistence = context.inject()
         assets = context.inject()
         messageBox = context.inject()
-        settings = persistence.loadSettings()?.create(assets) ?: SavedSettings().create(assets)
+        settings = persistence.loadSettings()?.create(assets) ?: SettingsData().create(assets)
     }
 
     fun paused() {
-        settings?.let { persistence.saveSettings(SavedSettings(it)) }
+        settings?.let { persistence.saveSettings(SettingsData(it)) }
     }
 
     fun resumed() {
         settings =
-            settings ?: persistence.loadSettings()?.create(assets) ?: SavedSettings().create(assets)
+            settings ?: persistence.loadSettings()?.create(assets) ?: SettingsData().create(assets)
     }
 
     fun get(): Settings = settings!!
 
-    fun getSaved(): SavedSettings = SavedSettings(settings!!)
+    fun getData(): SettingsData = SettingsData(settings!!)
 
-    fun update(savedSettings: SavedSettings) {
+    fun update(settingsData: SettingsData) {
         val current = this.settings!!
-        val themeChanged = savedSettings.darkTheme != current.darkTheme
-        val backDesignChanged = savedSettings.backDesign != current.backDesign
+        val themeChanged = settingsData.darkTheme != current.darkTheme
+        val backDesignChanged = settingsData.backDesign != current.backDesign
         val animationsChanged =
-            savedSettings.animation != animationToVariant(current.animationStrategy)
+            settingsData.animation != animationToVariant(current.animationStrategy)
         val drawingStrategyChanged =
-            savedSettings.drawingStrategy != drawingToVariant(current.drawingStrategy)
+            settingsData.drawingStrategy != drawingToVariant(current.drawingStrategy)
 
         if (themeChanged || backDesignChanged || animationsChanged || drawingStrategyChanged) {
-            val newSettings = savedSettings.create(assets)
+            val newSettings = settingsData.create(assets)
             settings = newSettings
             if (themeChanged) messageBox.send(Msg.SkinChanged)
             if (themeChanged || backDesignChanged) messageBox.send(Msg.SpriteSetChanged)
@@ -66,7 +66,7 @@ class SettingsService {
     }
 }
 
-class SavedSettings(
+class SettingsData(
     var darkTheme: Boolean,
     var backDesign: Int,
     var layout: Layouts,
