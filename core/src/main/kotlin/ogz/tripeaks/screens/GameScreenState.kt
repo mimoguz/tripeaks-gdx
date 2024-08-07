@@ -1,24 +1,21 @@
 package ogz.tripeaks.screens
 
-import com.badlogic.gdx.InputAdapter
 import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.math.MathUtils
-import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.utils.Disposable
 import com.badlogic.gdx.utils.Logger
 import com.badlogic.gdx.utils.viewport.Viewport
 import ktx.app.clearScreen
 import ktx.graphics.use
-import kotlin.reflect.KClass
 import ogz.tripeaks.Constants
 import ogz.tripeaks.graphics.BlurredRenderer
 import ogz.tripeaks.graphics.SimpleRenderer
 import ogz.tripeaks.models.GameState
-import ogz.tripeaks.services.Message
 import ogz.tripeaks.services.SettingsService
 import ogz.tripeaks.views.GameView
+import kotlin.reflect.KClass
 
 private val logger = Logger("states", Logger.DEBUG)
 
@@ -32,7 +29,7 @@ sealed interface GameScreenState {
 
 }
 
-class GameScreenSwitch(private val viewport: Viewport) : GameScreenState, Disposable {
+class GameScreenSwitch() : GameScreenState, Disposable {
 
     private var game: GameState? = null
     private val states: MutableMap<String, GameScreenState> = mutableMapOf()
@@ -193,6 +190,7 @@ class PlayingGameScreenState(
                     val socket = layout.lookup(col + columnOffset, row + rowOffset)
                     if (socket != null && game.take(socket.index)) {
                         view.syncSocket(socket)
+                        ui.undoButton.enabled = game.canUndo
                         if (game.won) return TouchResult.WON
                         if (game.stalled) return TouchResult.STALLED
                         return TouchResult.CONTINUE
@@ -236,7 +234,6 @@ class PlayingGameScreenState(
 
 class TransitionGameScreenState(
     private val batch: SpriteBatch,
-    private val assets: AssetManager,
     private val viewport: Viewport,
     private val settings: SettingsService,
     private val ui: GameUi,

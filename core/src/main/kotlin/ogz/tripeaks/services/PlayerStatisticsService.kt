@@ -15,7 +15,8 @@ class PlayerStatisticsService {
     }
 
     fun paused() {
-        statistics?.let { persistence.savePlayerStatistics(it) }
+        // TODO: Saving on update now, not needed.
+        // statistics?.let { persistence.savePlayerStatistics(it) }
     }
 
     fun resumed() {
@@ -30,16 +31,14 @@ class PlayerStatisticsService {
             val layoutStatistics = addGame(playerStats, gameStatistics)
             layoutStatistics.won += 1
         }
+        save()
     }
 
     fun addLose(gameStatistics: GameStatistics) {
         statistics?.let { playerStats ->
             addGame(playerStats, gameStatistics)
         }
-    }
-
-    fun updatePlayed() {
-        statistics?.apply { played += 1 }
+        save()
     }
 
     private fun addGame(
@@ -56,5 +55,9 @@ class PlayerStatisticsService {
         stats.longestChain = gameStatistics.longestChain
         playerStats.layoutStatistics.sort { a, b -> b.played.compareTo(a.played) }
         return stats
+    }
+
+    private fun save() {
+        statistics?.let { persistence.savePlayerStatistics(it) }
     }
 }

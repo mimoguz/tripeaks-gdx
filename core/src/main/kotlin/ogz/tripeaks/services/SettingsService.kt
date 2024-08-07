@@ -16,7 +16,7 @@ import ogz.tripeaks.models.layout.DiamondsLayout
 import ogz.tripeaks.models.layout.Inverted2ndLayout
 import ogz.tripeaks.models.layout.Layout
 
-class SettingsService: Disposable {
+class SettingsService : Disposable {
 
     private var settings: Settings? = null
     private lateinit var persistence: PersistenceService
@@ -38,7 +38,7 @@ class SettingsService: Disposable {
     fun resumed() {
         settings = settings
             ?: persistence.loadSettings()?.create(assets)
-            ?: SettingsData().create(assets)
+                    ?: SettingsData().create(assets)
     }
 
     fun get(): Settings = settings!!
@@ -47,20 +47,15 @@ class SettingsService: Disposable {
 
     fun update(settingsData: SettingsData) {
         val current = this.settings!!
-        val themeChanged = settingsData.darkTheme != current.darkTheme
-        val backDesignChanged = settingsData.backDesign != current.backDesign
-        val animationsChanged =
-            settingsData.animation != animationToVariant(current.animationStrategy)
-        val drawingStrategyChanged =
-            settingsData.drawingStrategy != drawingToVariant(current.drawingStrategy)
-        val layoutChanged = settingsData.layout.tag != current.layout.tag
+        val settingsChanged =
+            settingsData.darkTheme != current.darkTheme
+                    || settingsData.backDesign != current.backDesign
+                    || settingsData.animation != current.animationStrategy.toVariant()
+                    || settingsData.drawingStrategy != current.drawingStrategy.toVariant()
+                    || settingsData.layout.tag != current.layout.tag
+                    || settingsData.emptyDiscard != current.emptyDiscard
 
-        if (themeChanged
-            || backDesignChanged
-            || animationsChanged
-            || drawingStrategyChanged
-            || layoutChanged
-        ) {
+        if (settingsChanged) {
             val newSettings = settingsData.create(assets)
             settings?.animationStrategy?.also { if (it is Disposable) it.dispose() }
             settings = newSettings
@@ -99,9 +94,9 @@ class SettingsData(
     constructor(settings: Settings) : this(
         settings.darkTheme,
         settings.backDesign,
-        tagToLayoutVariant(settings.layout.tag),
-        animationToVariant(settings.animationStrategy),
-        drawingToVariant(settings.drawingStrategy),
+        settings.layout.tag.toLayoutVariant(),
+        settings.animationStrategy.toVariant(),
+        settings.drawingStrategy.toVariant(),
         settings.emptyDiscard
     )
 
@@ -112,7 +107,6 @@ class SettingsData(
             animation.create(assets),
             drawingStrategy.create(),
             SpriteSet(darkTheme, backDesign, assets),
-            // TODO: less hacky way_
             UiSkin(assets, assets[BundleAssets.Bundle]["skinKey"] == "cjk", darkTheme),
             emptyDiscard
         )
@@ -151,18 +145,16 @@ enum class Layouts {
         }
 }
 
-fun tagToLayoutVariant(tag: String): Layouts = when (tag) {
+fun String.toLayoutVariant(): Layouts = when (this) {
     BasicLayout.TAG -> Layouts.Basic
     DiamondsLayout.TAG -> Layouts.Diamonds
     else -> Layouts.Inverted2nd
 }
 
-fun Layouts.create(): Layout {
-    return when (this) {
-        Layouts.Basic -> BasicLayout()
-        Layouts.Diamonds -> DiamondsLayout()
-        Layouts.Inverted2nd -> Inverted2ndLayout()
-    }
+fun Layouts.create(): Layout = when (this) {
+    Layouts.Basic -> BasicLayout()
+    Layouts.Diamonds -> DiamondsLayout()
+    Layouts.Inverted2nd -> Inverted2ndLayout()
 }
 
 enum class AnimationStrategies {
@@ -171,20 +163,16 @@ enum class AnimationStrategies {
     FadeOut
 }
 
-fun animationToVariant(s: AnimationStrategy): AnimationStrategies {
-    return when (s) {
-        is AnimationStrategy.Strategies.Blink -> AnimationStrategies.Blink
-        is AnimationStrategy.Strategies.FadeOut -> AnimationStrategies.FadeOut
-        is AnimationStrategy.Strategies.Dissolve -> AnimationStrategies.Dissolve
-    }
+fun AnimationStrategy.toVariant(): AnimationStrategies = when (this) {
+    is AnimationStrategy.Strategies.Blink -> AnimationStrategies.Blink
+    is AnimationStrategy.Strategies.FadeOut -> AnimationStrategies.FadeOut
+    is AnimationStrategy.Strategies.Dissolve -> AnimationStrategies.Dissolve
 }
 
-fun AnimationStrategies.create(assets: AssetManager): AnimationStrategy {
-    return when (this) {
-        AnimationStrategies.Blink -> AnimationStrategy.Strategies.Blink(assets)
-        AnimationStrategies.Dissolve -> AnimationStrategy.Strategies.Dissolve(assets)
-        AnimationStrategies.FadeOut -> AnimationStrategy.Strategies.FadeOut(assets)
-    }
+fun AnimationStrategies.create(assets: AssetManager): AnimationStrategy = when (this) {
+    AnimationStrategies.Blink -> AnimationStrategy.Strategies.Blink(assets)
+    AnimationStrategies.Dissolve -> AnimationStrategy.Strategies.Dissolve(assets)
+    AnimationStrategies.FadeOut -> AnimationStrategy.Strategies.FadeOut(assets)
 }
 
 enum class DrawingStrategies {
@@ -192,16 +180,15 @@ enum class DrawingStrategies {
     BackHidden
 }
 
-fun drawingToVariant(s: CardDrawingStrategy): DrawingStrategies =
-    if (s is CardDrawingStrategy.Strategies.BackVisible) {
+fun CardDrawingStrategy.toVariant(): DrawingStrategies =
+    if (this is CardDrawingStrategy.Strategies.BackVisible) {
         DrawingStrategies.BackVisible
     } else {
         DrawingStrategies.BackHidden
     }
 
-fun DrawingStrategies.create(): CardDrawingStrategy {
-    return when (this) {
-        DrawingStrategies.BackHidden -> CardDrawingStrategy.Strategies.BackHidden
-        DrawingStrategies.BackVisible -> CardDrawingStrategy.Strategies.BackVisible
-    }
+fun DrawingStrategies.create(): CardDrawingStrategy = when (this) {
+    DrawingStrategies.BackHidden -> CardDrawingStrategy.Strategies.BackHidden
+    DrawingStrategies.BackVisible -> CardDrawingStrategy.Strategies.BackVisible
 }
+
