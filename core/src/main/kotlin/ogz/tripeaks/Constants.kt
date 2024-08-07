@@ -28,7 +28,7 @@ object Constants {
 
     const val TEXT_BUTTON_VERTICAL_PADDING = 4f
     const val TEXT_BUTTON_HORIZONTAL_PADDING = 8f
-    const val UI_VERTICAL_SPACING = 10f
+    const val UI_VERTICAL_SPACING = 6f
     const val UI_HORIZONTAL_SPACING = 6f
     const val UI_PANEL_VERTICAL_BORDER = 10f
     const val UI_PANEL_HORIZONTAL_BORDER = 10f
