@@ -288,6 +288,9 @@ class GameScreen(private val context: Context) : KtxScreen, InputAdapter() {
     }
 
     private fun setupGame(game: GameState) {
+        this.game?.also {
+            if (!it.won && it.wasPlayed) playerStatistics.addLose(game.statistics)
+        }
         this.game = game
         view.currentGame = game
         switch.setGame(game)

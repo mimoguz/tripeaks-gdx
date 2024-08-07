@@ -1,7 +1,5 @@
 package ogz.tripeaks.models.layout
 
-import ktx.collections.GdxIntArray
-
 /** 27 sockets arranged in three diamonds.  */
 class DiamondsLayout : LayoutBase(
     listOf(
@@ -43,6 +41,7 @@ class DiamondsLayout : LayoutBase(
         Socket(26, listOf(), listOf(22, 23), 4, 14, 0),
     )
 ) {
+
     override val numberOfColumns: Int get() = COLUMNS
 
     override val numberOfRows: Int get() = ROWS
@@ -54,4 +53,5 @@ class DiamondsLayout : LayoutBase(
         private const val ROWS = 7
         const val TAG = "diamondsLayout"
     }
+
 }

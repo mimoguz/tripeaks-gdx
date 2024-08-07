@@ -44,7 +44,7 @@ class GameState private constructor(
 
     /** Are there any moves we can take back? */
     val canUndo: Boolean
-        get() = if (canEmptyDiscard) discard.size > 0 else discard.size > 1
+        get() = !won || if (canEmptyDiscard) discard.size > 0 else discard.size > 1
 
     /** Are there any cards left on the stack? */
     val canDeal: Boolean

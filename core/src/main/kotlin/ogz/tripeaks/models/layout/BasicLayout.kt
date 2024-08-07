@@ -1,7 +1,5 @@
 package ogz.tripeaks.models.layout
 
-import ktx.collections.GdxIntArray
-
 /** 28 sockets arranged in three peaks, indexed from 0 (top-left) to 27 (bottom-right).  */
 class BasicLayout : LayoutBase(
     listOf(
@@ -42,6 +40,7 @@ class BasicLayout : LayoutBase(
         Socket(27, listOf(17), listOf(), 3, 18, 3),
     )
 ) {
+
     override val numberOfColumns: Int get() = COLUMNS
 
     override val numberOfRows: Int get() = ROWS
@@ -53,4 +52,5 @@ class BasicLayout : LayoutBase(
         private const val ROWS = 5
         const val TAG = "basicLayout"
     }
+
 }

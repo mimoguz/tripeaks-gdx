@@ -1,7 +1,5 @@
 package ogz.tripeaks.models.layout
 
-import ktx.collections.GdxIntArray
-
 /** 27 sockets arranged in three diamonds.  */
 class Inverted2ndLayout : LayoutBase(
     listOf(
@@ -44,6 +42,7 @@ class Inverted2ndLayout : LayoutBase(
         Socket(29, listOf(20), listOf(), 3, 18, 3),
     )
 ) {
+
     override val numberOfColumns: Int get() = COLUMNS
 
     override val numberOfRows: Int get() = ROWS
@@ -55,4 +54,5 @@ class Inverted2ndLayout : LayoutBase(
         private const val ROWS = 5
         const val TAG = "inverted2ndLayout"
     }
+
 }
