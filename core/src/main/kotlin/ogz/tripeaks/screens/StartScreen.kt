@@ -16,10 +16,7 @@ import ogz.tripeaks.graphics.CustomViewport
 import ogz.tripeaks.screens.stage.OptionsDialog
 import ogz.tripeaks.screens.stage.OptionsDialogResult
 import ogz.tripeaks.screens.stage.StatisticsDialog
-import ogz.tripeaks.services.Message
-import ogz.tripeaks.services.MessageBox
 import ogz.tripeaks.services.PlayerStatisticsService
-import ogz.tripeaks.services.Receiver
 import ogz.tripeaks.services.SettingsService
 import ogz.tripeaks.ui.LabelButton
 
