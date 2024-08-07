@@ -74,6 +74,7 @@ sealed interface AnimationStrategy {
         }
 
         class Blink(assets: AssetManager) : AnimationStrategy, Disposable {
+
             override var param = 0f
 
             override val shaderProgram: ShaderProgram
@@ -106,6 +107,46 @@ sealed interface AnimationStrategy {
             private fun step(time: Float, vertexColor: Color): Boolean {
                 val normalizedTime = (time / DISSOLVE_TIME).coerceAtMost(1f)
                 vertexColor.set(1f, 1f - normalizedTime, param, 1f)
+                return time > DISSOLVE_TIME
+            }
+
+        }
+
+        class FadeOut(assets: AssetManager) : AnimationStrategy, Disposable {
+
+            // Unused
+            override var param = 0f
+
+            override val shaderProgram: ShaderProgram
+
+            init {
+                val vert = assets[ShaderSourceAssets.Vert].string
+                val frag = assets[ShaderSourceAssets.FadeOut].string
+                shaderProgram = ShaderProgram(vert, frag)
+            }
+
+            override fun cardRemoved(
+                deltaTime: Float,
+                time: Float,
+                vertexColor: Color,
+                position: Vector2,
+                scale: Vector2
+            ): Boolean = step(time, vertexColor)
+
+            override fun screenTransition(time: Float, vertexColor: Color): Boolean =
+                step(time, vertexColor)
+
+            override fun setTheme(dark: Boolean) {
+                // Pass
+            }
+
+            override fun dispose() {
+                shaderProgram.dispose()
+            }
+
+            private fun step(time: Float, vertexColor: Color): Boolean {
+                val normalizedTime = (time / DISSOLVE_TIME).coerceAtMost(1f)
+                vertexColor.set(1f, 1f - normalizedTime, 0f, 1f)
                 return time > DISSOLVE_TIME
             }
 

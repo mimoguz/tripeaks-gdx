@@ -167,20 +167,23 @@ fun Layouts.create(): Layout {
 
 enum class AnimationStrategies {
     Blink,
-    Dissolve
+    Dissolve,
+    FadeOut
 }
 
-fun animationToVariant(s: AnimationStrategy): AnimationStrategies =
-    if (s is AnimationStrategy.Strategies.Blink) {
-        AnimationStrategies.Blink
-    } else {
-        AnimationStrategies.Dissolve
+fun animationToVariant(s: AnimationStrategy): AnimationStrategies {
+    return when (s) {
+        is AnimationStrategy.Strategies.Blink -> AnimationStrategies.Blink
+        is AnimationStrategy.Strategies.FadeOut -> AnimationStrategies.FadeOut
+        is AnimationStrategy.Strategies.Dissolve -> AnimationStrategies.Dissolve
     }
+}
 
 fun AnimationStrategies.create(assets: AssetManager): AnimationStrategy {
     return when (this) {
         AnimationStrategies.Blink -> AnimationStrategy.Strategies.Blink(assets)
         AnimationStrategies.Dissolve -> AnimationStrategy.Strategies.Dissolve(assets)
+        AnimationStrategies.FadeOut -> AnimationStrategy.Strategies.FadeOut(assets)
     }
 }
 
