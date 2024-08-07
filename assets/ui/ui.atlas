@@ -1,0 +1,416 @@
+
+ui.png
+size: 128, 128
+format: RGBA8888
+filter: Nearest, Nearest
+repeat: none
+dark_buttonDisabled
+  rotate: false
+  xy: 92, 110
+  size: 16, 16
+  split: 3, 3, 4, 4
+  pad: 3, 3, 4, 4
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+dark_buttonDown
+  rotate: false
+  xy: 110, 110
+  size: 16, 16
+  split: 3, 3, 4, 4
+  pad: 3, 3, 4, 4
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+dark_buttonUp
+  rotate: false
+  xy: 2, 2
+  size: 16, 16
+  split: 3, 3, 4, 4
+  pad: 3, 3, 4, 4
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+dark_checkboxOff
+  rotate: false
+  xy: 29, 115
+  size: 25, 11
+  orig: 25, 11
+  offset: 0, 0
+  index: -1
+dark_checkboxOff_alt
+  rotate: false
+  xy: 84, 70
+  size: 11, 11
+  orig: 11, 11
+  offset: 0, 0
+  index: -1
+dark_checkboxOn
+  rotate: false
+  xy: 2, 102
+  size: 25, 11
+  orig: 25, 11
+  offset: 0, 0
+  index: -1
+dark_checkboxOn_alt
+  rotate: false
+  xy: 101, 97
+  size: 11, 11
+  orig: 11, 11
+  offset: 0, 0
+  index: -1
+dark_deal
+  rotate: false
+  xy: 47, 81
+  size: 11, 15
+  orig: 11, 15
+  offset: 0, 0
+  index: -1
+dark_line
+  rotate: false
+  xy: 22, 86
+  size: 3, 1
+  split: 1, 1, 0, 1
+  pad: 1, 1, 0, 0
+  orig: 3, 1
+  offset: 0, 0
+  index: -1
+dark_menu
+  rotate: false
+  xy: 62, 96
+  size: 9, 13
+  orig: 9, 13
+  offset: 0, 0
+  index: -1
+dark_menuItemDown
+  rotate: false
+  xy: 117, 69
+  size: 7, 7
+  split: 3, 3, 3, 3
+  pad: 3, 3, 3, 3
+  orig: 7, 7
+  offset: 0, 0
+  index: -1
+dark_menuItemOver
+  rotate: false
+  xy: 35, 26
+  size: 7, 7
+  split: 3, 3, 3, 3
+  pad: 3, 3, 3, 3
+  orig: 7, 7
+  offset: 0, 0
+  index: -1
+dark_menuItemUp
+  rotate: false
+  xy: 108, 61
+  size: 7, 7
+  split: 3, 3, 3, 3
+  pad: 3, 3, 3, 3
+  orig: 7, 7
+  offset: 0, 0
+  index: -1
+dark_options
+  rotate: false
+  xy: 97, 67
+  size: 9, 7
+  orig: 9, 7
+  offset: 0, 0
+  index: -1
+dark_overlay
+  rotate: false
+  xy: 35, 35
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: -1
+dark_radioButtonOff
+  rotate: false
+  xy: 20, 6
+  size: 11, 11
+  orig: 11, 11
+  offset: 0, 0
+  index: -1
+dark_radioButtonOffDisabled
+  rotate: false
+  xy: 114, 97
+  size: 11, 11
+  orig: 11, 11
+  offset: 0, 0
+  index: -1
+dark_radioButtonOn
+  rotate: false
+  xy: 22, 32
+  size: 11, 11
+  orig: 11, 11
+  offset: 0, 0
+  index: -1
+dark_radioButtonOnDisabled
+  rotate: false
+  xy: 53, 50
+  size: 11, 11
+  orig: 11, 11
+  offset: 0, 0
+  index: -1
+dark_scroll
+  rotate: false
+  xy: 97, 86
+  size: 8, 8
+  split: 3, 3, 3, 3
+  pad: 3, 3, 3, 3
+  orig: 8, 8
+  offset: 0, 0
+  index: -1
+dark_scrollKnob
+  rotate: false
+  xy: 56, 111
+  size: 16, 15
+  split: 3, 3, 3, 3
+  pad: 3, 3, 3, 3
+  orig: 16, 15
+  offset: 0, 0
+  index: -1
+dark_selectBoxDown
+  rotate: false
+  xy: 2, 38
+  size: 18, 15
+  split: 3, 9, 4, 4
+  pad: 3, 9, 4, 4
+  orig: 18, 15
+  offset: 0, 0
+  index: -1
+dark_selectBoxUp
+  rotate: false
+  xy: 2, 55
+  size: 18, 15
+  split: 3, 9, 4, 4
+  pad: 3, 9, 4, 4
+  orig: 18, 15
+  offset: 0, 0
+  index: -1
+dark_stats
+  rotate: false
+  xy: 53, 41
+  size: 9, 7
+  orig: 9, 7
+  offset: 0, 0
+  index: -1
+dark_undo
+  rotate: false
+  xy: 87, 96
+  size: 12, 12
+  orig: 12, 12
+  offset: 0, 0
+  index: -1
+dark_window
+  rotate: false
+  xy: 22, 45
+  size: 16, 16
+  split: 3, 3, 3, 5
+  pad: 3, 3, 3, 5
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+light_buttonDisabled
+  rotate: false
+  xy: 74, 110
+  size: 16, 16
+  split: 3, 3, 4, 4
+  pad: 3, 3, 4, 4
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+light_buttonDown
+  rotate: false
+  xy: 22, 63
+  size: 16, 16
+  split: 3, 3, 4, 4
+  pad: 3, 3, 4, 4
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+light_buttonUp
+  rotate: false
+  xy: 2, 20
+  size: 16, 16
+  split: 3, 3, 4, 4
+  pad: 3, 3, 4, 4
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+light_checkboxOff
+  rotate: false
+  xy: 2, 89
+  size: 25, 11
+  orig: 25, 11
+  offset: 0, 0
+  index: -1
+light_checkboxOff_alt
+  rotate: false
+  xy: 71, 70
+  size: 11, 11
+  orig: 11, 11
+  offset: 0, 0
+  index: -1
+light_checkboxOn
+  rotate: false
+  xy: 2, 115
+  size: 25, 11
+  orig: 25, 11
+  offset: 0, 0
+  index: -1
+light_checkboxOn_alt
+  rotate: false
+  xy: 84, 83
+  size: 11, 11
+  orig: 11, 11
+  offset: 0, 0
+  index: -1
+light_deal
+  rotate: false
+  xy: 40, 46
+  size: 11, 15
+  orig: 11, 15
+  offset: 0, 0
+  index: -1
+light_line
+  rotate: false
+  xy: 49, 112
+  size: 3, 1
+  orig: 3, 1
+  offset: 0, 0
+  index: -1
+light_menu
+  rotate: false
+  xy: 60, 81
+  size: 9, 13
+  orig: 9, 13
+  offset: 0, 0
+  index: -1
+light_menuItemDown
+  rotate: false
+  xy: 117, 60
+  size: 7, 7
+  split: 3, 3, 3, 3
+  pad: 3, 3, 3, 3
+  orig: 7, 7
+  offset: 0, 0
+  index: -1
+light_menuItemOver
+  rotate: false
+  xy: 118, 78
+  size: 7, 7
+  split: 3, 3, 3, 3
+  pad: 3, 3, 3, 3
+  orig: 7, 7
+  offset: 0, 0
+  index: -1
+light_menuItemUp
+  rotate: false
+  xy: 108, 70
+  size: 7, 7
+  split: 3, 3, 3, 3
+  pad: 3, 3, 3, 3
+  orig: 7, 7
+  offset: 0, 0
+  index: -1
+light_options
+  rotate: false
+  xy: 107, 79
+  size: 9, 7
+  orig: 9, 7
+  offset: 0, 0
+  index: -1
+light_overlay
+  rotate: false
+  xy: 118, 87
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: -1
+light_radioButtonOff
+  rotate: false
+  xy: 20, 19
+  size: 11, 11
+  orig: 11, 11
+  offset: 0, 0
+  index: -1
+light_radioButtonOffDisabled
+  rotate: false
+  xy: 49, 98
+  size: 11, 11
+  orig: 11, 11
+  offset: 0, 0
+  index: -1
+light_radioButtonOn
+  rotate: false
+  xy: 58, 68
+  size: 11, 11
+  orig: 11, 11
+  offset: 0, 0
+  index: -1
+light_radioButtonOnDisabled
+  rotate: false
+  xy: 71, 83
+  size: 11, 11
+  orig: 11, 11
+  offset: 0, 0
+  index: -1
+light_scroll
+  rotate: false
+  xy: 97, 76
+  size: 8, 8
+  split: 3, 3, 3, 3
+  pad: 3, 3, 3, 3
+  orig: 8, 8
+  offset: 0, 0
+  index: -1
+light_scrollKnob
+  rotate: false
+  xy: 29, 81
+  size: 16, 15
+  split: 3, 3, 3, 3
+  pad: 3, 3, 3, 3
+  orig: 16, 15
+  offset: 0, 0
+  index: -1
+light_selectBoxDown
+  rotate: false
+  xy: 2, 72
+  size: 18, 15
+  split: 3, 9, 4, 4
+  pad: 3, 9, 4, 4
+  orig: 18, 15
+  offset: 0, 0
+  index: -1
+light_selectBoxUp
+  rotate: false
+  xy: 29, 98
+  size: 18, 15
+  split: 3, 9, 4, 4
+  pad: 3, 9, 4, 4
+  orig: 18, 15
+  offset: 0, 0
+  index: -1
+light_stats
+  rotate: false
+  xy: 107, 88
+  size: 9, 7
+  orig: 9, 7
+  offset: 0, 0
+  index: -1
+light_undo
+  rotate: false
+  xy: 73, 96
+  size: 12, 12
+  orig: 12, 12
+  offset: 0, 0
+  index: -1
+light_window
+  rotate: false
+  xy: 40, 63
+  size: 16, 16
+  split: 3, 3, 3, 5
+  pad: 3, 3, 3, 5
+  orig: 16, 16
+  offset: 0, 0
+  index: -1

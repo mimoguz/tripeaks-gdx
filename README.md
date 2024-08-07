@@ -30,4 +30,3 @@ A simple tri peaks solitaire game using [libGDX](https://libgdx.com/).
 * Spanish
 * Turkish
 
-P.S. Current development branch is `oop`

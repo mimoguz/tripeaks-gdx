@@ -1,93 +1,74 @@
 buildscript {
-    ext.kotlinVersion = '1.7.0'
-
     repositories {
-        mavenLocal()
         mavenCentral()
+        maven { url 'https://s01.oss.sonatype.org' }
         gradlePluginPortal()
-        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+        mavenLocal()
         google()
+        maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
+        maven { url 'https://s01.oss.sonatype.org/content/repositories/snapshots/' }
+        maven { url 'https://jitpack.io' }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.2.1'
+        classpath 'com.android.tools.build:gradle:8.5.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+
     }
 }
 
 allprojects {
-    apply plugin: "eclipse"
+    apply plugin: 'eclipse'
+    apply plugin: 'idea'
 
-    version = '1.0.1'
-    ext {
-        appName = "TriPeaks"
-        gdxVersion = '1.10.0'
-        roboVMVersion = '2.3.12'
-        box2DLightsVersion = '1.5'
-        ashleyVersion = '1.7.4'
-        aiVersion = '1.8.2'
-        gdxControllersVersion = '2.1.0'
-        ktxVersion = '1.10.0-b4'
+    // This allows you to "Build and run using IntelliJ IDEA", an option in IDEA's Settings.
+    idea {
+        module {
+            outputDir file('build/classes/java/main')
+            testOutputDir file('build/classes/java/test')
+        }
     }
+}
 
+configure(subprojects - project(':android')) {
+    apply plugin: 'java-library'
+    apply plugin: 'kotlin'
+    sourceCompatibility = 17
+    compileJava {
+        options.incremental = true
+    }
+    // From https://lyze.dev/2021/04/29/libGDX-Internal-Assets-List/
+    // The article can be helpful when using assets.txt in your project.
+    compileJava.doLast {
+        // projectFolder/assets
+        def assetsFolder = new File("${project.rootDir}/assets/")
+        // projectFolder/assets/assets.txt
+        def assetsFile = new File(assetsFolder, "assets.txt")
+        // delete that file in case we've already created it
+        assetsFile.delete()
+
+        // iterate through all files inside that folder
+        // convert it to a relative path
+        // and append it to the file assets.txt
+        fileTree(assetsFolder).collect { assetsFolder.relativePath(it) }.each {
+            assetsFile.append(it + "\n")
+        }
+    }
+    compileKotlin.compilerOptions.jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
+
+}
+
+subprojects {
+    version = '1.1.0'
+    ext.appName = 'tripeaks'
     repositories {
-        mavenLocal()
         mavenCentral()
-        google()
-        gradlePluginPortal()
-        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
-        maven { url "https://oss.sonatype.org/content/repositories/releases/" }
+        maven { url 'https://s01.oss.sonatype.org' }
+        // You may want to remove the following line if you have errors downloading dependencies.
+        mavenLocal()
+        maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
+        maven { url 'https://s01.oss.sonatype.org/content/repositories/snapshots/' }
+        maven { url 'https://jitpack.io' }
     }
 }
 
-project(":desktop") {
-    apply plugin: "kotlin"
-
-
-    dependencies {
-        implementation project(":core")
-        api "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
-        api "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
-        api "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
-    }
-}
-
-project(":android") {
-    apply plugin: "android"
-    apply plugin: "kotlin-android"
-
-    configurations { natives }
-
-    dependencies {
-        implementation project(":core")
-        api "com.badlogicgames.gdx:gdx-backend-android:$gdxVersion"
-        natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi-v7a"
-        natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-arm64-v8a"
-        natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-x86"
-        natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-x86_64"
-        api "com.badlogicgames.ashley:ashley:$ashleyVersion"
-        api "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
-    }
-}
-
-project(":core") {
-    apply plugin: "kotlin"
-
-
-    dependencies {
-        api "com.badlogicgames.gdx:gdx:$gdxVersion"
-        api "com.badlogicgames.ashley:ashley:$ashleyVersion"
-        api "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
-
-        api "io.github.libktx:ktx-app:$ktxVersion"
-        api "io.github.libktx:ktx-ashley:$ktxVersion"
-        api "io.github.libktx:ktx-assets:$ktxVersion"
-        api "io.github.libktx:ktx-collections:$ktxVersion"
-        api "io.github.libktx:ktx-graphics:$ktxVersion"
-        api "io.github.libktx:ktx-log:$ktxVersion"
-        api "io.github.libktx:ktx-inject:$ktxVersion"
-        api "io.github.libktx:ktx-math:$ktxVersion"
-        api "io.github.libktx:ktx-preferences:$ktxVersion"
-        api "io.github.libktx:ktx-scene2d:$ktxVersion"
-        api "io.github.libktx:ktx-style:$ktxVersion"
-    }
-}
+eclipse.project.name = 'tripeaks' + '-parent'
