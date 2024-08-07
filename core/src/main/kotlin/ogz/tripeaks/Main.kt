@@ -8,14 +8,13 @@ import com.badlogic.gdx.scenes.scene2d.Stage
 import ktx.app.KtxGame
 import ktx.app.KtxScreen
 import ktx.inject.Context
-import ogz.tripeaks.graphics.CustomViewport
 import ogz.tripeaks.Constants.MAX_WORLD_WIDTH
 import ogz.tripeaks.Constants.MIN_WORLD_WIDTH
 import ogz.tripeaks.Constants.WORLD_HEIGHT
 import ogz.tripeaks.assets.Text
 import ogz.tripeaks.assets.TextLoader
+import ogz.tripeaks.graphics.CustomViewport
 import ogz.tripeaks.screens.LoadingScreen
-import ogz.tripeaks.services.MessageBox
 import ogz.tripeaks.services.PersistenceService
 import ogz.tripeaks.services.PlayerStatisticsService
 import ogz.tripeaks.services.SettingsService
@@ -52,7 +51,6 @@ class Main : KtxGame<KtxScreen>() {
             bindSingleton(playerStatistics)
             bindSingleton(settings)
             bindSingleton(assets)
-            bindSingleton(MessageBox())
             bindSingleton(PersistenceService())
             bindSingleton(SpriteBatch())
         }
