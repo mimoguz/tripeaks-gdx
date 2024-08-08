@@ -82,6 +82,7 @@ class PersistenceService {
         val layoutStats = GdxArray.of(LayoutStatistics::class.java)
         for (layout in Layouts.entries) {
             try {
+                if (!prefs.contains("${layout.tag}_Played")) continue
                 val played = prefs.getInteger("${layout.tag}_Played")
                 val won = prefs.getInteger("${layout.tag}_Won")
                 val longestChain = prefs.getInteger("${layout.tag}_LongestChain")
