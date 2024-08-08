@@ -90,7 +90,7 @@ class OptionsDialog(
         pad(
             Constants.UI_PANEL_VERTICAL_BORDER,
             Constants.UI_PANEL_HORIZONTAL_BORDER,
-            Constants.UI_PANEL_VERTICAL_BORDER,
+            Constants.UI_PANEL_VERTICAL_BORDER - 1f,
             Constants.UI_PANEL_HORIZONTAL_BORDER,
         )
 

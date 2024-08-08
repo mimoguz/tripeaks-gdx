@@ -256,6 +256,7 @@ class GameScreen(private val context: Context) : KtxScreen, InputAdapter() {
                 playerStatistics.addLose(game.statistics)
             }
         }
+        menu = null
         startNewGame()
     }
 

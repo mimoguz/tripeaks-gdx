@@ -30,8 +30,8 @@ class StatisticsDialog(
     init {
         val bundle = assets[BundleAssets.Bundle]
         val uiAssets = assets[TextureAtlasAssets.Ui]
-        val games = stats.layoutStatistics.fold(0) { sum, layout ->  sum + layout.played }
-        val wins = stats.layoutStatistics.fold(0) { sum, layout ->  sum + layout.won }
+        val games = stats.layoutStatistics.fold(0) { sum, layout -> sum + layout.played }
+        val wins = stats.layoutStatistics.fold(0) { sum, layout -> sum + layout.won }
         val longestChain = stats.layoutStatistics.fold(0) { acc, layout ->
             if (acc > layout.longestChain) acc else layout.longestChain
         }
@@ -40,7 +40,7 @@ class StatisticsDialog(
         pad(
             Constants.UI_PANEL_VERTICAL_BORDER,
             Constants.UI_PANEL_HORIZONTAL_BORDER,
-            Constants.UI_PANEL_VERTICAL_BORDER,
+            Constants.UI_PANEL_VERTICAL_BORDER - 1f,
             Constants.UI_PANEL_HORIZONTAL_BORDER,
         )
 
@@ -69,25 +69,31 @@ class StatisticsDialog(
                 bundle["statAll"],
                 games,
                 wins,
-                longestChain
+                longestChain,
+                true
             )
 
             row()
 
             // Layout stats
-            stats.layoutStatistics.sortedBy { it.played }.reversed().forEach { layout ->
-                addStat(
-                    this,
-                    bundle,
-                    line,
-                    bundle[layout.tag],
-                    layout.played,
-                    layout.won,
-                    layout.longestChain
-                )
+            val lastIndex = stats.layoutStatistics.size - 1
+            stats.layoutStatistics
+                .sortedBy { -it.played }
+                .withIndex()
+                .forEach { (index, layout) ->
+                    addStat(
+                        this,
+                        bundle,
+                        line,
+                        bundle[layout.tag],
+                        layout.played,
+                        layout.won,
+                        layout.longestChain,
+                        index != lastIndex
+                    )
 
-                row()
-            }
+                    row()
+                }
         }
 
         val scroll = ScrollPane(table, skin).apply {
@@ -122,6 +128,7 @@ class StatisticsDialog(
         played: Int,
         won: Int,
         longestChain: Int,
+        padLast: Boolean = false
     ) {
         val uiSkin = skin as UiSkin
         val divSpacing = MathUtils.floor(uiSkin.extraLineSpacing / 2f).toFloat().coerceAtLeast(1f)
