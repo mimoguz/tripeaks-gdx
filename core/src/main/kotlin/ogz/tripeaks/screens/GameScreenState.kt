@@ -170,7 +170,7 @@ class PlayingGameScreenState(
         val result = game?.let { game ->
             logger.debug("Playing: touch down")
 
-            if (ui.handlePressed(worldX, worldY)) return TouchResult.CONTINUE
+            if (ui.handlePressed(worldX, worldY)) return TouchResult.UI
 
             val layout = game.gameLayout
             val x = worldX + (layout.numberOfColumns / 2) * Constants.CELL_WIDTH.toInt()
@@ -305,5 +305,5 @@ class TransitionGameScreenState(
 }
 
 enum class TouchResult {
-    CONTINUE, STALLED, WON
+    CONTINUE, UI, STALLED, WON
 }

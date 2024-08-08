@@ -7,6 +7,7 @@ import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.scenes.scene2d.Stage
+import com.badlogic.gdx.utils.Timer
 import com.ray3k.stripe.PopTable
 import ktx.app.KtxScreen
 import ktx.inject.Context
@@ -41,6 +42,7 @@ class GameScreen(private val context: Context) : KtxScreen, InputAdapter() {
     private val viewport = context.inject<CustomViewport>()
     private val assets = context.inject<AssetManager>()
     private val stage = context.inject<Stage>()
+    private var menu: Menu? = null
 
     // ************************************************************************
     // STATE, HELPERS AND VIEW
@@ -96,6 +98,7 @@ class GameScreen(private val context: Context) : KtxScreen, InputAdapter() {
         viewport.apply()
         stage.viewport.apply()
         stage.act(delta)
+
         view.update(delta, settings.get())
 
         switch.render(delta)
@@ -127,7 +130,12 @@ class GameScreen(private val context: Context) : KtxScreen, InputAdapter() {
         when (switch.handleTouchDown(pos.x.toInt(), pos.y.toInt())) {
             TouchResult.WON -> onWon()
             TouchResult.STALLED -> onStalled()
-            TouchResult.CONTINUE -> {}
+            // TODO: Better way to handle menu visibility
+            // This is a hack to be able to reopen menu if it was closed by touching
+            // outside of it. It's not perfect, doesn't handle the cases if the player
+            // presses undo or deal buttons.
+            TouchResult.CONTINUE -> menu = null
+            TouchResult.UI -> {}
         }
         return true
     }
@@ -252,11 +260,18 @@ class GameScreen(private val context: Context) : KtxScreen, InputAdapter() {
     }
 
     private fun onShowMenu() {
-        val menu = Menu(settings.get().skin, menuActions)
-        menu.show(stage)
-        menu.setPosition(
-            stage.width - menu.width - HORIZONTAL_PADDING,
-            stage.height - menu.height - ui.menuButton.height - 2f * VIEWPORT_VERTICAL_PADDING
+        val currentMenu = menu
+        if (currentMenu != null) {
+            currentMenu.hide()
+            menu = null
+            return
+        }
+        val newMenu = Menu(settings.get().skin, menuActions)
+        menu = newMenu
+        newMenu.show(stage)
+        newMenu.setPosition(
+            stage.width - newMenu.width - HORIZONTAL_PADDING,
+            stage.height - newMenu.height - ui.menuButton.height - 2f * VIEWPORT_VERTICAL_PADDING
         )
     }
 
@@ -284,6 +299,7 @@ class GameScreen(private val context: Context) : KtxScreen, InputAdapter() {
             }
         }
         switch.switch(PausedGameScreenState::class)
+        menu = null
         dialog.show(stage)
     }
 
