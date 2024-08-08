@@ -30,8 +30,8 @@ class StatisticsDialog(
     init {
         val bundle = assets[BundleAssets.Bundle]
         val uiAssets = assets[TextureAtlasAssets.Ui]
-        val games = stats.layoutStatistics.sumOf { it.played }
-        val wins = stats.layoutStatistics.sumOf { it.won }
+        val games = stats.layoutStatistics.fold(0) { sum, layout ->  sum + layout.played }
+        val wins = stats.layoutStatistics.fold(0) { sum, layout ->  sum + layout.won }
         val longestChain = stats.layoutStatistics.fold(0) { acc, layout ->
             if (acc > layout.longestChain) acc else layout.longestChain
         }

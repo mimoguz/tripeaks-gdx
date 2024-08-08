@@ -4,7 +4,9 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.utils.Json
 import com.badlogic.gdx.utils.Logger
 import com.badlogic.gdx.utils.SerializationException
+import ktx.collections.GdxArray
 import ogz.tripeaks.models.GameState
+import ogz.tripeaks.models.LayoutStatistics
 import ogz.tripeaks.models.PlayerStatistics
 import java.time.Instant
 
@@ -29,6 +31,7 @@ class PersistenceService {
 
     fun loadPlayerStatistics(): PlayerStatistics? {
         return load(PlayerStatistics::class.java, STATISTICS_FILE, STATISTICS_KEY)
+            ?: loadLegacyPlayerStatistics()
     }
 
     fun saveSettings(current: SettingsData) {
@@ -74,7 +77,24 @@ class PersistenceService {
         }
     }
 
+    private fun loadLegacyPlayerStatistics(): PlayerStatistics? {
+        val prefs = Gdx.app.getPreferences("save")
+        val layoutStats = GdxArray.of(LayoutStatistics::class.java)
+        for (layout in Layouts.entries) {
+            try {
+                val played = prefs.getInteger("${layout.tag}_Played")
+                val won = prefs.getInteger("${layout.tag}_Won")
+                val longestChain = prefs.getInteger("${layout.tag}_LongestChain")
+                layoutStats.add(LayoutStatistics(layout.tag, played, won, longestChain))
+            } catch (e: Exception) {
+                // Pass
+            }
+        }
+        return if (layoutStats.isEmpty) null else PlayerStatistics(layoutStats)
+    }
+
     companion object {
+
         const val SETTINGS_FILE = "ogz.tripeaks.settings.preferences"
         const val SETTINGS_KEY = "settings"
 
@@ -83,6 +103,8 @@ class PersistenceService {
 
         const val STATISTICS_FILE = "ogz.tripeaks.statistics.preferences"
         const val STATISTICS_KEY = "statistics"
+
     }
+
 }
 

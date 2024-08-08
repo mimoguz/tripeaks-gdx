@@ -4,18 +4,14 @@ import ktx.collections.GdxArray
 import ktx.collections.gdxArrayOf
 
 class PlayerStatistics(
-    var played: Int,
-    var won: Int,
     var layoutStatistics: GdxArray<LayoutStatistics>,
 ) {
 
-    constructor() : this(played = 0, won = 0, layoutStatistics = gdxArrayOf())
+    constructor() : this(layoutStatistics = gdxArrayOf())
 
     fun clone(
-        played: Int = this.played,
-        won: Int = this.won,
         layoutStatistics: GdxArray<LayoutStatistics> = this.layoutStatistics.clone()
-    ): PlayerStatistics = PlayerStatistics(played, won, layoutStatistics)
+    ): PlayerStatistics = PlayerStatistics(layoutStatistics)
 
     companion object {
 

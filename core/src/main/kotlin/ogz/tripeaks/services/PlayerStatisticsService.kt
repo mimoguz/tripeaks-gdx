@@ -6,6 +6,7 @@ import ogz.tripeaks.models.LayoutStatistics
 import ogz.tripeaks.models.PlayerStatistics
 
 class PlayerStatisticsService {
+
     private var statistics: PlayerStatistics? = null
     private lateinit var persistence: PersistenceService
 
@@ -27,7 +28,6 @@ class PlayerStatisticsService {
 
     fun addWin(gameStatistics: GameStatistics) {
         statistics?.let { playerStats ->
-            playerStats.won += 1
             val layoutStatistics = addGame(playerStats, gameStatistics)
             layoutStatistics.won += 1
         }
@@ -45,7 +45,6 @@ class PlayerStatisticsService {
         playerStats: PlayerStatistics,
         gameStatistics: GameStatistics
     ): LayoutStatistics {
-        playerStats.played += 1
         var stats = playerStats.layoutStatistics.find { it.tag == gameStatistics.layoutTag }
         if (stats == null) {
             stats = LayoutStatistics(gameStatistics.layoutTag, 0, 0, 0)
@@ -60,4 +59,5 @@ class PlayerStatisticsService {
     private fun save() {
         statistics?.let { persistence.savePlayerStatistics(it) }
     }
+
 }
