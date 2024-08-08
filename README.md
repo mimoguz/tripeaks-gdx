@@ -4,11 +4,11 @@ A simple tri peaks solitaire game using [libGDX](https://libgdx.com/).
 
 ## Screenshots
 
-* [Start screen](fastlane/metadata/android/en-US/images/phoneScreenshots/1.png)
-* [UI](fastlane/metadata/android/en-US/images/phoneScreenshots/2.png)
-* [Options dialog](fastlane/metadata/android/en-US/images/phoneScreenshots/3.png)
-* [A different layout, in dark theme](fastlane/metadata/android/en-US/images/phoneScreenshots/4.png)
-* [Another layout, with all cards visible](fastlane/metadata/android/en-US/images/phoneScreenshots/5.png)
+* [Start screen](_fastlane/metadata/android/en-US/images/phoneScreenshots/1.png)
+* [UI](_fastlane/metadata/android/en-US/images/phoneScreenshots/2.png)
+* [Options dialog](_fastlane/metadata/android/en-US/images/phoneScreenshots/3.png)
+* [A different layout, in dark theme](_fastlane/metadata/android/en-US/images/phoneScreenshots/4.png)
+* [Another layout, with all cards visible](_fastlane/metadata/android/en-US/images/phoneScreenshots/5.png)
 
 
 [<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png" alt="Get it on F-Droid" height="80">](https://f-droid.org/packages/ogz.tripeaks)
