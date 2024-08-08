@@ -3,6 +3,7 @@ package ogz.tripeaks.views
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import ktx.collections.GdxArray
 import ktx.collections.gdxIntArrayOf
+import ktx.collections.isNotEmpty
 import ktx.collections.sortBy
 import ogz.tripeaks.models.GameState
 import ogz.tripeaks.models.Settings
@@ -60,8 +61,12 @@ class GameView(game: GameState?, private var worldWidth: Float) {
         cards.forEach { card ->
             card.draw(batch, settings.spriteSet, settings.drawingStrategy)
         }
-        animations.forEach { anim ->
-            anim.draw(batch, settings.spriteSet)
+        if (animations.isNotEmpty()) {
+            batch.shader = settings.animationStrategy.shaderProgram
+            animations.forEach { anim ->
+                anim.draw(batch, settings.spriteSet)
+            }
+            batch.shader = null
         }
         animations.removeAll(finishedAnimations, true)
         finishedAnimations.clear()

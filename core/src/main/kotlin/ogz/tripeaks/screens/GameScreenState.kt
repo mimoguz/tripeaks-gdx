@@ -8,8 +8,6 @@ import com.badlogic.gdx.utils.Disposable
 import com.badlogic.gdx.utils.Logger
 import com.badlogic.gdx.utils.viewport.Viewport
 import ktx.app.clearScreen
-import ktx.graphics.use
-import ktx.log.logger
 import ogz.tripeaks.Constants
 import ogz.tripeaks.graphics.BlurredRenderer
 import ogz.tripeaks.graphics.SimpleRenderer
@@ -30,7 +28,7 @@ sealed interface GameScreenState {
 
 }
 
-class GameScreenSwitch() : GameScreenState, Disposable {
+class GameScreenSwitch : GameScreenState, Disposable {
 
     private var game: GameState? = null
     private val states: MutableMap<String, GameScreenState> = mutableMapOf()
@@ -138,7 +136,6 @@ class PausedGameScreenState(
             batch,
             viewport,
             currentSettings.spriteSet.background,
-            currentSettings.animationStrategy.shaderProgram
         ) { batch ->
             view.draw(batch, currentSettings)
             batch.color = Color.WHITE
@@ -219,7 +216,6 @@ class PlayingGameScreenState(
             batch,
             viewport,
             currentSettings.spriteSet.background,
-            currentSettings.animationStrategy.shaderProgram
         ) { batch ->
             view.draw(batch, currentSettings)
             batch.color = Color.WHITE
@@ -281,11 +277,10 @@ class TransitionGameScreenState(
         ) { batch ->
             view.draw(batch, currentSettings)
             ui.draw(batch, currentSettings.spriteSet)
-        }
 
-        batch.shader = anim.shaderProgram
-        batch.color = vertexColor
-        batch.use(viewport.camera) { batch ->
+            // Draw title transition
+            batch.shader = anim.shaderProgram
+            batch.color = vertexColor
             batch.draw(
                 titleTexture,
                 x,
@@ -294,8 +289,6 @@ class TransitionGameScreenState(
                 titleTexture.height.toFloat()
             )
         }
-        batch.color = Color.WHITE
-        batch.shader = null
 
         if (time >= Constants.DISSOLVE_TIME) {
             callback.invoke()
