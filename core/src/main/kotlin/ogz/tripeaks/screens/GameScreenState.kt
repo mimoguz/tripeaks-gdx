@@ -288,6 +288,7 @@ class TransitionGameScreenState(
                 titleTexture.width.toFloat(),
                 titleTexture.height.toFloat()
             )
+            batch.color = Color.WHITE
         }
 
         if (time >= Constants.DISSOLVE_TIME) {

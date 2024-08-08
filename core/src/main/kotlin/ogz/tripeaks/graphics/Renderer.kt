@@ -97,6 +97,7 @@ class BlurredRenderer(assets: AssetManager) : Renderer {
         texture.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest)
         clearScreen(clearColor.r, clearColor.g, clearColor.b, clearColor.a)
         batch.shader = blurShader
+        batch.color = Color.WHITE
         val w = viewport.worldWidth
         val h = viewport.worldHeight
         val x = MathUtils.floor(w * -0.5f).toFloat()

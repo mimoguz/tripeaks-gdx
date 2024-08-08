@@ -7,7 +7,6 @@ import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.scenes.scene2d.Stage
-import com.badlogic.gdx.utils.Timer
 import com.ray3k.stripe.PopTable
 import ktx.app.KtxScreen
 import ktx.inject.Context
@@ -208,8 +207,7 @@ class GameScreen(private val context: Context) : KtxScreen, InputAdapter() {
     private fun onDeal() {
         game?.let { game ->
             game.deal()
-            ui.dealButton.enabled = game.canDeal
-            ui.undoButton.enabled = game.canUndo
+            updateButtons(game)
             if (game.stalled) onStalled()
         }
     }
@@ -243,8 +241,7 @@ class GameScreen(private val context: Context) : KtxScreen, InputAdapter() {
             if (target >= 0) {
                 view.syncSocket(game.gameLayout[target])
             }
-            ui.dealButton.enabled = game.canDeal
-            ui.undoButton.enabled = game.canUndo
+            updateButtons(game)
         }
     }
 
@@ -284,6 +281,11 @@ class GameScreen(private val context: Context) : KtxScreen, InputAdapter() {
     // HELPERS
     // ************************************************************************
 
+    private fun updateButtons(game: GameState) {
+        ui.dealButton.enabled = game.canDeal && !game.won
+        ui.undoButton.enabled = game.canUndo && !game.won
+    }
+
     private fun toWorld(screenX: Int, screenY: Int): Vector2 {
         val pos = Vector2(screenX.toFloat(), screenY.toFloat())
         viewport.unproject(pos)
@@ -311,8 +313,7 @@ class GameScreen(private val context: Context) : KtxScreen, InputAdapter() {
         this.game = game
         view.currentGame = game
         switch.setGame(game)
-        ui.undoButton.enabled = game.canUndo
-        ui.dealButton.enabled = game.canDeal
+        updateButtons(game)
     }
 
     private fun startNewGame() {
