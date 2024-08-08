@@ -6,7 +6,8 @@ precision mediump float;
 #endif
 
 // I use vertex colors to pass various per-entity parameters.
-// For this shader, r channel is noise scale, g channel is normalized remaining time, b channel is theme selection.
+// For this shader, r channel is noise scale, g channel is normalized remaining time,
+// b channel inverted screen scale.
 varying LOWP vec4 v_color;
 
 varying vec2 v_texCoords;
@@ -96,8 +97,8 @@ float snoise(vec2 v)
 void main() {
     vec4 outColor = texture2D(u_texture, v_texCoords);
     float remainingTime = v_color.g;
-    float scale = v_color.r;
-    float n = snoise(vec2(v_texCoords.x * scale * 150.0, v_texCoords.y * scale * 75.0));
+    float scale = v_color.r / v_color.b;
+    float n = snoise(vec2(v_texCoords.x * scale * 100.0, v_texCoords.y * scale * 50.0));
     float alpha =  smoothstep(0.6, 0.9, min(n * n + remainingTime, 1.0));
     gl_FragColor = vec4(outColor.rgb, outColor.a * alpha);
 }

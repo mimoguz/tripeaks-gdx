@@ -1,5 +1,6 @@
 package ogz.tripeaks.services
 
+import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.utils.Disposable
 import ktx.inject.Context
@@ -73,7 +74,7 @@ class SettingsService : Disposable {
 
 }
 
-class SettingsData(
+class SettingsData private constructor(
     var darkTheme: Boolean,
     var backDesign: Int,
     var layout: Layouts,
@@ -85,9 +86,9 @@ class SettingsData(
     constructor() : this(
         darkTheme = false,
         backDesign = 0,
-        layout = Layouts.Diamonds,
-        animation = AnimationStrategies.Dissolve,
-        drawingStrategy = DrawingStrategies.BackVisible,
+        layout = Layouts.Basic,
+        animation = AnimationStrategies.FadeOut,
+        drawingStrategy = DrawingStrategies.BackHidden,
         emptyDiscard = false
     )
 
@@ -104,7 +105,10 @@ class SettingsData(
         return Settings(
             backDesign,
             layout.create(),
-            animation.create(assets),
+            animation.create(assets).apply {
+                setTheme(darkTheme)
+                setScale((1f / Gdx.graphics.density).coerceAtLeast(1f))
+            },
             drawingStrategy.create(),
             SpriteSet(darkTheme, backDesign, assets),
             UiSkin(assets, assets[BundleAssets.Bundle]["skinKey"] == "cjk", darkTheme),

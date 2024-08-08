@@ -9,6 +9,7 @@ import com.badlogic.gdx.utils.Logger
 import com.badlogic.gdx.utils.viewport.Viewport
 import ktx.app.clearScreen
 import ktx.graphics.use
+import ktx.log.logger
 import ogz.tripeaks.Constants
 import ogz.tripeaks.graphics.BlurredRenderer
 import ogz.tripeaks.graphics.SimpleRenderer

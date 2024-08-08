@@ -28,12 +28,14 @@ sealed interface AnimationStrategy {
 
     fun setTheme(dark: Boolean)
 
+    fun setScale(scale: Float)
+
     companion object Strategies {
 
         // TODO: Dispose
         class Dissolve(assets: AssetManager) : AnimationStrategy, Disposable {
 
-            override var param = 0f
+            override var param = 1f
             override val shaderProgram: ShaderProgram
 
             init {
@@ -65,7 +67,11 @@ sealed interface AnimationStrategy {
             }
 
             override fun setTheme(dark: Boolean) {
-                param = if (dark) 1f else 0f
+                // Pass
+            }
+
+            override fun setScale(scale: Float) {
+                param = 1f / scale
             }
 
             override fun dispose() {
@@ -99,6 +105,10 @@ sealed interface AnimationStrategy {
 
             override fun setTheme(dark: Boolean) {
                 param = if (dark) 1f else 0f
+            }
+
+            override fun setScale(scale: Float) {
+                // Pass
             }
 
             override fun dispose() {
@@ -141,6 +151,10 @@ sealed interface AnimationStrategy {
                 step(time, vertexColor)
 
             override fun setTheme(dark: Boolean) {
+                // Pass
+            }
+
+            override fun setScale(scale: Float) {
                 // Pass
             }
 
