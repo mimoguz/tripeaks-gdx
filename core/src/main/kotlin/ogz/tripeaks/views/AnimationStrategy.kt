@@ -32,6 +32,7 @@ sealed interface AnimationStrategy {
 
         // TODO: Dispose
         class Dissolve(assets: AssetManager) : AnimationStrategy, Disposable {
+
             override var param = 0f
             override val shaderProgram: ShaderProgram
 
@@ -131,7 +132,10 @@ sealed interface AnimationStrategy {
                 vertexColor: Color,
                 position: Vector2,
                 scale: Vector2
-            ): Boolean = step(time, vertexColor)
+            ): Boolean {
+                position.y -= 1.2f * deltaTime * WORLD_HEIGHT
+                return step(time, vertexColor)
+            }
 
             override fun screenTransition(time: Float, vertexColor: Color): Boolean =
                 step(time, vertexColor)

@@ -5,8 +5,7 @@ precision mediump float;
 #define LOWP
 #endif
 
-#define SAMPLES 6.0
-#define STRIDE 4.0
+#define MAX_WIDTH 6.0
 
 // I use vertex colors to pass various per-entity parameters.
 // For this shader, g channel is normalized remaining time.
@@ -18,14 +17,33 @@ uniform sampler2D u_texture;
 uniform vec2 u_worldSize;
 
 void main() {
-    float stride = STRIDE * (1.0 - v_color.g);
-    vec2 xy = floor(u_worldSize * v_texCoords / (SAMPLES * STRIDE)) * (SAMPLES * STRIDE);
-    vec4 pixelSample = vec4(0.0, 0.0, 0.0, 0.0);
-    for (float x = 0.0; x < SAMPLES; x += 1.0) {
-        for (float y = 0.0; y < SAMPLES; y += 1.0) {
-            vec2 uv = vec2((xy.x + x * STRIDE) / u_worldSize.x, (xy.y + y * STRIDE) / u_worldSize.y);
-            pixelSample += texture2D(u_texture, uv);
-        }
-    }
-    gl_FragColor = vec4(pixelSample.rgb / (SAMPLES * SAMPLES), 1.0);
+//    float t = v_color.g;
+//    float width = MAX_WIDTH * (1.0 - t) + 1.0;
+//    float halfWidth = width * 0.5;
+//    vec4 pixelSample = vec4(0.0, 0.0, 0.0, 0.0);
+//    float step = 1.0 / MAX_WIDTH;
+//    float samples = floor(width / step + 0.5);
+//    vec2 xy = v_texCoords + vec2(halfWidth, halfWidth);
+//    for (float x = -halfWidth; x < halfWidth; x += step) {
+//        for (float y = -halfWidth; y < halfWidth; y += step) {
+//            vec2 uv = xy + vec2(x, y);
+//            pixelSample += texture2D(u_texture, uv);
+//        }
+//    }
+//    gl_FragColor = mix(
+//        vec4(pixelSample.rgb / (samples * samples), t),
+//        texture2D(u_texture, v_texCoords),
+//        step(0.9, t)
+//    );
+
+    float size = (1.0 - v_color.g) * MAX_WIDTH;
+    vec2 xy = floor(vec2(21.0, 32.0) * v_texCoords / size) * size;
+    vec2 uv = xy / vec2(21.0, 32.0);
+    vec4 color = texture2D(u_texture, uv);
+    color.a = v_color.g;
+    gl_FragColor = mix(
+        color,
+        texture2D(u_texture, v_texCoords),
+        step(0.99, v_color.g)
+    );
 }

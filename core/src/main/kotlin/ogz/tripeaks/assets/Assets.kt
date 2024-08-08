@@ -45,7 +45,8 @@ enum class ShaderSourceAssets(val path: String) {
     Dissolve("shaders/dissolve.frag"),
     Pixelate("shaders/pixelate_avg.frag"),
     Blink("shaders/blink.frag"),
-    FadeOut("shaders/fadeout.frag")
+    FadeOut("shaders/fadeout.frag"),
+    PixelateAnimated("shaders/pixelate_anim.frag")
 }
 
 fun AssetManager.load(asset: ShaderSourceAssets) = load<Text>(asset.path)
