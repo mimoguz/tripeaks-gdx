@@ -57,7 +57,7 @@ configure(subprojects - project(':android')) {
 }
 
 subprojects {
-    version = '1.1b1'
+    version = '1.1-beta.2'
     ext.appName = 'tripeaks'
     repositories {
         mavenCentral()
