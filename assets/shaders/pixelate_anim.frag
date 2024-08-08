@@ -9,7 +9,7 @@ precision mediump float;
 #define STRIDE 4.0
 
 // I use vertex colors to pass various per-entity parameters.
-// For this shader it's unused;
+// For this shader, g channel is normalized remaining time.
 varying LOWP vec4 v_color;
 
 varying vec2 v_texCoords;
@@ -18,6 +18,7 @@ uniform sampler2D u_texture;
 uniform vec2 u_worldSize;
 
 void main() {
+    float stride = STRIDE * (1.0 - v_color.g);
     vec2 xy = floor(u_worldSize * v_texCoords / (SAMPLES * STRIDE)) * (SAMPLES * STRIDE);
     vec4 pixelSample = vec4(0.0, 0.0, 0.0, 0.0);
     for (float x = 0.0; x < SAMPLES; x += 1.0) {
