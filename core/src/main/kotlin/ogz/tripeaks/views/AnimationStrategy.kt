@@ -60,7 +60,7 @@ sealed interface AnimationStrategy {
             }
 
             override fun screenTransition(time: Float, vertexColor: Color): Boolean {
-                vertexColor.set(0.2f, 1f - time / DISSOLVE_TIME, param, 1f)
+                vertexColor.set(0.5f, 1f - time / DISSOLVE_TIME, param, 1f)
                 return time > DISSOLVE_TIME
             }
 
@@ -133,7 +133,7 @@ sealed interface AnimationStrategy {
                 position: Vector2,
                 scale: Vector2
             ): Boolean {
-                position.y -= 1.2f * deltaTime * WORLD_HEIGHT
+                position.y -= 0.5f * deltaTime * WORLD_HEIGHT
                 return step(time, vertexColor)
             }
 
