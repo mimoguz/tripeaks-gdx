@@ -65,7 +65,6 @@ class WinDialog(
             .align(Align.center)
             .fillX()
 
-        debug = true
         isModal = true
         isHideOnUnfocus = false
     }

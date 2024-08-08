@@ -219,7 +219,6 @@ class OptionsDialog(
             .uniformX()
             .padLeft(Constants.UI_HORIZONTAL_SPACING / 2)
 
-        debug = true
         isModal = true
         isHideOnUnfocus = false
     }

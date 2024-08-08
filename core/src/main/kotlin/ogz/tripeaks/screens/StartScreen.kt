@@ -54,7 +54,6 @@ class StartScreen(private val app: Main, private val context: Context): KtxScree
         stage.clear()
         val skin = settings.get().skin
         table = Table(skin).apply {
-            debug()
             setSize(viewport.worldWidth, viewport.worldHeight)
             center()
             setPosition(0f, 0f)

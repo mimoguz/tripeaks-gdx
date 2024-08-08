@@ -115,7 +115,6 @@ class StatisticsDialog(
             .width(100f)
             .align(Align.center)
 
-        debug = true
         isModal = true
         isHideOnUnfocus = false
     }
