@@ -43,6 +43,20 @@ float fnoise(vec2 v) {
     return mix(c.x, c.y, v.y);
 }
 
+// Alternative
+float frand2(vec2 n) {
+    return fract(sin(dot(n, vec2(12.9898, 4.1414))) * 43758.5453);
+}
+
+float fnoise2(vec2 n) {
+    const vec2 d = vec2(0.0, 1.0);
+    vec2 b = floor(n);
+    vec2 f = smoothstep(vec2(0.0), vec2(1.0), fract(n));
+    return mix(
+        mix(frand2(b), frand2(b + d.yx), f.x),
+        mix(frand2(b + d.xy), frand2(b + d.yy), f.x), f.y);
+}
+
 // *******************************************************************************
 // End of the noise function
 // *******************************************************************************
@@ -51,11 +65,11 @@ void main() {
     vec4 outColor = texture2D(u_texture, v_texCoords);
     float remainingTime = v_color.g;
     float scale = v_color.r;
-    float n = fnoise(vec2(v_texCoords.x * 512.0 * scale, v_texCoords.y  * 256.0 * scale));
-    float alpha =  smoothstep(0.6, 0.9, min(n * n + remainingTime, 1.0));
+    float n = fnoise2(vec2(v_texCoords.x * scale * 800.0, v_texCoords.y * scale * 200.0));
+    float alpha =  smoothstep(0.6, 0.9, min(n*n + remainingTime, 1.0));
     // Burnt edges:
     vec3 tint = mix(vec3(0.8, 0.4,  0.2), vec3(0.5, 0.2,  0.3), v_color.b);
-    outColor.rgb = mix(tint, outColor.rgb, smoothstep(0.6, 0.9, alpha));
+    outColor.rgb = mix(tint, outColor.rgb, alpha);
 
-    gl_FragColor = vec4(outColor.rgb, outColor.a * alpha * remainingTime);
+    gl_FragColor = vec4(outColor.rgb, outColor.a * alpha);
 }
