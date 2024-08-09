@@ -30,3 +30,5 @@ A simple tri peaks solitaire game using [libGDX](https://libgdx.com/).
 * Spanish
 * Turkish
 
+_P.S._ [Need help with translation](https://github.com/mimoguz/tripeaks-gdx/issues/27)
+
