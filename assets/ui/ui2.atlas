@@ -59,8 +59,8 @@ split:4,4,4,4
 pad:4,4,4,4
 dark_scroll_knob
 bounds:38,61,12,12
-split:5,5,5,5
-pad:5,5,5,5
+split:4,4,4,4
+pad:4,4,4,4
 dark_selectbox_down
 bounds:20,111,18,15
 split:8,8,3,3
@@ -71,8 +71,8 @@ split:8,8,3,3
 pad:8,8,3,3
 dark_window
 bounds:2,53,16,16
-split:2,2,2,4
-pad:2,2,2,4
+split:3,3,3,5
+pad:3,3,3,5
 light_button_disabled
 bounds:2,109,16,17
 split:3,3,3,5
@@ -131,8 +131,8 @@ split:3,3,4,4
 pad:3,3,4,4
 light_scroll_knob
 bounds:110,114,12,12
-split:5,5,5,5
-pad:5,5,5,5
+split:4,4,4,4
+pad:4,4,4,4
 light_selectbox_down
 bounds:40,111,18,15
 split:8,8,3,3
@@ -143,5 +143,5 @@ split:8,8,3,3
 pad:8,8,3,3
 light_window
 bounds:20,55,16,16
-split:2,2,2,4
-pad:2,2,2,4
+split:3,3,3,5
+pad:3,3,3,5
