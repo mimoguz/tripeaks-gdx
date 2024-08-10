@@ -269,7 +269,7 @@ class GameScreen(private val context: Context) : KtxScreen, InputAdapter() {
         newMenu.show(stage)
         newMenu.setPosition(
             stage.width - newMenu.width - HORIZONTAL_PADDING,
-            stage.height - newMenu.height - ui.menuButton.height - 2f * VIEWPORT_VERTICAL_PADDING
+            stage.height - newMenu.height - ui.menuButton.height - 2f * VIEWPORT_VERTICAL_PADDING + 2f
         )
     }
 
