@@ -21,6 +21,7 @@ import ogz.tripeaks.models.PlayerStatistics
 import ogz.tripeaks.Constants
 import ogz.tripeaks.ui.LabelButton
 
+// TODO- Missing characters, missing icon, L- kerning. Can I always use gamepixels here?
 class AboutDiaog(
     skin: UiSkin,
     assets: AssetManager,
