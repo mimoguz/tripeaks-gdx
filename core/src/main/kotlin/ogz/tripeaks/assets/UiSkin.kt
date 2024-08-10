@@ -85,7 +85,7 @@ class UiSkin private constructor(
         window {
             titleFont = uiFont
             titleFontColor = skin[TEXT_COLOR]
-            background = skin["${resourcePrefix}_window"]
+            background = skin["${resourcePrefix}_menu"] // window
         }
 
         checkBox {
@@ -110,7 +110,7 @@ class UiSkin private constructor(
             fontColorUnselected = skin[TEXT_COLOR]
             selection = skin["${resourcePrefix}_menu_item_down"]
             over = skin["${resourcePrefix}_menu_item_over"]
-            background = skin["${resourcePrefix}_window"]
+            background = skin["${resourcePrefix}_menu"]
         }
 
         val skinScrollPaneStyle = scrollPane {
@@ -131,12 +131,12 @@ class UiSkin private constructor(
         }
 
         addStyle("default", PopTableStyle().apply {
-            background = skin["${resourcePrefix}_window"]
+            background = skin["${resourcePrefix}_menu"] // window
             // stageBackground = skin["overlay_$resourcePostfix"]
         })
 
         addStyle("menu", PopTableStyle().apply {
-            background = skin["${resourcePrefix}_window"]
+            background = skin["${resourcePrefix}_menu"]
         })
     }
 
