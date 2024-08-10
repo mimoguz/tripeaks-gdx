@@ -41,7 +41,7 @@ class OptionsDialog(
             bundle["darkTheme"],
             skin
         ).apply {
-            imageCell.padRight(5f)
+            imageCell.padRight(Constants.UI_HORIZONTAL_SPACING)
             isChecked = settingsData.darkTheme
         }
 
@@ -88,19 +88,20 @@ class OptionsDialog(
         }
 
         pad(
-            Constants.UI_PANEL_VERTICAL_BORDER,
+            Constants.UI_PANEL_VERTICAL_BORDER - 2f,
             Constants.UI_PANEL_HORIZONTAL_BORDER,
-            Constants.UI_PANEL_VERTICAL_BORDER - 1f,
+            Constants.UI_PANEL_VERTICAL_BORDER,
             Constants.UI_PANEL_HORIZONTAL_BORDER,
         )
 
         // Title
         add(HorizontalGroup().apply {
-            space(5f)
+            space(4f)
             children.add(Image(uiAssets.findRegion("${skin.resourcePrefix}_icon_options")))
             children.add(Label(bundle["options"], skin, UiSkin.TITLE_LABEL_STYLE))
         })
             .align(Align.left)
+            .padLeft(-14f)
             .colspan(2)
             .padBottom(Constants.UI_VERTICAL_SPACING + skin.extraLineSpacing)
 

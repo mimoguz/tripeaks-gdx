@@ -38,19 +38,20 @@ class StatisticsDialog(
         val line = uiAssets.findRegion("${skin.resourcePrefix}_line")
 
         pad(
-            Constants.UI_PANEL_VERTICAL_BORDER,
+            Constants.UI_PANEL_VERTICAL_BORDER - 2f,
             Constants.UI_PANEL_HORIZONTAL_BORDER,
-            Constants.UI_PANEL_VERTICAL_BORDER - 1f,
+            Constants.UI_PANEL_VERTICAL_BORDER,
             Constants.UI_PANEL_HORIZONTAL_BORDER,
         )
 
         // Title
         add(HorizontalGroup().apply {
-            space(Constants.UI_HORIZONTAL_SPACING)
+            space(4f)
             children.add(Image(uiAssets.findRegion("${skin.resourcePrefix}_icon_stats")))
             children.add(Label(bundle["statistics"], skin, UiSkin.TITLE_LABEL_STYLE))
         })
             .align(Align.left)
+            .padLeft(-14f)
             .colspan(2)
             .padBottom(Constants.UI_VERTICAL_SPACING + skin.extraLineSpacing)
 
@@ -112,7 +113,7 @@ class StatisticsDialog(
         add(LabelButton(skin, bundle["close"]) {
             hide()
         })
-            .width(100f)
+            .minWidth(100f)
             .align(Align.center)
 
         isModal = true
@@ -130,12 +131,13 @@ class StatisticsDialog(
         padLast: Boolean = false
     ) {
         val uiSkin = skin as UiSkin
-        val divSpacing = MathUtils.floor(uiSkin.extraLineSpacing / 2f).toFloat().coerceAtLeast(1f)
-        val columnSpacing = Constants.UI_HORIZONTAL_SPACING * 4
+        val divSpacing = MathUtils.floor(uiSkin.extraLineSpacing / 2f).toFloat().coerceAtLeast(2f)
+        val columnSpacing = Constants.UI_HORIZONTAL_SPACING * 4f
+        val indent = Constants.UI_HORIZONTAL_SPACING * 2f
 
         table.add(Label(title, skin, UiSkin.TITLE_LABEL_STYLE))
             .colspan(2)
-            .align(Align.center)
+            .align(Align.left)
             .padBottom(uiSkin.extraLineSpacing)
 
         table.row()
@@ -148,23 +150,30 @@ class StatisticsDialog(
 
         table.row()
 
-        table.add(Label(bundle["statGames"], skin)).padRight(columnSpacing)
-        table.add(Label(played.toString(), skin)).align(Align.right)
+        table.add(Label(bundle["statGames"], skin))
+            .padRight(columnSpacing)
+            .padLeft(indent)
+        table.add(Label(played.toString(), skin))
+            .align(Align.right)
 
         table.row()
 
-        table.add(Label(bundle["statWins"], skin)).padRight(columnSpacing)
-        table.add(Label(won.toString(), skin)).align(Align.right)
+        table.add(Label(bundle["statWins"], skin))
+            .padRight(columnSpacing)
+            .padLeft(indent)
+        table.add(Label(won.toString(), skin))
+            .align(Align.right)
 
         table.row()
 
         table.add(Label(bundle["statLongestChain"], skin))
             .padRight(columnSpacing)
+            .padLeft(indent)
             .padBottom(Constants.UI_VERTICAL_SPACING)
         table
             .add(Label(longestChain.toString(), skin))
             .align(Align.right)
-            .padBottom(Constants.UI_VERTICAL_SPACING)
+            .padBottom(if (padLast) Constants.UI_VERTICAL_SPACING else 0f)
     }
 
 }

@@ -25,15 +25,15 @@
      inkscape:document-units="px"
      showgrid="true"
      showguides="true"
-     inkscape:zoom="4.1837696"
-     inkscape:cx="30.713928"
-     inkscape:cy="70.152046"
-     inkscape:window-width="1904"
+     inkscape:zoom="7.3292575"
+     inkscape:cx="49.800406"
+     inkscape:cy="41.409379"
+     inkscape:window-width="1437"
      inkscape:window-height="1115"
      inkscape:window-x="35"
      inkscape:window-y="32"
      inkscape:window-maximized="0"
-     inkscape:current-layer="layer4"
+     inkscape:current-layer="layer5"
      guidecolor="#00e54d"
      guideopacity="0.6">
     <inkscape:grid
@@ -41,13 +41,13 @@
        units="px"
        originx="0"
        originy="0"
-       spacingx="0.26458333"
-       spacingy="0.26458333"
+       spacingx="0.52916666"
+       spacingy="0.52916666"
        empcolor="#e5cc00"
        empopacity="0.30196078"
        color="#e5d000"
        opacity="0.14901961"
-       empspacing="4"
+       empspacing="2"
        dotted="false"
        gridanglex="30"
        gridanglez="30"
@@ -232,6 +232,25 @@
        only_selected="true"
        hide_knots="false" />
   </defs>
+  <g
+     inkscape:groupmode="layer"
+     id="layer5"
+     inkscape:label="safe_zone"
+     sodipodi:insensitive="true">
+    <rect
+       style="fill:#999999;stroke-width:0.264583"
+       id="rect2"
+       width="19.049999"
+       height="19.049999"
+       x="4.7625003"
+       y="4.7625003" />
+    <circle
+       style="display:inline;fill:#f9f9f9;stroke-width:0.264583"
+       id="path2"
+       cx="14.287499"
+       cy="14.287499"
+       r="8.7312498" />
+  </g>
   <g
      inkscape:label="bg"
      inkscape:groupmode="layer"

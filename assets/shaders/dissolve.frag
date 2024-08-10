@@ -46,7 +46,7 @@ vec3 permute(vec3 x) {
 // Cellular noise, returning F1 and F2 in a vec2.
 // Standard 3x3 search window for good F1 and F2 values
 vec2 cellular(vec2 P) {
-    #define K 0.142857142857 // 1/7
+#define K 0.142857142857 // 1/7
 #define Ko 0.428571428571 // 3/7
 #define jitter 1.0 // Less gives more regular pattern
 	vec2 Pi = mod289(floor(P));

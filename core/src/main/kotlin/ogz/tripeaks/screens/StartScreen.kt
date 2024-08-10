@@ -3,16 +3,28 @@ package ogz.tripeaks.screens
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
+import com.badlogic.gdx.graphics.g2d.TextureAtlas
+import com.badlogic.gdx.graphics.g2d.TextureRegion
+import com.badlogic.gdx.math.MathUtils
+import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.Stage
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton
 import com.badlogic.gdx.scenes.scene2d.ui.Table
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
+import com.badlogic.gdx.utils.Align
 import com.ray3k.stripe.PopTable
 import ktx.app.KtxScreen
 import ktx.inject.Context
 import ogz.tripeaks.Constants
 import ogz.tripeaks.Main
 import ogz.tripeaks.assets.BundleAssets
+import ogz.tripeaks.assets.TextureAtlasAssets
+import ogz.tripeaks.assets.UiSkin
 import ogz.tripeaks.assets.get
 import ogz.tripeaks.graphics.CustomViewport
+import ogz.tripeaks.screens.stage.AboutDiaog
 import ogz.tripeaks.screens.stage.OptionsDialog
 import ogz.tripeaks.screens.stage.OptionsDialogResult
 import ogz.tripeaks.screens.stage.StatisticsDialog
@@ -20,7 +32,7 @@ import ogz.tripeaks.services.PlayerStatisticsService
 import ogz.tripeaks.services.SettingsService
 import ogz.tripeaks.ui.LabelButton
 
-class StartScreen(private val app: Main, private val context: Context): KtxScreen {
+class StartScreen(private val app: Main, private val context: Context) : KtxScreen {
 
     private val settings = context.inject<SettingsService>()
     private val stats = context.inject<PlayerStatisticsService>()
@@ -33,17 +45,21 @@ class StartScreen(private val app: Main, private val context: Context): KtxScree
 
     init {
         val batch = context.inject<SpriteBatch>()
-        switch.addState(PausedStartScreen::class.java, PausedStartScreen(
-            batch,
-            viewport,
-            settings,
-            assets
-        ))
-        switch.addState(PlayingStartScreen::class.java, PlayingStartScreen(
-            batch,
-            viewport,
-            settings
-        ))
+        switch.addState(
+            PausedStartScreen::class.java, PausedStartScreen(
+                batch,
+                viewport,
+                settings,
+                assets
+            )
+        )
+        switch.addState(
+            PlayingStartScreen::class.java, PlayingStartScreen(
+                batch,
+                viewport,
+                settings
+            )
+        )
         switch.update()
         switch.switch(PlayingStartScreen::class.java)
         Gdx.input.inputProcessor = stage
@@ -57,16 +73,10 @@ class StartScreen(private val app: Main, private val context: Context): KtxScree
             setSize(viewport.worldWidth, viewport.worldHeight)
             center()
             setPosition(0f, 0f)
-            defaults().fillX().padBottom(Constants.UI_VERTICAL_SPACING)
-            add(LabelButton(skin, bundle["start"], this@StartScreen::startGame)).padTop(1f)
-            row()
-            add(LabelButton(skin, bundle["options"], this@StartScreen::showOptionsDialog))
-            row()
-            add(LabelButton(skin, bundle["statistics"], this@StartScreen::showStatisticsDialog))
-            row()
-            add(LabelButton(skin, bundle["exit"], this@StartScreen::exit)).padBottom(0f)
+            if (skin.cjk) setupButtonTableCJK(this, skin) else setupButtonTableCJK(this, skin)
         }
         stage.addActor(table)
+
     }
 
     override fun resize(width: Int, height: Int) {
@@ -86,6 +96,48 @@ class StartScreen(private val app: Main, private val context: Context): KtxScree
         switch.dispose()
     }
 
+    private fun setupButtonTable(table: Table, skin: UiSkin) {
+        table.apply {
+            defaults().fillX().padBottom(Constants.UI_VERTICAL_SPACING)
+            add(LabelButton(skin, bundle["start"], this@StartScreen::startGame)).padTop(1f)
+            row()
+            add(LabelButton(skin, bundle["options"], this@StartScreen::showOptionsDialog))
+            row()
+            add(LabelButton(skin, bundle["statistics"], this@StartScreen::showStatisticsDialog))
+            row()
+            add(LabelButton(skin, bundle["about"], this@StartScreen::showAboutDialog))
+            row()
+            add(LabelButton(skin, bundle["exit"], this@StartScreen::exit)).padBottom(0f)
+        }
+    }
+
+    private fun setupButtonTableCJK(table: Table, skin: UiSkin) {
+        table.apply {
+            defaults()
+                .fillX()
+                .uniformX()
+                .minWidth(86f)
+                .pad(
+                    0f,
+                    MathUtils.floor(Constants.UI_HORIZONTAL_SPACING / 2f).toFloat(),
+                    Constants.UI_VERTICAL_SPACING,
+                    MathUtils.floor(Constants.UI_HORIZONTAL_SPACING / 2f).toFloat()
+                )
+
+            add(LabelButton(skin, bundle["start"], this@StartScreen::startGame))
+                .padTop(1f)
+                .colspan(2)
+                .fillX()
+                .minHeight(26f)
+            row()
+            add(LabelButton(skin, bundle["options"], this@StartScreen::showOptionsDialog))
+            add(LabelButton(skin, bundle["statistics"], this@StartScreen::showStatisticsDialog))
+            row()
+            add(LabelButton(skin, bundle["about"], this@StartScreen::showAboutDialog)).padBottom(0f)
+            add(LabelButton(skin, bundle["exit"], this@StartScreen::exit)).padBottom(0f)
+        }
+    }
+
     private fun showOptionsDialog() {
         val dialog = OptionsDialog(settings.get().skin, assets, settings.getData()) { result ->
             when (result) {
@@ -101,6 +153,11 @@ class StartScreen(private val app: Main, private val context: Context): KtxScree
 
     private fun showStatisticsDialog() {
         val dialog = StatisticsDialog(settings.get().skin, assets, stats.get())
+        showDialog(dialog)
+    }
+
+    private fun showAboutDialog() {
+        val dialog = AboutDiaog(settings.get().skin, assets)
         showDialog(dialog)
     }
 
@@ -132,5 +189,5 @@ class StartScreen(private val app: Main, private val context: Context): KtxScree
     private fun onDialogHidden() {
         switch.switch(PlayingStartScreen::class.java)
     }
-    
+
 }
