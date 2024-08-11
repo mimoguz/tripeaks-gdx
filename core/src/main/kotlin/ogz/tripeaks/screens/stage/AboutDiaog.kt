@@ -1,27 +1,21 @@
 package ogz.tripeaks.screens.stage
 
 import com.badlogic.gdx.assets.AssetManager
-import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.math.MathUtils
-import com.badlogic.gdx.scenes.scene2d.Actor
-import com.badlogic.gdx.scenes.scene2d.ui.Cell
 import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup
 import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane
 import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.utils.Align
-import com.badlogic.gdx.utils.I18NBundle
 import com.ray3k.stripe.PopTable
+import ogz.tripeaks.Constants
 import ogz.tripeaks.assets.BundleAssets
 import ogz.tripeaks.assets.TextureAtlasAssets
 import ogz.tripeaks.assets.UiSkin
 import ogz.tripeaks.assets.get
-import ogz.tripeaks.models.PlayerStatistics
-import ogz.tripeaks.Constants
 import ogz.tripeaks.ui.LabelButton
 
-// TODO- Missing characters, missing icon, L- kerning. Can I always use gamepixels here?
 class AboutDiaog(
     skin: UiSkin,
     assets: AssetManager,
@@ -43,7 +37,7 @@ class AboutDiaog(
         // Title
         add(HorizontalGroup().apply {
             space(4f)
-            children.add(Image(uiAssets.findRegion("${skin.resourcePrefix}_icon_stats")))
+            children.add(Image(uiAssets.findRegion("${skin.resourcePrefix}_icon_about")))
             children.add(Label(bundle["about"], skin, UiSkin.TITLE_LABEL_STYLE))
         })
             .align(Align.left)
@@ -61,7 +55,7 @@ class AboutDiaog(
                 .expandX()
                 .fillX()
 
-            add(Label("Licenses", skin, UiSkin.TITLE_LABEL_STYLE))
+            add(Label("Licenses", skin, UiSkin.TITLE_LABEL_STYLE_LATIN))
             row()
             add(Image(line)).pad(divSpacing, 0f, divSpacing, Constants.UI_HORIZONTAL_SPACING)
             row()
@@ -73,11 +67,11 @@ class AboutDiaog(
             addLicenseInfo(
                 this,
                 "GNU Unifont",
-                "OFL-1.1, or GNU GPL-2 or\nlater with the GNU font embedding\nexception",
-                "https://unifoundry.com/unifont/"
+                "OFL-1.1, or GNU GPL-2+ with\nthe GNU font embedding exception",
+                "unifoundry.com/unifont"
             )
 
-            add(Label("Privacy Policy", skin, UiSkin.TITLE_LABEL_STYLE))
+            add(Label("Privacy Policy", skin, UiSkin.TITLE_LABEL_STYLE_LATIN))
             row()
             add(Image(line)).pad(divSpacing, 0f, divSpacing, Constants.UI_HORIZONTAL_SPACING)
             row()
@@ -88,7 +82,8 @@ class AboutDiaog(
                             "from the source codes available at\n" +
                             "github.com/mimoguz/tripeaks-gdx.\n" +
                             "It does not collect any user data.",
-                    skin
+                    skin,
+                    UiSkin.LATIN_LABEL_STYLE
                 )
             )
                 .padLeft(Constants.UI_HORIZONTAL_SPACING * 2f)
@@ -127,10 +122,10 @@ class AboutDiaog(
         val uiSkin = skin as UiSkin
 
         table.apply {
-            add(Label("$projectName: $license.", skin)).padLeft(indent)
-                .padBottom(uiSkin.extraLineSpacing.coerceAtLeast(3f))
+            add(Label("$projectName: $license.", skin, UiSkin.LATIN_LABEL_STYLE)).padLeft(indent)
+                .padBottom(2f)
             row()
-            add(Label(link, skin))
+            add(Label(link, skin, UiSkin.LATIN_LABEL_STYLE))
                 .padBottom(Constants.UI_HORIZONTAL_SPACING + 2f)
                 .colspan(2)
                 .padLeft(indent)

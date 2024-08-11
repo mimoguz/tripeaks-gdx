@@ -17,6 +17,8 @@ dark_checkbox_off
 bounds:98,58,11,11
 dark_checkbox_on
 bounds:72,45,11,11
+dark_icon_about
+bounds:85,49,9,7
 dark_icon_deal
 bounds:112,111,11,15
 dark_icon_lose
@@ -26,7 +28,7 @@ bounds:60,72,9,13
 dark_icon_options
 bounds:20,4,9,7
 dark_icon_stats
-bounds:61,48,9,7
+bounds:96,49,9,7
 dark_icon_undo
 bounds:79,97,12,12
 dark_icon_win
@@ -95,6 +97,8 @@ light_checkbox_off
 bounds:79,84,11,11
 light_checkbox_on
 bounds:107,98,11,11
+light_icon_about
+bounds:117,75,9,7
 light_icon_deal
 bounds:47,70,11,15
 light_icon_lose
@@ -102,9 +106,9 @@ bounds:2,105,23,21
 light_icon_menu
 bounds:61,57,9,13
 light_icon_options
-bounds:117,66,9,7
+bounds:61,48,9,7
 light_icon_stats
-bounds:117,75,9,7
+bounds:117,66,9,7
 light_icon_undo
 bounds:93,97,12,12
 light_icon_win

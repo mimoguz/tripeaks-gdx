@@ -132,48 +132,51 @@ class StatisticsDialog(
     ) {
         val uiSkin = skin as UiSkin
         val divSpacing = MathUtils.floor(uiSkin.extraLineSpacing / 2f).toFloat().coerceAtLeast(2f)
+        val lineSpacing = uiSkin.extraLineSpacing.coerceAtLeast(2f)
         val columnSpacing = Constants.UI_HORIZONTAL_SPACING * 4f
         val indent = Constants.UI_HORIZONTAL_SPACING * 2f
 
-        table.add(Label(title, skin, UiSkin.TITLE_LABEL_STYLE))
-            .colspan(2)
-            .align(Align.left)
-            .padBottom(uiSkin.extraLineSpacing)
+        table.apply {
+            add(Label(title, skin, UiSkin.TITLE_LABEL_STYLE))
+                .colspan(2)
+                .align(Align.left)
+                .padBottom(uiSkin.extraLineSpacing)
 
-        table.row()
+            row()
 
-        table.add(Image(line))
-            .colspan(2)
-            .expandX()
-            .fillX()
-            .pad(divSpacing, 0f, divSpacing, 0f)
+            add(Image(line))
+                .colspan(2)
+                .expandX()
+                .fillX()
+                .pad(divSpacing, 0f, divSpacing, 0f)
 
-        table.row()
+            row()
 
-        table.add(Label(bundle["statGames"], skin))
-            .padRight(columnSpacing)
-            .padLeft(indent)
-        table.add(Label(played.toString(), skin))
-            .align(Align.right)
+            add(Label(bundle["statGames"], skin))
+                .padRight(columnSpacing)
+                .padLeft(indent)
+                .padBottom(lineSpacing)
 
-        table.row()
+            add(Label(played.toString(), skin)).align(Align.right).padBottom(lineSpacing)
 
-        table.add(Label(bundle["statWins"], skin))
-            .padRight(columnSpacing)
-            .padLeft(indent)
-        table.add(Label(won.toString(), skin))
-            .align(Align.right)
+            row()
 
-        table.row()
+            add(Label(bundle["statWins"], skin))
+                .padRight(columnSpacing)
+                .padLeft(indent)
+                .padBottom(lineSpacing)
+            add(Label(won.toString(), skin)).align(Align.right).padBottom(lineSpacing)
 
-        table.add(Label(bundle["statLongestChain"], skin))
-            .padRight(columnSpacing)
-            .padLeft(indent)
-            .padBottom(Constants.UI_VERTICAL_SPACING)
-        table
-            .add(Label(longestChain.toString(), skin))
-            .align(Align.right)
-            .padBottom(if (padLast) Constants.UI_VERTICAL_SPACING else 0f)
+            row()
+
+            add(Label(bundle["statLongestChain"], skin))
+                .padRight(columnSpacing)
+                .padLeft(indent)
+                .padBottom(if (padLast) Constants.UI_VERTICAL_SPACING else 0f)
+            add(Label(longestChain.toString(), skin))
+                .align(Align.right)
+                .padBottom(if (padLast) Constants.UI_VERTICAL_SPACING else 0f)
+        }
     }
 
 }

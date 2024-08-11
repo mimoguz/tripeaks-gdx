@@ -23,6 +23,7 @@ import ogz.tripeaks.Constants
 class UiSkin private constructor(
     atlas: TextureAtlas,
     uiFont: BitmapFont,
+    latinFont: BitmapFont,
     textColor: Color,
     emphasisColor: Color,
     val resourcePrefix: String,
@@ -34,6 +35,7 @@ class UiSkin private constructor(
     constructor(assets: AssetManager, cjk: Boolean, dark: Boolean) : this(
         assets[TextureAtlasAssets.Ui],
         if (cjk) assets[FontAssets.UnifontCJK] else assets[FontAssets.GamePixels],
+        assets[FontAssets.GamePixels],
         if (dark) Constants.DARK_UI_TEXT else Constants.LIGHT_UI_TEXT,
         if (dark) Constants.DARK_UI_EMPHASIS else Constants.LIGHT_UI_EMPHASIS,
         if (dark) "dark" else "light",
@@ -54,6 +56,15 @@ class UiSkin private constructor(
         }
 
         label(TITLE_LABEL_STYLE, extend = defaultStyle) {
+            fontColor = skin[EMPHASIS_COLOR]
+        }
+
+        label(LATIN_LABEL_STYLE, extend = defaultStyle) {
+            font = latinFont
+        }
+
+        label(TITLE_LABEL_STYLE_LATIN, extend = defaultStyle) {
+            font = latinFont
             fontColor = skin[EMPHASIS_COLOR]
         }
 
@@ -144,6 +155,8 @@ class UiSkin private constructor(
         private const val TEXT_COLOR = "textColor"
         private const val EMPHASIS_COLOR = "emphasisColor"
         const val TITLE_LABEL_STYLE = "title"
+        const val TITLE_LABEL_STYLE_LATIN = "title_latin"
+        const val LATIN_LABEL_STYLE = "label_latin"
         const val MENU_ITEM_BUTTON_STYLE = "menuItem"
         const val RADIO_BUTTON_STYLE = "radioButton"
     }

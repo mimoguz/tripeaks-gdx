@@ -144,7 +144,7 @@ class OptionsDialog(
         }
 
         val itemTable = Table().apply {
-            defaults().align(Align.left).padBottom(2f + skin.extraLineSpacing).align(Align.left)
+            defaults().align(Align.left).padBottom(3f + skin.extraLineSpacing).align(Align.left)
             padRight(Constants.UI_VERTICAL_SPACING)
 
             add(Label(bundle["layout"], skin))
