@@ -2,11 +2,14 @@ package ogz.tripeaks.screens.stage
 
 import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.math.MathUtils
+import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.badlogic.gdx.scenes.scene2d.ui.Label
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
 import com.badlogic.gdx.utils.Align
 import com.ray3k.stripe.PopTable
 import ogz.tripeaks.Constants
 import ogz.tripeaks.assets.BundleAssets
+import ogz.tripeaks.assets.TextureAtlasAssets
 import ogz.tripeaks.assets.UiSkin
 import ogz.tripeaks.assets.get
 import ogz.tripeaks.models.GameStatistics
@@ -30,10 +33,17 @@ class StalledDialog(
         )
 
         defaults()
-            .padBottom(Constants.UI_VERTICAL_SPACING + skin.extraLineSpacing)
-            .align(Align.left)
+            .padBottom(Constants.UI_VERTICAL_SPACING)
+            .left()
 
-        add(Label(bundle.get("stalled"), skin)).align(Align.left).expandX().colspan(2)
+        add(Image(TextureRegionDrawable(assets[TextureAtlasAssets.Ui].findRegion("${skin.resourcePrefix}_icon_lose"))))
+            .padRight(Constants.UI_HORIZONTAL_SPACING)
+            .colspan(2)
+            .center()
+
+        row()
+
+        add(Label(bundle["stalled"], skin)).colspan(2)
 
         row()
 
@@ -44,7 +54,7 @@ class StalledDialog(
             .padRight(MathUtils.floor(Constants.UI_HORIZONTAL_SPACING / 2f).toFloat())
             .padBottom(0f)
             .uniformX()
-            .align(Align.center)
+            .center()
             .fillX()
 
         add(LabelButton(skin, bundle.get("return")) {
@@ -54,7 +64,7 @@ class StalledDialog(
             .padLeft(MathUtils.floor(Constants.UI_HORIZONTAL_SPACING / 2f).toFloat())
             .padBottom(0f)
             .uniformX()
-            .align(Align.center)
+            .center()
             .fillX()
 
         isModal = true

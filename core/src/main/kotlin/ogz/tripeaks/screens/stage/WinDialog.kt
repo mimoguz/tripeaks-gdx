@@ -2,11 +2,15 @@ package ogz.tripeaks.screens.stage
 
 import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.math.MathUtils
+import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.badlogic.gdx.scenes.scene2d.ui.Label
+import com.badlogic.gdx.scenes.scene2d.ui.Table
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
 import com.badlogic.gdx.utils.Align
 import com.ray3k.stripe.PopTable
 import ogz.tripeaks.Constants
 import ogz.tripeaks.assets.BundleAssets
+import ogz.tripeaks.assets.TextureAtlasAssets
 import ogz.tripeaks.assets.UiSkin
 import ogz.tripeaks.assets.get
 import ogz.tripeaks.models.GameStatistics
@@ -30,10 +34,18 @@ class WinDialog(
         )
 
         defaults()
-            .padBottom(Constants.UI_VERTICAL_SPACING + skin.extraLineSpacing)
-            .align(Align.left)
+            .padBottom(skin.extraLineSpacing.coerceAtLeast(2f))
+            .left()
 
-        add(Label(bundle["won"], skin, UiSkin.TITLE_LABEL_STYLE))
+        add(Image(TextureRegionDrawable(assets[TextureAtlasAssets.Ui].findRegion("${skin.resourcePrefix}_icon_win"))))
+            .padRight(Constants.UI_HORIZONTAL_SPACING)
+            .colspan(2)
+            .padBottom(Constants.UI_VERTICAL_SPACING)
+            .center()
+
+        row()
+
+        add(Label(bundle["won"], skin, UiSkin.TITLE_LABEL_STYLE)).colspan(2)
 
         row()
 
@@ -41,7 +53,9 @@ class WinDialog(
 
         row()
 
-        add(Label(bundle.format("usedUndo", stats.undoCount), skin)).colspan(2)
+        add(Label(bundle.format("usedUndo", stats.undoCount), skin))
+            .colspan(2)
+            .padBottom(Constants.UI_VERTICAL_SPACING)
 
         row()
 
@@ -52,7 +66,7 @@ class WinDialog(
             .padRight(MathUtils.floor(Constants.UI_HORIZONTAL_SPACING / 2f).toFloat())
             .padBottom(0f)
             .uniformX()
-            .align(Align.center)
+            .center()
             .fillX()
 
         add(LabelButton(skin, bundle.get("exit")) {
@@ -62,7 +76,7 @@ class WinDialog(
             .padLeft(MathUtils.floor(Constants.UI_HORIZONTAL_SPACING / 2f).toFloat())
             .padBottom(0f)
             .uniformX()
-            .align(Align.center)
+            .center()
             .fillX()
 
         isModal = true
