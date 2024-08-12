@@ -67,7 +67,7 @@ class AboutDiaog(
             addLicenseInfo(
                 this,
                 "GNU Unifont",
-                "OFL-1.1, or GNU GPL-2+ with\nthe GNU font embedding exception",
+                "OFL-1.1, or GPL-2+ with\nthe GNU font embedding exception",
                 "unifoundry.com/unifont"
             )
 
