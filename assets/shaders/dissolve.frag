@@ -5,9 +5,10 @@ precision mediump float;
 #define LOWP
 #endif
 
+#define WORLD_HEIGHT 168.0
+
 // I use vertex colors to pass various per-entity parameters.
-// For this shader, r channel is noise scale, g channel is normalized remaining time,
-// b channel inverted screen scale.
+// For this shader, r channel is is aspect ratio, g channel is normalized remaining time,
 varying LOWP vec4 v_color;
 
 varying vec2 v_texCoords;
@@ -90,13 +91,16 @@ vec2 cellular(vec2 P) {
 // End of the noise function
 // *******************************************************************************
 
+
 void main() {
     vec4 outColor = texture2D(u_texture, v_texCoords);
     float remainingTime = v_color.g;
     float scale = v_color.r / v_color.b;
-    float n = 1.0 - cellular(vec2(v_texCoords.x * scale * 200.0, v_texCoords.y * scale * 100.0)).x;
-    float alpha = 1.0 - step(min(n * n + remainingTime, 1.0), 0.8);
+    vec2 worldSize = vec2(floor(WORLD_HEIGHT * v_color.b), WORD_HEIGHT);
+    vec2 pos = floor(v_texCoords * worldSize);
+    float n = 1.0 - cellular(pos).x;
+    float alpha = 1.0 - step(min(n * n * remainingTime, 1.0), 0.8);
     vec4 tint = vec4(0.7216, 0.2157, 0.2667, alpha);
-    gl_FragColor = mix(vec4(outColor.rgb, alpha), tint, 0.1) ;
+    gl_FragColor = mix(vec4(outColor.rgb, alpha), tint, 1.0 - remainingTime) ;
     gl_FragColor = vec4(outColor.rgb, outColor.a * alpha);
 }

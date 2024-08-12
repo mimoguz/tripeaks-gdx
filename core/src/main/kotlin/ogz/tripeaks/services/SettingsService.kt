@@ -107,7 +107,6 @@ class SettingsData private constructor(
             layout.create(),
             animation.create(assets).apply {
                 setTheme(darkTheme)
-                setScale((1f / Gdx.graphics.density).coerceAtLeast(1f))
             },
             drawingStrategy.create(),
             SpriteSet(darkTheme, backDesign, assets),

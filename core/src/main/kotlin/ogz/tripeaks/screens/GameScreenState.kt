@@ -137,7 +137,7 @@ class PausedGameScreenState(
             viewport,
             currentSettings.spriteSet.background,
         ) { batch ->
-            view.draw(batch, currentSettings)
+            view.draw(batch, currentSettings, viewport.worldWidth, viewport.worldHeight)
             batch.color = Color.WHITE
             ui.draw(batch, currentSettings.spriteSet)
         }
@@ -217,7 +217,7 @@ class PlayingGameScreenState(
             viewport,
             currentSettings.spriteSet.background,
         ) { batch ->
-            view.draw(batch, currentSettings)
+            view.draw(batch, currentSettings, viewport.worldWidth, viewport.worldHeight)
             batch.color = Color.WHITE
             ui.draw(batch, currentSettings.spriteSet)
         }
@@ -275,7 +275,7 @@ class TransitionGameScreenState(
             viewport,
             currentSettings.spriteSet.background,
         ) { batch ->
-            view.draw(batch, currentSettings)
+            view.draw(batch, currentSettings, viewport.worldWidth, viewport.worldHeight)
             ui.draw(batch, currentSettings.spriteSet)
 
             // Draw title transition

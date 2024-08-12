@@ -4,23 +4,18 @@ import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.utils.Pool.Poolable
+import ogz.tripeaks.Constants
 import kotlin.math.truncate
 import ogz.tripeaks.graphics.SpriteSet
 import ogz.tripeaks.models.Card
-import ogz.tripeaks.Constants.CARD_HEIGHT
-import ogz.tripeaks.Constants.CARD_WIDTH
-import ogz.tripeaks.Constants.FACE_HEIGHT
-import ogz.tripeaks.Constants.FACE_WIDTH
-import ogz.tripeaks.Constants.FACE_X
-import ogz.tripeaks.Constants.FACE_Y
 
 class AnimationView : Poolable {
 
     private var card: Card = -1
     private var time = 0f
-    private var position = Vector2(0f, 0f)
-    private var scale = Vector2(1f, 1f)
-    private var vertexColor = Color(1f, 1f, 1f, 1f)
+    private val position = Vector2(0f, 0f)
+    private val scale = Vector2(1f, 1f)
+    private val vertexColor = Color(1f, 1f, 1f, 1f)
 
     fun set(card: Card, startX: Float, startY: Float) {
         this.card = card
@@ -44,15 +39,15 @@ class AnimationView : Poolable {
             sprites.card,
             x,
             y,
-            truncate(scale.x * CARD_WIDTH),
-            truncate(scale.y * CARD_HEIGHT)
+            truncate(scale.x * Constants.CARD_WIDTH),
+            truncate(scale.y * Constants.CARD_HEIGHT)
         )
         batch.draw(
             sprites.face[card],
-            x + FACE_X,
-            y + FACE_Y,
-            truncate(scale.x * FACE_WIDTH),
-            truncate(scale.y * FACE_HEIGHT)
+            x + Constants.FACE_X,
+            y + Constants.FACE_Y,
+            truncate(scale.x * Constants.FACE_WIDTH),
+            truncate(scale.y * Constants.FACE_HEIGHT)
         )
     }
 

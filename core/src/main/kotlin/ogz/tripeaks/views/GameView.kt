@@ -55,7 +55,7 @@ class GameView(game: GameState?, private var worldWidth: Float) {
         }
     }
 
-    fun draw(batch: SpriteBatch, settings: Settings) {
+    fun draw(batch: SpriteBatch, settings: Settings, worldWidth: Float, worldHeight: Float) {
         discard.draw(batch, settings.spriteSet)
         stack.draw(batch, settings.spriteSet, settings.drawingStrategy)
         cards.forEach { card ->
@@ -63,6 +63,7 @@ class GameView(game: GameState?, private var worldWidth: Float) {
         }
         if (animations.isNotEmpty()) {
             batch.shader = settings.animationStrategy.shaderProgram
+            settings.animationStrategy.resize(worldWidth, worldHeight)
             animations.forEach { anim ->
                 anim.draw(batch, settings.spriteSet)
             }

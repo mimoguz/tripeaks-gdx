@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.glutils.ShaderProgram
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.utils.Disposable
+import ogz.tripeaks.Constants
 import ogz.tripeaks.Constants.DISSOLVE_TIME
 import ogz.tripeaks.Constants.WORLD_HEIGHT
 import ogz.tripeaks.assets.ShaderSourceAssets
@@ -30,23 +31,20 @@ sealed interface AnimationStrategy {
 
     fun setTheme(dark: Boolean)
 
-    fun setScale(scale: Float)
+    fun resize(wordWidth: Float, worldHeight: Float)
 
     companion object Strategies {
 
         class Dissolve(assets: AssetManager) : AnimationStrategy, Disposable {
 
-            override var param = 1f
+            override var param = Constants.MIN_WORLD_WIDTH / Constants.WORLD_HEIGHT
             override val shaderProgram: ShaderProgram
 
             init {
-                val typ = Gdx.app.type
-                val isMobile =
-                    typ == Application.ApplicationType.Android
-                            || typ == Application.ApplicationType.iOS
+                val isDesktop = Gdx.app.type == Application.ApplicationType.Desktop
                 val fragAsset =
-                    if (isMobile) ShaderSourceAssets.DissolveMobile
-                    else ShaderSourceAssets.Dissolve
+                    if (isDesktop) ShaderSourceAssets.Dissolve
+                    else ShaderSourceAssets.DissolveMobile
                 val vert = assets[ShaderSourceAssets.Vert].string
                 val frag = assets[fragAsset].string
                 shaderProgram = ShaderProgram(vert, frag)
@@ -60,17 +58,12 @@ sealed interface AnimationStrategy {
                 scale: Vector2
             ): Boolean {
                 val normalizedTime = (time / DISSOLVE_TIME).coerceAtMost(1f)
-                position.y -= 1.2f * deltaTime * WORLD_HEIGHT
-                scale.set(
-                    1f - normalizedTime * 0.10f,
-                    1f + normalizedTime * 1.2f
-                )
-                vertexColor.set(0.8f, 1f - normalizedTime, param, 1f)
+                vertexColor.set(param, 1f - normalizedTime, 1f, 1f)
                 return time > DISSOLVE_TIME
             }
 
             override fun screenTransition(time: Float, vertexColor: Color): Boolean {
-                vertexColor.set(0.5f, 1f - time / DISSOLVE_TIME, param, 1f)
+                vertexColor.set(param, 1f - time / DISSOLVE_TIME, 1f, 1f)
                 return time > DISSOLVE_TIME
             }
 
@@ -78,8 +71,8 @@ sealed interface AnimationStrategy {
                 // Pass
             }
 
-            override fun setScale(scale: Float) {
-                param = 1f / scale
+            override fun resize(wordWidth: Float, worldHeight: Float) {
+                param = wordWidth / worldHeight
             }
 
             override fun dispose() {
@@ -115,7 +108,7 @@ sealed interface AnimationStrategy {
                 param = if (dark) 1f else 0f
             }
 
-            override fun setScale(scale: Float) {
+            override fun resize(wordWidth: Float, worldHeight: Float) {
                 // Pass
             }
 
@@ -162,7 +155,7 @@ sealed interface AnimationStrategy {
                 // Pass
             }
 
-            override fun setScale(scale: Float) {
+            override fun resize(wordWidth: Float, worldHeight: Float) {
                 // Pass
             }
 
