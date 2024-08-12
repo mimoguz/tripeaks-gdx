@@ -5,31 +5,7 @@ precision mediump float;
 #define LOWP
 #endif
 
-#define WORLD_HEIGHT 168.0
-
-// I use vertex colors to pass various per-entity parameters.
-// For this shader, r channel is aspect ratio, g channel is normalized remaining time,
-varying LOWP vec4 v_color;
-
-varying vec2 v_texCoords;
-
-uniform sampler2D u_texture;
-
-// *******************************************************************************
-// Noise function
-// *******************************************************************************
-
-/*
-contributors: [Stefan Gustavson, Ian McEwan]
-description: Simplex Noise https://github.com/stegu/webgl-noise
-use: snoise(<vec2|vec3|vec4> pos)
-license: |
-    Copyright 2021-2023 by Stefan Gustavson and Ian McEwan.
-    Published under the terms of the MIT license:
-    https://opensource.org/license/mit/
-examples:
-    - /shaders/generative_snoise.frag
-*/
+/* ************************* NOISE FUNCTION **************************** */
 
 vec3 permute(vec3 x) { return mod(((x*34.0)+1.0)*x, 289.0); }
 
@@ -60,18 +36,28 @@ float snoise(vec2 v){
     return 130.0 * dot(m, g);
 }
 
-// *******************************************************************************
-// End of the noise function
-// *******************************************************************************
+float fnoise(vec2 pos) {
+    return snoise(pos);
+}
 
+/* *********************** END NOISE FUNCTION ************************** */
 
+// I use vertex colors to pass various per-entity parameters.
+// For this shader, r channel is aspect ratio, g channel is normalized remaining time,
+varying LOWP vec4 v_color;
+
+varying vec2 v_texCoords;
+
+uniform sampler2D u_texture;
+
+#define WORLD_HEIGHT 168.0
 void main() {
     vec4 outColor = texture2D(u_texture, v_texCoords);
     float remainingTime = v_color.g;
     float scale = v_color.r / v_color.b;
     vec2 worldSize = vec2(floor(WORLD_HEIGHT * v_color.b), WORLD_HEIGHT);
     vec2 pos = floor(v_texCoords * worldSize);
-    float n = 1.0 - snoise(pos);
+    float n = 1.0 - fnoise(pos);
     float alpha = outColor.a * (1.0 - step(min(n * n * remainingTime, 1.0), 0.9));
     vec4 tint = vec4(0.7216, 0.2157, 0.2667, alpha);
     gl_FragColor = mix(vec4(outColor.rgb, alpha), tint, 0.1) ;

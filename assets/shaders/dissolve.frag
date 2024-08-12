@@ -5,19 +5,7 @@ precision mediump float;
 #define LOWP
 #endif
 
-#define WORLD_HEIGHT 168.0
-
-// I use vertex colors to pass various per-entity parameters.
-// For this shader, r channel is is aspect ratio, g channel is normalized remaining time,
-varying LOWP vec4 v_color;
-
-varying vec2 v_texCoords;
-
-uniform sampler2D u_texture;
-
-// *******************************************************************************
-// Noise function
-// *******************************************************************************
+/* ************************* NOISE FUNCTION **************************** */
 
 // Cellular noise ("Worley noise") in 2D in GLSL.
 // Copyright (c) Stefan Gustavson 2011-04-19. All rights reserved.
@@ -47,7 +35,7 @@ vec3 permute(vec3 x) {
 // Cellular noise, returning F1 and F2 in a vec2.
 // Standard 3x3 search window for good F1 and F2 values
 vec2 cellular(vec2 P) {
-#define K 0.142857142857 // 1/7
+    #define K 0.142857142857 // 1/7
 #define Ko 0.428571428571 // 3/7
 #define jitter 1.0 // Less gives more regular pattern
 	vec2 Pi = mod289(floor(P));
@@ -87,18 +75,28 @@ vec2 cellular(vec2 P) {
     return sqrt(d1.xy);
 }
 
-// *******************************************************************************
-// End of the noise function
-// *******************************************************************************
+float fnoise(vec2 pos) {
+    return cellular(pos).x;
+}
 
+/* *********************** END NOISE FUNCTION ************************** */
 
+// I use vertex colors to pass various per-entity parameters.
+// For this shader, r channel is is aspect ratio, g channel is normalized remaining time,
+varying LOWP vec4 v_color;
+
+varying vec2 v_texCoords;
+
+uniform sampler2D u_texture;
+
+#define WORLD_HEIGHT 168.0
 void main() {
     vec4 outColor = texture2D(u_texture, v_texCoords);
     float remainingTime = v_color.g;
     float scale = v_color.r / v_color.b;
     vec2 worldSize = vec2(floor(WORLD_HEIGHT * v_color.b), WORD_HEIGHT);
     vec2 pos = floor(v_texCoords * worldSize);
-    float n = 1.0 - cellular(pos).x;
+    float n = 1.0 - fnoise(pos);
     float alpha = 1.0 - step(min(n * n * remainingTime, 1.0), 0.8);
     vec4 tint = vec4(0.7216, 0.2157, 0.2667, alpha);
     gl_FragColor = mix(vec4(outColor.rgb, alpha), tint, 1.0 - remainingTime) ;
