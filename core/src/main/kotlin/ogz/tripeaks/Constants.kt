@@ -17,9 +17,9 @@ object Constants {
     const val HORIZONTAL_PADDING = 12f
     const val MAX_WORLD_WIDTH = 360f
     const val MIN_WORLD_WIDTH = 300f
-    const val SMALL_FACE_HEIGHT = 9f
-    const val SMALL_10_HEIGHT = 15f
-    const val SMALL_FACE_WIDTH = 5f
+    const val SMALL_FACE_HEIGHT = 10f
+    const val SMALL_10_HEIGHT = 17f
+    const val SMALL_FACE_WIDTH = 6f
     const val VIEWPORT_VERTICAL_PADDING = 4f
     const val WORLD_HEIGHT = 168f
     const val DISCARD_LEFT =  HORIZONTAL_PADDING + CELL_WIDTH * 2f + CELL_PADDING_LEFT
