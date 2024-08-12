@@ -42,11 +42,11 @@ operator fun AssetManager.get(asset: BundleAssets) = getAsset<I18NBundle>(asset.
 
 enum class ShaderSourceAssets(val path: String) {
     Vert("shaders/basic.vert"),
-    Dissolve("shaders/dissolve.frag"),
-    Pixelate("shaders/pixelate_avg.frag"),
+    Dissolve("shaders/dissolve_mobile.frag"),
+    DissolveMobile("shaders/dissolve_mobile.frag"),
+    Pixelate("shaders/pixelate.frag"),
     Blink("shaders/blink.frag"),
     FadeOut("shaders/fadeout.frag"),
-    PixelateAnimated("shaders/pixelate_anim.frag")
 }
 
 fun AssetManager.load(asset: ShaderSourceAssets) = load<Text>(asset.path)

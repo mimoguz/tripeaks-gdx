@@ -1,5 +1,7 @@
 package ogz.tripeaks.views
 
+import com.badlogic.gdx.Application
+import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.glutils.ShaderProgram
@@ -32,15 +34,21 @@ sealed interface AnimationStrategy {
 
     companion object Strategies {
 
-        // TODO: Dispose
         class Dissolve(assets: AssetManager) : AnimationStrategy, Disposable {
 
             override var param = 1f
             override val shaderProgram: ShaderProgram
 
             init {
+                val typ = Gdx.app.type
+                val isMobile =
+                    typ == Application.ApplicationType.Android
+                            || typ == Application.ApplicationType.iOS
+                val fragAsset =
+                    if (isMobile) ShaderSourceAssets.DissolveMobile
+                    else ShaderSourceAssets.Dissolve
                 val vert = assets[ShaderSourceAssets.Vert].string
-                val frag = assets[ShaderSourceAssets.Dissolve].string
+                val frag = assets[fragAsset].string
                 shaderProgram = ShaderProgram(vert, frag)
             }
 

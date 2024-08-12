@@ -96,5 +96,7 @@ void main() {
     float scale = v_color.r / v_color.b;
     float n = 1.0 - cellular(vec2(v_texCoords.x * scale * 200.0, v_texCoords.y * scale * 100.0)).x;
     float alpha = 1.0 - step(min(n * n + remainingTime, 1.0), 0.8);
+    vec4 tint = vec4(0.7216, 0.2157, 0.2667, alpha);
+    gl_FragColor = mix(vec4(outColor.rgb, alpha), tint, 0.1) ;
     gl_FragColor = vec4(outColor.rgb, outColor.a * alpha);
 }
