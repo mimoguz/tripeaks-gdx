@@ -279,6 +279,7 @@ class TransitionGameScreenState(
             ui.draw(batch, currentSettings.spriteSet)
 
             // Draw title transition
+            anim.resize(viewport.worldWidth, viewport.worldHeight)
             batch.shader = anim.shaderProgram
             batch.color = vertexColor
             batch.draw(
