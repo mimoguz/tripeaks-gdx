@@ -1,23 +1,17 @@
 package ogz.tripeaks.views
 
-import com.badlogic.gdx.Application
-import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.glutils.ShaderProgram
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.utils.Disposable
 import ogz.tripeaks.Constants
-import ogz.tripeaks.Constants.DISSOLVE_TIME
-import ogz.tripeaks.Constants.WORLD_HEIGHT
 import ogz.tripeaks.assets.ShaderSourceAssets
 import ogz.tripeaks.assets.get
 
 sealed interface AnimationStrategy {
 
     val shaderProgram: ShaderProgram?
-
-    var param: Float
 
     fun cardRemoved(
         deltaTime: Float,
@@ -37,16 +31,12 @@ sealed interface AnimationStrategy {
 
         class Dissolve(assets: AssetManager) : AnimationStrategy, Disposable {
 
-            override var param = Constants.MIN_WORLD_WIDTH / Constants.WORLD_HEIGHT
             override val shaderProgram: ShaderProgram
+            private var aspectRatio = Constants.MIN_WORLD_WIDTH / Constants.WORLD_HEIGHT
 
             init {
-                val isDesktop = Gdx.app.type == Application.ApplicationType.Desktop
-                val fragAsset =
-                    if (isDesktop) ShaderSourceAssets.Dissolve
-                    else ShaderSourceAssets.DissolveMobile
                 val vert = assets[ShaderSourceAssets.Vert].string
-                val frag = assets[fragAsset].string
+                val frag = assets[ShaderSourceAssets.Dissolve].string
                 shaderProgram = ShaderProgram(vert, frag)
             }
 
@@ -57,14 +47,13 @@ sealed interface AnimationStrategy {
                 position: Vector2,
                 scale: Vector2
             ): Boolean {
-                val normalizedTime = (time / DISSOLVE_TIME).coerceAtMost(1f)
-                vertexColor.set(param, 1f - normalizedTime, 1f, 1f)
-                return time > DISSOLVE_TIME
+                vertexColor.set(aspectRatio, 1f - normalizedTime(time, Constants.DISSOLVE_TIME), 1f, 1f)
+                return time > Constants.DISSOLVE_TIME
             }
 
             override fun screenTransition(time: Float, vertexColor: Color): Boolean {
-                vertexColor.set(param, 1f - time / DISSOLVE_TIME, 1f, 1f)
-                return time > DISSOLVE_TIME
+                vertexColor.set(aspectRatio, 1f - normalizedTime(time, Constants.DISSOLVE_TIME), 1f, 1f)
+                return time > Constants.DISSOLVE_TIME
             }
 
             override fun setTheme(dark: Boolean) {
@@ -72,7 +61,7 @@ sealed interface AnimationStrategy {
             }
 
             override fun resize(wordWidth: Float, worldHeight: Float) {
-                param = wordWidth / worldHeight
+                aspectRatio = wordWidth / worldHeight
             }
 
             override fun dispose() {
@@ -83,7 +72,7 @@ sealed interface AnimationStrategy {
 
         class Blink(assets: AssetManager) : AnimationStrategy, Disposable {
 
-            override var param = 0f
+            private var isDark = 0f
 
             override val shaderProgram: ShaderProgram
 
@@ -105,7 +94,7 @@ sealed interface AnimationStrategy {
                 step(time, vertexColor)
 
             override fun setTheme(dark: Boolean) {
-                param = if (dark) 1f else 0f
+                isDark = if (dark) 1f else 0f
             }
 
             override fun resize(wordWidth: Float, worldHeight: Float) {
@@ -117,17 +106,13 @@ sealed interface AnimationStrategy {
             }
 
             private fun step(time: Float, vertexColor: Color): Boolean {
-                val normalizedTime = (time / DISSOLVE_TIME).coerceAtMost(1f)
-                vertexColor.set(1f, 1f - normalizedTime, param, 1f)
-                return time > DISSOLVE_TIME
+                vertexColor.set(1f, 1f - normalizedTime(time, Constants.DISSOLVE_TIME), isDark, 1f)
+                return time > Constants.DISSOLVE_TIME
             }
 
         }
 
         class FadeOut(assets: AssetManager) : AnimationStrategy, Disposable {
-
-            // Unused
-            override var param = 0f
 
             override val shaderProgram: ShaderProgram
 
@@ -144,7 +129,7 @@ sealed interface AnimationStrategy {
                 position: Vector2,
                 scale: Vector2
             ): Boolean {
-                position.y -= 0.5f * deltaTime * WORLD_HEIGHT
+                position.y -= 0.5f * deltaTime * Constants.WORLD_HEIGHT
                 return step(time, vertexColor)
             }
 
@@ -164,9 +149,9 @@ sealed interface AnimationStrategy {
             }
 
             private fun step(time: Float, vertexColor: Color): Boolean {
-                val normalizedTime = (time / DISSOLVE_TIME).coerceAtMost(1f)
+                val normalizedTime = (time / Constants.DISSOLVE_TIME).coerceAtMost(1f)
                 vertexColor.set(1f, 1f - normalizedTime, 0f, 1f)
-                return time > DISSOLVE_TIME
+                return time > Constants.DISSOLVE_TIME
             }
 
         }
@@ -174,3 +159,5 @@ sealed interface AnimationStrategy {
     }
 
 }
+
+private fun normalizedTime(time: Float, animTime: Float) = (time / animTime).coerceAtMost(1f)

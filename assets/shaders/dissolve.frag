@@ -93,12 +93,9 @@ uniform sampler2D u_texture;
 void main() {
     vec4 outColor = texture2D(u_texture, v_texCoords);
     float remainingTime = v_color.g;
-    float scale = v_color.r / v_color.b;
-    vec2 worldSize = vec2(floor(WORLD_HEIGHT * v_color.b), WORD_HEIGHT);
+    vec2 worldSize = vec2(floor(WORLD_HEIGHT * v_color.r), WORLD_HEIGHT);
     vec2 pos = floor(v_texCoords * worldSize);
-    float n = 1.0 - fnoise(pos);
-    float alpha = 1.0 - step(min(n * n * remainingTime, 1.0), 0.8);
-    vec4 tint = vec4(0.7216, 0.2157, 0.2667, alpha);
-    gl_FragColor = mix(vec4(outColor.rgb, alpha), tint, 1.0 - remainingTime) ;
-    gl_FragColor = vec4(outColor.rgb, outColor.a * alpha);
+    float n = 1.0 - fnoise(pos * 0.2);
+    float alpha = outColor.a * (1.0 - step(min(n * n * remainingTime + remainingTime, 1.0), 0.8));
+    gl_FragColor = vec4(outColor.rgb, alpha);
 }
