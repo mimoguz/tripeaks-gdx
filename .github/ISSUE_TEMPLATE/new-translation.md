@@ -41,6 +41,13 @@ assignees: mimoguz
     statGames=Games
     statWins=Wins
     statLongestChain=The longest chain
+    cardAnimation=Card animation:
+    Blink=Blink
+    Dissolve=Dissolve
+    FadeOut=Fade out
+    decor=Card design:
+    close=Close
+    about=About
 
 # full_description.txt
 
