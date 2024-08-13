@@ -28,7 +28,7 @@ class Panel(
         val titlePadding = if (latin) 2f else uiSkin.extraLineSpacing.coerceAtLeast(2f)
         val labelStyle = if (latin) UiSkin.TITLE_LABEL_STYLE_LATIN else UiSkin.TITLE_LABEL_STYLE
 
-        pad(Constants.UI_VERTICAL_SPACING, Constants.UI_HORIZONTAL_SPACING)
+        pad(Constants.UI_VERTICAL_SPACING, Constants.UI_HORIZONTAL_SPACING + 3)
         setBackground(bg)
 
         add(Label(title, skin, labelStyle)).colspan(columns).left().padBottom(titlePadding)
@@ -37,7 +37,7 @@ class Panel(
             .colspan(columns)
             .expandX()
             .fillX()
-            .pad(divPadding, -Constants.UI_HORIZONTAL_SPACING + 3)
+            .pad(divPadding, -Constants.UI_HORIZONTAL_SPACING)
         row()
     }
 
