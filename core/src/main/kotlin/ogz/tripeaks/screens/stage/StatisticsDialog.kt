@@ -2,13 +2,11 @@ package ogz.tripeaks.screens.stage
 
 import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
-import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup
 import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane
 import com.badlogic.gdx.scenes.scene2d.ui.Table
-import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable
 import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.I18NBundle
 import com.ray3k.stripe.PopTable
@@ -19,7 +17,10 @@ import ogz.tripeaks.assets.UiSkin
 import ogz.tripeaks.assets.get
 import ogz.tripeaks.models.LayoutStatistics
 import ogz.tripeaks.models.PlayerStatistics
+import ogz.tripeaks.pad
 import ogz.tripeaks.ui.LabelButton
+import ogz.tripeaks.ui.Panel
+import kotlin.math.nextDown
 
 class StatisticsDialog(
     skin: UiSkin,
@@ -62,7 +63,7 @@ class StatisticsDialog(
             defaults().align(Align.left).padBottom(Constants.UI_VERTICAL_SPACING).expandX().fillX()
 
             // General stats
-            add(statPanel(bundle, uiAssets, LayoutStatistics("statAll", games, wins, longestChain)))
+            add(statPanel(bundle, uiAssets, skin, LayoutStatistics("statAll", games, wins, longestChain)))
 
             row()
 
@@ -72,7 +73,7 @@ class StatisticsDialog(
                 .sortedBy { -it.played }
                 .withIndex()
                 .forEach { (index, layout) ->
-                    val cell = add(statPanel(bundle, uiAssets, layout))
+                    val cell = add(statPanel(bundle, uiAssets, skin, layout))
                     if (index == lastIndex) cell.padBottom(0f)
                     row()
                 }
@@ -104,40 +105,10 @@ class StatisticsDialog(
     private fun statPanel(
         bundle: I18NBundle,
         uiAssets: TextureAtlas,
+        uiSkin: UiSkin,
         stats: LayoutStatistics
-    ): Table = Table(skin).apply {
-        val uiSkin = skin as UiSkin
-        val line = uiAssets.findRegion("${uiSkin.resourcePrefix}_line")
-        val divSpacing = MathUtils.floor(uiSkin.extraLineSpacing / 2f).toFloat().coerceAtLeast(2f)
-        val bg = NinePatchDrawable(uiAssets.createPatch("${uiSkin.resourcePrefix}_panel"))
-
-        pad(
-            Constants.UI_VERTICAL_SPACING,
-            Constants.UI_HORIZONTAL_SPACING,
-            Constants.UI_VERTICAL_SPACING,
-            Constants.UI_HORIZONTAL_SPACING,
-        )
-        setBackground(bg)
+    ): Table = Panel(bundle[stats.tag], uiSkin, uiAssets, false, 2).apply {
         defaults().padBottom(uiSkin.extraLineSpacing.coerceAtLeast(2f)).left()
-
-        add(Label(bundle[stats.tag], skin, UiSkin.TITLE_LABEL_STYLE))
-            .colspan(2)
-            .align(Align.left)
-
-        row()
-
-        add(Image(line))
-            .colspan(2)
-            .expandX()
-            .fillX()
-            .pad(
-                divSpacing,
-                -Constants.UI_HORIZONTAL_SPACING,
-                divSpacing,
-                -Constants.UI_HORIZONTAL_SPACING
-            )
-
-        row()
 
         add(Label(bundle["statGames"], skin))
         add(Label(stats.played.toString(), skin)).right()
@@ -149,8 +120,8 @@ class StatisticsDialog(
 
         row()
 
-        add(Label(bundle["statLongestChain"], skin))
-        add(Label(stats.longestChain.toString(), skin)).right()
+        add(Label(bundle["statLongestChain"], skin)).padBottom(0f)
+        add(Label(stats.longestChain.toString(), skin)).right().padBottom(0f)
     }
 
 }

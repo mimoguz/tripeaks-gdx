@@ -18,14 +18,13 @@ import ogz.tripeaks.assets.TextureAtlasAssets
 import ogz.tripeaks.assets.UiSkin
 import ogz.tripeaks.assets.get
 import ogz.tripeaks.ui.LabelButton
+import ogz.tripeaks.ui.Panel
 
 class AboutDiaog(skin: UiSkin, assets: AssetManager) : PopTable(skin) {
 
     init {
         val bundle = assets[BundleAssets.Bundle]
         val uiAssets = assets[TextureAtlasAssets.Ui]
-        val line = uiAssets.findRegion("${skin.resourcePrefix}_line")
-        val divSpacing = MathUtils.floor(skin.extraLineSpacing / 2f).toFloat().coerceAtLeast(2f)
 
         pad(
             Constants.UI_PANEL_VERTICAL_BORDER - 2f,
@@ -52,24 +51,22 @@ class AboutDiaog(skin: UiSkin, assets: AssetManager) : PopTable(skin) {
             defaults().align(Align.left).expandX().fillX()
 
             add(
-                sectionPanel(uiAssets, "Licenses").apply {
+                Panel("Licenses", skin, uiAssets, true).apply {
+                    defaults().padBottom(Constants.UI_VERTICAL_SPACING + 2f).left()
                     addLicenseInfo("tripeaks-gdx", "GPL-3.0", "github.com/mimoguz/tripeaks-gdx")
-                        .padBottom(Constants.UI_VERTICAL_SPACING + 2f)
                     row()
                     addLicenseInfo("libGDX", "Apache-2.0", "libgdx.com")
-                        .padBottom(Constants.UI_VERTICAL_SPACING + 2f)
                     row()
                     addLicenseInfo("KTX", "CC0-1.0", "libktx.github.io")
-                        .padBottom(Constants.UI_VERTICAL_SPACING + 2f)
                     row()
                     addLicenseInfo("Stripe", "MIT", "github.com/raeleus/stripe")
-                        .padBottom(Constants.UI_VERTICAL_SPACING + 2f)
                     row()
                     addLicenseInfo(
                         "GNU Unifont",
                         "OFL-1.1, or GPL-2+ with\nthe GNU font embedding exception",
                         "unifoundry.com/unifont"
                     )
+                        .padBottom(0f)
                 }
             )
                 .padBottom(Constants.UI_VERTICAL_SPACING)
@@ -77,7 +74,7 @@ class AboutDiaog(skin: UiSkin, assets: AssetManager) : PopTable(skin) {
             row()
 
             add(
-                sectionPanel(uiAssets, "Privacy Policy").apply {
+                Panel("Privacy Policy", skin, uiAssets, true).apply {
                     add(
                         Label(
                             "This game is open source and free\n" +
@@ -126,38 +123,4 @@ class AboutDiaog(skin: UiSkin, assets: AssetManager) : PopTable(skin) {
             add(Label(link, skin, UiSkin.LATIN_LABEL_STYLE))
         }
 
-    private fun sectionPanel(uiAssets: TextureAtlas, header: String): Table = Table(skin).apply {
-        val uiSkin = skin as UiSkin
-        val line = uiAssets.findRegion("${uiSkin.resourcePrefix}_line")
-        val divSpacing = MathUtils.floor(uiSkin.extraLineSpacing / 2f).toFloat().coerceAtLeast(2f)
-        val bg = NinePatchDrawable(uiAssets.createPatch("${uiSkin.resourcePrefix}_panel"))
-
-        pad(
-            Constants.UI_VERTICAL_SPACING,
-            Constants.UI_HORIZONTAL_SPACING,
-            Constants.UI_VERTICAL_SPACING,
-            Constants.UI_HORIZONTAL_SPACING,
-        )
-        setBackground(bg)
-        defaults().padBottom(uiSkin.extraLineSpacing.coerceAtLeast(2f)).left()
-
-        add(Label(header, skin, UiSkin.TITLE_LABEL_STYLE))
-            .colspan(2)
-            .align(Align.left)
-
-        row()
-
-        add(Image(line))
-            .colspan(2)
-            .expandX()
-            .fillX()
-            .pad(
-                divSpacing,
-                -Constants.UI_HORIZONTAL_SPACING,
-                divSpacing,
-                -Constants.UI_HORIZONTAL_SPACING
-            )
-
-        row()
-    }
 }
