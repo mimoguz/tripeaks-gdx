@@ -37,7 +37,7 @@ class Panel(
             .colspan(columns)
             .expandX()
             .fillX()
-            .pad(divPadding, -Constants.UI_HORIZONTAL_SPACING)
+            .pad(divPadding, -Constants.UI_HORIZONTAL_SPACING + 3)
         row()
     }
 

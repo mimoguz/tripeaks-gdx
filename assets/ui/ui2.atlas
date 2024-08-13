@@ -55,8 +55,8 @@ split:2,2,2,2
 pad:2,2,2,2
 dark_panel
 bounds:47,70,16,15
-split:3,3,3,4
-pad:3,3,3,4
+split:3,3,3,3
+pad:3,3,3,3
 dark_radio_off
 bounds:104,85,11,11
 dark_radio_off_disabled
@@ -139,8 +139,8 @@ split:2,2,2,2
 pad:2,2,2,2
 light_panel
 bounds:47,53,16,15
-split:3,3,3,4
-pad:3,3,3,4
+split:4,4,4,4
+pad:4,4,4,4
 light_radio_off
 bounds:91,71,11,11
 light_radio_off_disabled
