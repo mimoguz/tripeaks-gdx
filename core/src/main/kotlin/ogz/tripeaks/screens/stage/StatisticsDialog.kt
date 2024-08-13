@@ -42,7 +42,7 @@ class StatisticsDialog(
             Constants.UI_PANEL_VERTICAL_BORDER - 2f,
             Constants.UI_PANEL_HORIZONTAL_BORDER,
             Constants.UI_PANEL_VERTICAL_BORDER,
-            Constants.UI_PANEL_HORIZONTAL_BORDER,
+            Constants.UI_PANEL_HORIZONTAL_BORDER - Constants.UI_SCROLL_FIX,
         )
 
         // Title
@@ -59,7 +59,7 @@ class StatisticsDialog(
         row()
 
         val table = Table(skin).apply {
-            padRight(Constants.UI_HORIZONTAL_SPACING)
+            padRight(Constants.UI_SCROLL_PUSH)
             defaults().align(Align.left).padBottom(Constants.UI_VERTICAL_SPACING).expandX().fillX()
 
             // General stats
@@ -97,6 +97,7 @@ class StatisticsDialog(
         })
             .minWidth(100f)
             .align(Align.center)
+            .padRight(Constants.UI_SCROLL_FIX)
 
         isModal = true
         isHideOnUnfocus = false
@@ -109,18 +110,19 @@ class StatisticsDialog(
         stats: LayoutStatistics
     ): Table = Panel(bundle[stats.tag], uiSkin, uiAssets, false, 2).apply {
         defaults().padBottom(uiSkin.extraLineSpacing.coerceAtLeast(2f)).left()
+        val colSpacing = Constants.UI_HORIZONTAL_SPACING * 3
 
-        add(Label(bundle["statGames"], skin))
+        add(Label(bundle["statGames"], skin)).padRight(colSpacing)
         add(Label(stats.played.toString(), skin)).right()
 
         row()
 
-        add(Label(bundle["statWins"], skin))
+        add(Label(bundle["statWins"], skin)).padRight(colSpacing)
         add(Label(stats.won.toString(), skin)).right()
 
         row()
 
-        add(Label(bundle["statLongestChain"], skin)).padBottom(0f)
+        add(Label(bundle["statLongestChain"], skin)).padRight(colSpacing).padBottom(0f)
         add(Label(stats.longestChain.toString(), skin)).right().padBottom(0f)
     }
 

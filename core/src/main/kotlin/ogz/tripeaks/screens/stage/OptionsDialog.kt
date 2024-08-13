@@ -91,7 +91,7 @@ class OptionsDialog(
             Constants.UI_PANEL_VERTICAL_BORDER - 2f,
             Constants.UI_PANEL_HORIZONTAL_BORDER,
             Constants.UI_PANEL_VERTICAL_BORDER,
-            Constants.UI_PANEL_HORIZONTAL_BORDER,
+            Constants.UI_PANEL_HORIZONTAL_BORDER - Constants.UI_SCROLL_FIX,
         )
 
         // Title
@@ -145,7 +145,7 @@ class OptionsDialog(
 
         val itemTable = Table().apply {
             defaults().align(Align.left).padBottom(3f + skin.extraLineSpacing).align(Align.left)
-            padRight(Constants.UI_VERTICAL_SPACING)
+            padRight(Constants.UI_SCROLL_PUSH)
 
             add(Label(bundle["layout"], skin))
             row()
@@ -219,6 +219,7 @@ class OptionsDialog(
             .fillX()
             .uniformX()
             .padLeft(Constants.UI_HORIZONTAL_SPACING / 2)
+            .padRight(Constants.UI_SCROLL_FIX)
 
         isModal = true
         isHideOnUnfocus = false

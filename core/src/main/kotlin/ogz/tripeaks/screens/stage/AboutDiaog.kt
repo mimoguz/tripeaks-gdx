@@ -30,7 +30,7 @@ class AboutDiaog(skin: UiSkin, assets: AssetManager) : PopTable(skin) {
             Constants.UI_PANEL_VERTICAL_BORDER - 2f,
             Constants.UI_PANEL_HORIZONTAL_BORDER,
             Constants.UI_PANEL_VERTICAL_BORDER,
-            Constants.UI_PANEL_HORIZONTAL_BORDER,
+            Constants.UI_PANEL_HORIZONTAL_BORDER - Constants.UI_SCROLL_FIX,
         )
 
         // Title
@@ -47,7 +47,7 @@ class AboutDiaog(skin: UiSkin, assets: AssetManager) : PopTable(skin) {
         row()
 
         val table = Table(skin).apply {
-            padRight(Constants.UI_HORIZONTAL_SPACING)
+            padRight(Constants.UI_SCROLL_PUSH)
             defaults().align(Align.left).expandX().fillX()
 
             add(
@@ -108,6 +108,7 @@ class AboutDiaog(skin: UiSkin, assets: AssetManager) : PopTable(skin) {
         })
             .minWidth(100f)
             .align(Align.center)
+            .padRight(Constants.UI_SCROLL_FIX)
 
         isModal = true
         isHideOnUnfocus = false

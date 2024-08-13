@@ -18,7 +18,7 @@ object Constants {
     const val MAX_WORLD_WIDTH = 360f
     const val MIN_WORLD_WIDTH = 300f
     const val SMALL_FACE_HEIGHT = 10f
-    const val SMALL_10_HEIGHT = 17f
+    const val SMALL_10_HEIGHT = 18f
     const val SMALL_FACE_WIDTH = 6f
     const val VIEWPORT_VERTICAL_PADDING = 4f
     const val WORLD_HEIGHT = 168f
@@ -31,8 +31,10 @@ object Constants {
     const val UI_VERTICAL_SPACING = 6f
     const val UI_HORIZONTAL_SPACING = 6f
     const val UI_PANEL_VERTICAL_BORDER = 9f
-    const val UI_PANEL_HORIZONTAL_BORDER = 20f
+    const val UI_PANEL_HORIZONTAL_BORDER = 22f
     const val UI_CJK_LINE_SPACING = 4f
+    const val UI_SCROLL_FIX = 14f
+    const val UI_SCROLL_PUSH = 4f
 
     val DARK_UI_TEXT = rgb(249, 219, 169)
     val LIGHT_UI_TEXT = rgb(76, 56, 77)
