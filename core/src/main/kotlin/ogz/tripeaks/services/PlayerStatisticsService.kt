@@ -51,7 +51,7 @@ class PlayerStatisticsService {
             playerStats.layoutStatistics.add(stats)
         }
         stats.played += 1
-        stats.longestChain = gameStatistics.longestChain
+        stats.longestChain = gameStatistics.longestChain.coerceAtLeast(stats.longestChain)
         playerStats.layoutStatistics.sort { a, b -> b.played.compareTo(a.played) }
         return stats
     }
