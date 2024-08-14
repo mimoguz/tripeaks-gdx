@@ -8,9 +8,11 @@ import ktx.collections.GdxArray
 import ogz.tripeaks.models.GameState
 import ogz.tripeaks.models.LayoutStatistics
 import ogz.tripeaks.models.PlayerStatistics
+import ogz.tripeaks.models.layout.BasicLayout
 import java.time.Instant
 
 class PersistenceService {
+
     private val logger = Logger(PersistenceService::class.simpleName)
 
     init {
@@ -39,7 +41,7 @@ class PersistenceService {
     }
 
     fun loadSettings(): SettingsData? {
-        return load(SettingsData::class.java, SETTINGS_FILE, SETTINGS_KEY)
+        return load(SettingsData::class.java, SETTINGS_FILE, SETTINGS_KEY) ?: loadLegacySettings()
     }
 
     private fun <T> save(current: T, file: String, key: String) {
@@ -69,6 +71,7 @@ class PersistenceService {
                     logger.error("${Instant.now()} - Malformed save $key: ${e.message}")
                     return null
                 }
+
                 else -> {
                     logger.error("${Instant.now()} - Error during loading $key (unhandled): ${e.message}")
                     throw e
@@ -92,6 +95,25 @@ class PersistenceService {
             }
         }
         return if (layoutStats.isEmpty) null else PlayerStatistics(layoutStats)
+    }
+
+    private fun loadLegacySettings(): SettingsData? {
+        val preferences = Gdx.app.getPreferences("gamePreferences")
+        if (!preferences.contains("layout")) return null;
+
+        val useDarkTheme = preferences.getBoolean("darkTheme", false)
+        val showAllCards = preferences.getBoolean("showAllCards", false)
+        val drawing =
+            if (showAllCards) DrawingStrategies.BackVisible
+            else DrawingStrategies.BackHidden
+        val startWithEmptyDiscard = preferences.getBoolean("startWithEmptyDiscard", false)
+        val layout = preferences.getString("layout", BasicLayout.TAG).toLayoutVariant()
+        return SettingsData().copy(
+            darkTheme = useDarkTheme,
+            drawingStrategy = drawing,
+            emptyDiscard = startWithEmptyDiscard,
+            layout = layout,
+        )
     }
 
     companion object {
