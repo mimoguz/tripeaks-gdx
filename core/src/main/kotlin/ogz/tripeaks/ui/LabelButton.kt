@@ -13,9 +13,9 @@ class LabelButton(skin: UiSkin, text: String?, private val action: () -> Unit = 
 
     init {
         pad(
-            TEXT_BUTTON_VERTICAL_PADDING - 1f + skin.extraLineSpacing,
+            TEXT_BUTTON_VERTICAL_PADDING + skin.extraLineSpacing,
             TEXT_BUTTON_HORIZONTAL_PADDING,
-            TEXT_BUTTON_VERTICAL_PADDING + 2f + skin.extraLineSpacing,
+            TEXT_BUTTON_VERTICAL_PADDING + skin.extraLineSpacing.coerceAtLeast(3f),
             TEXT_BUTTON_HORIZONTAL_PADDING
         )
 
