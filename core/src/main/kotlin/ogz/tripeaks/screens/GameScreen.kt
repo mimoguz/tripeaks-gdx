@@ -68,15 +68,15 @@ class GameScreen(private val context: Context) : KtxScreen, InputAdapter() {
         switch.apply {
             addState(
                 PausedGameScreenState::class,
-                PausedGameScreenState(batch, viewport, settings, ui, view, assets)
+                PausedGameScreenState(batch, viewport, settings, ui, view, context.inject())
             )
             addState(
                 PlayingGameScreenState::class,
-                PlayingGameScreenState(batch, viewport, settings, ui, view)
+                PlayingGameScreenState(batch, viewport, settings, ui, view, context.inject())
             )
             addState(
                 TransitionGameScreenState::class,
-                TransitionGameScreenState(batch, viewport, settings, ui, view) {
+                TransitionGameScreenState(batch, viewport, settings, ui, view, context.inject()) {
                     switch.switch(PlayingGameScreenState::class)
                 }
             )
@@ -188,7 +188,7 @@ class GameScreen(private val context: Context) : KtxScreen, InputAdapter() {
                 game.statistics,
                 this::winDialogCallback
             )
-            showDialog(dialog)
+            showDialog(dialog, true)
         }
     }
 
@@ -200,7 +200,7 @@ class GameScreen(private val context: Context) : KtxScreen, InputAdapter() {
                 game.statistics,
                 this::stalledDialogCallback
             )
-            showDialog(dialog)
+            showDialog(dialog, true)
         }
     }
 
@@ -292,7 +292,7 @@ class GameScreen(private val context: Context) : KtxScreen, InputAdapter() {
         return pos
     }
 
-    private fun showDialog(dialog: PopTable) {
+    private fun showDialog(dialog: PopTable, animated: Boolean = false) {
         dialog.addListener {
             if (dialog.isHidden) {
                 onDialogHidden()
@@ -302,6 +302,7 @@ class GameScreen(private val context: Context) : KtxScreen, InputAdapter() {
             }
         }
         switch.switch(PausedGameScreenState::class)
+        switch.reset(animated)
         menu = null
         dialog.show(stage)
     }

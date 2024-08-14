@@ -25,6 +25,7 @@ object Constants {
     const val DISCARD_LEFT =  HORIZONTAL_PADDING + CELL_WIDTH * 2f + CELL_PADDING_LEFT
     const val STACK_RIGHT = HORIZONTAL_PADDING + CELL_WIDTH * 4f - CELL_PADDING_LEFT * 2f
     const val DISSOLVE_TIME = 0.5f
+    const val BLUR_TIME = 0.667f
 
     const val TEXT_BUTTON_VERTICAL_PADDING = 4f
     const val TEXT_BUTTON_HORIZONTAL_PADDING = 8f

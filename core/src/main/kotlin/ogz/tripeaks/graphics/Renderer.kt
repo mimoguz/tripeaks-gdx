@@ -11,6 +11,7 @@ import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.utils.Disposable
 import com.badlogic.gdx.utils.viewport.Viewport
 import ktx.app.clearScreen
+import ktx.graphics.color
 import ktx.graphics.use
 import ogz.tripeaks.Constants
 import ogz.tripeaks.assets.ShaderSourceAssets
@@ -23,7 +24,15 @@ interface Renderer : Disposable {
         viewport: Viewport,
         clearColor: Color,
         paint: (SpriteBatch) -> Unit
-    )
+    ): Unit
+
+    fun draw(
+        t: Float,
+        batch: SpriteBatch,
+        viewport: Viewport,
+        clearColor: Color,
+        paint: (SpriteBatch) -> Unit
+    ): Unit = draw(batch, viewport, clearColor, paint)
 
     fun resize(worldWidth: Int, worldHeight: Int)
 
@@ -78,6 +87,16 @@ class BlurredRenderer(assets: AssetManager) : Renderer {
         clearColor: Color,
         paint: (SpriteBatch) -> Unit
     ) {
+        draw(1f, batch, viewport, clearColor, paint)
+    }
+
+    override fun draw(
+        t: Float,
+        batch: SpriteBatch,
+        viewport: Viewport,
+        clearColor: Color,
+        paint: (SpriteBatch) -> Unit
+    ) {
         frameBuffer.begin()
         clearScreen(clearColor.r, clearColor.g, clearColor.b, clearColor.a)
         batch.shader = null
@@ -97,7 +116,7 @@ class BlurredRenderer(assets: AssetManager) : Renderer {
         texture.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest)
         clearScreen(clearColor.r, clearColor.g, clearColor.b, clearColor.a)
         batch.shader = blurShader
-        batch.color = Color.WHITE
+        batch.color = color(t, 1f, 1f, 1f)
         val w = viewport.worldWidth
         val h = viewport.worldHeight
         val x = MathUtils.floor(w * -0.5f).toFloat()
@@ -106,6 +125,7 @@ class BlurredRenderer(assets: AssetManager) : Renderer {
             batch.shader.setUniformf("u_worldSize", w, h)
             batch.draw(texture, x, y, w, h, 0f, 0f, 1f, 1f)
         }
+        batch.color = Color.WHITE
     }
 
     override fun resize(worldWidth: Int, worldHeight: Int) {

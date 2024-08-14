@@ -11,6 +11,8 @@ import ogz.tripeaks.assets.ShaderSourceAssets
 import ogz.tripeaks.assets.TextureAssets
 import ogz.tripeaks.assets.TextureAtlasAssets
 import ogz.tripeaks.assets.load
+import ogz.tripeaks.graphics.BlurredRenderer
+import ogz.tripeaks.graphics.SimpleRenderer
 import ogz.tripeaks.services.PlayerStatisticsService
 import ogz.tripeaks.services.SettingsService
 
@@ -37,6 +39,8 @@ class LoadingScreen(private val app: Main, private val context: Context) : KtxSc
     private fun switch() {
         context.inject<PlayerStatisticsService>().initialize(context)
         context.inject<SettingsService>().initialize(context)
+        context.bindSingleton(SimpleRenderer())
+        context.bindSingleton(BlurredRenderer(assets))
         val startScreen = StartScreen(app, context)
         app.addScreen(startScreen)
         app.setScreen<StartScreen>()

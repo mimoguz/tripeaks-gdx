@@ -25,6 +25,7 @@ sealed interface GameScreenState {
     fun handleTouchUp(worldX: Int, worldY: Int)
     fun update()
     fun render(deltaTime: Float)
+    fun reset(animated: Boolean)
 
 }
 
@@ -55,6 +56,10 @@ class GameScreenSwitch : GameScreenState, Disposable {
 
     override fun render(deltaTime: Float) {
         currentState.render((deltaTime))
+    }
+
+    override fun reset(animated: Boolean) {
+        currentState.reset(animated)
     }
 
     fun <T> addState(cls: KClass<T>, state: T) where T : GameScreenState {
@@ -98,6 +103,10 @@ data object NoopGameScreenState : GameScreenState {
         clearScreen(0f, 0f, 0f)
     }
 
+    override fun reset(animated: Boolean) {
+        logger.debug("Noop: reset")
+    }
+
 }
 
 class PausedGameScreenState(
@@ -106,11 +115,11 @@ class PausedGameScreenState(
     private val settings: SettingsService,
     private val ui: GameUi,
     private val view: GameView,
-    assets: AssetManager
-) : GameScreenState, Disposable {
+    private val renderer: BlurredRenderer,
+) : GameScreenState {
 
     private var game: GameState? = null
-    private val renderer = BlurredRenderer(assets)
+    private var t = Constants.BLUR_TIME
 
     override fun setGame(game: GameState?) {
         this.game = game
@@ -133,6 +142,7 @@ class PausedGameScreenState(
     override fun render(deltaTime: Float) {
         val currentSettings = settings.get()
         renderer.draw(
+            (t / Constants.BLUR_TIME).coerceAtLeast(0.1f),
             batch,
             viewport,
             currentSettings.spriteSet.background,
@@ -141,10 +151,11 @@ class PausedGameScreenState(
             batch.color = Color.WHITE
             ui.draw(batch, currentSettings.spriteSet)
         }
+        t = (t + deltaTime).coerceAtMost(Constants.BLUR_TIME)
     }
 
-    override fun dispose() {
-        renderer.dispose()
+    override fun reset(animated: Boolean) {
+        t = if (animated) 0f else Constants.BLUR_TIME
     }
 
 }
@@ -154,11 +165,11 @@ class PlayingGameScreenState(
     private val viewport: Viewport,
     private val settings: SettingsService,
     private val ui: GameUi,
-    private val view: GameView
-) : GameScreenState, Disposable {
+    private val view: GameView,
+    private val renderer: SimpleRenderer
+) : GameScreenState {
 
     private var game: GameState? = null
-    private val renderer = SimpleRenderer()
 
     override fun setGame(game: GameState?) {
         this.game = game
@@ -223,8 +234,8 @@ class PlayingGameScreenState(
         }
     }
 
-    override fun dispose() {
-        renderer.dispose()
+    override fun reset(animated: Boolean) {
+        // Pass
     }
 
 }
@@ -235,11 +246,11 @@ class TransitionGameScreenState(
     private val settings: SettingsService,
     private val ui: GameUi,
     private val view: GameView,
+    private val renderer: SimpleRenderer,
     private val callback: () -> Unit
 ) : GameScreenState {
 
     private var game: GameState? = null
-    private val renderer = SimpleRenderer()
     private var time = 0f
     private val vertexColor = Color()
 
@@ -296,6 +307,10 @@ class TransitionGameScreenState(
             callback.invoke()
             time = Constants.DISSOLVE_TIME
         }
+    }
+
+    override fun reset(animated: Boolean) {
+        // Pass
     }
 
 }
