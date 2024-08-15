@@ -36,10 +36,7 @@ class StalledDialog(
             .padBottom(Constants.UI_VERTICAL_SPACING)
             .left()
 
-        add(Image(TextureRegionDrawable(assets[TextureAtlasAssets.Ui].findRegion("${skin.resourcePrefix}_icon_lose"))))
-            .padRight(Constants.UI_HORIZONTAL_SPACING)
-            .colspan(2)
-            .center()
+        add(Image(skin.iconLose)).padRight(Constants.UI_HORIZONTAL_SPACING).colspan(2).center()
 
         row()
 

@@ -3,8 +3,12 @@ package ogz.tripeaks.assets
 import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.BitmapFont
+import com.badlogic.gdx.graphics.g2d.NinePatch
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.scenes.scene2d.ui.Skin
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable
+import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
 import com.ray3k.stripe.PopTable.PopTableStyle
 import ktx.style.addStyle
 import ktx.style.button
@@ -31,6 +35,15 @@ class UiSkin private constructor(
     val cjk: Boolean = false,
     val extraLineSpacing: Float = 0f
 ) : Skin(atlas) {
+
+    val iconLink: Drawable = findIcon(atlas,"link")
+    val iconOptions: Drawable = findIcon(atlas,"options")
+    val iconAbout: Drawable = findIcon(atlas,"about")
+    val iconStatistics: Drawable = findIcon(atlas,"stats")
+    val iconWin: Drawable = findIcon(atlas,"win")
+    val iconLose: Drawable = findIcon(atlas,"lose")
+    val panelBg = NinePatchDrawable(NinePatch(atlas.createPatch("${resourcePrefix}_panel")))
+    val line = NinePatchDrawable(NinePatch(atlas.createPatch("${resourcePrefix}_line")))
 
     constructor(assets: AssetManager, cjk: Boolean, dark: Boolean) : this(
         assets[TextureAtlasAssets.Ui],
@@ -146,9 +159,14 @@ class UiSkin private constructor(
             // stageBackground = skin["overlay_$resourcePostfix"]
         })
 
-        addStyle("menu", PopTableStyle().apply {
+        addStyle(MENU_POP_STYLE, PopTableStyle().apply {
             background = skin["${resourcePrefix}_menu"]
         })
+
+    }
+
+    private fun findIcon(atlas: TextureAtlas, name: String): Drawable {
+        return TextureRegionDrawable(atlas.findRegion("${resourcePrefix}_icon_$name"))
     }
 
     companion object {
@@ -159,6 +177,8 @@ class UiSkin private constructor(
         const val LATIN_LABEL_STYLE = "label_latin"
         const val MENU_ITEM_BUTTON_STYLE = "menuItem"
         const val RADIO_BUTTON_STYLE = "radioButton"
+        const val PANEL_TABLE_STYLE = "panelTable"
+        const val MENU_POP_STYLE = "menu"
     }
 
 }

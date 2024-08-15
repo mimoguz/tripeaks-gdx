@@ -30,13 +30,11 @@ class StatisticsDialog(
 
     init {
         val bundle = assets[BundleAssets.Bundle]
-        val uiAssets = assets[TextureAtlasAssets.Ui]
         val games = stats.layoutStatistics.fold(0) { sum, layout -> sum + layout.played }
         val wins = stats.layoutStatistics.fold(0) { sum, layout -> sum + layout.won }
         val longestChain = stats.layoutStatistics.fold(0) { acc, layout ->
             if (acc > layout.longestChain) acc else layout.longestChain
         }
-        val line = uiAssets.findRegion("${skin.resourcePrefix}_line")
 
         pad(
             Constants.UI_PANEL_VERTICAL_BORDER - 2f,
@@ -48,7 +46,7 @@ class StatisticsDialog(
         // Title
         add(HorizontalGroup().apply {
             space(4f)
-            children.add(Image(uiAssets.findRegion("${skin.resourcePrefix}_icon_stats")))
+            children.add(Image(skin.iconStatistics))
             children.add(Label(bundle["statistics"], skin, UiSkin.TITLE_LABEL_STYLE))
         })
             .align(Align.left)
@@ -63,7 +61,7 @@ class StatisticsDialog(
             defaults().align(Align.left).padBottom(Constants.UI_VERTICAL_SPACING).expandX().fillX()
 
             // General stats
-            add(statPanel(bundle, uiAssets, skin, LayoutStatistics("statAll", games, wins, longestChain)))
+            add(statPanel(bundle, skin, LayoutStatistics("statAll", games, wins, longestChain)))
 
             row()
 
@@ -73,7 +71,7 @@ class StatisticsDialog(
                 .sortedBy { -it.played }
                 .withIndex()
                 .forEach { (index, layout) ->
-                    val cell = add(statPanel(bundle, uiAssets, skin, layout))
+                    val cell = add(statPanel(bundle, skin, layout))
                     if (index == lastIndex) cell.padBottom(0f)
                     row()
                 }
@@ -105,10 +103,9 @@ class StatisticsDialog(
 
     private fun statPanel(
         bundle: I18NBundle,
-        uiAssets: TextureAtlas,
         uiSkin: UiSkin,
         stats: LayoutStatistics
-    ): Table = Panel(bundle[stats.tag], uiSkin, uiAssets, false, 2).apply {
+    ): Table = Panel(bundle[stats.tag], uiSkin, false, 2).apply {
         defaults().padBottom(uiSkin.extraLineSpacing.coerceAtLeast(2f)).left()
         val colSpacing = Constants.UI_HORIZONTAL_SPACING * 3
 

@@ -37,11 +37,7 @@ class WinDialog(
             .padBottom(skin.extraLineSpacing.coerceAtLeast(2f))
             .left()
 
-        add(Image(TextureRegionDrawable(assets[TextureAtlasAssets.Ui].findRegion("${skin.resourcePrefix}_icon_win"))))
-            .padRight(Constants.UI_HORIZONTAL_SPACING)
-            .colspan(2)
-            .padBottom(Constants.UI_VERTICAL_SPACING)
-            .center()
+        add(Image(skin.iconWin)).colspan(2).padBottom(Constants.UI_VERTICAL_SPACING).center()
 
         row()
 

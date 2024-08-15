@@ -13,15 +13,12 @@ import kotlin.math.nextDown
 class Panel(
     title: String,
     skin: UiSkin,
-    uiAtlas: TextureAtlas,
     latin: Boolean = false,
     columns: Int = 1
 ): Table(skin) {
 
     init {
         val uiSkin = skin as UiSkin
-        val divider = uiAtlas.findRegion("${uiSkin.resourcePrefix}_line")
-        val bg = NinePatchDrawable(uiAtlas.createPatch("${uiSkin.resourcePrefix}_panel"))
         val divPadding =
             if (latin) 2f
             else (uiSkin.extraLineSpacing / 2f).nextDown().coerceAtLeast(2f)
@@ -29,11 +26,11 @@ class Panel(
         val labelStyle = if (latin) UiSkin.TITLE_LABEL_STYLE_LATIN else UiSkin.TITLE_LABEL_STYLE
 
         pad(Constants.UI_VERTICAL_SPACING, Constants.UI_HORIZONTAL_SPACING + 3)
-        setBackground(bg)
+        setBackground(skin.panelBg)
 
         add(Label(title, skin, labelStyle)).colspan(columns).left().padBottom(titlePadding)
         row()
-        add(Image(divider))
+        add(Image(skin.line))
             .colspan(columns)
             .expandX()
             .fillX()

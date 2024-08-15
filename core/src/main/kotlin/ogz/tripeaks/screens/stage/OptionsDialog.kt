@@ -97,7 +97,7 @@ class OptionsDialog(
         // Title
         add(HorizontalGroup().apply {
             space(4f)
-            children.add(Image(uiAssets.findRegion("${skin.resourcePrefix}_icon_options")))
+            children.add(Image(skin.iconOptions))
             children.add(Label(bundle["options"], skin, UiSkin.TITLE_LABEL_STYLE))
         })
             .align(Align.left)
