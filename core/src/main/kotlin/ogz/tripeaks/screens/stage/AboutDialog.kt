@@ -17,7 +17,7 @@ import ogz.tripeaks.assets.get
 import ogz.tripeaks.ui.LabelButton
 import ogz.tripeaks.ui.Panel
 
-class AboutDiaog(skin: UiSkin, assets: AssetManager) : PopTable(skin) {
+class AboutDialog(skin: UiSkin, assets: AssetManager) : PopTable(skin) {
 
     init {
         val bundle = assets[BundleAssets.Bundle]
@@ -116,11 +116,11 @@ class AboutDiaog(skin: UiSkin, assets: AssetManager) : PopTable(skin) {
         link: String,
     ): Cell<LabelButton> = this.let {
         val uiSkin = skin as UiSkin
-            add(Label("$projectName: $license.", skin, UiSkin.LATIN_LABEL_STYLE)).padBottom(2f)
-            row()
-            add((LabelButton(uiSkin, link) { Gdx.net.openURI("https://$link")}).apply {
-                add(Image(uiSkin.iconLink)).padLeft(Constants.UI_HORIZONTAL_SPACING)
-            })
-        }
+        add(Label("$projectName: $license.", skin, UiSkin.LATIN_LABEL_STYLE)).padBottom(2f)
+        row()
+        add((LabelButton(uiSkin, link) { Gdx.net.openURI("https://$link") }).apply {
+            add(Image(uiSkin.iconLink)).padLeft(Constants.UI_HORIZONTAL_SPACING)
+        })
+    }
 
 }

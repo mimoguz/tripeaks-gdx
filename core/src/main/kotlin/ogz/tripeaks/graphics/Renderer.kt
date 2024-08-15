@@ -24,7 +24,7 @@ interface Renderer : Disposable {
         viewport: Viewport,
         clearColor: Color,
         paint: (SpriteBatch) -> Unit
-    ): Unit
+    )
 
     fun draw(
         t: Float,

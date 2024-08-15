@@ -99,7 +99,7 @@ class PersistenceService {
 
     private fun loadLegacySettings(): SettingsData? {
         val preferences = Gdx.app.getPreferences("gamePreferences")
-        if (!preferences.contains("layout")) return null;
+        if (!preferences.contains("layout")) return null
 
         val useDarkTheme = preferences.getBoolean("darkTheme", false)
         val showAllCards = preferences.getBoolean("showAllCards", false)

@@ -1,7 +1,6 @@
 package ogz.tripeaks.screens.stage
 
 import com.badlogic.gdx.assets.AssetManager
-import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup
 import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.badlogic.gdx.scenes.scene2d.ui.Label
@@ -12,15 +11,12 @@ import com.badlogic.gdx.utils.I18NBundle
 import com.ray3k.stripe.PopTable
 import ogz.tripeaks.Constants
 import ogz.tripeaks.assets.BundleAssets
-import ogz.tripeaks.assets.TextureAtlasAssets
 import ogz.tripeaks.assets.UiSkin
 import ogz.tripeaks.assets.get
 import ogz.tripeaks.models.LayoutStatistics
 import ogz.tripeaks.models.PlayerStatistics
-import ogz.tripeaks.pad
 import ogz.tripeaks.ui.LabelButton
 import ogz.tripeaks.ui.Panel
-import kotlin.math.nextDown
 
 class StatisticsDialog(
     skin: UiSkin,

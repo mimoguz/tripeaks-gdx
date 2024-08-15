@@ -177,7 +177,6 @@ class UiSkin private constructor(
         const val LATIN_LABEL_STYLE = "label_latin"
         const val MENU_ITEM_BUTTON_STYLE = "menuItem"
         const val RADIO_BUTTON_STYLE = "radioButton"
-        const val PANEL_TABLE_STYLE = "panelTable"
         const val MENU_POP_STYLE = "menu"
     }
 

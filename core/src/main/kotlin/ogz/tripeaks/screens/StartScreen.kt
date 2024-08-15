@@ -3,28 +3,19 @@ package ogz.tripeaks.screens
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
-import com.badlogic.gdx.graphics.g2d.TextureAtlas
-import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.math.MathUtils
-import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.Stage
-import com.badlogic.gdx.scenes.scene2d.ui.ImageButton
 import com.badlogic.gdx.scenes.scene2d.ui.Table
-import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener
-import com.badlogic.gdx.scenes.scene2d.utils.Drawable
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
-import com.badlogic.gdx.utils.Align
 import com.ray3k.stripe.PopTable
 import ktx.app.KtxScreen
 import ktx.inject.Context
 import ogz.tripeaks.Constants
 import ogz.tripeaks.Main
 import ogz.tripeaks.assets.BundleAssets
-import ogz.tripeaks.assets.TextureAtlasAssets
 import ogz.tripeaks.assets.UiSkin
 import ogz.tripeaks.assets.get
 import ogz.tripeaks.graphics.CustomViewport
-import ogz.tripeaks.screens.stage.AboutDiaog
+import ogz.tripeaks.screens.stage.AboutDialog
 import ogz.tripeaks.screens.stage.OptionsDialog
 import ogz.tripeaks.screens.stage.OptionsDialogResult
 import ogz.tripeaks.screens.stage.StatisticsDialog
@@ -73,7 +64,7 @@ class StartScreen(private val app: Main, private val context: Context) : KtxScre
             setSize(viewport.worldWidth, viewport.worldHeight)
             center()
             setPosition(0f, 0f)
-            if (skin.cjk) setupButtonTableCJK(this, skin) else setupButtonTableCJK(this, skin)
+            setupButtonTable(this, skin)
         }
         stage.addActor(table)
 
@@ -97,21 +88,6 @@ class StartScreen(private val app: Main, private val context: Context) : KtxScre
     }
 
     private fun setupButtonTable(table: Table, skin: UiSkin) {
-        table.apply {
-            defaults().fillX().padBottom(Constants.UI_VERTICAL_SPACING)
-            add(LabelButton(skin, bundle["start"], this@StartScreen::startGame)).padTop(1f)
-            row()
-            add(LabelButton(skin, bundle["options"], this@StartScreen::showOptionsDialog))
-            row()
-            add(LabelButton(skin, bundle["statistics"], this@StartScreen::showStatisticsDialog))
-            row()
-            add(LabelButton(skin, bundle["about"], this@StartScreen::showAboutDialog))
-            row()
-            add(LabelButton(skin, bundle["exit"], this@StartScreen::exit)).padBottom(0f)
-        }
-    }
-
-    private fun setupButtonTableCJK(table: Table, skin: UiSkin) {
         table.apply {
             defaults()
                 .fillX()
@@ -157,7 +133,7 @@ class StartScreen(private val app: Main, private val context: Context) : KtxScre
     }
 
     private fun showAboutDialog() {
-        val dialog = AboutDiaog(settings.get().skin, assets)
+        val dialog = AboutDialog(settings.get().skin, assets)
         showDialog(dialog)
     }
 

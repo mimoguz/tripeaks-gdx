@@ -1,14 +1,11 @@
 package ogz.tripeaks.services
 
-import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.utils.Disposable
 import ktx.inject.Context
 import ogz.tripeaks.assets.BundleAssets
 import ogz.tripeaks.assets.UiSkin
 import ogz.tripeaks.assets.get
-import ogz.tripeaks.views.AnimationStrategy
-import ogz.tripeaks.views.CardDrawingStrategy
 import ogz.tripeaks.graphics.SpriteSet
 import ogz.tripeaks.models.GameState
 import ogz.tripeaks.models.Settings
@@ -16,6 +13,8 @@ import ogz.tripeaks.models.layout.BasicLayout
 import ogz.tripeaks.models.layout.DiamondsLayout
 import ogz.tripeaks.models.layout.Inverted2ndLayout
 import ogz.tripeaks.models.layout.Layout
+import ogz.tripeaks.views.AnimationStrategy
+import ogz.tripeaks.views.CardDrawingStrategy
 
 class SettingsService : Disposable {
 

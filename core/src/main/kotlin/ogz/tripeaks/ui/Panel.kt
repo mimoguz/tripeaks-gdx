@@ -1,10 +1,8 @@
 package ogz.tripeaks.ui
 
-import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.Table
-import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable
 import ogz.tripeaks.Constants
 import ogz.tripeaks.assets.UiSkin
 import ogz.tripeaks.pad
@@ -12,13 +10,12 @@ import kotlin.math.nextDown
 
 class Panel(
     title: String,
-    skin: UiSkin,
+    uiSkin: UiSkin,
     latin: Boolean = false,
     columns: Int = 1
-): Table(skin) {
+): Table(uiSkin) {
 
     init {
-        val uiSkin = skin as UiSkin
         val divPadding =
             if (latin) 2f
             else (uiSkin.extraLineSpacing / 2f).nextDown().coerceAtLeast(2f)
@@ -26,11 +23,11 @@ class Panel(
         val labelStyle = if (latin) UiSkin.TITLE_LABEL_STYLE_LATIN else UiSkin.TITLE_LABEL_STYLE
 
         pad(Constants.UI_VERTICAL_SPACING, Constants.UI_HORIZONTAL_SPACING + 3)
-        setBackground(skin.panelBg)
+        setBackground(uiSkin.panelBg)
 
-        add(Label(title, skin, labelStyle)).colspan(columns).left().padBottom(titlePadding)
+        add(Label(title, uiSkin, labelStyle)).colspan(columns).left().padBottom(titlePadding)
         row()
-        add(Image(skin.line))
+        add(Image(uiSkin.line))
             .colspan(columns)
             .expandX()
             .fillX()

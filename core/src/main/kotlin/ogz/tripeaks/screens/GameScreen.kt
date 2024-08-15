@@ -197,7 +197,6 @@ class GameScreen(private val context: Context) : KtxScreen, InputAdapter() {
             val dialog = StalledDialog(
                 settings.get().skin,
                 assets,
-                game.statistics,
                 this::stalledDialogCallback
             )
             showDialog(dialog, true)

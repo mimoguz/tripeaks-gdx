@@ -11,7 +11,7 @@ fun Table.pad(vertical: Float, horizontal: Float): Table = this.pad(
     horizontal
 )
 
-fun <T : Actor> Cell<T>.pad(vertical: Float, horizontal: Float) = this.pad(
+fun <T : Actor> Cell<T>.pad(vertical: Float, horizontal: Float): Cell<T> = this.pad(
     vertical,
     horizontal,
     vertical,

@@ -1,6 +1,5 @@
 package ogz.tripeaks.screens
 
-import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.assets.AssetManager
 import ktx.app.KtxScreen
 import ktx.inject.Context
