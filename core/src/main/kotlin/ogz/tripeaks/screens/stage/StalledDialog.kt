@@ -31,7 +31,7 @@ class StalledDialog(
             .padBottom(Constants.UI_VERTICAL_SPACING)
             .left()
 
-        add(Image(skin.iconLose)).padRight(Constants.UI_HORIZONTAL_SPACING).colspan(2).center()
+        add(Image(skin.iconLose)).colspan(2).center()
 
         row()
 
