@@ -1,5 +1,6 @@
 package ogz.tripeaks.screens.stage
 
+import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.math.MathUtils
@@ -24,7 +25,6 @@ class AboutDiaog(skin: UiSkin, assets: AssetManager) : PopTable(skin) {
 
     init {
         val bundle = assets[BundleAssets.Bundle]
-        val uiAssets = assets[TextureAtlasAssets.Ui]
 
         pad(
             Constants.UI_PANEL_VERTICAL_BORDER - 2f,
@@ -36,7 +36,7 @@ class AboutDiaog(skin: UiSkin, assets: AssetManager) : PopTable(skin) {
         // Title
         add(HorizontalGroup().apply {
             space(4f)
-            children.add(Image(uiAssets.findRegion("${skin.resourcePrefix}_icon_about")))
+            children.add(Image(skin.iconAbout))
             children.add(Label(bundle["about"], skin, UiSkin.TITLE_LABEL_STYLE))
         })
             .align(Align.left)
@@ -51,7 +51,7 @@ class AboutDiaog(skin: UiSkin, assets: AssetManager) : PopTable(skin) {
             defaults().align(Align.left).expandX().fillX()
 
             add(
-                Panel("Licenses", skin, uiAssets, true).apply {
+                Panel("Licenses", skin, true).apply {
                     defaults().padBottom(Constants.UI_VERTICAL_SPACING + 2f).left()
                     addLicenseInfo("tripeaks-gdx", "GPL-3.0", "github.com/mimoguz/tripeaks-gdx")
                     row()
@@ -74,7 +74,7 @@ class AboutDiaog(skin: UiSkin, assets: AssetManager) : PopTable(skin) {
             row()
 
             add(
-                Panel("Privacy Policy", skin, uiAssets, true).apply {
+                Panel("Privacy Policy", skin, true).apply {
                     add(
                         Label(
                             "This game is open source and free\n" +
@@ -85,7 +85,7 @@ class AboutDiaog(skin: UiSkin, assets: AssetManager) : PopTable(skin) {
                             skin,
                             UiSkin.LATIN_LABEL_STYLE
                         )
-                    )
+                    ).left()
                 }
             )
         }
@@ -118,10 +118,13 @@ class AboutDiaog(skin: UiSkin, assets: AssetManager) : PopTable(skin) {
         projectName: String,
         license: String,
         link: String,
-    ): Cell<Label> = this.let {
+    ): Cell<LabelButton> = this.let {
+        val uiSkin = skin as UiSkin
             add(Label("$projectName: $license.", skin, UiSkin.LATIN_LABEL_STYLE)).padBottom(2f)
             row()
-            add(Label(link, skin, UiSkin.LATIN_LABEL_STYLE))
+            add((LabelButton(uiSkin, link) { Gdx.net.openURI("https://$link")}).apply {
+                add(Image(uiSkin.iconLink)).padLeft(Constants.UI_HORIZONTAL_SPACING)
+            })
         }
 
 }
