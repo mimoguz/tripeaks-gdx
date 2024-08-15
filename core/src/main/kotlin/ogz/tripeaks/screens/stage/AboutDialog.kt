@@ -2,12 +2,14 @@ package ogz.tripeaks.screens.stage
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.assets.AssetManager
-import com.badlogic.gdx.scenes.scene2d.ui.Cell
+import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup
 import com.badlogic.gdx.scenes.scene2d.ui.Image
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane
 import com.badlogic.gdx.scenes.scene2d.ui.Table
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener
 import com.badlogic.gdx.utils.Align
 import com.ray3k.stripe.PopTable
 import ogz.tripeaks.Constants
@@ -114,12 +116,21 @@ class AboutDialog(skin: UiSkin, assets: AssetManager) : PopTable(skin) {
         projectName: String,
         license: String,
         link: String,
-    ): Cell<LabelButton> = this.let {
+    ) = this.let {
         val uiSkin = skin as UiSkin
-        add(Label("$projectName: $license.", skin, UiSkin.LATIN_LABEL_STYLE)).padBottom(2f)
+        add(Label("$projectName: $license.", uiSkin, UiSkin.LATIN_LABEL_STYLE)).padBottom(2f)
         row()
-        add((LabelButton(uiSkin, link) { Gdx.net.openURI("https://$link") }).apply {
-            add(Image(uiSkin.iconLink)).padLeft(Constants.UI_HORIZONTAL_SPACING)
+        add(ImageButton(uiSkin.iconLink).apply {
+            getCell(getChild(0)).padTop(2f)
+            add(Label(link, uiSkin)).padLeft(Constants.UI_HORIZONTAL_SPACING)
+            row()
+            add(Image())
+            add(Image(uiSkin.line)).fillX().padLeft(Constants.UI_HORIZONTAL_SPACING)
+            addListener(object : ChangeListener() {
+                override fun changed(event: ChangeEvent?, actor: Actor?) {
+                    Gdx.net.openURI("https://$link")
+                }
+            })
         })
     }
 
