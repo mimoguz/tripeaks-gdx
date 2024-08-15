@@ -29,7 +29,7 @@ class StatisticsDialog(
         val games = stats.layoutStatistics.fold(0) { sum, layout -> sum + layout.played }
         val wins = stats.layoutStatistics.fold(0) { sum, layout -> sum + layout.won }
         val longestChain = stats.layoutStatistics.fold(0) { acc, layout ->
-            if (acc > layout.longestChain) acc else layout.longestChain
+            acc.coerceAtLeast(layout.longestChain)
         }
 
         pad(
@@ -103,7 +103,7 @@ class StatisticsDialog(
         stats: LayoutStatistics
     ): Table = Panel(bundle[stats.tag], uiSkin, false, 2).apply {
         defaults().padBottom(uiSkin.extraLineSpacing.coerceAtLeast(2f)).left()
-        val colSpacing = Constants.UI_HORIZONTAL_SPACING * 3
+        val colSpacing = Constants.UI_HORIZONTAL_SPACING * 4
 
         add(Label(bundle["statGames"], skin)).padRight(colSpacing)
         add(Label(stats.played.toString(), skin)).right()
