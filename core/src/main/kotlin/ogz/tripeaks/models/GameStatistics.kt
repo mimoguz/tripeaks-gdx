@@ -6,13 +6,14 @@ import ktx.collections.gdxIntArrayOf
 class GameStatistics(
     private var tag: String,
     private var chains: GdxIntArray = gdxIntArrayOf(),
-    private var undoCounter: Int = 0
+    private var undoCounter: Int = 0,
+    private var score: Int = 0
 ) {
 
     constructor() : this("")
 
     val longestChain
-        get() = max(chains, 0)
+        get() = chains.max( 0)
 
     val undoCount
         get() = undoCounter
@@ -49,10 +50,10 @@ class GameStatistics(
 
     companion object {
 
-        private fun max(array: GdxIntArray, initialValue: Int = Int.MIN_VALUE): Int {
+        private fun GdxIntArray.max(initialValue: Int = Int.MIN_VALUE): Int {
             var max = initialValue
-            for (i in 0 until array.size) {
-                max = max.coerceAtLeast(array[i])
+            for (i in 0 until this.size) {
+                max = max.coerceAtLeast(this[i])
             }
             return max
         }

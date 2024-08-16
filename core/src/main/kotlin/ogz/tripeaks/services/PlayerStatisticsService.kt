@@ -47,7 +47,7 @@ class PlayerStatisticsService {
     ): LayoutStatistics {
         var stats = playerStats.layoutStatistics.find { it.tag == gameStatistics.layoutTag }
         if (stats == null) {
-            stats = LayoutStatistics(gameStatistics.layoutTag, 0, 0, 0)
+            stats = LayoutStatistics(gameStatistics.layoutTag, 0, 0, 0, 0)
             playerStats.layoutStatistics.add(stats)
         }
         stats.played += 1

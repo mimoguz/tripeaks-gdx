@@ -89,7 +89,7 @@ class PersistenceService {
                 val played = prefs.getInteger("${layout.tag}_Played")
                 val won = prefs.getInteger("${layout.tag}_Won")
                 val longestChain = prefs.getInteger("${layout.tag}_LongestChain")
-                layoutStats.add(LayoutStatistics(layout.tag, played, won, longestChain))
+                layoutStats.add(LayoutStatistics(layout.tag, played, won, longestChain, 0))
             } catch (e: Exception) {
                 // Pass
             }

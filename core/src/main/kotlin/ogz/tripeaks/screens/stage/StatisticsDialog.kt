@@ -57,7 +57,7 @@ class StatisticsDialog(
             defaults().align(Align.left).padBottom(Constants.UI_VERTICAL_SPACING).expandX().fillX()
 
             // General stats
-            add(statPanel(bundle, skin, LayoutStatistics("statAll", games, wins, longestChain)))
+            add(statPanel(bundle, skin, LayoutStatistics("statAll", games, wins, longestChain, 0)))
 
             row()
 
