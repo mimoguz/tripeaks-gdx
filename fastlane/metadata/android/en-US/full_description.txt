@@ -1,5 +1,8 @@
 An open-source tri peaks solitaire game with multiple layout options. Currently only has randomly generated games.
 
-- Version 1.0.1 added French translation. Thanks!
+Changes: 
 
-*I need help for translations. If you like to, please open an issue in the issue tracker.
+- Version 1.1 added new effects and option to use different card back designs.
+
+- Version 1.1 also changes how the game state is persisted. This change should solve issues related to reloading the previous state, such as statistics getting wiped.
+
