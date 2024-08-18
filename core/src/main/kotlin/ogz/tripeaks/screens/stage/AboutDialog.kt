@@ -122,7 +122,13 @@ class AboutDialog(skin: UiSkin, assets: AssetManager) : PopTable(skin) {
         row()
         add(ImageButton(uiSkin.iconLink).apply {
             getCell(getChild(0)).padTop(2f)
-            add(Label(link, uiSkin)).padLeft(Constants.UI_HORIZONTAL_SPACING)
+            add(
+                Label(
+                    link,
+                    uiSkin,
+                    UiSkin.LATIN_LABEL_STYLE
+                )
+            ).padLeft(Constants.UI_HORIZONTAL_SPACING)
             row()
             add(Image())
             add(Image(uiSkin.line)).fillX().padLeft(Constants.UI_HORIZONTAL_SPACING)
