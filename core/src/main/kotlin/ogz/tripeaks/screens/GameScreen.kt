@@ -212,6 +212,7 @@ class GameScreen(private val context: Context) : KtxScreen, InputAdapter() {
     }
 
     private fun onExit() {
+        game?.let { persistence.saveGameState(it) }
         Gdx.app.exit()
     }
 
