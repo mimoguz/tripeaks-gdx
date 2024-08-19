@@ -7,6 +7,7 @@ import ogz.tripeaks.graphics.SpriteSet
 import ogz.tripeaks.models.layout.Layout
 
 class Settings(
+    val themeMode: ThemeMode,
     val backDesign: Int,
     val layout: Layout,
     val animationStrategy: AnimationStrategy,
@@ -23,3 +24,8 @@ class Settings(
         get() = skin.isDark
 
 }
+
+enum class ThemeMode {
+    SYSTEM, LIGHT, DARK
+}
+

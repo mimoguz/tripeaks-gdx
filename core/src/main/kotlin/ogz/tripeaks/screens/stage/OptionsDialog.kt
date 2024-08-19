@@ -13,12 +13,14 @@ import com.badlogic.gdx.scenes.scene2d.ui.Stack
 import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.utils.Align
 import com.ray3k.stripe.PopTable
+import ktx.collections.GdxArray
 import ktx.collections.toGdxArray
+import ogz.tripeaks.Constants
 import ogz.tripeaks.assets.BundleAssets
 import ogz.tripeaks.assets.TextureAtlasAssets
 import ogz.tripeaks.assets.UiSkin
 import ogz.tripeaks.assets.get
-import ogz.tripeaks.Constants
+import ogz.tripeaks.models.ThemeMode
 import ogz.tripeaks.services.AnimationStrategies
 import ogz.tripeaks.services.DrawingStrategies
 import ogz.tripeaks.services.Layouts
@@ -34,16 +36,7 @@ class OptionsDialog(
 
     init {
         val bundle = assets[BundleAssets.Bundle]
-        val uiAssets = assets[TextureAtlasAssets.Ui]
         val cardAssets = assets[TextureAtlasAssets.Cards]
-
-        val darkThemeSwitch = CheckBox(
-            bundle["darkTheme"],
-            skin
-        ).apply {
-            imageCell.padRight(Constants.UI_HORIZONTAL_SPACING)
-            isChecked = settingsData.darkTheme
-        }
 
         val showAllSwitch = CheckBox(
             bundle["showAll"],
@@ -62,6 +55,18 @@ class OptionsDialog(
         }
 
         val extraLineSpacing = MathUtils.floor(skin.extraLineSpacing / 2f).toFloat()
+
+        val themeModeSelect = SelectBox<String>(skin).apply {
+            setAlignment(Align.center)
+            style.listStyle.selection.apply {
+                topHeight = Constants.TEXT_BUTTON_VERTICAL_PADDING + extraLineSpacing
+                bottomHeight = Constants.TEXT_BUTTON_VERTICAL_PADDING + extraLineSpacing
+                leftWidth = Constants.TEXT_BUTTON_HORIZONTAL_PADDING
+                rightWidth = Constants.TEXT_BUTTON_HORIZONTAL_PADDING
+            }
+            items = GdxArray.with("System", "Light", "Dark")
+            selectedIndex = ThemeMode.entries.indexOf(settingsData.themeMode)
+        }
 
         val layoutSelection = SelectBox<String>(skin).apply {
             setAlignment(Align.center)
@@ -107,7 +112,7 @@ class OptionsDialog(
 
         row()
 
-        val cardRegion = if (settingsData.darkTheme) "dark_card" else "light_card"
+        val cardRegion = if (skin.isDark) "dark_card" else "light_card"
 
         val decorSelectList = (0..3).map { index ->
             CheckBox(null, skin, UiSkin.RADIO_BUTTON_STYLE).apply {
@@ -177,7 +182,7 @@ class OptionsDialog(
 
             row()
 
-            add(darkThemeSwitch).expandX()
+            add(themeModeSelect).expandX().fillX()
         }
 
         add(ScrollPane(itemTable, skin).apply {
@@ -194,7 +199,7 @@ class OptionsDialog(
 
         add(LabelButton(skin, bundle["save"]) {
             val updatedSettings = settingsData.copy(
-                darkTheme = darkThemeSwitch.isChecked,
+                themeMode = ThemeMode.entries[themeModeSelect.selectedIndex],
                 animation = AnimationStrategies.entries[animationSelection.selectedIndex],
                 layout = Layouts.entries[layoutSelection.selectedIndex],
                 emptyDiscard = emptyDiscardSwitch.isChecked,

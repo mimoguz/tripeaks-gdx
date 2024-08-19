@@ -19,11 +19,11 @@ import ogz.tripeaks.services.PersistenceService
 import ogz.tripeaks.services.PlayerStatisticsService
 import ogz.tripeaks.services.SettingsService
 
-class Main : KtxGame<KtxScreen>() {
+class Main(systemDarkMode: Boolean = false) : KtxGame<KtxScreen>() {
 
     private val context = Context()
     private val playerStatistics = PlayerStatisticsService()
-    private val settings = SettingsService()
+    private val settings = SettingsService(systemDarkMode)
 
     override fun create() {
         val viewport = CustomViewport(

@@ -8,6 +8,7 @@ import ktx.collections.GdxArray
 import ogz.tripeaks.models.GameState
 import ogz.tripeaks.models.LayoutStatistics
 import ogz.tripeaks.models.PlayerStatistics
+import ogz.tripeaks.models.ThemeMode
 import ogz.tripeaks.models.layout.BasicLayout
 import java.time.Instant
 
@@ -98,6 +99,17 @@ class PersistenceService {
     }
 
     private fun loadLegacySettings(): SettingsData? {
+        val v11Settings = load(LegacySettingsData::class.java, SETTINGS_FILE, SETTINGS_KEY)
+        if (v11Settings != null) return SettingsData().copy(
+            if (v11Settings.darkTheme) ThemeMode.DARK else ThemeMode.LIGHT,
+            v11Settings.backDesign,
+            v11Settings.layout,
+            v11Settings.animation,
+            v11Settings.drawingStrategy,
+            v11Settings.emptyDiscard
+        )
+
+        // Load <1.1 settings:
         val preferences = Gdx.app.getPreferences("gamePreferences")
         if (!preferences.contains("layout")) return null
 
@@ -109,7 +121,7 @@ class PersistenceService {
         val startWithEmptyDiscard = preferences.getBoolean("startWithEmptyDiscard", false)
         val layout = preferences.getString("layout", BasicLayout.TAG).toLayoutVariant()
         return SettingsData().copy(
-            darkTheme = useDarkTheme,
+            themeMode = if (useDarkTheme) ThemeMode.DARK else ThemeMode.LIGHT,
             drawingStrategy = drawing,
             emptyDiscard = startWithEmptyDiscard,
             layout = layout,
