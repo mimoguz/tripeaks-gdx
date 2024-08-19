@@ -160,7 +160,7 @@ class GameScreen(private val context: Context) : KtxScreen, InputAdapter() {
     private fun stalledDialogCallback(result: StalledDialogResult) {
         when (result) {
             StalledDialogResult.NEW_GAME -> {
-                game?.let { playerStatistics.addLose(it.statistics) }
+                addStat()
                 startNewGame()
             }
 
@@ -170,7 +170,10 @@ class GameScreen(private val context: Context) : KtxScreen, InputAdapter() {
 
     private fun winDialogCallback(result: WinDialogResult) {
         when (result) {
-            WinDialogResult.NEW_GAME -> startNewGame()
+            WinDialogResult.NEW_GAME -> {
+                addStat()
+                startNewGame()
+            }
             WinDialogResult.EXIT -> Gdx.app.exit()
         }
     }
@@ -181,7 +184,6 @@ class GameScreen(private val context: Context) : KtxScreen, InputAdapter() {
 
     private fun onWon() {
         game?.also { game ->
-            playerStatistics.addWin(game.statistics)
             val dialog = WinDialog(
                 settings.get().skin,
                 assets,
@@ -246,13 +248,7 @@ class GameScreen(private val context: Context) : KtxScreen, InputAdapter() {
     }
 
     private fun onNewGame() {
-        game?.let { game ->
-            if (game.won) {
-                playerStatistics.addWin(game.statistics)
-            } else if (game.wasPlayed) {
-                playerStatistics.addLose(game.statistics)
-            }
-        }
+        addStat()
         menu = null
         startNewGame()
     }
@@ -308,9 +304,6 @@ class GameScreen(private val context: Context) : KtxScreen, InputAdapter() {
     }
 
     private fun setupGame(game: GameState) {
-        this.game?.also {
-            if (!it.won && it.wasPlayed) playerStatistics.addLose(game.statistics)
-        }
         this.game = game
         view.currentGame = game
         switch.setGame(game)
@@ -319,6 +312,16 @@ class GameScreen(private val context: Context) : KtxScreen, InputAdapter() {
 
     private fun startNewGame() {
         setupGame(settings.getNewGame())
+    }
+
+    private fun addStat() {
+        game?.let { game ->
+            if (game.won) {
+                playerStatistics.addWin(game.statistics)
+            } else if (game.wasPlayed) {
+                playerStatistics.addLose(game.statistics)
+            }
+        }
     }
 
 }
