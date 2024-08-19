@@ -1,4 +1,4 @@
-An open-source tri peaks solitaire game with multiple layout options. Currently only has randomly generated games.
+An open-source tri peaks solitaire game with multiple layout options. 
 
 Changes: 
 
