@@ -1,6 +1,7 @@
 # TO DO:
 
 * _Fix:_ Win/lose icons have odd widths, but the spacing between dialog buttons is even. This causes the icon alignment to be off by one pixel.
+* _Fix:_ “Statistics dialog alignment when no games have been played yet.”
 
 ## Version 1.2 and beyond
 
