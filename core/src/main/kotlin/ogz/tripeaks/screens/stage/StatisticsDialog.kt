@@ -32,11 +32,15 @@ class StatisticsDialog(
             acc.coerceAtLeast(layout.longestChain)
         }
 
+        val padRight =
+            if (games == 0) Constants.UI_PANEL_HORIZONTAL_BORDER
+            else Constants.UI_PANEL_HORIZONTAL_BORDER - Constants.UI_SCROLL_FIX
+
         pad(
             Constants.UI_PANEL_VERTICAL_BORDER - 2f,
             Constants.UI_PANEL_HORIZONTAL_BORDER,
             Constants.UI_PANEL_VERTICAL_BORDER,
-            Constants.UI_PANEL_HORIZONTAL_BORDER - Constants.UI_SCROLL_FIX,
+            padRight,
         )
 
         // Title
