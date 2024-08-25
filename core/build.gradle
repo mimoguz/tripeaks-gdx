@@ -4,9 +4,9 @@ eclipse.project.name = appName + '-core'
 dependencies {
     api "com.badlogicgames.gdx:gdx:$gdxVersion"
     api "io.github.libktx:ktx-app:$ktxVersion"
-    api "io.github.libktx:ktx-assets-async:$ktxVersion"
+    // api "io.github.libktx:ktx-assets-async:$ktxVersion"
     api "io.github.libktx:ktx-assets:$ktxVersion"
-    api "io.github.libktx:ktx-async:$ktxVersion"
+    // api "io.github.libktx:ktx-async:$ktxVersion"
     api "io.github.libktx:ktx-collections:$ktxVersion"
     api "io.github.libktx:ktx-graphics:$ktxVersion"
     api "io.github.libktx:ktx-i18n:$ktxVersion"
@@ -18,6 +18,6 @@ dependencies {
     api "io.github.libktx:ktx-scene2d:$ktxVersion"
     api "io.github.libktx:ktx-style:$ktxVersion"
     api "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
-    api "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinxCoroutinesVersion"
+    // api "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinxCoroutinesVersion"
     api "com.github.raeleus.stripe:stripe:$stripeVersion"
 }
