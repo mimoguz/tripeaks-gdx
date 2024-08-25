@@ -1,7 +1,7 @@
 # TO DO:
 
-* _Fix:_ Win/lose icons have odd widths, but the spacing between dialog buttons is even. This causes the icon alignment to be off by one pixel.
-* _Fix:_ Statistics dialog alignment when no games have been played yet.
+* ~~_Fix:_ Win/lose icons have odd widths, but the spacing between dialog buttons is even. This causes the icon alignment to be off by one pixel.~~ _[Fixed by narrowing the icons by one pixel.]_
+* ~~_Fix:_ Statistics dialog alignment when no games have been played yet.~~ _[Fixed]_
 * _Change:_ Should ```undo``` just decrease the current chain length or reset?
 
 ## Version 1.2 and beyond

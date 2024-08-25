@@ -27,8 +27,8 @@ android {
         applicationId 'ogz.tripeaks'
         minSdkVersion 19
         targetSdkVersion 35
-        versionCode 29
-        versionName "1.1.2"
+        versionCode 30
+        versionName "1.1.3"
         multiDexEnabled true
     }
     compileOptions {
