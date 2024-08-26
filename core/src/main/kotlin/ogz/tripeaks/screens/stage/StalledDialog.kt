@@ -31,32 +31,31 @@ class StalledDialog(
             .padBottom(Constants.UI_VERTICAL_SPACING)
             .left()
 
-        add(Image(skin.iconLose)).colspan(2).center()
+        add(Image(skin.iconLose)).center().row()
+        add(Label(bundle["stalled"], skin)).row()
 
-        row()
-
-        add(Label(bundle["stalled"], skin)).colspan(2)
-
-        row()
+        add(LabelButton(skin, bundle.get("restart")) {
+            callback.invoke(StalledDialogResult.RESTART)
+            hide()
+        })
+            .minWidth(100f)
+            .fillX()
+            .row()
 
         add(LabelButton(skin, bundle.get("newGame")) {
             callback.invoke(StalledDialogResult.NEW_GAME)
             hide()
         })
-            .padRight(MathUtils.floor(Constants.UI_HORIZONTAL_SPACING / 2f).toFloat())
-            .padBottom(0f)
-            .uniformX()
-            .center()
+            .minWidth(100f)
             .fillX()
+            .row()
 
         add(LabelButton(skin, bundle.get("return")) {
             callback.invoke(StalledDialogResult.RETURN)
             hide()
         })
-            .padLeft(MathUtils.floor(Constants.UI_HORIZONTAL_SPACING / 2f).toFloat())
+            .minWidth(100f)
             .padBottom(0f)
-            .uniformX()
-            .center()
             .fillX()
 
         isModal = true
