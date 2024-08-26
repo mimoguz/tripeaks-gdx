@@ -61,8 +61,8 @@ class WinDialog(
             .center()
             .fillX()
 
-        add(LabelButton(skin, bundle.get("exit")) {
-            callback.invoke(WinDialogResult.EXIT)
+        add(LabelButton(skin, bundle.get("return")) {
+            callback.invoke(WinDialogResult.RETURN)
             hide()
         })
             .padLeft(MathUtils.floor(Constants.UI_HORIZONTAL_SPACING / 2f).toFloat())
@@ -78,5 +78,5 @@ class WinDialog(
 }
 
 enum class WinDialogResult {
-    NEW_GAME, EXIT
+    NEW_GAME, RETURN
 }

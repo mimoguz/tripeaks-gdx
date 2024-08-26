@@ -181,7 +181,7 @@ class GameScreen(private val context: Context) : KtxScreen, InputAdapter() {
                 startNewGame()
             }
 
-            WinDialogResult.EXIT -> Gdx.app.exit()
+            WinDialogResult.RETURN -> game?.let { updateButtons(it) }
         }
     }
 
