@@ -28,7 +28,7 @@ class SpriteSet(val isDark: Boolean, backIndex: Int, assets: AssetManager) {
 
     init {
         val prefix = if (isDark) "dark" else "light"
-        val cards = assets[TextureAtlasAssets.Cards]
+        val cards = assets[TextureAtlasAssets.Images]
         back = cards.findRegion("card_back", backIndex)
         background = if (isDark) Constants.DARK_BG else Constants.LIGHT_BG
         buttonDisabled = cards.createPatch("${prefix}_button_disabled")
@@ -49,7 +49,7 @@ class SpriteSet(val isDark: Boolean, backIndex: Int, assets: AssetManager) {
 class IndexedSprite(name: String, assets: AssetManager) {
 
     private val sprites = (0 until 52).map { index ->
-        assets[TextureAtlasAssets.Cards].findRegion(name, index)
+        assets[TextureAtlasAssets.Images].findRegion(name, index)
     }
 
     operator fun get(index: Int): TextureRegion = sprites[index]

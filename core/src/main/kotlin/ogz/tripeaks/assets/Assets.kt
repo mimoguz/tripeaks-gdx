@@ -17,8 +17,7 @@ fun AssetManager.load(asset: TextureAssets) = load<Texture>(asset.path)
 operator fun AssetManager.get(asset: TextureAssets) = getAsset<Texture>(asset.path)
 
 enum class TextureAtlasAssets(val path: String) {
-    Cards("images/cards2.atlas"),
-    Ui("ui/ui2.atlas")
+    Images("images/images.atlas")
 }
 
 fun AssetManager.load(asset: TextureAtlasAssets) = load<TextureAtlas>(asset.path)

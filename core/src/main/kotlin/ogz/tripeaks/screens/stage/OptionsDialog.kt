@@ -35,7 +35,7 @@ class OptionsDialog(
 
     init {
         val bundle = assets[BundleAssets.Bundle]
-        val cardAssets = assets[TextureAtlasAssets.Cards]
+        val atlas = assets[TextureAtlasAssets.Images]
 
         val showAllSwitch = CheckBox(
             bundle["showAll"],
@@ -111,15 +111,15 @@ class OptionsDialog(
 
         row()
 
-        val cardRegion = if (skin.isDark) "dark_card" else "light_card"
+        val cardRegion = "${skin.resourcePrefix}_card"
 
         val decorSelectList = (0..3).map { index ->
             CheckBox(null, skin, UiSkin.RADIO_BUTTON_STYLE).apply {
                 isChecked = index == settingsData.backDesign
                 add(
                     Stack(
-                        Image(cardAssets.findRegion(cardRegion)),
-                        Image(cardAssets.findRegion("card_back", index))
+                        Image(atlas.findRegion(cardRegion)),
+                        Image(atlas.findRegion("card_back", index))
                     )
                 )
                 imageCell.align(Align.topLeft).padRight(2f)

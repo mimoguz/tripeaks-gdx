@@ -46,7 +46,7 @@ class UiSkin private constructor(
     val line = NinePatchDrawable(NinePatch(atlas.createPatch("${resourcePrefix}_line")))
 
     constructor(assets: AssetManager, cjk: Boolean, dark: Boolean) : this(
-        assets[TextureAtlasAssets.Ui],
+        assets[TextureAtlasAssets.Images],
         if (cjk) assets[FontAssets.UnifontCJK] else assets[FontAssets.GamePixels],
         assets[FontAssets.GamePixels],
         if (dark) Constants.DARK_UI_TEXT else Constants.LIGHT_UI_TEXT,
