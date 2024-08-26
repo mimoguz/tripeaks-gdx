@@ -111,14 +111,13 @@ class OptionsDialog(
 
         row()
 
-        val cardRegion = "${skin.resourcePrefix}_card"
 
         val decorSelectList = (0..3).map { index ->
             CheckBox(null, skin, UiSkin.RADIO_BUTTON_STYLE).apply {
                 isChecked = index == settingsData.backDesign
                 add(
                     Stack(
-                        Image(atlas.findRegion(cardRegion)),
+                        Image(skin.getThemedDrawable("card")),
                         Image(atlas.findRegion("card_back", index))
                     )
                 )

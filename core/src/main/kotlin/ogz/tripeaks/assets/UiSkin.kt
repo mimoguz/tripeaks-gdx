@@ -165,6 +165,8 @@ class UiSkin private constructor(
 
     }
 
+    fun getThemedDrawable(name: String): Drawable = getDrawable("${resourcePrefix}_${name}")
+
     private fun findIcon(atlas: TextureAtlas, name: String): Drawable {
         return TextureRegionDrawable(atlas.findRegion("${resourcePrefix}_icon_$name"))
     }
