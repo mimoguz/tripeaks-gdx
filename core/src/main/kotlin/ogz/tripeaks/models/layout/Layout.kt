@@ -13,7 +13,8 @@ interface Layout {
 
 abstract class LayoutBase(private val sockets: List<Socket>) : Layout {
 
-    private val cellMap: Map<Int, Socket> = sockets.associateBy { socket -> getCellIndex(socket.column, socket.row) }
+    private val cellMap: Map<Int, Socket> =
+        sockets.associateBy { socket -> getCellIndex(socket.column, socket.row) }
 
     private fun getCellIndex(column: Int, row: Int) = row * numberOfColumns + column
 
