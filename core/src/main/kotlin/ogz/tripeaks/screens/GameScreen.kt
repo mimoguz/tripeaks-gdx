@@ -57,6 +57,7 @@ class GameScreen(private val context: Context) : KtxScreen, InputAdapter() {
     private val switch = GameScreenSwitch()
     private val menuActions = listOf(
         Pair(assets[BundleAssets.Bundle]["newGame"], this::onNewGame),
+        Pair(assets[BundleAssets.Bundle]["restart"], this::onRestartCurrentGame),
         Pair(assets[BundleAssets.Bundle]["options"], this::onShowOptions),
         Pair(assets[BundleAssets.Bundle]["statistics"], this::onShowStatistics),
         Pair(assets[BundleAssets.Bundle]["exit"], this::onExit),
@@ -164,6 +165,11 @@ class GameScreen(private val context: Context) : KtxScreen, InputAdapter() {
                 startNewGame()
             }
 
+            StalledDialogResult.RESTART -> {
+                addStat()
+                restartCurrentGame()
+            }
+
             StalledDialogResult.RETURN -> {}
         }
     }
@@ -195,7 +201,7 @@ class GameScreen(private val context: Context) : KtxScreen, InputAdapter() {
     }
 
     private fun onStalled() {
-        game?.also { game ->
+        game?.also {
             val dialog = StalledDialog(
                 settings.get().skin,
                 assets,
@@ -251,6 +257,12 @@ class GameScreen(private val context: Context) : KtxScreen, InputAdapter() {
         addStat()
         menu = null
         startNewGame()
+    }
+
+    private fun onRestartCurrentGame() {
+        addStat()
+        menu = null
+        restartCurrentGame()
     }
 
     private fun onShowMenu() {
@@ -312,6 +324,10 @@ class GameScreen(private val context: Context) : KtxScreen, InputAdapter() {
 
     private fun startNewGame() {
         setupGame(settings.getNewGame())
+    }
+
+    private fun restartCurrentGame() {
+        throw NotImplementedError("Restart game")
     }
 
     private fun addStat() {

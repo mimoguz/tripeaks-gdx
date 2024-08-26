@@ -66,5 +66,5 @@ class StalledDialog(
 }
 
 enum class StalledDialogResult {
-    NEW_GAME, RETURN
+    NEW_GAME, RESTART, RETURN
 }
