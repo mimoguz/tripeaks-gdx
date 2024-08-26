@@ -49,16 +49,33 @@ class AboutDialog(skin: UiSkin, assets: AssetManager) : PopTable(skin) {
             defaults().align(Align.left).expandX().fillX()
 
             add(
+                Panel("Help/How-to", skin, true).apply {
+                    add(ImageButton(skin.iconLink).apply {
+                        getCell(getChild(0)).padTop(2f)
+                        add(Label("Wiki on GitHub", skin, UiSkin.LATIN_LABEL_STYLE))
+                            .padLeft(Constants.UI_HORIZONTAL_SPACING)
+                            .row()
+                        add(Image())
+                        add(Image(skin.line)).fillX().padLeft(Constants.UI_HORIZONTAL_SPACING)
+                        addListener(object : ChangeListener() {
+                            override fun changed(event: ChangeEvent?, actor: Actor?) {
+                                Gdx.net.openURI("https://github.com/mimoguz/tripeaks-gdx/wiki")
+                            }
+                        })
+                    })
+                        .left()
+                }
+            )
+                .padBottom(Constants.UI_VERTICAL_SPACING)
+                .row()
+
+            add(
                 Panel("Licenses", skin, true).apply {
                     defaults().padBottom(Constants.UI_VERTICAL_SPACING + 2f).left()
-                    addLicenseInfo("tripeaks-gdx", "GPL-3.0", "github.com/mimoguz/tripeaks-gdx")
-                    row()
-                    addLicenseInfo("libGDX", "Apache-2.0", "libgdx.com")
-                    row()
-                    addLicenseInfo("KTX", "CC0-1.0", "libktx.github.io")
-                    row()
-                    addLicenseInfo("Stripe", "MIT", "github.com/raeleus/stripe")
-                    row()
+                    addLicenseInfo("tripeaks-gdx", "GPL-3.0", "github.com/mimoguz/tripeaks-gdx").row()
+                    addLicenseInfo("libGDX", "Apache-2.0", "libgdx.com").row()
+                    addLicenseInfo("KTX", "CC0-1.0", "libktx.github.io").row()
+                    addLicenseInfo("Stripe", "MIT", "github.com/raeleus/stripe").row()
                     addLicenseInfo(
                         "GNU Unifont",
                         "OFL-1.1, or GPL-2+ with\nthe GNU font embedding exception",
@@ -68,8 +85,8 @@ class AboutDialog(skin: UiSkin, assets: AssetManager) : PopTable(skin) {
                 }
             )
                 .padBottom(Constants.UI_VERTICAL_SPACING)
+                .row()
 
-            row()
 
             add(
                 Panel("Privacy Policy", skin, true).apply {
@@ -122,14 +139,9 @@ class AboutDialog(skin: UiSkin, assets: AssetManager) : PopTable(skin) {
         row()
         add(ImageButton(uiSkin.iconLink).apply {
             getCell(getChild(0)).padTop(2f)
-            add(
-                Label(
-                    link,
-                    uiSkin,
-                    UiSkin.LATIN_LABEL_STYLE
-                )
-            ).padLeft(Constants.UI_HORIZONTAL_SPACING)
-            row()
+            add(Label(link, uiSkin, UiSkin.LATIN_LABEL_STYLE))
+                .padLeft(Constants.UI_HORIZONTAL_SPACING)
+                .row()
             add(Image())
             add(Image(uiSkin.line)).fillX().padLeft(Constants.UI_HORIZONTAL_SPACING)
             addListener(object : ChangeListener() {
@@ -138,6 +150,7 @@ class AboutDialog(skin: UiSkin, assets: AssetManager) : PopTable(skin) {
                 }
             })
         })
+            .left()
     }
 
 }
