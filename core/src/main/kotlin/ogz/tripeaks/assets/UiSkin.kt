@@ -36,14 +36,14 @@ class UiSkin private constructor(
     val extraLineSpacing: Float = 0f
 ) : Skin(atlas) {
 
-    val iconLink: Drawable = findIcon(atlas,"link")
-    val iconOptions: Drawable = findIcon(atlas,"options")
-    val iconAbout: Drawable = findIcon(atlas,"about")
-    val iconStatistics: Drawable = findIcon(atlas,"stats")
-    val iconWin: Drawable = findIcon(atlas,"win")
-    val iconLose: Drawable = findIcon(atlas,"lose")
-    val panelBg = NinePatchDrawable(NinePatch(atlas.createPatch("${resourcePrefix}_panel")))
-    val line = NinePatchDrawable(NinePatch(atlas.createPatch("${resourcePrefix}_line")))
+    val iconLink: Drawable = findIcon(atlas, "link")
+    val iconOptions: Drawable = findIcon(atlas, "options")
+    val iconAbout: Drawable = findIcon(atlas, "about")
+    val iconStatistics: Drawable = findIcon(atlas, "stats")
+    val iconWin: Drawable = findIcon(atlas, "win")
+    val iconLose: Drawable = findIcon(atlas, "lose")
+    val panelBg = find9Patch(atlas, "panel")
+    val line = find9Patch(atlas, "line")
 
     constructor(assets: AssetManager, cjk: Boolean, dark: Boolean) : this(
         assets[TextureAtlasAssets.Images],
@@ -171,7 +171,12 @@ class UiSkin private constructor(
         return TextureRegionDrawable(atlas.findRegion("${resourcePrefix}_icon_$name"))
     }
 
+    private fun find9Patch(atlas: TextureAtlas, name: String): NinePatchDrawable {
+        return NinePatchDrawable(NinePatch(atlas.createPatch("${resourcePrefix}_${name}")))
+    }
+
     companion object {
+
         private const val TEXT_COLOR = "textColor"
         private const val EMPHASIS_COLOR = "emphasisColor"
         const val TITLE_LABEL_STYLE = "title"
