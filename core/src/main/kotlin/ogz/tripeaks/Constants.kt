@@ -16,7 +16,7 @@ object Constants {
     const val FACE_Y = (CARD_HEIGHT - FACE_HEIGHT - 1) / 2 + 1
     const val HORIZONTAL_PADDING = 12f
     const val MAX_WORLD_WIDTH = 360f
-    const val MIN_WORLD_WIDTH = 300f
+    const val MIN_WORLD_WIDTH = 304f
     const val SMALL_FACE_HEIGHT = 10f
     const val SMALL_10_HEIGHT = 18f
     const val SMALL_FACE_WIDTH = 6f
