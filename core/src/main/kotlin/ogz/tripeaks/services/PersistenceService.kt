@@ -99,9 +99,9 @@ class PersistenceService {
     }
 
     private fun loadLegacySettings(): SettingsData? {
-        val v11Settings = load(LegacySettingsData::class.java, SETTINGS_FILE, SETTINGS_KEY)
+        val v11Settings = load(SettingsDataV1_1::class.java, SETTINGS_FILE, SETTINGS_KEY)
         if (v11Settings != null) return SettingsData().copy(
-            if (v11Settings.darkTheme) ThemeMode.DARK else ThemeMode.LIGHT,
+            if (v11Settings.darkTheme) ThemeMode.Dark else ThemeMode.Light,
             v11Settings.backDesign,
             v11Settings.layout,
             v11Settings.animation,
@@ -121,7 +121,7 @@ class PersistenceService {
         val startWithEmptyDiscard = preferences.getBoolean("startWithEmptyDiscard", false)
         val layout = preferences.getString("layout", BasicLayout.TAG).toLayoutVariant()
         return SettingsData().copy(
-            themeMode = if (useDarkTheme) ThemeMode.DARK else ThemeMode.LIGHT,
+            themeMode = if (useDarkTheme) ThemeMode.Dark else ThemeMode.Light,
             drawingStrategy = drawing,
             emptyDiscard = startWithEmptyDiscard,
             layout = layout,

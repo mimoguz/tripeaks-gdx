@@ -77,7 +77,7 @@ class SettingsService(private val systemDarkMode: Boolean) : Disposable {
 
 }
 
-class LegacySettingsData private constructor(
+class SettingsDataV1_1 private constructor(
     var darkTheme: Boolean,
     var backDesign: Int,
     var layout: Layouts,
@@ -96,7 +96,7 @@ class SettingsData private constructor(
 ) {
 
     constructor() : this(
-        themeMode = ThemeMode.SYSTEM,
+        themeMode = ThemeMode.System,
         backDesign = 0,
         layout = Layouts.Basic,
         animation = AnimationStrategies.FadeOut,
@@ -115,7 +115,7 @@ class SettingsData private constructor(
 
     fun create(assets: AssetManager, systemDarkMode: Boolean): Settings {
         val darkTheme =
-            themeMode == ThemeMode.DARK || (themeMode == ThemeMode.SYSTEM && systemDarkMode)
+            themeMode == ThemeMode.Dark || (themeMode == ThemeMode.System && systemDarkMode)
         return Settings(
             themeMode,
             backDesign,

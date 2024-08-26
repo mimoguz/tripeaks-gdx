@@ -13,7 +13,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Stack
 import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.utils.Align
 import com.ray3k.stripe.PopTable
-import ktx.collections.GdxArray
 import ktx.collections.toGdxArray
 import ogz.tripeaks.Constants
 import ogz.tripeaks.assets.BundleAssets
@@ -64,7 +63,7 @@ class OptionsDialog(
                 leftWidth = Constants.TEXT_BUTTON_HORIZONTAL_PADDING
                 rightWidth = Constants.TEXT_BUTTON_HORIZONTAL_PADDING
             }
-            items = GdxArray.with("System", "Light", "Dark")
+            items = ThemeMode.entries.map { bundle[it.name] }.toGdxArray()
             selectedIndex = ThemeMode.entries.indexOf(settingsData.themeMode)
         }
 
@@ -117,10 +116,12 @@ class OptionsDialog(
         val decorSelectList = (0..3).map { index ->
             CheckBox(null, skin, UiSkin.RADIO_BUTTON_STYLE).apply {
                 isChecked = index == settingsData.backDesign
-                add(Stack(
-                    Image(cardAssets.findRegion(cardRegion)),
-                    Image(cardAssets.findRegion("card_back", index))
-                ))
+                add(
+                    Stack(
+                        Image(cardAssets.findRegion(cardRegion)),
+                        Image(cardAssets.findRegion("card_back", index))
+                    )
+                )
                 imageCell.align(Align.topLeft).padRight(2f)
             }
         }
@@ -152,36 +153,29 @@ class OptionsDialog(
             defaults().align(Align.left).padBottom(3f + skin.extraLineSpacing).align(Align.left)
             padRight(Constants.UI_SCROLL_PUSH)
 
-            add(Label(bundle["layout"], skin))
-            row()
+            add(Label(bundle["layout"], skin)).row()
             add(layoutSelection)
                 .padBottom(Constants.UI_VERTICAL_SPACING + skin.extraLineSpacing)
                 .expandX()
                 .fillX()
+                .row()
 
-            row()
-
-            add(Label(bundle["cardAnimation"], skin))
-            row()
+            add(Label(bundle["cardAnimation"], skin)).row()
             add(animationSelection)
                 .padBottom(Constants.UI_VERTICAL_SPACING + skin.extraLineSpacing)
                 .expandX()
                 .fillX()
+                .row()
 
-            row()
-
-            add(decorSelect).padBottom(Constants.UI_VERTICAL_SPACING + skin.extraLineSpacing)
-
-            row()
+            add(decorSelect).padBottom(Constants.UI_VERTICAL_SPACING + skin.extraLineSpacing).row()
 
             add(showAllSwitch).padBottom(Constants.UI_VERTICAL_SPACING + skin.extraLineSpacing)
-
-            row()
+                .row()
 
             add(emptyDiscardSwitch).padBottom(Constants.UI_VERTICAL_SPACING + skin.extraLineSpacing)
+                .row()
 
-            row()
-
+            add(Label(bundle["themeMode"], skin)).row()
             add(themeModeSelect).expandX().fillX()
         }
 
