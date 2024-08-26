@@ -4,6 +4,7 @@ import ktx.collections.GdxArray
 import ktx.collections.GdxIntArray
 import ktx.collections.gdxArrayOf
 import ktx.collections.gdxIntArrayOf
+import ktx.collections.toGdxArray
 import ogz.tripeaks.models.layout.BasicLayout
 import ogz.tripeaks.models.layout.Layout
 import ogz.tripeaks.models.layout.Socket
@@ -127,7 +128,6 @@ class GameState private constructor(
 
         val card = discard.pop()
         val socketIndex = sockets.indexOfFirst { it.card == card }
-        println("Undoing socket $socketIndex")
         if (socketIndex == -1) {
             // Card wasn't from the tableau.
             stack.add(card)
@@ -144,6 +144,33 @@ class GameState private constructor(
         !sockets[socketIndex].isEmpty && layout[socketIndex].blockedBy.all { sockets[it].isEmpty }
 
     fun isEmpty(socketIndex: Int): Boolean = sockets[socketIndex].isEmpty
+
+    fun t0Copy(): GameState {
+        // Basically, create a copy and undo everything
+        val copyStack = stack.toArray().toGdxArray()
+        val copyDiscard = discard.toArray().toGdxArray()
+        val copySockets = sockets.toGdxArray()
+        val minDiscardLength = if (canEmptyDiscard) 0 else 1
+        while (copyDiscard.size > minDiscardLength) {
+            val card = copyDiscard.pop()
+            val socketIndex = copySockets.indexOfFirst { it.card == card }
+            if (socketIndex == -1) {
+                copyStack.add(card)
+            } else {
+                copySockets[socketIndex].isEmpty = false
+            }
+        }
+        return GameState(
+            stats = GameStatistics(gameLayout.tag),
+            layout = layout,
+            sockets = copySockets,
+            played = false,
+            stack = copyStack,
+            discard = copyDiscard,
+            canEmptyDiscard = canEmptyDiscard,
+            stalledBefore = false
+        )
+    }
 
     /** Can we remove the card at the socket index from the tableau? */
     private fun canTake(socketIndex: Int): Boolean =

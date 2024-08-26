@@ -10,13 +10,12 @@ import com.badlogic.gdx.scenes.scene2d.Stage
 import com.ray3k.stripe.PopTable
 import ktx.app.KtxScreen
 import ktx.inject.Context
-import ogz.tripeaks.assets.BundleAssets
-import ogz.tripeaks.assets.get
-import ogz.tripeaks.views.GameView
-import ogz.tripeaks.graphics.CustomViewport
-import ogz.tripeaks.models.GameState
 import ogz.tripeaks.Constants.HORIZONTAL_PADDING
 import ogz.tripeaks.Constants.VIEWPORT_VERTICAL_PADDING
+import ogz.tripeaks.assets.BundleAssets
+import ogz.tripeaks.assets.get
+import ogz.tripeaks.graphics.CustomViewport
+import ogz.tripeaks.models.GameState
 import ogz.tripeaks.screens.stage.OptionsDialog
 import ogz.tripeaks.screens.stage.OptionsDialogResult
 import ogz.tripeaks.screens.stage.StalledDialog
@@ -28,6 +27,7 @@ import ogz.tripeaks.services.PersistenceService
 import ogz.tripeaks.services.PlayerStatisticsService
 import ogz.tripeaks.services.SettingsService
 import ogz.tripeaks.ui.Menu
+import ogz.tripeaks.views.GameView
 
 class GameScreen(private val context: Context) : KtxScreen, InputAdapter() {
 
@@ -180,6 +180,7 @@ class GameScreen(private val context: Context) : KtxScreen, InputAdapter() {
                 addStat()
                 startNewGame()
             }
+
             WinDialogResult.EXIT -> Gdx.app.exit()
         }
     }
@@ -327,7 +328,7 @@ class GameScreen(private val context: Context) : KtxScreen, InputAdapter() {
     }
 
     private fun restartCurrentGame() {
-        throw NotImplementedError("Restart game")
+        game?.let { setupGame(it.t0Copy()) }
     }
 
     private fun addStat() {
