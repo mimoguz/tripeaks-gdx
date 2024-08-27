@@ -23,6 +23,7 @@ import ktx.style.selectBox
 import ktx.style.textButton
 import ktx.style.window
 import ogz.tripeaks.Constants
+import ogz.tripeaks.models.ThemeMode
 
 class UiSkin private constructor(
     atlas: TextureAtlas,
@@ -45,14 +46,34 @@ class UiSkin private constructor(
     val panelBg = find9Patch(atlas, "panel")
     val line = find9Patch(atlas, "line")
 
-    constructor(assets: AssetManager, cjk: Boolean, dark: Boolean) : this(
+    constructor(
+        assets: AssetManager,
+        cjk: Boolean,
+        theme: ThemeMode,
+        darkSystem: Boolean
+    ) : this(
         assets[TextureAtlasAssets.Images],
         if (cjk) assets[FontAssets.UnifontCJK] else assets[FontAssets.GamePixels],
         assets[FontAssets.GamePixels],
-        if (dark) Constants.DARK_UI_TEXT else Constants.LIGHT_UI_TEXT,
-        if (dark) Constants.DARK_UI_EMPHASIS else Constants.LIGHT_UI_EMPHASIS,
-        if (dark) "dark" else "light",
-        dark,
+        when (theme) {
+            ThemeMode.Dark -> Constants.DARK_UI_TEXT
+            ThemeMode.Light -> Constants.LIGHT_UI_TEXT
+            ThemeMode.Black -> Constants.BLACK_UI_TEXT
+            ThemeMode.System -> if (darkSystem) Constants.DARK_UI_TEXT else Constants.LIGHT_UI_TEXT
+        },
+        when (theme) {
+            ThemeMode.Dark -> Constants.DARK_UI_EMPHASIS
+            ThemeMode.Light -> Constants.LIGHT_UI_EMPHASIS
+            ThemeMode.Black -> Constants.BLACK_UI_EMPHASIS
+            ThemeMode.System -> if (darkSystem) Constants.DARK_UI_EMPHASIS else Constants.LIGHT_UI_EMPHASIS
+        },
+        when (theme) {
+            ThemeMode.Dark -> "dark"
+            ThemeMode.Light -> "light"
+            ThemeMode.Black -> "black"
+            ThemeMode.System -> if (darkSystem) "dark" else "light"
+        },
+        theme == ThemeMode.Dark || theme == ThemeMode.Black || (theme == ThemeMode.System && darkSystem),
         cjk,
         if (cjk) Constants.UI_CJK_LINE_SPACING else 0f,
     )

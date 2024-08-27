@@ -39,10 +39,13 @@ object Constants {
 
     val DARK_UI_TEXT = rgb(249, 219, 169)
     val LIGHT_UI_TEXT = rgb(76, 56, 77)
+    val BLACK_UI_TEXT = rgb(96, 131, 66)
     val DARK_UI_EMPHASIS = rgb(224, 122, 95)
     val LIGHT_UI_EMPHASIS = rgb(184, 55, 68)
+    val BLACK_UI_EMPHASIS = rgb(184, 55, 68)
     val DARK_BG: Color = Color.valueOf("232433ff")
     val LIGHT_BG: Color = Color.valueOf("63a347ff")
+    val BLACK_BG: Color = Color.BLACK
 
     private fun rgb(r: Int, g: Int, b: Int): Color = Color(r / 255f, g / 255f, b / 255f, 1f)
 

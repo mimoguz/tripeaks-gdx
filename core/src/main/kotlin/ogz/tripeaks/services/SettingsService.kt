@@ -30,8 +30,9 @@ class SettingsService(private val systemDarkMode: Boolean) : Disposable {
         assets = context.inject()
         settings =
             persistence.loadSettings()?.create(assets, systemDarkMode)
-                ?: SettingsData().create(assets, systemDarkMode
-            )
+                ?: SettingsData().create(
+                    assets, systemDarkMode
+                )
     }
 
     fun paused() {
@@ -115,7 +116,7 @@ class SettingsData private constructor(
 
     fun create(assets: AssetManager, systemDarkMode: Boolean): Settings {
         val darkTheme =
-            themeMode == ThemeMode.Dark || (themeMode == ThemeMode.System && systemDarkMode)
+            themeMode == ThemeMode.Dark || themeMode == ThemeMode.Black || (themeMode == ThemeMode.System && systemDarkMode)
         return Settings(
             themeMode,
             backDesign,
@@ -124,8 +125,13 @@ class SettingsData private constructor(
                 setTheme(darkTheme)
             },
             drawingStrategy.create(),
-            SpriteSet(darkTheme, backDesign, assets),
-            UiSkin(assets, assets[BundleAssets.Bundle]["skinKey"] == "cjk", darkTheme),
+            SpriteSet(themeMode, systemDarkMode, backDesign, assets),
+            UiSkin(
+                assets,
+                assets[BundleAssets.Bundle]["skinKey"] == "cjk",
+                themeMode,
+                systemDarkMode
+            ),
             emptyDiscard
         )
     }

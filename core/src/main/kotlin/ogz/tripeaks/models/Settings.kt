@@ -26,6 +26,6 @@ class Settings(
 }
 
 enum class ThemeMode {
-    System, Light, Dark
+    System, Light, Dark, Black
 }
 

@@ -9,8 +9,9 @@ import ogz.tripeaks.Constants
 import ogz.tripeaks.assets.TextureAssets
 import ogz.tripeaks.assets.TextureAtlasAssets
 import ogz.tripeaks.assets.get
+import ogz.tripeaks.models.ThemeMode
 
-class SpriteSet(val isDark: Boolean, backIndex: Int, assets: AssetManager) {
+class SpriteSet(val theme: ThemeMode, darkSystem: Boolean, backIndex: Int, assets: AssetManager) {
 
     val back: TextureRegion
     val background: Color
@@ -27,13 +28,25 @@ class SpriteSet(val isDark: Boolean, backIndex: Int, assets: AssetManager) {
     val title: Texture
 
     init {
-        val prefix = if (isDark) "dark" else "light"
+        val prefix = when (theme) {
+            ThemeMode.Dark -> "dark"
+            ThemeMode.Light -> "light"
+            ThemeMode.Black -> "black"
+            ThemeMode.System -> if (darkSystem) "dark" else "light"
+        }
+        val isDark =
+            theme == ThemeMode.Dark || theme == ThemeMode.Black || (theme == ThemeMode.System && darkSystem)
         val cards = assets[TextureAtlasAssets.Images]
         back = cards.findRegion("card_back", backIndex)
-        background = if (isDark) Constants.DARK_BG else Constants.LIGHT_BG
+        background = when (theme) {
+            ThemeMode.Dark -> Constants.DARK_BG
+            ThemeMode.Light -> Constants.LIGHT_BG
+            ThemeMode.Black -> Constants.BLACK_BG
+            ThemeMode.System -> if (darkSystem) Constants.DARK_BG else Constants.LIGHT_BG
+        }
         buttonDisabled = cards.createPatch("${prefix}_button_disabled")
         buttonDown = cards.createPatch("${prefix}_button_down")
-        buttonUp =  cards.createPatch("${prefix}_button_up")
+        buttonUp = cards.createPatch("${prefix}_button_up")
         card = cards.findRegion("${prefix}_card")
         dealIcon = cards.findRegion("${prefix}_icon_deal")
         empty = cards.findRegion("${prefix}_empty")
@@ -61,15 +74,18 @@ sealed interface Icon {
     fun get(sprites: SpriteSet): TextureRegion
 
     data object Deal : Icon {
+
         override fun get(sprites: SpriteSet): TextureRegion = sprites.dealIcon
     }
 
     data object Menu : Icon {
+
         override fun get(sprites: SpriteSet): TextureRegion = sprites.menuIcon
     }
 
     data object Undo : Icon {
+
         override fun get(sprites: SpriteSet): TextureRegion = sprites.undoIcon
     }
-    
+
 }
