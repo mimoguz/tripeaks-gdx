@@ -55,25 +55,10 @@ class UiSkin private constructor(
         assets[TextureAtlasAssets.Images],
         if (cjk) assets[FontAssets.UnifontCJK] else assets[FontAssets.GamePixels],
         assets[FontAssets.GamePixels],
-        when (theme) {
-            ThemeMode.Dark -> Constants.DARK_UI_TEXT
-            ThemeMode.Light -> Constants.LIGHT_UI_TEXT
-            ThemeMode.Black -> Constants.BLACK_UI_TEXT
-            ThemeMode.System -> if (darkSystem) Constants.DARK_UI_TEXT else Constants.LIGHT_UI_TEXT
-        },
-        when (theme) {
-            ThemeMode.Dark -> Constants.DARK_UI_EMPHASIS
-            ThemeMode.Light -> Constants.LIGHT_UI_EMPHASIS
-            ThemeMode.Black -> Constants.BLACK_UI_EMPHASIS
-            ThemeMode.System -> if (darkSystem) Constants.DARK_UI_EMPHASIS else Constants.LIGHT_UI_EMPHASIS
-        },
-        when (theme) {
-            ThemeMode.Dark -> "dark"
-            ThemeMode.Light -> "light"
-            ThemeMode.Black -> "black"
-            ThemeMode.System -> if (darkSystem) "dark" else "light"
-        },
-        theme == ThemeMode.Dark || theme == ThemeMode.Black || (theme == ThemeMode.System && darkSystem),
+        theme.select(darkSystem, Constants.LIGHT_UI_TEXT, Constants.DARK_UI_TEXT, Constants.BLACK_UI_TEXT),
+        theme.select(darkSystem, Constants.LIGHT_UI_EMPHASIS, Constants.DARK_UI_EMPHASIS, Constants.BLACK_UI_EMPHASIS),
+        theme.select(darkSystem, "light", "dark", "black"),
+        theme.isDark(darkSystem),
         cjk,
         if (cjk) Constants.UI_CJK_LINE_SPACING else 0f,
     )
