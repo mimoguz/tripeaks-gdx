@@ -44,7 +44,12 @@ class SpriteSet(val theme: ThemeMode, darkSystem: Boolean, backIndex: Int, asset
         menuIcon = cards.findRegion("${prefix}_icon_menu")
         smallFace = IndexedSprite("${prefix}_small_face", assets)
         undoIcon = cards.findRegion("${prefix}_icon_undo")
-        title = if (isDark) assets[TextureAssets.DarkTitle] else assets[TextureAssets.LightTitle]
+        title = theme.select(
+            darkSystem,
+            assets[TextureAssets.LightTitle],
+            assets[TextureAssets.DarkTitle],
+            assets[TextureAssets.BlackTitle]
+        )
     }
 
 }
