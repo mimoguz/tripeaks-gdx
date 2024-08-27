@@ -34,7 +34,6 @@ open class PopDialog(protected val uiSkin: UiSkin, title: String? = null, icon: 
 
         isModal = true
         isHideOnUnfocus = false
-        debug()
     }
 
 }
