@@ -91,7 +91,7 @@ class UiSkin private constructor(
             up = skin["${resourcePrefix}_button_up"]
             down = skin["${resourcePrefix}_button_down"]
             disabled = skin["${resourcePrefix}_button_disabled"]
-            pressedOffsetY = -1f
+            pressedOffsetY = if (resourcePrefix == "black") -2f else -1f
         }
 
         textButton {
@@ -100,7 +100,7 @@ class UiSkin private constructor(
             disabled = skin["${resourcePrefix}_button_disabled"]
             font = uiFont
             fontColor = skin[TEXT_COLOR]
-            pressedOffsetY = -1f
+            pressedOffsetY = if (resourcePrefix == "black") -2f else -1f
         }
 
         textButton(MENU_ITEM_BUTTON_STYLE) {

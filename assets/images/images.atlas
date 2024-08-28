@@ -6,7 +6,7 @@ bounds:379,165,16,17
 split:4,4,4,6
 black_button_down
 bounds:216,128,16,17
-split:4,4,5,5
+split:4,4,6,4
 black_button_up
 bounds:379,184,16,17
 split:4,4,4,6
