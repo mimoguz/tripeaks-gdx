@@ -312,10 +312,6 @@ black_icon_undo
 bounds:260,159,12,12
 black_icon_win
 bounds:349,233,22,21
-black_line
-bounds:209,149,6,1
-split:1,1,0,1
-pad:1,1,0,0
 black_menu
 bounds:134,8,18,18
 split:4,4,4,6
@@ -605,6 +601,9 @@ bounds:223,57,12,12
 dark_icon_win
 bounds:325,233,22,21
 dark_line
+bounds:397,233,6,1
+split:1,1,0,1
+black_line
 bounds:397,233,6,1
 split:1,1,0,1
 dark_menu
