@@ -37,5 +37,7 @@ enum class ThemeMode {
 
     fun isDark(darkSystem: Boolean): Boolean =
         this == Dark || this == Black || (this == System && darkSystem)
+
+    fun resource(darkSystem: Boolean): String = select(darkSystem, "light", "dark", "black")
 }
 

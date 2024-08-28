@@ -57,7 +57,7 @@ class UiSkin private constructor(
         assets[FontAssets.GamePixels],
         theme.select(darkSystem, Constants.LIGHT_UI_TEXT, Constants.DARK_UI_TEXT, Constants.BLACK_UI_TEXT),
         theme.select(darkSystem, Constants.LIGHT_UI_EMPHASIS, Constants.DARK_UI_EMPHASIS, Constants.BLACK_UI_EMPHASIS),
-        theme.select(darkSystem, "light", "dark", "black"),
+        theme.resource(darkSystem),
         theme.isDark(darkSystem),
         cjk,
         if (cjk) Constants.UI_CJK_LINE_SPACING else 0f,

@@ -28,8 +28,7 @@ class SpriteSet(val theme: ThemeMode, darkSystem: Boolean, backIndex: Int, asset
     val title: Texture
 
     init {
-        val prefix = theme.select(darkSystem, "light", "dark", "black")
-        val isDark = theme.isDark(darkSystem)
+        val prefix = theme.resource(darkSystem)
         val cards = assets[TextureAtlasAssets.Images]
         back = cards.findRegion("card_back", backIndex)
         background =
