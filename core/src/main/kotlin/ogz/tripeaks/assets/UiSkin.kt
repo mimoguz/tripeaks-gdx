@@ -55,8 +55,18 @@ class UiSkin private constructor(
         assets[TextureAtlasAssets.Images],
         if (cjk) assets[FontAssets.UnifontCJK] else assets[FontAssets.GamePixels],
         assets[FontAssets.GamePixels],
-        theme.select(darkSystem, Constants.LIGHT_UI_TEXT, Constants.DARK_UI_TEXT, Constants.BLACK_UI_TEXT),
-        theme.select(darkSystem, Constants.LIGHT_UI_EMPHASIS, Constants.DARK_UI_EMPHASIS, Constants.BLACK_UI_EMPHASIS),
+        theme.select(
+            darkSystem,
+            Constants.LIGHT_UI_TEXT,
+            Constants.DARK_UI_TEXT,
+            Constants.BLACK_UI_TEXT
+        ),
+        theme.select(
+            darkSystem,
+            Constants.LIGHT_UI_EMPHASIS,
+            Constants.DARK_UI_EMPHASIS,
+            Constants.BLACK_UI_EMPHASIS
+        ),
         theme.resource(darkSystem),
         theme.isDark(darkSystem),
         cjk,
@@ -172,6 +182,9 @@ class UiSkin private constructor(
     }
 
     fun getThemedDrawable(name: String): Drawable = getDrawable("${resourcePrefix}_${name}")
+
+    fun getThemedDrawable(name: String, index: Int): Drawable =
+        TextureRegionDrawable(atlas.findRegion("${resourcePrefix}_${name}", index))
 
     private fun findIcon(atlas: TextureAtlas, name: String): Drawable {
         return TextureRegionDrawable(atlas.findRegion("${resourcePrefix}_icon_$name"))

@@ -118,7 +118,7 @@ class OptionsDialog(
                 add(
                     Stack(
                         Image(skin.getThemedDrawable("card")),
-                        Image(atlas.findRegion("card_back", index))
+                        Image(skin.getThemedDrawable("card_back", index))
                     )
                 )
                 imageCell.align(Align.topLeft).padRight(2f)

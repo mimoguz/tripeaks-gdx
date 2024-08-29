@@ -30,7 +30,7 @@ class SpriteSet(val theme: ThemeMode, darkSystem: Boolean, backIndex: Int, asset
     init {
         val prefix = theme.resource(darkSystem)
         val cards = assets[TextureAtlasAssets.Images]
-        back = cards.findRegion("card_back", backIndex)
+        back = cards.findRegion("${prefix}_card_back", backIndex)
         background =
             theme.select(darkSystem, Constants.LIGHT_BG, Constants.DARK_BG, Constants.BLACK_BG)
         buttonDisabled = cards.createPatch("${prefix}_button_disabled")
