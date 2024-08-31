@@ -9,6 +9,7 @@ import ogz.tripeaks.assets.get
 import ogz.tripeaks.graphics.SpriteSet
 import ogz.tripeaks.models.GameState
 import ogz.tripeaks.models.Settings
+import ogz.tripeaks.models.ThemeMode
 import ogz.tripeaks.models.layout.BasicLayout
 import ogz.tripeaks.models.layout.DiamondsLayout
 import ogz.tripeaks.models.layout.Inverted2ndLayout
@@ -16,7 +17,7 @@ import ogz.tripeaks.models.layout.Layout
 import ogz.tripeaks.views.AnimationStrategy
 import ogz.tripeaks.views.CardDrawingStrategy
 
-class SettingsService : Disposable {
+class SettingsService(private val systemDarkMode: Boolean) : Disposable {
 
     private var settings: Settings? = null
     private lateinit var persistence: PersistenceService
@@ -27,7 +28,11 @@ class SettingsService : Disposable {
         this.context = context
         persistence = context.inject()
         assets = context.inject()
-        settings = persistence.loadSettings()?.create(assets) ?: SettingsData().create(assets)
+        settings =
+            persistence.loadSettings()?.create(assets, systemDarkMode)
+                ?: SettingsData().create(
+                    assets, systemDarkMode
+                )
     }
 
     fun paused() {
@@ -37,8 +42,8 @@ class SettingsService : Disposable {
 
     fun resumed() {
         settings = settings
-            ?: persistence.loadSettings()?.create(assets)
-                    ?: SettingsData().create(assets)
+            ?: persistence.loadSettings()?.create(assets, systemDarkMode)
+                    ?: SettingsData().create(assets, systemDarkMode)
     }
 
     fun get(): Settings = settings!!
@@ -48,7 +53,7 @@ class SettingsService : Disposable {
     fun update(settingsData: SettingsData) {
         val current = this.settings!!
         val settingsChanged =
-            settingsData.darkTheme != current.darkTheme
+            settingsData.themeMode != current.themeMode
                     || settingsData.backDesign != current.backDesign
                     || settingsData.animation != current.animationStrategy.toVariant()
                     || settingsData.drawingStrategy != current.drawingStrategy.toVariant()
@@ -56,7 +61,7 @@ class SettingsService : Disposable {
                     || settingsData.emptyDiscard != current.emptyDiscard
 
         if (settingsChanged) {
-            val newSettings = settingsData.create(assets)
+            val newSettings = settingsData.create(assets, systemDarkMode)
             settings?.animationStrategy?.also { if (it is Disposable) it.dispose() }
             settings = newSettings
             persistence.saveSettings(settingsData)
@@ -73,8 +78,17 @@ class SettingsService : Disposable {
 
 }
 
-class SettingsData private constructor(
+class SettingsDataV1_1 private constructor(
     var darkTheme: Boolean,
+    var backDesign: Int,
+    var layout: Layouts,
+    var animation: AnimationStrategies,
+    var drawingStrategy: DrawingStrategies,
+    var emptyDiscard: Boolean,
+)
+
+class SettingsData private constructor(
+    var themeMode: ThemeMode,
     var backDesign: Int,
     var layout: Layouts,
     var animation: AnimationStrategies,
@@ -83,7 +97,7 @@ class SettingsData private constructor(
 ) {
 
     constructor() : this(
-        darkTheme = false,
+        themeMode = ThemeMode.System,
         backDesign = 0,
         layout = Layouts.Basic,
         animation = AnimationStrategies.FadeOut,
@@ -92,7 +106,7 @@ class SettingsData private constructor(
     )
 
     constructor(settings: Settings) : this(
-        settings.darkTheme,
+        settings.themeMode,
         settings.backDesign,
         settings.layout.tag.toLayoutVariant(),
         settings.animationStrategy.toVariant(),
@@ -100,22 +114,30 @@ class SettingsData private constructor(
         settings.emptyDiscard
     )
 
-    fun create(assets: AssetManager): Settings {
+    fun create(assets: AssetManager, systemDarkMode: Boolean): Settings {
+        val darkTheme =
+            themeMode == ThemeMode.Dark || themeMode == ThemeMode.Black || (themeMode == ThemeMode.System && systemDarkMode)
         return Settings(
+            themeMode,
             backDesign,
             layout.create(),
             animation.create(assets).apply {
                 setTheme(darkTheme)
             },
             drawingStrategy.create(),
-            SpriteSet(darkTheme, backDesign, assets),
-            UiSkin(assets, assets[BundleAssets.Bundle]["skinKey"] == "cjk", darkTheme),
+            SpriteSet(themeMode, systemDarkMode, backDesign, assets),
+            UiSkin(
+                assets,
+                assets[BundleAssets.Bundle]["skinKey"] == "cjk",
+                themeMode,
+                systemDarkMode
+            ),
             emptyDiscard
         )
     }
 
     fun copy(
-        darkTheme: Boolean = this.darkTheme,
+        themeMode: ThemeMode = this.themeMode,
         backDesign: Int = this.backDesign,
         layout: Layouts = this.layout,
         animation: AnimationStrategies = this.animation,
@@ -123,7 +145,7 @@ class SettingsData private constructor(
         emptyDiscard: Boolean = this.emptyDiscard,
     ): SettingsData {
         return SettingsData(
-            darkTheme,
+            themeMode,
             backDesign,
             layout,
             animation,

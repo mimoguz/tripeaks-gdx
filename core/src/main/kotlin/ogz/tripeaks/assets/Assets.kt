@@ -11,22 +11,22 @@ import ktx.assets.load
 enum class TextureAssets(val path: String) {
     LightTitle("images/light_title.png"),
     DarkTitle("images/dark_title.png"),
+    BlackTitle("images/black_title.png"),
 }
 
 fun AssetManager.load(asset: TextureAssets) = load<Texture>(asset.path)
 operator fun AssetManager.get(asset: TextureAssets) = getAsset<Texture>(asset.path)
 
 enum class TextureAtlasAssets(val path: String) {
-    Cards("images/cards2.atlas"),
-    Ui("ui/ui2.atlas")
+    Images("images/images.atlas")
 }
 
 fun AssetManager.load(asset: TextureAtlasAssets) = load<TextureAtlas>(asset.path)
 operator fun AssetManager.get(asset: TextureAtlasAssets) = getAsset<TextureAtlas>(asset.path)
 
 enum class FontAssets(val path: String) {
-    GamePixels("ui/gamepixels.fnt"),
-    UnifontCJK("ui/gnu_unifont_cjk16_2.fnt")
+    GamePixels("fonts/gamepixels.fnt"),
+    UnifontCJK("fonts/gnu_unifont_cjk16_2.fnt")
 }
 
 fun AssetManager.load(asset: FontAssets) = load<BitmapFont>(asset.path)

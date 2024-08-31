@@ -1,70 +1,58 @@
 package ogz.tripeaks.screens.stage
 
 import com.badlogic.gdx.assets.AssetManager
-import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.badlogic.gdx.scenes.scene2d.ui.Label
-import com.ray3k.stripe.PopTable
 import ogz.tripeaks.Constants
 import ogz.tripeaks.assets.BundleAssets
 import ogz.tripeaks.assets.UiSkin
 import ogz.tripeaks.assets.get
 import ogz.tripeaks.ui.LabelButton
+import ogz.tripeaks.ui.PopDialog
 
 class StalledDialog(
     skin: UiSkin,
     assets: AssetManager,
     callback: (StalledDialogResult) -> Unit
-) : PopTable(skin) {
+) : PopDialog(skin) {
 
     init {
         val bundle = assets[BundleAssets.Bundle]
 
-        pad(
-            Constants.UI_PANEL_VERTICAL_BORDER,
-            Constants.UI_PANEL_HORIZONTAL_BORDER,
-            Constants.UI_PANEL_VERTICAL_BORDER,
-            Constants.UI_PANEL_HORIZONTAL_BORDER,
-        )
-
-        defaults()
+        contentTable.defaults().expandX().left()
+        contentTable.add(Image(uiSkin.iconLose))
+            .center()
             .padBottom(Constants.UI_VERTICAL_SPACING)
-            .left()
+            .row()
+        contentTable.add(Label(bundle["stalled"], skin))
 
-        add(Image(skin.iconLose)).colspan(2).center()
+        buttonTable.defaults()
+            .minWidth(100f)
+            .uniformX()
+            .fillX()
+            .padBottom(Constants.UI_VERTICAL_SPACING)
 
-        row()
+        buttonTable.add(LabelButton(skin, bundle.get("restart")) {
+            callback.invoke(StalledDialogResult.RESTART)
+            hide()
+        })
+            .row()
 
-        add(Label(bundle["stalled"], skin)).colspan(2)
-
-        row()
-
-        add(LabelButton(skin, bundle.get("newGame")) {
+        buttonTable.add(LabelButton(skin, bundle.get("newGame")) {
             callback.invoke(StalledDialogResult.NEW_GAME)
             hide()
         })
-            .padRight(MathUtils.floor(Constants.UI_HORIZONTAL_SPACING / 2f).toFloat())
-            .padBottom(0f)
-            .uniformX()
-            .center()
-            .fillX()
+            .row()
 
-        add(LabelButton(skin, bundle.get("return")) {
+        buttonTable.add(LabelButton(skin, bundle.get("return")) {
             callback.invoke(StalledDialogResult.RETURN)
             hide()
         })
-            .padLeft(MathUtils.floor(Constants.UI_HORIZONTAL_SPACING / 2f).toFloat())
             .padBottom(0f)
-            .uniformX()
-            .center()
-            .fillX()
-
-        isModal = true
-        isHideOnUnfocus = false
     }
 
 }
 
 enum class StalledDialogResult {
-    NEW_GAME, RETURN
+    NEW_GAME, RESTART, RETURN
 }

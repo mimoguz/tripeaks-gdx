@@ -10,13 +10,12 @@ import com.badlogic.gdx.scenes.scene2d.Stage
 import com.ray3k.stripe.PopTable
 import ktx.app.KtxScreen
 import ktx.inject.Context
-import ogz.tripeaks.assets.BundleAssets
-import ogz.tripeaks.assets.get
-import ogz.tripeaks.views.GameView
-import ogz.tripeaks.graphics.CustomViewport
-import ogz.tripeaks.models.GameState
 import ogz.tripeaks.Constants.HORIZONTAL_PADDING
 import ogz.tripeaks.Constants.VIEWPORT_VERTICAL_PADDING
+import ogz.tripeaks.assets.BundleAssets
+import ogz.tripeaks.assets.get
+import ogz.tripeaks.graphics.CustomViewport
+import ogz.tripeaks.models.GameState
 import ogz.tripeaks.screens.stage.OptionsDialog
 import ogz.tripeaks.screens.stage.OptionsDialogResult
 import ogz.tripeaks.screens.stage.StalledDialog
@@ -28,6 +27,7 @@ import ogz.tripeaks.services.PersistenceService
 import ogz.tripeaks.services.PlayerStatisticsService
 import ogz.tripeaks.services.SettingsService
 import ogz.tripeaks.ui.Menu
+import ogz.tripeaks.views.GameView
 
 class GameScreen(private val context: Context) : KtxScreen, InputAdapter() {
 
@@ -57,6 +57,7 @@ class GameScreen(private val context: Context) : KtxScreen, InputAdapter() {
     private val switch = GameScreenSwitch()
     private val menuActions = listOf(
         Pair(assets[BundleAssets.Bundle]["newGame"], this::onNewGame),
+        Pair(assets[BundleAssets.Bundle]["restart"], this::onRestartCurrentGame),
         Pair(assets[BundleAssets.Bundle]["options"], this::onShowOptions),
         Pair(assets[BundleAssets.Bundle]["statistics"], this::onShowStatistics),
         Pair(assets[BundleAssets.Bundle]["exit"], this::onExit),
@@ -164,6 +165,11 @@ class GameScreen(private val context: Context) : KtxScreen, InputAdapter() {
                 startNewGame()
             }
 
+            StalledDialogResult.RESTART -> {
+                addStat()
+                restartCurrentGame()
+            }
+
             StalledDialogResult.RETURN -> {}
         }
     }
@@ -174,7 +180,8 @@ class GameScreen(private val context: Context) : KtxScreen, InputAdapter() {
                 addStat()
                 startNewGame()
             }
-            WinDialogResult.EXIT -> Gdx.app.exit()
+
+            WinDialogResult.RETURN -> game?.let { updateButtons(it) }
         }
     }
 
@@ -195,7 +202,7 @@ class GameScreen(private val context: Context) : KtxScreen, InputAdapter() {
     }
 
     private fun onStalled() {
-        game?.also { game ->
+        game?.also {
             val dialog = StalledDialog(
                 settings.get().skin,
                 assets,
@@ -251,6 +258,12 @@ class GameScreen(private val context: Context) : KtxScreen, InputAdapter() {
         addStat()
         menu = null
         startNewGame()
+    }
+
+    private fun onRestartCurrentGame() {
+        addStat()
+        menu = null
+        restartCurrentGame()
     }
 
     private fun onShowMenu() {
@@ -312,6 +325,10 @@ class GameScreen(private val context: Context) : KtxScreen, InputAdapter() {
 
     private fun startNewGame() {
         setupGame(settings.getNewGame())
+    }
+
+    private fun restartCurrentGame() {
+        game?.let { setupGame(it.t0Copy()) }
     }
 
     private fun addStat() {

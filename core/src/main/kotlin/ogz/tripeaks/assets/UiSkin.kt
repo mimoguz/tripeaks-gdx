@@ -23,6 +23,7 @@ import ktx.style.selectBox
 import ktx.style.textButton
 import ktx.style.window
 import ogz.tripeaks.Constants
+import ogz.tripeaks.models.ThemeMode
 
 class UiSkin private constructor(
     atlas: TextureAtlas,
@@ -36,23 +37,38 @@ class UiSkin private constructor(
     val extraLineSpacing: Float = 0f
 ) : Skin(atlas) {
 
-    val iconLink: Drawable = findIcon(atlas,"link")
-    val iconOptions: Drawable = findIcon(atlas,"options")
-    val iconAbout: Drawable = findIcon(atlas,"about")
-    val iconStatistics: Drawable = findIcon(atlas,"stats")
-    val iconWin: Drawable = findIcon(atlas,"win")
-    val iconLose: Drawable = findIcon(atlas,"lose")
-    val panelBg = NinePatchDrawable(NinePatch(atlas.createPatch("${resourcePrefix}_panel")))
-    val line = NinePatchDrawable(NinePatch(atlas.createPatch("${resourcePrefix}_line")))
+    val iconLink: Drawable = findIcon(atlas, "link")
+    val iconOptions: Drawable = findIcon(atlas, "options")
+    val iconAbout: Drawable = findIcon(atlas, "about")
+    val iconStatistics: Drawable = findIcon(atlas, "stats")
+    val iconWin: Drawable = findIcon(atlas, "win")
+    val iconLose: Drawable = findIcon(atlas, "lose")
+    val panelBg = find9Patch(atlas, "panel")
+    val line = find9Patch(atlas, "line")
 
-    constructor(assets: AssetManager, cjk: Boolean, dark: Boolean) : this(
-        assets[TextureAtlasAssets.Ui],
+    constructor(
+        assets: AssetManager,
+        cjk: Boolean,
+        theme: ThemeMode,
+        darkSystem: Boolean
+    ) : this(
+        assets[TextureAtlasAssets.Images],
         if (cjk) assets[FontAssets.UnifontCJK] else assets[FontAssets.GamePixels],
         assets[FontAssets.GamePixels],
-        if (dark) Constants.DARK_UI_TEXT else Constants.LIGHT_UI_TEXT,
-        if (dark) Constants.DARK_UI_EMPHASIS else Constants.LIGHT_UI_EMPHASIS,
-        if (dark) "dark" else "light",
-        dark,
+        theme.select(
+            darkSystem,
+            Constants.LIGHT_UI_TEXT,
+            Constants.DARK_UI_TEXT,
+            Constants.BLACK_UI_TEXT
+        ),
+        theme.select(
+            darkSystem,
+            Constants.LIGHT_UI_EMPHASIS,
+            Constants.DARK_UI_EMPHASIS,
+            Constants.BLACK_UI_EMPHASIS
+        ),
+        theme.resource(darkSystem),
+        theme.isDark(darkSystem),
         cjk,
         if (cjk) Constants.UI_CJK_LINE_SPACING else 0f,
     )
@@ -85,7 +101,7 @@ class UiSkin private constructor(
             up = skin["${resourcePrefix}_button_up"]
             down = skin["${resourcePrefix}_button_down"]
             disabled = skin["${resourcePrefix}_button_disabled"]
-            pressedOffsetY = -1f
+            pressedOffsetY = if (resourcePrefix == "black") -2f else -1f
         }
 
         textButton {
@@ -94,7 +110,7 @@ class UiSkin private constructor(
             disabled = skin["${resourcePrefix}_button_disabled"]
             font = uiFont
             fontColor = skin[TEXT_COLOR]
-            pressedOffsetY = -1f
+            pressedOffsetY = if (resourcePrefix == "black") -2f else -1f
         }
 
         textButton(MENU_ITEM_BUTTON_STYLE) {
@@ -165,11 +181,21 @@ class UiSkin private constructor(
 
     }
 
+    fun getThemedDrawable(name: String): Drawable = getDrawable("${resourcePrefix}_${name}")
+
+    fun getThemedDrawable(name: String, index: Int): Drawable =
+        TextureRegionDrawable(atlas.findRegion("${resourcePrefix}_${name}", index))
+
     private fun findIcon(atlas: TextureAtlas, name: String): Drawable {
         return TextureRegionDrawable(atlas.findRegion("${resourcePrefix}_icon_$name"))
     }
 
+    private fun find9Patch(atlas: TextureAtlas, name: String): NinePatchDrawable {
+        return NinePatchDrawable(NinePatch(atlas.createPatch("${resourcePrefix}_${name}")))
+    }
+
     companion object {
+
         private const val TEXT_COLOR = "textColor"
         private const val EMPHASIS_COLOR = "emphasisColor"
         const val TITLE_LABEL_STYLE = "title"

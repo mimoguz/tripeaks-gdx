@@ -9,8 +9,9 @@ import ogz.tripeaks.Constants
 import ogz.tripeaks.assets.TextureAssets
 import ogz.tripeaks.assets.TextureAtlasAssets
 import ogz.tripeaks.assets.get
+import ogz.tripeaks.models.ThemeMode
 
-class SpriteSet(val isDark: Boolean, backIndex: Int, assets: AssetManager) {
+class SpriteSet(val theme: ThemeMode, darkSystem: Boolean, backIndex: Int, assets: AssetManager) {
 
     val back: TextureRegion
     val background: Color
@@ -27,13 +28,14 @@ class SpriteSet(val isDark: Boolean, backIndex: Int, assets: AssetManager) {
     val title: Texture
 
     init {
-        val prefix = if (isDark) "dark" else "light"
-        val cards = assets[TextureAtlasAssets.Cards]
-        back = cards.findRegion("card_back", backIndex)
-        background = if (isDark) Constants.DARK_BG else Constants.LIGHT_BG
+        val prefix = theme.resource(darkSystem)
+        val cards = assets[TextureAtlasAssets.Images]
+        back = cards.findRegion("${prefix}_card_back", backIndex)
+        background =
+            theme.select(darkSystem, Constants.LIGHT_BG, Constants.DARK_BG, Constants.BLACK_BG)
         buttonDisabled = cards.createPatch("${prefix}_button_disabled")
         buttonDown = cards.createPatch("${prefix}_button_down")
-        buttonUp =  cards.createPatch("${prefix}_button_up")
+        buttonUp = cards.createPatch("${prefix}_button_up")
         card = cards.findRegion("${prefix}_card")
         dealIcon = cards.findRegion("${prefix}_icon_deal")
         empty = cards.findRegion("${prefix}_empty")
@@ -41,7 +43,12 @@ class SpriteSet(val isDark: Boolean, backIndex: Int, assets: AssetManager) {
         menuIcon = cards.findRegion("${prefix}_icon_menu")
         smallFace = IndexedSprite("${prefix}_small_face", assets)
         undoIcon = cards.findRegion("${prefix}_icon_undo")
-        title = if (isDark) assets[TextureAssets.DarkTitle] else assets[TextureAssets.LightTitle]
+        title = theme.select(
+            darkSystem,
+            assets[TextureAssets.LightTitle],
+            assets[TextureAssets.DarkTitle],
+            assets[TextureAssets.BlackTitle]
+        )
     }
 
 }
@@ -49,7 +56,7 @@ class SpriteSet(val isDark: Boolean, backIndex: Int, assets: AssetManager) {
 class IndexedSprite(name: String, assets: AssetManager) {
 
     private val sprites = (0 until 52).map { index ->
-        assets[TextureAtlasAssets.Cards].findRegion(name, index)
+        assets[TextureAtlasAssets.Images].findRegion(name, index)
     }
 
     operator fun get(index: Int): TextureRegion = sprites[index]
@@ -61,15 +68,18 @@ sealed interface Icon {
     fun get(sprites: SpriteSet): TextureRegion
 
     data object Deal : Icon {
+
         override fun get(sprites: SpriteSet): TextureRegion = sprites.dealIcon
     }
 
     data object Menu : Icon {
+
         override fun get(sprites: SpriteSet): TextureRegion = sprites.menuIcon
     }
 
     data object Undo : Icon {
+
         override fun get(sprites: SpriteSet): TextureRegion = sprites.undoIcon
     }
-    
+
 }
