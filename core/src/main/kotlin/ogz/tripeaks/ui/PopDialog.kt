@@ -21,15 +21,18 @@ open class PopDialog(protected val uiSkin: UiSkin, title: String? = null, icon: 
         pad(
             Constants.UI_PANEL_VERTICAL_BORDER, Constants.UI_PANEL_HORIZONTAL_BORDER
         )
-        icon?.let { header.add(Image(icon)).padLeft(Constants.HORIZONTAL_PADDING).left() }
+        icon?.let {
+            header.add(Image(icon)).padRight(4f).left()
+            header.padLeft(-icon.minWidth - 4f)
+        }
         title?.let {
-            header.add(Label(it, uiSkin))
+            header.add(Label(it, uiSkin)).expandX().fillX()
         }
         if (header.hasChildren()) {
             this.add(header).padBottom(Constants.UI_VERTICAL_SPACING).row()
         }
 
-        this.add(contentTable).row()
+        this.add(contentTable).expand().row()
         this.add(buttonTable).padTop(Constants.UI_VERTICAL_SPACING)
 
         isModal = true

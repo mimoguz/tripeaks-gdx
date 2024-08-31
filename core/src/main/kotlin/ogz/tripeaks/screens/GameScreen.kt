@@ -20,11 +20,9 @@ import ogz.tripeaks.screens.stage.OptionsDialog
 import ogz.tripeaks.screens.stage.OptionsDialogResult
 import ogz.tripeaks.screens.stage.StalledDialog
 import ogz.tripeaks.screens.stage.StalledDialogResult
-import ogz.tripeaks.screens.stage.StalledPopDialog
 import ogz.tripeaks.screens.stage.StatisticsDialog
 import ogz.tripeaks.screens.stage.WinDialog
 import ogz.tripeaks.screens.stage.WinDialogResult
-import ogz.tripeaks.screens.stage.WinPopDialog
 import ogz.tripeaks.services.PersistenceService
 import ogz.tripeaks.services.PlayerStatisticsService
 import ogz.tripeaks.services.SettingsService
@@ -193,7 +191,7 @@ class GameScreen(private val context: Context) : KtxScreen, InputAdapter() {
 
     private fun onWon() {
         game?.also { game ->
-            val dialog = WinPopDialog(
+            val dialog = WinDialog(
                 settings.get().skin,
                 assets,
                 game.statistics,
@@ -205,7 +203,7 @@ class GameScreen(private val context: Context) : KtxScreen, InputAdapter() {
 
     private fun onStalled() {
         game?.also {
-            val dialog = StalledPopDialog(
+            val dialog = StalledDialog(
                 settings.get().skin,
                 assets,
                 this::stalledDialogCallback

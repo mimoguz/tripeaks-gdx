@@ -11,71 +11,51 @@ import ogz.tripeaks.assets.UiSkin
 import ogz.tripeaks.assets.get
 import ogz.tripeaks.models.GameStatistics
 import ogz.tripeaks.ui.LabelButton
+import ogz.tripeaks.ui.PopDialog
 
 class WinDialog(
     skin: UiSkin,
     assets: AssetManager,
     stats: GameStatistics,
     callback: (WinDialogResult) -> Unit
-) : PopTable(skin) {
+) : PopDialog(skin) {
 
     init {
         val bundle = assets[BundleAssets.Bundle]
 
-        pad(
-            Constants.UI_PANEL_VERTICAL_BORDER,
-            Constants.UI_PANEL_HORIZONTAL_BORDER,
-            Constants.UI_PANEL_VERTICAL_BORDER,
-            Constants.UI_PANEL_HORIZONTAL_BORDER,
-        )
-
-        defaults()
+        contentTable
+            .defaults()
             .padBottom(skin.extraLineSpacing.coerceAtLeast(2f))
             .left()
+            .expandX()
 
-        add(Image(skin.iconWin)).colspan(2).padBottom(Constants.UI_VERTICAL_SPACING).center()
+        contentTable.add(Image(uiSkin.iconWin)).center().padBottom(Constants.UI_VERTICAL_SPACING)
+            .row()
+        contentTable.add(Label(bundle["won"], skin, UiSkin.TITLE_LABEL_STYLE)).row()
+        contentTable.add(Label(bundle.format("longestChain", stats.longestChain), skin)).row()
+        contentTable.add(Label(bundle.format("usedUndo", stats.undoCount), skin))
+            .padBottom(0f)
 
-        row()
+        buttonTable.defaults()
+            .minWidth(100f)
+            .uniformX()
+            .fillX()
 
-        add(Label(bundle["won"], skin, UiSkin.TITLE_LABEL_STYLE)).colspan(2)
-
-        row()
-
-        add(Label(bundle.format("longestChain", stats.longestChain), skin)).colspan(2)
-
-        row()
-
-        add(Label(bundle.format("usedUndo", stats.undoCount), skin))
-            .colspan(2)
-            .padBottom(Constants.UI_VERTICAL_SPACING)
-
-        row()
-
-        add(LabelButton(skin, bundle.get("newGame")) {
+        buttonTable.add(LabelButton(skin, bundle.get("newGame")) {
             callback.invoke(WinDialogResult.NEW_GAME)
             hide()
         })
             .padRight(MathUtils.floor(Constants.UI_HORIZONTAL_SPACING / 2f).toFloat())
-            .padBottom(0f)
-            .uniformX()
-            .center()
-            .fillX()
 
-        add(LabelButton(skin, bundle.get("return")) {
+        buttonTable.add(LabelButton(skin, bundle.get("return")) {
             callback.invoke(WinDialogResult.RETURN)
             hide()
         })
             .padLeft(MathUtils.floor(Constants.UI_HORIZONTAL_SPACING / 2f).toFloat())
-            .padBottom(0f)
-            .uniformX()
-            .center()
-            .fillX()
-
-        isModal = true
-        isHideOnUnfocus = false
     }
 
 }
+
 
 enum class WinDialogResult {
     NEW_GAME, RETURN

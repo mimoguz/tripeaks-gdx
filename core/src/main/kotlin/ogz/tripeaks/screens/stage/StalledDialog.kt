@@ -10,56 +10,47 @@ import ogz.tripeaks.assets.BundleAssets
 import ogz.tripeaks.assets.UiSkin
 import ogz.tripeaks.assets.get
 import ogz.tripeaks.ui.LabelButton
+import ogz.tripeaks.ui.PopDialog
 
 class StalledDialog(
     skin: UiSkin,
     assets: AssetManager,
     callback: (StalledDialogResult) -> Unit
-) : PopTable(skin) {
+) : PopDialog(skin) {
 
     init {
         val bundle = assets[BundleAssets.Bundle]
 
-        pad(
-            Constants.UI_PANEL_VERTICAL_BORDER,
-            Constants.UI_PANEL_HORIZONTAL_BORDER,
-            Constants.UI_PANEL_VERTICAL_BORDER,
-            Constants.UI_PANEL_HORIZONTAL_BORDER,
-        )
-
-        defaults()
+        contentTable.defaults().expandX().left()
+        contentTable.add(Image(uiSkin.iconLose))
+            .center()
             .padBottom(Constants.UI_VERTICAL_SPACING)
-            .left()
+            .row()
+        contentTable.add(Label(bundle["stalled"], skin))
 
-        add(Image(skin.iconLose)).center().row()
-        add(Label(bundle["stalled"], skin)).row()
+        buttonTable.defaults()
+            .minWidth(100f)
+            .uniformX()
+            .fillX()
+            .padBottom(Constants.UI_VERTICAL_SPACING)
 
-        add(LabelButton(skin, bundle.get("restart")) {
+        buttonTable.add(LabelButton(skin, bundle.get("restart")) {
             callback.invoke(StalledDialogResult.RESTART)
             hide()
         })
-            .minWidth(100f)
-            .fillX()
             .row()
 
-        add(LabelButton(skin, bundle.get("newGame")) {
+        buttonTable.add(LabelButton(skin, bundle.get("newGame")) {
             callback.invoke(StalledDialogResult.NEW_GAME)
             hide()
         })
-            .minWidth(100f)
-            .fillX()
             .row()
 
-        add(LabelButton(skin, bundle.get("return")) {
+        buttonTable.add(LabelButton(skin, bundle.get("return")) {
             callback.invoke(StalledDialogResult.RETURN)
             hide()
         })
-            .minWidth(100f)
             .padBottom(0f)
-            .fillX()
-
-        isModal = true
-        isHideOnUnfocus = false
     }
 
 }
