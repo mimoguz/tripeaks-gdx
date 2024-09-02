@@ -9,13 +9,15 @@ buildscript {
     }
 }
 plugins {
-    id "io.github.fourlastor.construo" version "1.2.0"
+    id "io.github.fourlastor.construo" version "1.3.0"
     id "application"
 }
 apply plugin: 'org.jetbrains.kotlin.jvm'
 
 
 import io.github.fourlastor.construo.Target
+import io.github.fourlastor.construo.ToolchainOptions
+import io.github.fourlastor.construo.ToolchainVersion
 
 sourceSets.main.resources.srcDirs += [rootProject.file('assets').path]
 mainClassName = 'ogz.tripeaks.lwjgl3.Lwjgl3Launcher'
@@ -72,30 +74,34 @@ construo {
     // Optional, defaults to project version
     // version.set("1.1b1")
 
+    toolchain.set(new ToolchainOptions(
+            ToolchainVersion.of("17.0.11+9"),
+            JvmVendorSpec.ADOPTIUM,
+    ))
+
     targets.configure {
         register("linuxX64", Target.Linux) {
             architecture.set(Target.Architecture.X86_64)
-            jdkUrl.set("https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.11%2B9/OpenJDK17U-jdk_x64_linux_hotspot_17.0.11_9.tar.gz")
+        }
+        register("linuxAARCH64", Target.Linux) {
+            architecture.set(Target.Architecture.AARCH64)
         }
         register("macM1", Target.MacOs) {
             architecture.set(Target.Architecture.AARCH64)
-            jdkUrl.set("https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.11%2B9/OpenJDK17U-jdk_aarch64_mac_hotspot_17.0.11_9.tar.gz")
             // macOS needs an identifier
-            identifier.set("i.should.be.changed.before.merge." + appName)
+            identifier.set("ogz." + appName)
             // Optional: icon for macOS
             macIcon.set(project.file("icons/logo.icns"))
         }
         register("macX64", Target.MacOs) {
             architecture.set(Target.Architecture.X86_64)
-            jdkUrl.set("https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.11%2B9/OpenJDK17U-jdk_x64_mac_hotspot_17.0.11_9.tar.gz")
             // macOS needs an identifier
-            identifier.set("i.should.be.changed.before.merge." + appName)
+            identifier.set("ogz." + appName)
             // Optional: icon for macOS
             macIcon.set(project.file("icons/logo.icns"))
         }
         register("winX64", Target.Windows) {
             architecture.set(Target.Architecture.X86_64)
-            jdkUrl.set("https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.11%2B9/OpenJDK17U-jdk_x64_windows_hotspot_17.0.11_9.zip")
         }
     }
 }
