@@ -2,6 +2,8 @@
 
 A simple tri peaks solitaire game using [libGDX](https://libgdx.com/).
 
+[Wiki/help](https://github.com/mimoguz/tripeaks-gdx/wiki)
+
 ## Screenshots
 
 * [Start screen](screenshots/readme-s1-2024-08-18.png)
@@ -29,5 +31,5 @@ A simple tri peaks solitaire game using [libGDX](https://libgdx.com/).
 * Spanish
 * Turkish
 
-\* Need help with translations: [issue #27](https://github.com/mimoguz/tripeaks-gdx/issues/27)
+\* Need help with translations: [issue #27](https://github.com/mimoguz/tripeaks-gdx/issues/27), [Weblate](https://hosted.weblate.org/projects/tripeaks-gdx/Bundle/).
 
