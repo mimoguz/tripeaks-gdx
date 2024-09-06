@@ -2,7 +2,7 @@
 
 A simple tri peaks solitaire game using [libGDX](https://libgdx.com/).
 
-* [Wiki/help](https://github.com/mimoguz/tripeaks-gdx/wiki)
+* [Wiki/How-to](https://github.com/mimoguz/tripeaks-gdx/wiki)
 * [Releases/Latest](https://github.com/mimoguz/tripeaks-gdx/releases/latest)
 
 [<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png" alt="Get it on F-Droid" height="80">](https://f-droid.org/packages/ogz.tripeaks)
