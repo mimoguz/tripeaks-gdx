@@ -6,9 +6,9 @@
 
 ## Version 1.2 and beyond
 
-* Restart current game option, both from the menu and the stalled dialog __(1.2)__. This should be same with starting a new game and count as a lose.
-* Documentation/help: I can create a wiki page and add a link to it in the about dialog __(1.2)__.
-* "System" theme option. Maybe I can just check the system theme on start and pass that to ```Main```, [as suggested by jjrpayne](https://github.com/mimoguz/tripeaks-gdx/issues/26) __(1.2)__.
+* ~~Restart current game option, both from the menu and the stalled dialog. This should be same with starting a new game and count as a lose.~~ __[Done]__
+* ~~Documentation/help: I can create a wiki page and add a link to it in the about dialog.~~ __[Done]__
+* ~~"System" theme option. Maybe I can just check the system theme on start and pass that to ```Main```, [as suggested by jjrpayne](https://github.com/mimoguz/tripeaks-gdx/issues/26).~~ __[Done]__
 * A better card back design UI: A carousel control or a pop-up maybe? __(> 1.2)__
 
 ### Scoring (> 1.2)
