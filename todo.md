@@ -10,6 +10,7 @@
 * ~~Documentation/help: I can create a wiki page and add a link to it in the about dialog.~~ __[Done]__
 * ~~"System" theme option. Maybe I can just check the system theme on start and pass that to ```Main```, [as suggested by jjrpayne](https://github.com/mimoguz/tripeaks-gdx/issues/26).~~ __[Done]__
 * A better card back design UI: A carousel control or a pop-up maybe? __(> 1.2, WIP. I've got a working prototype.)__
+* "Ensure solvable" option: I can create the game by playing it back from the solved state to make sure it's solvable. __(> 1.2)__
 
 ### Scoring (> 1.2)
 Excerpt from [this page](https://anytime.games/tri-peaks-solitaire-rules/):
