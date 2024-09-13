@@ -16,7 +16,6 @@ fun main() {
     if (StartupHelper.startNewJvmIfRequired()) {
         return
     }
-    println(getConfigDirectory("ogz.tripeaks"))
     Lwjgl3Application(Main(false), Lwjgl3ApplicationConfiguration().apply {
         setTitle("TriPeaks")
         setWindowedMode(Constants.MIN_WORLD_WIDTH.toInt() * 3, Constants.WORLD_HEIGHT.toInt() * 3)
