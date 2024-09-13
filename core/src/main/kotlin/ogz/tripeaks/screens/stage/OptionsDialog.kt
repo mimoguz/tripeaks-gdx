@@ -159,6 +159,12 @@ class OptionsDialog(
                 .fillX()
                 .row()
 
+            add(showAllSwitch).padBottom(Constants.UI_VERTICAL_SPACING + skin.extraLineSpacing)
+                .row()
+
+            add(emptyDiscardSwitch).padBottom(Constants.UI_VERTICAL_SPACING + skin.extraLineSpacing)
+                .row()
+
             add(Label(bundle["cardAnimation"], skin)).row()
             add(animationSelection)
                 .padBottom(Constants.UI_VERTICAL_SPACING + skin.extraLineSpacing)
@@ -167,12 +173,6 @@ class OptionsDialog(
                 .row()
 
             add(decorSelect).padBottom(Constants.UI_VERTICAL_SPACING + skin.extraLineSpacing).row()
-
-            add(showAllSwitch).padBottom(Constants.UI_VERTICAL_SPACING + skin.extraLineSpacing)
-                .row()
-
-            add(emptyDiscardSwitch).padBottom(Constants.UI_VERTICAL_SPACING + skin.extraLineSpacing)
-                .row()
 
             add(Label(bundle["themeMode"], skin)).row()
             add(themeModeSelect).expandX().fillX()
