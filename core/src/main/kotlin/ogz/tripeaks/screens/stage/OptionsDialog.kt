@@ -16,7 +16,6 @@ import com.ray3k.stripe.PopTable
 import ktx.collections.toGdxArray
 import ogz.tripeaks.Constants
 import ogz.tripeaks.assets.BundleAssets
-import ogz.tripeaks.assets.TextureAtlasAssets
 import ogz.tripeaks.assets.UiSkin
 import ogz.tripeaks.assets.get
 import ogz.tripeaks.models.ThemeMode
@@ -35,7 +34,7 @@ class OptionsDialog(
 
     init {
         val bundle = assets[BundleAssets.Bundle]
-        val atlas = assets[TextureAtlasAssets.Images]
+        val labelSpacing = 3f
 
         val showAllSwitch = CheckBox(
             bundle["showAll"],
@@ -134,13 +133,6 @@ class OptionsDialog(
         }
 
         val decorSelect = Table().apply {
-            add(Label(bundle["decor"], skin))
-                .colspan(decorSelectList.size * 2)
-                .padBottom(2f + skin.extraLineSpacing)
-                .align(Align.left)
-
-            row()
-
             for (item in decorSelectList) {
                 add(item)
                     .align(Align.topLeft)
@@ -149,10 +141,10 @@ class OptionsDialog(
         }
 
         val itemTable = Table().apply {
-            defaults().align(Align.left).padBottom(3f + skin.extraLineSpacing).align(Align.left)
+            defaults().align(Align.left).padBottom(labelSpacing + skin.extraLineSpacing).align(Align.left)
             padRight(Constants.UI_SCROLL_PUSH)
 
-            add(Label(bundle["layout"], skin)).row()
+            add(Label(bundle["layout"], skin)).padBottom(labelSpacing).row()
             add(layoutSelection)
                 .padBottom(Constants.UI_VERTICAL_SPACING + skin.extraLineSpacing)
                 .expandX()
@@ -171,6 +163,8 @@ class OptionsDialog(
                 .expandX()
                 .fillX()
                 .row()
+
+            add(Label(bundle["decor"], skin)).row()
 
             add(decorSelect).padBottom(Constants.UI_VERTICAL_SPACING + skin.extraLineSpacing).row()
 
