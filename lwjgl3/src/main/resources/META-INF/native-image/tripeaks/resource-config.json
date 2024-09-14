@@ -1,0 +1,9 @@
+{
+  "resources":{
+  "includes":[
+    {
+      "pattern": ".*(\\Qblack_title.png\\E|\\Qdark_title.png\\E|\\Qlight_title.png\\E|\\Qimages.png\\E|\\Qimages.atlas\\E|\\QBundle_bg.properties\\E|\\QBundle_es.properties\\E|\\QBundle_it.properties\\E|\\QBundle_pt_BR.properties\\E|\\QBundle_ru.properties\\E|\\QBundle_tr.properties\\E|\\QBundle_zh_CN.properties\\E|\\QBundle_id.properties\\E|\\QBundle_fr.properties\\E|\\QBundle.properties\\E|\\QBundle_de.properties\\E|\\Qbasic.vert\\E|\\Qblink.frag\\E|\\Qdissolve.frag\\E|\\Qfadeout.frag\\E|\\Qpixelate.frag\\E|\\Qgamepixels.fnt\\E|\\Qgamepixels_0.png\\E|\\Qgnu_unifont_cjk16_2.fnt\\E|\\Qgnu_unifont_cjk16_2_0.png\\E|tripeaksgdx.+\\.png|lsans.+)"
+    }
+  ]},
+  "bundles":[]
+}

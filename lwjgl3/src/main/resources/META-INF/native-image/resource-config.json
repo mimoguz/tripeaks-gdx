@@ -1,0 +1,43 @@
+{
+  "resources":{
+  "includes":[{
+    "pattern":"\\QMETA-INF/linux/x64/org/lwjgl/glfw/libglfw.so.sha1\\E"
+  }, {
+    "pattern":"\\QMETA-INF/linux/x64/org/lwjgl/jemalloc/libjemalloc.so.sha1\\E"
+  }, {
+    "pattern":"\\QMETA-INF/linux/x64/org/lwjgl/liblwjgl.so.sha1\\E"
+  }, {
+    "pattern":"\\QMETA-INF/linux/x64/org/lwjgl/openal/libopenal.so.sha1\\E"
+  }, {
+    "pattern":"\\QMETA-INF/linux/x64/org/lwjgl/opengl/liblwjgl_opengl.so.sha1\\E"
+  }, {
+    "pattern":"\\Qi8n/Bundle_en.properties\\E"
+  }, {
+    "pattern":"\\Qi8n/Bundle_en_GB.properties\\E"
+  }, {
+    "pattern":"\\QlibGLX.so.0\\E"
+  }, {
+    "pattern":"\\Qlibgdx64.so\\E"
+  }, {
+    "pattern":"\\Qlinux/x64/org/lwjgl/glfw/libglfw.so\\E"
+  }, {
+    "pattern":"\\Qlinux/x64/org/lwjgl/jemalloc/libjemalloc.so\\E"
+  }, {
+    "pattern":"\\Qlinux/x64/org/lwjgl/liblwjgl.so\\E"
+  }, {
+    "pattern":"\\Qlinux/x64/org/lwjgl/openal/libopenal.so\\E"
+  }, {
+    "pattern":"\\Qlinux/x64/org/lwjgl/opengl/liblwjgl_opengl.so\\E"
+  }, {
+    "pattern":"\\Qtripeaksgdx128.png\\E"
+  }, {
+    "pattern":"\\Qtripeaksgdx16.png\\E"
+  }, {
+    "pattern":"\\Qtripeaksgdx256.png\\E"
+  }, {
+    "pattern":"\\Qtripeaksgdx32.png\\E"
+  }, {
+    "pattern":"\\Qtripeaksgdx64.png\\E"
+  }]},
+  "bundles":[]
+}

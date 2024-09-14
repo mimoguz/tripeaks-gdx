@@ -19,7 +19,7 @@ fun main() {
     Lwjgl3Application(Main(false), Lwjgl3ApplicationConfiguration().apply {
         setTitle("TriPeaks")
         setWindowedMode(Constants.MIN_WORLD_WIDTH.toInt() * 3, Constants.WORLD_HEIGHT.toInt() * 3)
-        setWindowIcon(*(arrayOf(256, 128, 64, 32, 16).map { "tripeaks-gdx$it.png" }.toTypedArray()))
+        setWindowIcon(*(arrayOf(256, 128, 64, 32, 16).map { "tripeaksgdx$it.png" }.toTypedArray()))
         this.setPreferencesConfig(getConfigDirectory("ogz.tripeaks"), Files.FileType.Absolute)
     })
 }
