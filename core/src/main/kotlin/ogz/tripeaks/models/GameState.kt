@@ -45,7 +45,7 @@ class GameState private constructor(
 
     val isValid: Boolean
         get() = layout.numberOfSockets == sockets.size
-                && (sockets.size + discard.size + stack.size) == 52
+                && (sockets.count { !it.isEmpty } + discard.size + stack.size) == 52
 
     /** Are there any moves we can take back? */
     val canUndo: Boolean
