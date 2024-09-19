@@ -25,7 +25,16 @@ class PersistenceService {
     }
 
     fun loadGameState(): GameState? {
-        return load(GameState::class.java, SAVE_FILE, SAVE_KEY)
+        val state = load(GameState::class.java, SAVE_FILE, SAVE_KEY)
+        if (state != null) {
+            if (state.isValid) {
+                return state
+            } else {
+                logger.error("${Instant.now()} - Malformed save")
+                return null
+            }
+        }
+        return null
     }
 
     fun savePlayerStatistics(current: PlayerStatistics) {

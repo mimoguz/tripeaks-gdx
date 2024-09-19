@@ -43,6 +43,10 @@ class GameState private constructor(
         stalledBefore = false,
     )
 
+    val isValid: Boolean
+        get() = layout.numberOfSockets == sockets.size
+                && (sockets.size + discard.size + stack.size) == 52
+
     /** Are there any moves we can take back? */
     val canUndo: Boolean
         get() = if (canEmptyDiscard) discard.size > 0 else discard.size > 1
