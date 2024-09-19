@@ -56,8 +56,8 @@ class GameScreen(private val context: Context) : KtxScreen, InputAdapter() {
     private val view = GameView(game, viewport.worldWidth)
     private val switch = GameScreenSwitch()
     private val menuActions = listOf(
-        Pair(assets[BundleAssets.Bundle]["newGame"], this::onNewGame),
         Pair(assets[BundleAssets.Bundle]["restart"], this::onRestartCurrentGame),
+        Pair(assets[BundleAssets.Bundle]["newGame"], this::onNewGame),
         Pair(assets[BundleAssets.Bundle]["options"], this::onShowOptions),
         Pair(assets[BundleAssets.Bundle]["statistics"], this::onShowStatistics),
         Pair(assets[BundleAssets.Bundle]["exit"], this::onExit),
