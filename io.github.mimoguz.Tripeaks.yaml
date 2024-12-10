@@ -1,7 +1,7 @@
 app-id: io.github.mimoguz.Tripeaks
 runtime: org.freedesktop.Platform
 runtime-version: '23.08'
-command: /app/bin/lwjgl3
+command: io.github.mimoguz.Tripeaks.sh
 sdk: org.freedesktop.Sdk
 sdk-extensions:
 - org.freedesktop.Sdk.Extension.openjdk17
@@ -21,8 +21,11 @@ modules:
       
   - name: tripeaks
     sources:
+      - type: file
+        path: io.github.mimoguz.Tripeaks.sh
       - type: archive
         path: lwjgl3/build/distributions/lwjgl3-1.2.3.zip
     buildsystem: simple
     build-commands:
+      - install -Dm755 ${FLATPAK_ID}.sh -t /app/bin
       - cp -r * /app
