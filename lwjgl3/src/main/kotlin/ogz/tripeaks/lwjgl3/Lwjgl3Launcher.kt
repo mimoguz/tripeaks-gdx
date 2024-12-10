@@ -3,7 +3,6 @@
 package ogz.tripeaks.lwjgl3
 
 import com.badlogic.gdx.Files
-import com.badlogic.gdx.Graphics
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration
 import ogz.tripeaks.Constants
