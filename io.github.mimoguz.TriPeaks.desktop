@@ -5,4 +5,4 @@ Type=Application
 Exec=io.github.mimoguz.TriPeaks.sh
 Icon=io.github.mimoguz.TriPeaks
 Categories=Game;
-Version=1.2.3
+Version=1.5
