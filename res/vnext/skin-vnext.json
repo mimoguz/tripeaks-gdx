@@ -1,0 +1,137 @@
+{
+"com.badlogic.gdx.graphics.g2d.BitmapFont": {
+	"gamepixels": {
+		"file": "gamepixels.fnt",
+		"scaledSize": -1,
+		"markupEnabled": false,
+		"flip": false
+	}
+},
+"com.badlogic.gdx.graphics.Color": {
+	"foreground": {
+		"hex": "073642ff"
+	}
+},
+"com.badlogic.gdx.scenes.scene2d.ui.Button$ButtonStyle": {
+	"default": {
+		"up": "light_ui_button_normal",
+		"down": "light_ui_button_pressed",
+		"focused": "light_ui_button_focused",
+		"disabled": "light_ui_button_disabled"
+	}
+},
+"com.badlogic.gdx.scenes.scene2d.ui.CheckBox$CheckBoxStyle": {
+	"default": {
+		"checkboxOn": "light_ui_checkbox_on",
+		"checkboxOff": "light_ui_checkbox_off",
+		"font": "gamepixels",
+		"fontColor": "foreground",
+		"focused": "light_ui_focus",
+		"checkedFocused": "light_ui_focus"
+	},
+	"radio": {
+		"parent": "default",
+		"checkboxOn": "light_ui_radio_off",
+		"checkboxOff": "light_ui_radio_on"
+	},
+	"focused": {
+		"parent": "default",
+		"checkboxOn": "light_ui_checkbox_on_focused",
+		"checkboxOff": "light_ui_checkbox_off_focused"
+	},
+	"radio-focused": {
+		"parent": "radio",
+		"checkboxOn": "light_ui_radio_on_focused",
+		"checkboxOff": "light_ui_radio_off_focused"
+	}
+},
+"com.badlogic.gdx.scenes.scene2d.ui.ImageButton$ImageButtonStyle": {
+	"default": {
+		"parent": "default"
+	}
+},
+"com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton$ImageTextButtonStyle": {
+	"default": {
+		"parent": "default",
+		"font": "gamepixels",
+		"fontColor": "foreground"
+	}
+},
+"com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle": {
+	"default": {
+		"font": "gamepixels",
+		"fontColor": "foreground"
+	}
+},
+"com.badlogic.gdx.scenes.scene2d.ui.List$ListStyle": {
+	"default": {
+		"font": "gamepixels",
+		"fontColorSelected": "foreground",
+		"fontColorUnselected": "foreground",
+		"selection": "light_ui_button_normal",
+		"down": "light_ui_button_pressed",
+		"over": "light_ui_button_normal"
+	},
+	"menu": {
+		"parent": "default",
+		"background": "light_ui_menu"
+	}
+},
+"com.badlogic.gdx.scenes.scene2d.ui.ScrollPane$ScrollPaneStyle": {
+	"default": {
+		"hScroll": "light_ui_scroll_track_horizontal",
+		"hScrollKnob": "light_ui_scroll_thumb",
+		"vScroll": "light_ui_scroll_track_vertical",
+		"vScrollKnob": "light_ui_scroll_thumb"
+	},
+	"control": {
+		"hScroll": "light_ui_scroll_track_control_horizontal",
+		"hScrollKnob": "light_ui_scroll_thumb",
+		"vScroll": "light_ui_scroll_track_contol_vertical",
+		"vScrollKnob": "light_ui_scroll_thumb"
+	},
+	"menu": {
+		"parent": "control",
+		"background": "light_ui_menu"
+	}
+},
+"com.badlogic.gdx.scenes.scene2d.ui.SelectBox$SelectBoxStyle": {
+	"default": {
+		"font": "gamepixels",
+		"fontColor": "foreground",
+		"background": "light_ui_selectbox_closed",
+		"scrollStyle": "menu",
+		"listStyle": "default",
+		"backgroundOpen": "light_ui_selectbox_open"
+	},
+	"focused": {
+		"parent": "default",
+		"font": "gamepixels",
+		"fontColor": "foreground",
+		"background": "light_ui_selectbox_closed_focused",
+		"scrollStyle": "control",
+		"listStyle": "menu",
+		"backgroundOpen": "light_ui_selectbox_open"
+	}
+},
+"com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle": {
+	"default": {
+		"parent": "default",
+		"font": "gamepixels",
+		"fontColor": "foreground"
+	}
+},
+"com.badlogic.gdx.scenes.scene2d.ui.TextTooltip$TextTooltipStyle": {
+	"default": {
+		"label": "default"
+	}
+},
+"com.badlogic.gdx.scenes.scene2d.ui.Window$WindowStyle": {
+	"default": {
+		"background": "light_ui_window",
+		"titleFont": "gamepixels",
+		"titleFontColor": "foreground",
+		"stageBackground": "light_ui_shade"
+	}
+}
+}

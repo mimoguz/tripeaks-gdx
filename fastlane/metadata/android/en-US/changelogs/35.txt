@@ -1,0 +1,1 @@
+Version 1.2.2 is a very small update that only changes the ordering of the options dialog items.

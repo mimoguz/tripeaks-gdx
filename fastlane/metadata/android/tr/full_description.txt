@@ -1,0 +1,8 @@
+Açık kaynak kodlu, birden fazla oyun düzeni seçeneği içeren basit bir tri peaks (üç tepe) solitaire oyunu.
+
+Changes: 
+
+- Version 1.1 added new effects and option to use different card back designs.
+
+- Version 1.1 also changes how the game state is persisted. This change should solve issues related to reloading the previous state, such as statistics getting wiped.
+

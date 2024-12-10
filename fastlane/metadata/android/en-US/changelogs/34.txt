@@ -1,0 +1,2 @@
+- Updated Spanish translation
+- Added the required manifest key to support freeform window mode.

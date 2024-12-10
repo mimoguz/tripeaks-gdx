@@ -1,0 +1,1 @@
+- Version 1.2.0 adds new theme options and a command to restart the current game.
