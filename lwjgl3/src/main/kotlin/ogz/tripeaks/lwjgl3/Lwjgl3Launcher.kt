@@ -11,7 +11,7 @@ import java.nio.file.Paths
 import java.util.Locale
 
 /** Launches the desktop (LWJGL3) application. */
-fun main() {
+fun main(args: Array<String>) {
     // This handles macOS support and helps on Windows.
     if (StartupHelper.startNewJvmIfRequired()) {
         return
@@ -20,6 +20,9 @@ fun main() {
         setTitle("TriPeaks")
         setWindowedMode(Constants.MIN_WORLD_WIDTH.toInt() * 3, Constants.WORLD_HEIGHT.toInt() * 3)
         setWindowIcon(*(arrayOf(256, 128, 64, 32, 16).map { "tripeaksgdx$it.png" }.toTypedArray()))
+        if (args.contains("--fullscreen")) {
+            setFullscreenMode(Lwjgl3ApplicationConfiguration.getDisplayMode())
+        }
         this.setPreferencesConfig(getConfigDirectory("ogz.tripeaks"), Files.FileType.Absolute)
     })
 }
