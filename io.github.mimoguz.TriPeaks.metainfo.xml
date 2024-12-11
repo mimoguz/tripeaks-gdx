@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+	<id>io.github.mimoguz.TriPeaks</id>
+
+	<name>TriPeaks</name>
+	<summary>Dive into the relaxing and strategic world of TriPeaks Solitaire</summary>
+
+	<metadata_license>CC-BY-SA-4.0</metadata_license>
+	<project_license>AGPL-3.0-only</project_license>
+
+	<url type="homepage">https://github.com/mimoguz/tripeaks-gdx</url>
+	<url type="vcs-browser">https://github.com/mimoguz/tripeaks-gdx</url>
+	<url type="bugtracker">https://github.com/mimoguz/tripeaks-gdx/issues</url>
+
+	<developer id="io.github.mimoguz">
+		<name>M. Oguz</name>
+	</developer>
+
+	<supports>
+		<control>pointing</control>
+		<control>keyboard</control>
+		<control>touch</control>
+	</supports>
+
+	<description>
+		<p>Rediscover the joy of <em>TriPeaks Solitaire</em> with a pixel-art style and some enhanced gameplay options.</p>
+		<p>
+			<em>How to Play:</em>
+			<ul>
+				<li>Cards are arranged into three pyramid-like peaks (or choose one of two other layouts).</li>
+				<li>Match cards that are one rank higher or lower than the current card to clear the board.</li>
+				<li>Plan your moves, clear streaks, and aim for high scores!</li>
+			</ul>
+		</p>
+
+		<p>
+			<em>Extra Features:</em>
+			<ul>
+				<li><em>Three Layout Options:</em> Choose between the standard twenty-eight card tableau or two additional layouts for variety.</li>
+				<li><em>Customizable Start:</em> Begin with an 	empty discard pile, allowing you to start with any open card or draw from the stock.</li>
+				<li><em>Reveal Face-Down Cards:</em> Enable an option to view the face-down cards for added strategic planning.</li>
+			</ul>
+		</p>
+		<p>Enjoy a fresh, customizable take on the classic solitaire experience with <em>TriPeaks</em>, the perfect balance of relaxation and challenge.</p>
+	</description>
+
+	<launchable type="desktop-id">io.github.mimoguz.TriPeaks.desktop</launchable>
+	<screenshots>
+		<screenshot type="default"><image>https://raw.githubusercontent.com/mimoguz/tripeaks-gdx/refs/heads/main/screenshots/b_0_5_start_screen.png</image></screenshot>
+		<screenshot><image>https://raw.githubusercontent.com/mimoguz/tripeaks-gdx/refs/heads/main/screenshots/b_0_5_all_cards.png</image></screenshot>
+		<screenshot><image>https://raw.githubusercontent.com/mimoguz/tripeaks-gdx/refs/heads/main/screenshots/b_0_5_stalled_dialog.png</image></screenshot>
+	</screenshots>
+
+	<content_rating type="oars-1.1" />
+</component>
