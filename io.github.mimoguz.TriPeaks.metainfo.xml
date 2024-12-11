@@ -8,6 +8,11 @@
 	<metadata_license>CC-BY-SA-4.0</metadata_license>
 	<project_license>AGPL-3.0-only</project_license>
 
+	<branding>
+	  <color type="primary" scheme_preference="light">#4FE78B</color>
+	  <color type="primary" scheme_preference="dark">#0F7739</color>
+	</branding>
+
 	<url type="homepage">https://github.com/mimoguz/tripeaks-gdx</url>
 	<url type="vcs-browser">https://github.com/mimoguz/tripeaks-gdx</url>
 	<url type="contribute">https://github.com/mimoguz/tripeaks-gdx</url>
