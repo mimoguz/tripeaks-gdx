@@ -34,8 +34,8 @@ modules:
 
     buildsystem: simple
     build-commands:
-      - install -Ddm700 bin /app/bin
-      - install -Ddm700 lib /app/lib
-      - install -Dm700 ${FLATPAK_ID}.sh -t /app/bin
+      - cp -r bin /app
+      - cp -r lib /app
+      - install -m700 ${FLATPAK_ID}.sh -t /app/bin
       - install -Dm7600 ${FLATPAK_ID}.desktop -t /app/share/applications
       - install -Dm7600 icon.svg /app/share/icons/hicolor/scalable/apps/${FLATPAK_ID}.svg
