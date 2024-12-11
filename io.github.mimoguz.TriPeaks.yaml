@@ -21,6 +21,8 @@ modules:
 
   - name: tripeaks
     sources:
+      - type: archive
+        path: lwjgl3/build/distributions/lwjgl3-1.2.3.zip
       - type: file
         path: io.github.mimoguz.TriPeaks.sh
       - type: file
@@ -29,12 +31,11 @@ modules:
         url: https://github.com/mimoguz/tripeaks-gdx/raw/refs/heads/main/res/android_icon.svg
         dest-filename: icon.svg
         sha256: c5d66a2cdeab07e36bba5aa23f6f3238bf137031fb0d9b49a81c29745253f503
-      - type: archive
-        path: lwjgl3/build/distributions/lwjgl3-1.2.3.zip
 
     buildsystem: simple
     build-commands:
-      - install -Dm644 ${FLATPAK_ID}.desktop -t /app/share/applications
-      - install -Dm755 ${FLATPAK_ID}.sh -t /app/bin
-      - install -Dm644 icon.svg /app/share/icons/hicolor/scalable/apps/${FLATPAK_ID}.svg
-      - cp -r * /app
+      - install -Ddm700 bin /app/bin
+      - install -Ddm700 lib /app/lib
+      - install -Dm700 ${FLATPAK_ID}.sh -t /app/bin
+      - install -Dm7600 ${FLATPAK_ID}.desktop -t /app/share/applications
+      - install -Dm7600 icon.svg /app/share/icons/hicolor/scalable/apps/${FLATPAK_ID}.svg
