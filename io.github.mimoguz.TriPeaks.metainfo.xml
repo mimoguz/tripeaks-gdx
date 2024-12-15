@@ -35,7 +35,7 @@
 			<ul>
 				<li>Cards are arranged into three pyramid-like peaks (or choose one of two other layouts).</li>
 				<li>Match cards that are one rank higher or lower than the current card to clear the board.</li>
-				<li>Plan your moves, clear streaks, and aim for high scores!</li>
+				<li>Plan your move, clear cards, and aim for the highest streaks!</li>
 			</ul>
 		</p>
 
@@ -52,9 +52,18 @@
 
 	<launchable type="desktop-id">io.github.mimoguz.TriPeaks.desktop</launchable>
 	<screenshots>
-		<screenshot type="default"><image>https://raw.githubusercontent.com/mimoguz/tripeaks-gdx/refs/heads/main/screenshots/b_0_5_start_screen.png</image></screenshot>
-		<screenshot><image>https://raw.githubusercontent.com/mimoguz/tripeaks-gdx/refs/heads/main/screenshots/b_0_5_all_cards.png</image></screenshot>
-		<screenshot><image>https://raw.githubusercontent.com/mimoguz/tripeaks-gdx/refs/heads/main/screenshots/b_0_5_stalled_dialog.png</image></screenshot>
+		<screenshot type="default">
+            <caption>The TriPeaks main menu, with pixel art mountains and buttons to start a game, go to options, or quit.</caption>
+            <image>https://raw.githubusercontent.com/mimoguz/tripeaks-gdx/refs/heads/main/screenshots/b_0_5_start_screen.png</image>
+        </screenshot>
+		<screenshot>
+            <caption>The start of a tripeaks game with the "Two Peaks and a Valley" layout.</caption>
+            <image>https://raw.githubusercontent.com/mimoguz/tripeaks-gdx/refs/heads/main/screenshots/b_0_5_all_cards.png</image>
+        </screenshot>
+		<screenshot>
+            <caption>A dialog showing "No More Moves", meaning the deck has ran out and the player has no possible moves.</caption>
+            <image>https://raw.githubusercontent.com/mimoguz/tripeaks-gdx/refs/heads/main/screenshots/b_0_5_stalled_dialog.png</image>
+        </screenshot>
 	</screenshots>
 
     <releases>
