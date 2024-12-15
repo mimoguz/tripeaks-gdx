@@ -13,6 +13,10 @@ gradle-app.setting
 /server/build/
 /shared/build/
 
+## Flatpak:
+repo/
+.flatpak-builder/
+
 ## Java:
 *.class
 *.war
