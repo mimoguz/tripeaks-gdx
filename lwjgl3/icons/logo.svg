@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="512"
+   height="512"
+   viewBox="0 0 512 512"
+   version="1.1"
+   id="svg1"
+   xml:space="preserve"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"><defs
+     id="defs1" /><g
+     id="layer2"
+     style="display:inline"><rect
+       style="fill:#9fde84;fill-opacity:1;stroke-width:4;paint-order:markers fill stroke"
+       id="rect4"
+       width="384"
+       height="384"
+       x="64"
+       y="64"
+       ry="64" /><path
+       id="path723"
+       style="display:inline;fill:#9b7f9c;fill-opacity:1;stroke-width:0.404155"
+       d="m 176,336 v 16 h 16 v 16 H 319.99999 V 352 H 336 v -16 z" /><rect
+       style="display:inline;fill:#f9dba9;fill-opacity:1;stroke-width:0.264584"
+       id="rect742"
+       width="128"
+       height="176"
+       x="192"
+       y="160" /><path
+       id="path742"
+       style="display:inline;fill:#efa575;fill-opacity:1;stroke-width:0.264584"
+       d="m 192,160 v 8 h 128 v -8 z m 24,32 v 32 h 16.00001 v -32 z m 32.00001,0 v 32 H 264 v -32 z m 32,0 v 32 H 296 v -32 z m -48,48 v 16.00001 h 16 V 240 Z m 16,16.00001 V 272 H 264 v -15.99999 z m 15.99999,0 h 16.00001 V 240 H 264 Z m 16.00001,0 V 272 288 H 296 v -16 -15.99999 z m 0,31.99999 H 264 v 16.00001 h 16.00001 z M 264,304.00001 H 248.00001 V 320 H 264 Z m -15.99999,0 V 288 h -16 v 16.00001 z M 232.00001,288 V 272 256.00001 H 216 V 272 288 Z" /><path
+       id="path726"
+       style="display:inline;fill:#b83744;fill-opacity:1;stroke-width:0.264584"
+       d="M 215.99999,184.00001 V 216 H 232 v -31.99999 z m 32.00001,0 V 216 h 15.99999 v -31.99999 z m 32,0 V 216 h 15.99999 v -31.99999 z m -48,48 V 248 h 16 V 232.00001 Z M 248,248 v 16 h 15.99999 v -16 z m 15.99999,0 H 280 V 232.00001 H 263.99999 Z M 280,248 v 16 16.00001 h 15.99999 V 264 248 Z m 0,32.00001 H 263.99999 V 296 H 280 Z M 263.99999,296 H 248 v 16 h 15.99999 z M 248,296 V 280.00001 H 232 V 296 Z M 232,280.00001 V 264 248 h -16.00001 v 16 16.00001 z" /><path
+       id="path727"
+       style="display:inline;fill:#4c384d;fill-opacity:1;stroke-width:0.264584"
+       d="m 192.00001,144.00001 v 16 L 320,160 V 144 Z M 320,160 l -10e-6,176 H 336 l 10e-6,-176 z m -10e-6,176 L 192,336.00001 V 352 l 127.99999,-10e-6 z M 192,336.00001 l 1e-5,-176 h -16 l -1e-5,176 z" /></g></svg>
