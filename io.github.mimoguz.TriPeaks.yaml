@@ -1,0 +1,41 @@
+app-id: io.github.mimoguz.TriPeaks
+runtime: org.freedesktop.Platform
+runtime-version: "24.08"
+command: io.github.mimoguz.TriPeaks.sh
+sdk: org.freedesktop.Sdk
+sdk-extensions:
+- org.freedesktop.Sdk.Extension.openjdk17
+
+finish-args:
+- --socket=wayland
+- --socket=x11
+- --share=ipc
+- --device=dri
+- --env=JAVA_HOME=/app/jre
+
+modules:
+  - name: openjdk
+    buildsystem: simple
+    build-commands:
+      - /usr/lib/sdk/openjdk17/install.sh
+
+  - name: tripeaks
+    sources:
+      - type: archive
+        path: lwjgl3/build/distributions/lwjgl3-1.2.3.zip
+      - type: file
+        path: io.github.mimoguz.TriPeaks.sh
+      - type: file
+        path: io.github.mimoguz.TriPeaks.desktop
+      - type: file
+        path: res/android_icon.svg
+        dest-filename: icon.svg
+        sha256: c5d66a2cdeab07e36bba5aa23f6f3238bf137031fb0d9b49a81c29745253f503
+
+    buildsystem: simple
+    build-commands:
+      - cp -r bin /app
+      - cp -r lib /app
+      - install -m700 ${FLATPAK_ID}.sh -t /app/bin
+      - install -Dm7600 ${FLATPAK_ID}.desktop -t /app/share/applications
+      - install -Dm7600 icon.svg /app/share/icons/hicolor/scalable/apps/${FLATPAK_ID}.svg
