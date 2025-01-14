@@ -30,6 +30,7 @@
 
 	<description>
 		<p>A simple, open-source tri peaks solitaire game with multiple layout options.</p>
+        <p>This release is crafted for Linux mobile devices and will run in full-screen mode.</p>
 		<p>
 			<em>How to Play:</em>
 			<ul>
