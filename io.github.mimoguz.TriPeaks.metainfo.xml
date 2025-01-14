@@ -3,7 +3,7 @@
 	<id>io.github.mimoguz.TriPeaks</id>
 
 	<name>TriPeaks</name>
-	<summary>Dive into the relaxing and strategic world of TriPeaks Solitaire</summary>
+	<summary>A Tri Peaks solitaire (patience) game.</summary>
 
 	<metadata_license>CC-BY-SA-4.0</metadata_license>
 	<project_license>GPL-3.0-only</project_license>
@@ -19,7 +19,7 @@
 	<url type="bugtracker">https://github.com/mimoguz/tripeaks-gdx/issues</url>
 
 	<developer id="io.github.mimoguz">
-		<name>M. Oguz</name>
+		<name>Oguz Tas</name>
 	</developer>
 
 	<supports>
@@ -29,39 +29,38 @@
 	</supports>
 
 	<description>
-		<p>Rediscover the joy of <em>TriPeaks Solitaire</em> with a pixel-art style and some enhanced gameplay options.</p>
+		<p>A simple, open-source tri peaks solitaire game with multiple layout options.</p>
 		<p>
 			<em>How to Play:</em>
 			<ul>
-				<li>Cards are arranged into three pyramid-like peaks (or choose one of two other layouts).</li>
-				<li>Match cards that are one rank higher or lower than the current card to clear the board.</li>
-				<li>Plan your move, clear cards, and aim for the highest streaks!</li>
+                <li>Standard game starts with 28 cards arranged in three peaks, 23 cards in the stock, and one card in the discard pile.</li>
+                <li>Aim is to clear the peaks by selecting a card that is one rank higher or lower than the top card on the discard pile.</li>
+                <li>Sequences loop, so you can go from ace to two or king, in either direction at any time.</li>
+                <li>When needed, you can move a card from the stock to the discard pile.</li>
 			</ul>
 		</p>
-
 		<p>
-			<em>Extra Features:</em>
+			<em>Other Features:</em>
 			<ul>
-				<li><em>Three Layout Options:</em> Choose between the standard twenty-eight card tableau or two additional layouts for variety.</li>
-				<li><em>Customizable Start:</em> Begin with an 	empty discard pile, allowing you to start with any open card or draw from the stock.</li>
-				<li><em>Reveal Face-Down Cards:</em> Enable an option to view the face-down cards for added strategic planning.</li>
+				<li><em>Three Layout Options:</em>Beyond the standard TriPeaks layout, the game offers two more layout options.</li>
+				<li><em>Customizable Start:</em> Begin with an 	empty discard pile, allowing you to start with any open card or by drawing from the stock.</li>
+				<li><em>Exposed Face-Down Cards:</em> An option to view the face-down cards for added strategic planning.</li>
 			</ul>
 		</p>
-		<p>Enjoy a fresh, customizable take on the classic solitaire experience with <em>TriPeaks</em>, the perfect balance of relaxation and challenge.</p>
 	</description>
 
 	<launchable type="desktop-id">io.github.mimoguz.TriPeaks.desktop</launchable>
 	<screenshots>
 		<screenshot type="default">
-            <caption>The TriPeaks main menu, with pixel art mountains and buttons to start a game, go to options, or quit.</caption>
+            <caption>Start screen.</caption>
             <image>https://raw.githubusercontent.com/mimoguz/tripeaks-gdx/refs/heads/main/screenshots/b_0_5_start_screen.png</image>
         </screenshot>
 		<screenshot>
-            <caption>The start of a tripeaks game with the "Two Peaks and a Valley" layout.</caption>
+            <caption>One of two the non-standard layouts: Two Peaks and a Valley.</caption>
             <image>https://raw.githubusercontent.com/mimoguz/tripeaks-gdx/refs/heads/main/screenshots/b_0_5_all_cards.png</image>
         </screenshot>
 		<screenshot>
-            <caption>A dialog showing "No More Moves", meaning the deck has ran out and the player has no possible moves.</caption>
+            <caption>An end-game dialog.</caption>
             <image>https://raw.githubusercontent.com/mimoguz/tripeaks-gdx/refs/heads/main/screenshots/b_0_5_stalled_dialog.png</image>
         </screenshot>
 	</screenshots>
