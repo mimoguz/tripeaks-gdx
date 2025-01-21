@@ -20,15 +20,15 @@ A simple tri peaks solitaire game using [libGDX](https://libgdx.com/).
 
 ### Currently available in
 
-* Brazilian Portuguese
-* Bulgarian
+* Brazilian Portuguese (incomplete)
+* Bulgarian (incomplete)
 * English
-* French
+* French (incomplete)
 * German
-* Indonesian
-* Italian  
-* Russian
-* Simplified Chinese
+* Indonesian (incomplete)
+* Italian (incomplete)
+* Russian (incomplete)
+* Simplified Chinese (incomplete)
 * Spanish
 * Turkish
 
