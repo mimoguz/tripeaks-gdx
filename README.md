@@ -1,3 +1,5 @@
+_I'm now working on a re-implementation of this game. It's - hopefully - very close to a 1.0 release. Your input (and if you are a designer, help 🙂) would be very valuable. Repository link: [TriPeaks NEUE](https://github.com/mimoguz/tripeaks_neue)._
+
 # TriPeaks
 
 A simple tri peaks solitaire game using [libGDX](https://libgdx.com/).
