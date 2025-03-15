@@ -1,0 +1,2 @@
+Version 1.2.4:
+    - Added a new game layout.
