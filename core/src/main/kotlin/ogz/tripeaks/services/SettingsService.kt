@@ -175,7 +175,9 @@ enum class Layouts {
 fun String.toLayoutVariant(): Layouts = when (this) {
     BasicLayout.TAG -> Layouts.Basic
     DiamondsLayout.TAG -> Layouts.Diamonds
-    else -> Layouts.Inverted2nd
+    Inverted2ndLayout.TAG -> Layouts.Inverted2nd
+    TheaterLayout.TAG -> Layouts.Theater
+    else -> Layouts.Basic // Default
 }
 
 fun Layouts.create(): Layout = when (this) {
