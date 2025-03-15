@@ -14,6 +14,7 @@ import ogz.tripeaks.models.layout.BasicLayout
 import ogz.tripeaks.models.layout.DiamondsLayout
 import ogz.tripeaks.models.layout.Inverted2ndLayout
 import ogz.tripeaks.models.layout.Layout
+import ogz.tripeaks.models.layout.TheaterLayout
 import ogz.tripeaks.views.AnimationStrategy
 import ogz.tripeaks.views.CardDrawingStrategy
 
@@ -159,13 +160,15 @@ class SettingsData private constructor(
 enum class Layouts {
     Basic,
     Diamonds,
-    Inverted2nd;
+    Inverted2nd,
+    Theater;
 
     val tag
         get() = when (this) {
             Basic -> BasicLayout.TAG
             Diamonds -> DiamondsLayout.TAG
             Inverted2nd -> Inverted2ndLayout.TAG
+            Theater -> TheaterLayout.TAG
         }
 }
 
@@ -179,6 +182,7 @@ fun Layouts.create(): Layout = when (this) {
     Layouts.Basic -> BasicLayout()
     Layouts.Diamonds -> DiamondsLayout()
     Layouts.Inverted2nd -> Inverted2ndLayout()
+    Layouts.Theater -> TheaterLayout()
 }
 
 enum class AnimationStrategies {
